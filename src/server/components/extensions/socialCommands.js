@@ -79,7 +79,7 @@ module.exports = {
 
 		const chatCommandConfig = {
 			localCommands,
-			contextActions,
+			contextActions: extend([], contextActions),
 			commandRoles,
 			commandActions
 		};
@@ -94,11 +94,12 @@ module.exports = {
 		});
 
 		this.roleLevel = roles.getRoleLevel(this.obj);
-		this.calculateActions();
+
+		this.calculateActions(chatCommandConfig.contextActions);
 	},
 
-	calculateActions: function () {
-		this.actions = contextActions
+	calculateActions: function (actions) {
+		this.actions = actions
 			.filter(c => this.roleLevel >= commandRoles[c.command]);
 	},
 
