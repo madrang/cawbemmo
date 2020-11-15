@@ -8,7 +8,6 @@ module.exports = {
 	],
 
 	init: function () {
-		this.events.on('onBeforeGetSkins', this.beforeGetSkins.bind(this));
 		this.events.on('onBeforeGetItemTypes', this.beforeGetItemTypes.bind(this));
 		this.events.on('onBeforeGetSpellsInfo', this.beforeGetSpellsInfo.bind(this));
 		this.events.on('onBeforeGetSpellsConfig', this.beforeGetSpellsConfig.bind(this));
@@ -43,27 +42,6 @@ module.exports = {
 	},
 
 	beforeGetAnimations: function (animations) {
-		let spritesheet = `${this.folderName}/images/inGameSprite.png`;
-
-		animations.mobs[spritesheet] = {
-			0: {
-				magic: {
-					spritesheet: spritesheet,
-					row: 0,
-					col: 1,
-					frames: 4,
-					frameDelay: 4
-				},
-				melee: {
-					spritesheet: spritesheet,
-					row: 1,
-					col: 1,
-					frames: 3,
-					frameDelay: 4
-				}
-			}
-		};
-
 		//Skeleton animations
 		let mobsheet = `${this.folderName}/images/mobs.png`;
 		if (!animations.mobs[mobsheet])
@@ -100,7 +78,6 @@ module.exports = {
 	onBeforeGetClientConfig: function ({ resourceList, textureList }) {
 		resourceList.push(`${this.folderName}/images/abilityIcons.png`);
 
-		textureList.push(`${this.folderName}/images/inGameSprite.png`);
 		textureList.push(`${this.folderName}/images/mobs.png`);
 	},
 
@@ -111,14 +88,6 @@ module.exports = {
 			spell.template = require('./spells/spellSummonSkeleton');
 		else if (spell.type === 'BloodBarrier')
 			spell.template = require('./spells/spellBloodBarrier');
-	},
-
-	beforeGetSkins: function (skins) {
-		skins['1.8'] = {
-			name: 'Necromancer 1',
-			sprite: [0, 0],
-			spritesheet: `${this.folderName}/images/inGameSprite.png`
-		};
 	},
 
 	beforeGetItemTypes: function (types) {
