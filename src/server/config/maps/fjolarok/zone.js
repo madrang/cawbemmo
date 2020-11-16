@@ -911,7 +911,7 @@ module.exports = {
 						max: 10,
 						extra: [{
 							type: 'skin',
-							skinId: '2.0',
+							skinId: 'gaekatlan-druid',
 							worth: 100,
 							factions: [{
 								id: 'gaekatla',
