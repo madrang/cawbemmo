@@ -109,15 +109,16 @@ define([
 		}
 
 		let size = 64;
-		let offset = 0;
+		let margin = 0;
 
 		if (item.type === 'skin') {
-			offset = 4;
 			size = 8;
+			margin = 16;
 		}
 
-		const imgX = (-item.sprite[0] * size) + offset;
-		const imgY = (-item.sprite[1] * size) + offset;
+		const imgX = (-item.sprite[0] * size);
+		const imgY = (-item.sprite[1] * size);
+		const backgroundPosition = `${imgX}px ${imgY}px`;
 
 		let spritesheet = item.spritesheet || '../../../images/items.png';
 		if (!item.spritesheet) {
@@ -133,7 +134,12 @@ define([
 
 		itemEl
 			.find('.icon')
-			.css('background', `url(${spritesheet}) ${imgX}px ${imgY}px`);
+			.css({
+				background: `url(${spritesheet}) no-repeat scroll ${backgroundPosition} / auto`,
+				width: `${size}px`,
+				height: `${size}px`,
+				margin: `${margin}px`
+			});
 
 		if (item.quantity > 1 || item.eq || item.active || item.has('quickSlot')) {
 			let elQuantity = itemEl.find('.quantity');
