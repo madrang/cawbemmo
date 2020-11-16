@@ -187,7 +187,7 @@ module.exports = {
 		},
 		14: {
 			msg: [{
-				msg: 'Perhaps. But it may prove to be our salvation. For now we have double need of the energy. Our portal was closed from the other side and we don\'t have sufficient power between us to repopen it from here.',
+				msg: 'Perhaps. But it may prove to be our salvation. For now we have double need of the energy. Our portal was closed from the other side and we don\'t have sufficient power between us to reopen it from here.',
 				options: [14.1, 6.1]
 			}],
 			options: {
