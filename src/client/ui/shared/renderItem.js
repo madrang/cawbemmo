@@ -64,7 +64,7 @@ define([
 		let downHandler = () => {};
 		if (isMobile) {
 			moveHandler = () => {};
-			downHandler = renderItemManager.bind(renderItemManager, el, item);
+			downHandler = renderItemManager.onHover.bind(renderItemManager, el, item);
 		}
 
 		$.event.special.destroyed = {
