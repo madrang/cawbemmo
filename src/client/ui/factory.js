@@ -1,11 +1,13 @@
 define([
 	'ui/uiBase',
 	'js/system/events',
+	'js/system/client',
 	'js/system/globals',
 	'js/misc/tosAcceptanceValid'
 ], function (
 	uiBase,
 	events,
+	client,
 	globals,
 	tosAcceptanceValid
 ) {
@@ -29,14 +31,39 @@ define([
 			});
 		},
 
-		onEnterGame: function () {
+		onEnterGame: async function () {
 			events.clearQueue();
 
-			globals.clientConfig.uiList.forEach(u => {
-				if (u.path)
-					this.buildModUi(u);
-				else
-					this.build(u);
+			await Promise.all(
+				globals.clientConfig.uiList.map(u => {
+					const uiType = u.path ? u.path.split('/').pop() : u;
+
+					return new Promise(res => {
+						const doneCheck = () => {
+							const isDone = this.uis.some(ui => ui.type === uiType);
+							if (isDone) {
+								res();
+
+								return;
+							}
+
+							setTimeout(doneCheck, 100);
+						};
+
+						this.build(uiType, { path: u.path });
+
+						doneCheck();
+					});
+				})
+			);
+
+			client.request({
+				cpn: 'player',
+				method: 'performAction',
+				data: {
+					cpn: 'player',
+					method: 'notifyServerUiReady'
+				}
 			});
 		},
 
@@ -140,6 +167,10 @@ define([
 				if (u.update)
 					u.update();
 			}
+		},
+
+		getUi: function (type) {
+			return this.uis.find(u => u.type === type);
 		}
 	};
 });

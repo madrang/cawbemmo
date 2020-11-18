@@ -147,7 +147,7 @@ module.exports = (cpnSocial, msg) => {
 	if (!msgData.message)
 		return;
 
-	const { obj, muted, maxChatLength, messageHistory } = cpnSocial;
+	const { obj, maxChatLength, messageHistory } = cpnSocial;
 	const sendError = sendErrorMsg.bind(null, cpnSocial);
 
 	msgData.message = msgData.message
@@ -161,12 +161,6 @@ module.exports = (cpnSocial, msg) => {
 
 	if (msgData.message.trim() === '')
 		return;
-
-	if (muted) {
-		sendError('You have been muted from talking');
-
-		return;
-	}
 
 	let messageString = msgData.message;
 	if (messageString.length > maxChatLength)
@@ -203,16 +197,26 @@ module.exports = (cpnSocial, msg) => {
 		return;
 	}
 
-	messageHistory.push({
-		msg: messageString,
-		time: time
-	});
-
 	let msgEvent = {
 		source: obj.auth.charname,
-		msg: messageString
+		sourceObj: obj,
+		msg: messageString,
+		ignore: false,
+		error: null
 	};
 	events.emit('onBeforeSendMessage', msgEvent);
+
+	if (msgEvent.ignore) {
+		if (msgEvent.error)
+			sendError(msgEvent.error);
+
+		return;
+	}
+
+	messageHistory.push({
+		msg: msgEvent.messageString,
+		time: time
+	});
 
 	const messageHandler = {
 		global: sendRegularMessage,

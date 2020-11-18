@@ -10,7 +10,7 @@ const routerConfig = {
 		dialogue: ['talk'],
 		gatherer: ['gather'],
 		quests: ['complete'],
-		inventory: ['combineStacks', 'splitStack', 'useItem', 'moveItem', 'learnAbility', 'unlearnAbility', 'dropItem', 'destroyItem', 'salvageItem', 'stashItem', 'mailItem', 'sortInventory'],
+		inventory: ['combineStacks', 'splitStack', 'useItem', 'moveItem', 'learnAbility', 'unlearnAbility', 'dropItem', 'destroyItem', 'salvageItem', 'stashItem', 'sortInventory'],
 		equipment: ['equip', 'unequip', 'setQuickSlot', 'useQuickSlot', 'inspect'],
 		stash: ['withdraw', 'open'],
 		trade: ['buySell'],
@@ -18,7 +18,8 @@ const routerConfig = {
 		wardrobe: ['open', 'apply'],
 		stats: ['respawn'],
 		passives: ['tickNode', 'untickNode'],
-		workbench: ['open', 'craft', 'getRecipe']
+		workbench: ['open', 'craft', 'getRecipe'],
+		player: ['notifyServerUiReady']
 	},
 	globalAllowed: {
 		clientConfig: ['getClientConfig'],

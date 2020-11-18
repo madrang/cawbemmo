@@ -24,12 +24,11 @@ module.exports = {
 	},
 
 	simplify: function (self) {
-		const { party, customChannels, blockedPlayers, actions, muted } = this;
+		const { party, customChannels, blockedPlayers, actions } = this;
 
 		const res = {
 			type: 'social',
-			party,
-			muted
+			party
 		};
 
 		if (self) {
@@ -47,8 +46,7 @@ module.exports = {
 		return {
 			type: 'social',
 			customChannels: this.customChannels,
-			blockedPlayers: this.blockedPlayers,
-			muted: this.muted || null
+			blockedPlayers: this.blockedPlayers
 		};
 	},
 

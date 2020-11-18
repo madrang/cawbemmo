@@ -128,6 +128,12 @@ module.exports = {
 	},
 
 	fixSkins: async function (username, skins) {
+		//Skin 2.0 because gaekatlan-druid
+		skins.forEach((s, i) => {
+			if (s === '2.0')
+				skins[i] = 'gaekatlan-druid';
+		});
+
 		let length = skins.length;
 		skins = skins.filter(s => !!configSkins.getBlueprint(s));
 

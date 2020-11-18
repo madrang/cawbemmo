@@ -12,6 +12,7 @@ module.exports = {
 
 	init: function (blueprint) {
 		this.msg = blueprint.msg;
+		this.msgFunction = blueprint.msgFunction;
 		this.actions = blueprint.actions || {};
 		this.announce = blueprint.announce;
 		this.maxLevel = blueprint.maxLevel || 0;
@@ -31,6 +32,12 @@ module.exports = {
 		let args = action.args || [];
 
 		let cpn = null;
+
+		if (typeof(action) === 'function') {
+			action(obj);
+			
+			return;
+		}
 
 		if (action.targetId) {
 			let target = this.obj.instance.objects.find(o => o.id === action.targetId);
@@ -58,13 +65,15 @@ module.exports = {
 
 		this.callAction(obj, 'enter');
 
-		if (!this.msg)
+		if (!this.msg && !this.msgFunction)
 			return;
+
+		const msg = this.msg || this.msgFunction(obj);
 
 		if (this.announce) {
 			this.syncer.queue('onGetAnnouncement', {
 				src: this.obj.id,
-				msg: this.msg
+				msg
 			}, [obj.serverId]);
 
 			return;
@@ -72,7 +81,7 @@ module.exports = {
 
 		this.syncer.queue('onGetDialogue', {
 			src: this.obj.id,
-			msg: this.msg
+			msg
 		}, [obj.serverId]);
 	},
 

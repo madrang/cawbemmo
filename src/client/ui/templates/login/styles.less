@@ -38,7 +38,8 @@
 		width: @rightWidth;
 		padding: @boxPadding;
 
-		.label, input {
+		.label,
+		input {
 			float: left;
 		}
 
@@ -52,16 +53,21 @@
 			width: 70%;
 		}
 
-		input, .textbox, input:-webkit-autofill {
-			box-shadow: 0 0 0px 1000px darken(@gray, 15%) inset;
+		input,
+		.textbox,
+		input:-webkit-autofill {
+			-webkit-appearance: none;
+			box-shadow: 0 0 0px 20px darken(@gray, 15%) inset;
 			color: @white;
 			-webkit-text-fill-color: @white;
 			margin-bottom: @boxPadding;
 		}
 
 		/* We duplicate this for firefox which doesn't like the webkit selector */
-		input, .textbox {
-			box-shadow: 0 0 0px 1000px darken(@gray, 15%) inset;
+		input,
+		.textbox {
+			-webkit-appearance: none;
+			box-shadow: 0 0 0px 20px darken(@gray, 15%) inset;
 			color: @white;
 			-webkit-text-fill-color: @white;
 			margin-bottom: @boxPadding;

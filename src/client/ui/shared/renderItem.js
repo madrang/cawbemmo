@@ -10,40 +10,75 @@ define([
 ], function (
 	events
 ) {
-	const onHover = (el, item, e) => {
-		if (item)
-			this.hoverItem = item;
-		else
-			item = this.hoverItem;
-
-		let ttPos = null;
-
-		if (el) {
-			ttPos = {
-				x: ~~(e.clientX + 32),
-				y: ~~(e.clientY)
-			};
-		}
-
-		events.emit('onShowItemTooltip', item, ttPos, true);
-	};
-
 	const hideTooltip = (el, item, e) => {
 		events.emit('onHideItemTooltip', item);
 	};
 
+	const renderItemManager = {
+		hoverItem: null,
+
+		onHover: function (el, item, e) {
+			if (item)
+				this.hoverItem = item;
+			else
+				item = this.hoverItem;
+
+			let ttPos = null;
+
+			if (el) {
+				ttPos = {
+					x: ~~(e.clientX + 32),
+					y: ~~(e.clientY)
+				};
+			}
+
+			events.emit('onShowItemTooltip', item, ttPos, true);
+		},
+
+		onKeyDown: function (key) {
+			if (key === 'shift' && this.hoverItem)
+				this.onHover();
+		},
+
+		onKeyUp: function (key) {
+			if (key === 'shift' && this.hoverItem)
+				this.onHover();
+		},
+
+		onMouseLeave: function (el, item, e) {
+			if (this.hoverItem !== item)
+				return;
+
+			hideTooltip(el, item, e);
+
+			this.hoverItem = null;
+		}
+	};
+
+	events.on('onKeyDown', renderItemManager.onKeyDown.bind(renderItemManager));
+	events.on('onKeyUp', renderItemManager.onKeyUp.bind(renderItemManager));
+
 	const addTooltipEvents = (el, item) => {
-		let moveHandler = onHover.bind(null, el, item);
+		const leaveHandler = renderItemManager.onMouseLeave.bind(renderItemManager, el, item);
+		let moveHandler = renderItemManager.onHover.bind(renderItemManager, el, item);
 		let downHandler = () => {};
 		if (isMobile) {
 			moveHandler = () => {};
-			downHandler = onHover.bind(null, el, item);
+			downHandler = renderItemManager.onHover.bind(renderItemManager, el, item);
 		}
+
+		$.event.special.destroyed = {
+			remove: function (o) {
+				if (o.handler) 
+					o.handler();
+			}
+		};
 
 		el
 			.on('mousedown', downHandler)
 			.on('mousemove', moveHandler)
-			.on('mouseleave', hideTooltip.bind(null, el, item));
+			.on('mouseleave', leaveHandler)
+			.on('destroyed', leaveHandler);
 	};
 
 	const onShowContext = (item, getItemContextConfig, e) => {
@@ -64,7 +99,7 @@ define([
 		el.on('contextmenu', onShowContext.bind(this, item, getItemContextConfig));
 	};
 
-	return (container, item, useEl, manageTooltip, getItemContextConfig) => {
+	return (container, item, useEl, manageTooltip, getItemContextConfig, showNewIndicators = true) => {
 		const itemEl = useEl || $(tplItem).appendTo(container);
 
 		if (!item) {
@@ -74,15 +109,16 @@ define([
 		}
 
 		let size = 64;
-		let offset = 0;
+		let margin = 0;
 
 		if (item.type === 'skin') {
-			offset = 4;
 			size = 8;
+			margin = 16;
 		}
 
-		const imgX = (-item.sprite[0] * size) + offset;
-		const imgY = (-item.sprite[1] * size) + offset;
+		const imgX = (-item.sprite[0] * size);
+		const imgY = (-item.sprite[1] * size);
+		const backgroundPosition = `${imgX}px ${imgY}px`;
 
 		let spritesheet = item.spritesheet || '../../../images/items.png';
 		if (!item.spritesheet) {
@@ -98,7 +134,12 @@ define([
 
 		itemEl
 			.find('.icon')
-			.css('background', `url(${spritesheet}) ${imgX}px ${imgY}px`);
+			.css({
+				background: `url(${spritesheet}) no-repeat scroll ${backgroundPosition} / auto`,
+				width: `${size}px`,
+				height: `${size}px`,
+				margin: `${margin}px`
+			});
 
 		if (item.quantity > 1 || item.eq || item.active || item.has('quickSlot')) {
 			let elQuantity = itemEl.find('.quantity');
@@ -112,7 +153,7 @@ define([
 			//it must mean that it's active, EQd or QSd
 			if (!item.quantity)
 				itemEl.addClass('eq');
-		} else if (item.isNew) {
+		} else if (item.isNew && showNewIndicators) {
 			itemEl.addClass('new');
 			itemEl.find('.quantity').html('NEW');
 		}

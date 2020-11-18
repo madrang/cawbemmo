@@ -23,10 +23,7 @@ const config = {
 		'animMob',
 		'animBoss',
 		'white',
-		'ray',
-		'images/skins/0001.png',
-		'images/skins/0010.png',
-		'images/skins/0012.png'
+		'ray'
 	],
 	//Textures that are 24x24. The renderer needs to know this
 	bigTextures: [
@@ -178,7 +175,6 @@ const config = {
 		'death',
 		'leaderboard',
 		'reputation',
-		'mail',
 		'wardrobe',
 		'passives',
 		'workbench',

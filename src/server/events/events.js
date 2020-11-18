@@ -240,15 +240,26 @@ module.exports = {
 	giveRewards: function (config) {
 		const { event: { rewards = {} } } = config;
 
+		const subject = `${config.name} Rewards`;
+		const senderName = config.rewardSenderName;
+
 		Object.entries(rewards).forEach(e => {
 			const [ name, rList ] = e;
 
 			if (!rList || !rList.length)
 				return;
 
-			rList[0].msg = `${config.name} reward:`;
-
-			this.instance.mail.sendMail(name, rList);
+			//Hack: Mail is a mod. As such, events should be a mod that depends on mail
+			if (global.mailManager) {
+				global.mailManager.sendSystemMail({
+					to: name,
+					from: senderName,
+					subject,
+					msg: '',
+					items: rList,
+					notify: true
+				});
+			}
 		});
 
 		if ((config.events) && (config.events.afterGiveRewards))

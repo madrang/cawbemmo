@@ -6,7 +6,6 @@ const tableNames = [
 	'login',
 	'leaderboard',
 	'customMap',
-	'mail',
 	'customChannels',
 	'error',
 	'modLog',

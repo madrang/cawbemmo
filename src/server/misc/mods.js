@@ -2,12 +2,46 @@ const fileLister = require('../misc/fileLister');
 const events = require('../misc/events');
 
 module.exports = {
+	mods: [],
+
 	init: async function () {
 		const modList = fileLister.getFolderList('mods');
 
-		for (const m of modList) {
-			const mod = require('../mods/' + m + '/index');
-			await this.onGetMod(m, mod);
+		//Load all mods
+		let loadList = modList.map(m => {
+			const path = `../mods/${m}/index`;
+
+			const mod = require(path);
+			const id = mod.id ? mod.id : m.replace('iwd-', '');
+
+			return {
+				id,
+				folderName: m,
+				path,
+				mod
+			};
+		});
+
+		//Reorder mods so that mods that depend on others load later
+		loadList = loadList.sort((a, b) => {
+			const { id: idA, mod: { dependsOn: depA = [] } } = a;
+			const { id: idB, mod: { dependsOn: depB = [] } } = b;
+
+			if (depB.includes(idA) || !depA.length)
+				return -1;
+			else if (depA.includes(idB) || !depB.length)
+				return 1;
+
+			return 0;
+		});
+
+		//Initialize mods
+		for (const m of loadList) {
+			const { folderName, mod } = m;
+
+			await this.onGetMod(folderName, mod);
+
+			this.mods.push(mod);
 		}
 	},
 
@@ -41,5 +75,12 @@ module.exports = {
 
 	onGetExtra: function (name, mod, extra) {
 		extra.folderName = 'server/mods/' + name;
+	},
+
+	tick: function () {
+		this.mods.forEach(m => {
+			if (m.tick)
+				m.tick();
+		});
 	}
 };

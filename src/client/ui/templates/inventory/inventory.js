@@ -290,10 +290,6 @@ define([
 					text: 'equip',
 					callback: this.performItemAction.bind(this, item, 'equip')
 				},
-				mail: {
-					text: 'mail',
-					callback: this.openMailUi.bind(this, item)
-				},
 				split: {
 					text: 'split stack',
 					callback: this.splitStackStart.bind(this, item)
@@ -344,9 +340,6 @@ define([
 
 			if (item.quantity > 1 && !item.quest)
 				ctxConfig.push(menuItems.split);
-
-			if ((!item.noDrop) && (!item.quest))
-				ctxConfig.push(menuItems.mail);
 
 			ctxConfig.push(menuItems.link);
 
@@ -545,12 +538,6 @@ define([
 					method: action,
 					data: data
 				}
-			});
-		},
-
-		openMailUi: function (item) {
-			events.emit('onSetMailItem', {
-				item: item
 			});
 		},
 

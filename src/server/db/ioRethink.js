@@ -75,6 +75,21 @@ module.exports = {
 		return res;
 	},
 
+	getFilterAsync: async function ({ table, noDefault, filter }) {
+		const res = await r
+			.table(table)
+			.filter(filter)
+			.run();
+
+		if (res)
+			return res;
+
+		if (!noDefault)
+			return [];
+
+		return null;
+	},
+
 	getAllAsync: async function ({
 		table,
 		key,

@@ -736,8 +736,6 @@ module.exports = {
 		let stats = this.stats;
 		let time = scheduler.getTime();
 		stats.lastLogin = time;
-
-		this.obj.instance.mail.getMail(this.obj.name);
 	},
 
 	getKillStreakCoefficient: function (mobName) {

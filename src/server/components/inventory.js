@@ -6,7 +6,6 @@ let itemEffects = require('../items/itemEffects');
 const events = require('../misc/events');
 
 const { isItemStackable } = require('./inventory/helpers');
-const transactions = require('../security/transactions');
 
 const getItem = require('./inventory/getItem');
 const dropBag = require('./inventory/dropBag');
@@ -381,45 +380,6 @@ module.exports = {
 
 			item.pos = m.pos;
 		}, this);
-	},
-
-	mailItem: async function (msg) {
-		let item = this.findItem(msg.itemId);
-
-		if (!item || item.noDrop || item.quest) {
-			this.resolveCallback(msg);
-			return;
-		}
-
-		let res = await io.getAsync({
-			key: msg.recipient,
-			table: 'character'
-		});
-
-		if (!res) {
-			this.resolveCallback(msg, 'Recipient does not exist');
-			return;
-		} else if (!this.findItem(msg.itemId)) 
-			return;
-
-		const resolveTrans = transactions.register();
-
-		let blocked = false;
-		if (res.components) {
-			let social = res.components.find(f => f.type === 'social');
-			if (social.blockedPlayers && social.blockedPlayers.includes(this.obj.name)) 
-				blocked = true;
-		}
-
-		const mappedItem = this.simplifyItem(item);
-		this.destroyItem(item.id);
-
-		if (!blocked)
-			await this.obj.instance.mail.sendMail(msg.recipient, [mappedItem]);
-
-		this.resolveCallback(msg);
-
-		resolveTrans();
 	},
 
 	hookItemEvents: function (items) {

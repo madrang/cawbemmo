@@ -7,7 +7,6 @@ const connections = require('../../security/connections');
 const events = require('../../misc/events');
 
 //Commands
-const ban = require('../social/ban');
 const rezone = require('../social/rezone');
 const canChat = require('../social/canChat');
 const startEvent = require('../social/startEvent');
@@ -23,11 +22,6 @@ let commandRoles = {
 	block: 0,
 	unblock: 0,
 	help: 0,
-
-	//Mods
-	ban: 5,
-	mute: 5,
-	unmute: 5,
 
 	//Super Mods
 	broadcast: 8,
@@ -56,37 +50,20 @@ let commandRoles = {
 
 //Commands that should be run on the main thread (not the zone thread)
 const localCommands = [
-	'ban',
 	'join',
 	'leave',
-	'mute',
-	'unmute',
 	'setPassword',
 	'roll',
 	'giveSkin',
 	'broadcast',
 	'saveAll',
-	'ban',
 	'help',
 	'startEvent',
 	'stopEvent'
 ];
 
 //Actions that should appear when a player is right clicked
-const contextActions = [
-	{
-		command: 'mute',
-		text: 'mute'
-	},
-	{
-		command: 'unmute',
-		text: 'unmute'
-	},
-	{
-		command: 'ban',
-		text: 'ban'
-	}
-];
+const contextActions = [];
 
 const commandActions = {};
 
@@ -100,6 +77,15 @@ module.exports = {
 				.filter((c, i) => (this.customChannels.indexOf(c) === i));
 		}
 
+		const chatCommandConfig = {
+			localCommands,
+			contextActions: extend([], contextActions),
+			commandRoles,
+			commandActions
+		};
+
+		events.emit('onBeforeGetChatCommands', chatCommandConfig);
+
 		events.emit('onBeforeGetCommandRoles', commandRoles, commandActions);
 		Object.entries(commandActions).forEach(a => {
 			const [ actionName, actionHandler ] = a;
@@ -108,11 +94,12 @@ module.exports = {
 		});
 
 		this.roleLevel = roles.getRoleLevel(this.obj);
-		this.calculateActions();
+
+		this.calculateActions(chatCommandConfig.contextActions);
 	},
 
-	calculateActions: function () {
-		this.actions = contextActions
+	calculateActions: function (actions) {
+		this.actions = actions
 			.filter(c => this.roleLevel >= commandRoles[c.command]);
 	},
 
@@ -369,110 +356,6 @@ module.exports = {
 		let eq = this.obj.equipment;
 		Object.keys(eq.eq).forEach(function (slot) {
 			eq.unequip(eq.eq[slot]);
-		});
-	},
-
-	mute: async function (target, reason = null) {
-		if (typeof (target) === 'object') {
-			let keys = Object.keys(target);
-			target = keys[0];
-			reason = keys[1] || null;
-		}
-
-		if (target === this.obj.name)
-			return;
-
-		let o = connections.players.find(f => (f.name === target));
-		if (!o)
-			return;
-
-		let role = roles.getRoleLevel(o);
-		if (role >= this.roleLevel)
-			return;
-
-		let social = o.social;
-		if (social.muted) {
-			this.sendMessage('That player has already been muted', 'color-redA');
-			return;
-		}
-
-		let reasonMsg = '';
-		if (reason)
-			reasonMsg = ' (' + reason + ')';
-
-		social.muted = true;
-		this.sendMessage('Successfully muted ' + target, 'color-yellowB');
-		this.sendMessage('You have been muted' + reasonMsg, 'color-yellowB', o);
-
-		atlas.updateObject(o, {
-			components: [{
-				type: 'social',
-				muted: true
-			}]
-		});
-
-		await io.setAsync({
-			key: new Date(),
-			table: 'modLog',
-			value: {
-				source: this.obj.name,
-				command: 'mute',
-				target: target,
-				reason: reason
-			},
-			serialize: true
-		});
-	},
-
-	unmute: async function (target, reason = null) {
-		if (typeof (target) === 'object') {
-			let keys = Object.keys(target);
-			target = keys[0];
-			reason = keys[1] || null;
-		}
-
-		if (target === this.obj.name)
-			return;
-
-		let o = connections.players.find(f => (f.name === target));
-		if (!o)
-			return;
-
-		let role = roles.getRoleLevel(o);
-		if (role >= this.roleLevel)
-			return;
-
-		let social = o.social;
-		if (!social.muted) {
-			this.sendMessage('That player is not muted', 'color-redA');
-			return;
-		}
-
-		let reasonMsg = '';
-		if (reason)
-			reasonMsg = ' (' + reason + ')';
-
-		delete social.muted;
-		this.sendMessage('Successfully unmuted ' + target, 'color-yellowB');
-		this.sendMessage('You have been unmuted' + reasonMsg, 'color-yellowB', o);
-
-		atlas.updateObject(o, {
-			components: [{
-				type: 'social',
-				muted: null
-			}]
-		});
-
-		await io.setAsync({
-			key: new Date(),
-			table: 'modLog',
-			value: {
-				source: this.obj.name,
-				command: 'unmute',
-				target: target,
-				reason: reason
-			},
-			serialize: true
 		});
 	},
 
@@ -739,10 +622,6 @@ module.exports = {
 
 	saveAll: function () {
 		connections.forceSaveAll();
-	},
-
-	ban: function (msg) {
-		ban(this, msg);
 	},
 
 	rezone: function (msg) {
