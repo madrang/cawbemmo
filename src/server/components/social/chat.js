@@ -214,7 +214,7 @@ module.exports = (cpnSocial, msg) => {
 	}
 
 	messageHistory.push({
-		msg: msgEvent.messageString,
+		msg: msgEvent.msg,
 		time: time
 	});
 
