@@ -464,6 +464,7 @@ module.exports = {
 		let oldLevel = values.level;
 
 		values.level = level;
+		obj.fireEvent('onLevelUp', values.level);
 
 		let delta = level - oldLevel;
 
