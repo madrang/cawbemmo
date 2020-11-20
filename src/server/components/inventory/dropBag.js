@@ -7,7 +7,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 	const obj = cpnInv.obj;
 
 	//Only drop loot if this player is in the zone
-	let playerObject = obj.instance.objects.find(o => o.name === ownerName);
+	let playerObject = obj.instance.objects.find(o => o.player && o.name === ownerName);
 	if (!playerObject)
 		return;
 
