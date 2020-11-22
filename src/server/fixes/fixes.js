@@ -46,6 +46,14 @@ module.exports = {
 			.filter(i => (i.name === 'Elixir of Infatuation'))
 			.forEach(function (i) {
 				i.cdMax = 342;
+				i.sprite = [1, 0];
+			});
+
+		items
+			.filter(i => i.name === 'Squashling Vine')
+			.forEach(i => {
+				i.petSheet = 'server/mods/iwd-souls-moor/images/skins.png';
+				i.petCell = 16;
 			});
 
 		items
