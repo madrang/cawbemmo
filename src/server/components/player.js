@@ -102,7 +102,8 @@ module.exports = {
 		});
 
 		eventEmitter.emit('onAfterBuildPlayerObject', {
-			obj: this.obj
+			obj: this.obj,
+			saveData: character
 		});
 
 		obj.xp = stats.values.xp;
