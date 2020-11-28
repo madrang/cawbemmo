@@ -20,7 +20,9 @@ define([
 
 		centered: true,
 		characterInfo: {},
+		characters: null,
 		selected: null,
+		selectedIndex: -1,
 		deleteCount: 0,
 
 		beforeRender: function () {
@@ -47,10 +49,33 @@ define([
 		},
 
 		onKeyDown: function (key) {
-			if (key !== 'enter' || this.el.hasClass('disabled'))
+			if (this.el.hasClass('disabled'))
 				return;
 
-			this.onPlayClick();
+			if (key === 'enter')
+				this.onPlayClick();
+			else if (key === 'up' || key === 'down') {
+				if (!this.characters || this.selectedIndex === -1)
+					return;
+
+				const numChars = this.characters.length;
+				if (!numChars)
+					return;
+
+				const delta = key === 'up' ? -1 : 1;
+
+				//Clamp index within range [0, numChars - 1]
+				const newIndex = Math.min(Math.max(this.selectedIndex + delta, 0), numChars - 1);
+
+				const list = this.find('.left');
+				if (!list)
+					return;
+
+				const li = list.children()[newIndex];
+				li.click();
+
+				list.scrollTop(li.offsetTop);
+			}
 		},
 
 		onPlayClick: function () {
@@ -90,6 +115,7 @@ define([
 			});
 		},
 		onGetCharacters: function (characters) {
+			this.characters = characters;
 			this.find('.sprite').css('background', '');
 			this.find('.info div').html('');
 
@@ -98,7 +124,7 @@ define([
 			let list = this.find('.left')
 				.empty();
 
-			characters
+			this.characters
 				.sort(function (a, b) {
 					return (b.level - a.level);
 				})
@@ -113,13 +139,14 @@ define([
 					let li = $(html)
 						.appendTo(list);
 
-					li.on('click', this.onCharacterClick.bind(this, c.name));
+					li.on('click', this.onCharacterClick.bind(this, c.name, i));
 
 					if (i === 0)
 						li.click();
 				}, this);
 		},
-		onCharacterClick: function (charName, e) {
+		onCharacterClick: function (charName, charIndex, e) {
+			this.selectedIndex = charIndex;
 			this.el.addClass('disabled');
 
 			let el = $(e.target);
