@@ -716,7 +716,7 @@ define([
 				h = obj.h / scaleMult;
 			}
 
-			let bigSheets = globals.clientConfig.bigTextures;
+			const bigSheets = globals.clientConfig.bigTextures;
 			if (bigSheets.includes(sheetName)) {
 				obj.layerName = 'mobs';
 				w = 24;
@@ -795,6 +795,26 @@ define([
 		},
 
 		setSprite: function (obj) {
+			let w = 8;
+			let h = 8;
+
+			let bigSheets = globals.clientConfig.bigTextures;
+			if (bigSheets.includes(obj.sheetName)) {
+				w = 24;
+				h = 24;
+				obj.w = w * scaleMult;
+				obj.h = h * scaleMult;
+			}
+
+			let sprite = obj.sprite;
+			sprite.width = obj.w || scale;
+			sprite.height = obj.h || scale;
+
+			if (bigSheets.includes(obj.sheetName)) {
+				sprite.x -= scale;
+				sprite.y -= (scale * 2);
+			}
+
 			obj.sprite.texture = this.getTexture(obj.sheetName, obj.cell, obj.sprite.width / scaleMult);
 		},
 
