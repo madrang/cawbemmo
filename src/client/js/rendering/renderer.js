@@ -808,7 +808,7 @@ define([
 			sprite.width = obj.w;
 			sprite.height = obj.h;
 
-			if (bigSheets.includes(sheetName)) {
+			if (isBigSheet) {
 				sprite.x -= scale;
 				sprite.y -= (scale * 2);
 			}
