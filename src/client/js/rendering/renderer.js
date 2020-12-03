@@ -795,27 +795,25 @@ define([
 		},
 
 		setSprite: function (obj) {
-			let w = 8;
-			let h = 8;
+			const { sprite, sheetName, cell } = obj;
 
-			let bigSheets = globals.clientConfig.bigTextures;
-			if (bigSheets.includes(obj.sheetName)) {
-				w = 24;
-				h = 24;
-				obj.w = w * scaleMult;
-				obj.h = h * scaleMult;
-			}
+			const bigSheets = globals.clientConfig.bigTextures;
+			const isBigSheet = bigSheets.includes(sheetName);
 
-			let sprite = obj.sprite;
-			sprite.width = obj.w || scale;
-			sprite.height = obj.h || scale;
+			const size = isBigSheet ? 24 : 8;
 
-			if (bigSheets.includes(obj.sheetName)) {
+			obj.w = size * scaleMult;
+			obj.h = size * scaleMult;
+
+			sprite.width = obj.w;
+			sprite.height = obj.h;
+
+			if (bigSheets.includes(sheetName)) {
 				sprite.x -= scale;
 				sprite.y -= (scale * 2);
 			}
 
-			obj.sprite.texture = this.getTexture(obj.sheetName, obj.cell, obj.sprite.width / scaleMult);
+			sprite.texture = this.getTexture(sheetName, cell, size);
 		},
 
 		reorder: function () {
