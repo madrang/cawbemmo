@@ -707,45 +707,21 @@ define([
 		},
 
 		buildObject: function (obj) {
-			const { sheetName } = obj;
+			const { sheetName, parent: container, layerName, visible = true } = obj;
 
-			let w = 8;
-			let h = 8;
-			if (obj.w) {
-				w = obj.w / scaleMult;
-				h = obj.h / scaleMult;
-			}
+			const sprite = new pixi.Sprite();
 
-			const bigSheets = globals.clientConfig.bigTextures;
-			if (bigSheets.includes(sheetName)) {
-				obj.layerName = 'mobs';
-				w = 24;
-				h = 24;
-				obj.w = w * scaleMult;
-				obj.h = h * scaleMult;
-			}
+			obj.sprite = sprite;
 
-			let sprite = new pixi.Sprite(this.getTexture(obj.sheetName, obj.cell, w));
-			sprite.x = obj.x * scale;
-			sprite.y = obj.y * scale;
-			sprite.width = obj.w || scale;
-			sprite.height = obj.h || scale;
-			sprite.visible = obj.has('visible') ? obj.visible : true;
+			this.setSprite(obj);
 
-			if (bigSheets.includes(sheetName)) {
-				sprite.x -= scale;
-				sprite.y -= (scale * 2);
-			}
+			sprite.visible = visible;
 
-			if (obj.flipX) {
-				sprite.scale.x *= -1;
-				if (bigSheets.indexOf(obj.sheetName) > -1)
-					sprite.x += (scale * 2);
-				else
-					sprite.x += scale;
-			}
+			const spriteContainer = container || this.layers[layerName || sheetName] || this.layers.objects;
+			spriteContainer.addChild(sprite);
 
-			(obj.parent || this.layers[obj.layerName || obj.sheetName] || this.layers.objects).addChild(sprite);
+			obj.w = sprite.width;
+			obj.h = sprite.height;
 
 			return sprite;
 		},
@@ -800,20 +776,41 @@ define([
 			const bigSheets = globals.clientConfig.bigTextures;
 			const isBigSheet = bigSheets.includes(sheetName);
 
-			const size = isBigSheet ? 24 : 8;
+			const newSize = isBigSheet ? 24 : 8;
 
-			obj.w = size * scaleMult;
-			obj.h = size * scaleMult;
+			obj.w = newSize * scaleMult;
+			obj.h = obj.w;
 
 			sprite.width = obj.w;
 			sprite.height = obj.h;
+			sprite.texture = this.getTexture(sheetName, cell, newSize);
 
-			if (isBigSheet) {
-				sprite.x -= scale;
+			if (newSize !== sprite.size) {
+				sprite.size = newSize;
+				this.setSpritePosition(obj);
+			}
+		},
+
+		setSpritePosition: function (obj) {
+			const { sprite, x, y, flipX, offsetX, offsetY } = obj;
+
+			sprite.x = (x * scale) + (flipX ? scale : 0) + offsetX;
+			const oldY = sprite.y;
+			sprite.y = (y * scale) + offsetY;
+
+			if (sprite.width > scale) {
+				if (flipX)
+					sprite.x += scale;
+				else
+					sprite.x -= scale;
+
 				sprite.y -= (scale * 2);
 			}
 
-			sprite.texture = this.getTexture(sheetName, cell, size);
+			if (oldY !== sprite.y)
+				this.reorder();
+
+			sprite.scale.x = flipX ? -scaleMult : scaleMult;
 		},
 
 		reorder: function () {
