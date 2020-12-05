@@ -22,7 +22,8 @@ module.exports = {
 
 			const spellName = 'spell' + spell.replace(/./, spell.toUpperCase()[0]);
 			const spellTemplate = require(`../spells/${spellName}`);
-			const builtSpell = extend({ obj: this }, spellBaseTemplate, spellTemplate, { 
+			const builtSpell = extend({ obj: this }, spellBaseTemplate, spellTemplate, {
+				name: spellName,
 				noEvents: true,
 				statType,
 				damage: spellDamage,
