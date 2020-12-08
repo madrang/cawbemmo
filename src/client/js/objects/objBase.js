@@ -82,44 +82,30 @@ define([
 		},
 
 		setSpritePosition: function () {
-			if (!this.sprite)
+			const { sprite, chatter, stats, x, y } = this;
+
+			if (!sprite)
 				return;
 
-			this.sprite.x = (this.x * scale) + (this.flipX ? scale : 0) + this.offsetX;
-			const oldY = this.sprite.y;
-			this.sprite.y = (this.y * scale) + this.offsetY;
-
-			if (this.sprite.width > scale) {
-				if (this.flipX)
-					this.sprite.x += scale;
-				else
-					this.sprite.x -= scale;
-
-				this.sprite.y -= (scale * 2);
-			}
-
-			if (oldY !== this.sprite.y)
-				renderer.reorder();
-
-			this.sprite.scale.x = this.flipX ? -scaleMult : scaleMult;
+			renderer.setSpritePosition(this);
 
 			['nameSprite', 'chatSprite'].forEach((s, i) => {
-				const sprite = this[s];
-				if (!sprite)
+				const subSprite = this[s];
+				if (!subSprite)
 					return;
 
 				let yAdd = scale;
 				if (i === 1) {
 					yAdd *= -0.8;
-					yAdd -= (this.chatter.msg.split('\r\n').length - 1) * scale * 0.8;
+					yAdd -= (chatter.msg.split('\r\n').length - 1) * scale * 0.8;
 				}
 
-				sprite.x = (this.x * scale) + (scale / 2) - (sprite.width / 2);
-				sprite.y = (this.y * scale) + yAdd;
+				subSprite.x = (x * scale) + (scale / 2) - (subSprite.width / 2);
+				subSprite.y = (y * scale) + yAdd;
 			});
 
-			if (this.stats)
-				this.stats.updateHpSprite();
+			if (stats)
+				stats.updateHpSprite();
 		},
 
 		setVisible: function (visible) {
