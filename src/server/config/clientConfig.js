@@ -29,7 +29,8 @@ const config = {
 	bigTextures: [
 		'animBigObjects',
 		'bigObjects',
-		'bosses'
+		'bosses',
+		'auras'
 	],
 	atlasTextures: [
 		'tiles',

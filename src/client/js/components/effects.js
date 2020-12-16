@@ -28,49 +28,47 @@ define([
 
 		init: function (blueprint) {
 			this.effects = this.effects
-				.filter(function (e) {
-					return (auras[e] !== null);
-				}, this)
-				.map(function (e) {
+				.filter(e => auras[e] !== null)
+				.map(e => {
 					return {
 						name: e,
 						sprite: renderer.buildObject({
 							layerName: 'effects',
 							sheetName: 'auras',
-							x: this.obj.x - 0.5,
-							y: this.obj.y - 0.5,
-							w: scale * 2,
-							h: scale * 2,
+							x: this.obj.x,
+							y: this.obj.y + 1,
+							w: scale * 3,
+							h: scale * 3,
 							cell: auras[e]
 						})
 					};
-				}, this);
+				});
 		},
 		extend: function (blueprint) {
 			if (blueprint.addEffects) {
 				blueprint.addEffects = blueprint.addEffects
-					.filter(function (e) {
+					.filter(e => {
 						return (auras[e] !== null);
 					})
-					.map(function (e) {
+					.map(e => {
 						return {
 							name: e,
 							sprite: renderer.buildObject({
 								layerName: 'effects',
 								sheetName: 'auras',
-								x: this.obj.x - 0.5,
-								y: this.obj.y - 0.5,
-								w: scale * 2,
-								h: scale * 2,
+								x: this.obj.x,
+								y: this.obj.y + 1,
+								w: scale * 3,
+								h: scale * 3,
 								cell: auras[e]
 							})
 						};
-					}, this);
+					});
 
 				this.effects.push.apply(this.effects, blueprint.addEffects || []);
 			}
 			if (blueprint.removeEffects) {
-				blueprint.removeEffects.forEach(function (r) {
+				blueprint.removeEffects.forEach(r => {
 					let effect = this.effects.find(e => e.name === r);
 
 					if (!effect)
@@ -82,7 +80,7 @@ define([
 					});
 
 					this.effects.spliceFirstWhere(e => e.name === r);
-				}, this);
+				});
 			}
 		},
 
@@ -96,8 +94,8 @@ define([
 				this.alphaDir *= -1;
 			}
 
-			let x = (this.obj.x - 0.5) * scale;
-			let y = (this.obj.y - 0.5) * scale;
+			let x = this.obj.x;
+			let y = this.obj.y;
 
 			let useAlpha = this.alpha;
 			if (useAlpha < this.alphaCutoff)
@@ -107,21 +105,25 @@ define([
 				useAlpha /= (this.alphaMax - this.alphaCutoff);
 			}
 
-			this.effects.forEach(function (e) {
+			this.effects.forEach(e => {
+				renderer.setSpritePosition({
+					x,
+					y: y + 1,
+					sprite: e.sprite
+				});
+
 				e.sprite.alpha = useAlpha;
-				e.sprite.x = x;
-				e.sprite.y = y;
 			}, this);
 		},
 
 		setVisible: function (visible) {
-			this.effects.forEach(function (e) {
+			this.effects.forEach(e => {
 				e.sprite.visible = visible;
-			}, this);
+			});
 		},
 
 		destroy: function () {
-			this.effects.forEach(function (e) {
+			this.effects.forEach(e => {
 				renderer.destroyObject({
 					layerName: 'effects',
 					sprite: e.sprite

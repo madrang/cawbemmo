@@ -792,7 +792,7 @@ define([
 		},
 
 		setSpritePosition: function (obj) {
-			const { sprite, x, y, flipX, offsetX, offsetY } = obj;
+			const { sprite, x, y, flipX, offsetX = 0, offsetY = 0 } = obj;
 
 			sprite.x = (x * scale) + (flipX ? scale : 0) + offsetX;
 			const oldY = sprite.y;
