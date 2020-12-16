@@ -239,16 +239,12 @@ define([
 			let oldX = obj.x;
 
 			let sprite = obj.sprite;
-			let moved = false;
 			for (let p in template) {
 				let value = template[p];
 				let type = typeof (value);
 
 				if (type !== 'object')
 					obj[p] = value;
-
-				if ((p === 'x') || (p === 'y'))
-					moved = true;
 
 				if (p === 'casting') {
 					if (obj === window.player)
@@ -266,9 +262,6 @@ define([
 					}
 				}
 			}
-
-			if (moved)
-				obj.setSpritePosition();
 
 			if (((template.sheetName) || (template.cell)) && (sprite))
 				renderer.setSprite(obj);
