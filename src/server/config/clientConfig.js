@@ -28,6 +28,7 @@ const config = {
 	//Textures that are 24x24. The renderer needs to know this
 	bigTextures: [
 		'animBigObjects',
+		'animBoss',
 		'bigObjects',
 		'bosses',
 		'auras'
