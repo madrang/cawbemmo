@@ -42,7 +42,7 @@ define([
 			this.sprite = renderer.buildObject({
 				sheetName: this.spritesheet || this.spriteSheet,
 				cell: cell,
-				x: this.obj.x + (this.flipped ? 1 : 0),
+				x: this.obj.x,
 				y: this.obj.y,
 				offsetX: this.obj.offsetX,
 				offsetY: this.obj.offsetY,
