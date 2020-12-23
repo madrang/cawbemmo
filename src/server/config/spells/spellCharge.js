@@ -65,7 +65,9 @@ module.exports = {
 
 		let selfEffect = this.obj.effects.addEffect({
 			type: 'stunned',
-			noMsg: true
+			noMsg: true,
+			force: true,
+			new: true
 		});
 
 		const moveAnimationEffect = {
@@ -92,8 +94,6 @@ module.exports = {
 			}, -1);
 		}
 
-		physics.removeObject(obj, obj.x, obj.y);
-
 		this.queueCallback(this.reachDestination.bind(this, target, targetPos, targetEffect, selfEffect), ttl - 50);
 
 		return true;
@@ -103,6 +103,8 @@ module.exports = {
 			return;
 
 		let obj = this.obj;
+
+		obj.instance.physics.removeObject(obj, obj.x, obj.y);
 
 		obj.x = targetPos.x;
 		obj.y = targetPos.y;
