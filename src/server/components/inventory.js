@@ -231,9 +231,15 @@ module.exports = {
 		let fromItem = this.findItem(msg.fromId);
 		let toItem = this.findItem(msg.toId);
 
-		if ((!fromItem) || (!toItem))
-			return;
-		else if ((!isItemStackable(fromItem)) || (!isItemStackable(toItem)))
+		const failure = (
+			!fromItem ||
+			!toItem ||
+			fromItem.name !== toItem.name ||
+			!isItemStackable(fromItem) ||
+			!isItemStackable(toItem)
+		);
+
+		if (failure)
 			return;
 
 		toItem.quantity += fromItem.quantity;
