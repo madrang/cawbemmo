@@ -113,6 +113,16 @@ module.exports = {
 					if (!eventMsg.success)
 						continue;
 
+					const targetEffect = m.effects.addEffect({
+						type: 'stunned',
+						noMsg: true,
+						new: true
+					});
+
+					//If targetEffect is undefined, it means that the target has become resistant
+					if (!targetEffect)
+						continue;
+
 					this.sendAnimation({
 						id: m.id,
 						components: [{
@@ -123,13 +133,6 @@ module.exports = {
 						}]
 					});
 
-					let targetEffect = m.effects.addEffect({
-						type: 'stunned',
-						noMsg: true,
-						new: true
-					});
-
-					physics.removeObject(m, m.x, m.y);
 					this.queueCallback(this.endEffect.bind(this, m, targetPos, targetEffect), ttl, null, m);
 				}
 			}
@@ -145,6 +148,8 @@ module.exports = {
 
 	endEffect: function (target, targetPos, targetEffect) {
 		target.effects.removeEffect(targetEffect, true);
+
+		target.instance.physics.removeObject(target, target.x, target.y);
 
 		target.x = targetPos.x;
 		target.y = targetPos.y;
