@@ -51,6 +51,9 @@ define([
 					await loadLongPress();
 			}
 
+			if (window.location.search.includes('hideMonetization'))
+				$('.ui-container').addClass('hideMonetization');
+
 			client.init(this.onClientReady.bind(this));
 		},
 
