@@ -54,9 +54,6 @@ define([
 		},
 
 		onAfterShow: function () {
-			this.isInspecting = false;
-			delete this.result;
-
 			this.find('.itemList').hide();
 
 			this.onGetStats();
