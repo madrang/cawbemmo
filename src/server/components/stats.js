@@ -571,7 +571,8 @@ module.exports = {
 			id: obj.id,
 			source: source.id,
 			crit: damage.crit,
-			amount: amount
+			amount: amount,
+			element: damage.element
 		};
 
 		this.values.hp -= amount;
