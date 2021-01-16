@@ -7,6 +7,14 @@ define([
 	objects,
 	renderer
 ) {
+	const elementColors = {
+		arcane: '0xFC66F7',
+		frost: '0x48EDFF',
+		fire: '0xFF4252',
+		holy: '0xFFEB38',
+		poison: '0x51FC9A'
+	}
+
 	return {
 		list: [],
 
@@ -33,7 +41,8 @@ define([
 				event: msg.event,
 				text: msg.text,
 				crit: msg.crit,
-				heal: msg.heal
+				heal: msg.heal,
+				element: msg.element,
 			};
 
 			if (numberObj.event) 
@@ -55,7 +64,8 @@ define([
 				layerName: 'effects',
 				x: numberObj.x,
 				y: numberObj.y,
-				text: text
+				text: text,
+				color: elementColors[numberObj.element]
 			});
 
 			this.list.push(numberObj);
