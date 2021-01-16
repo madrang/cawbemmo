@@ -1,18 +1,20 @@
 define([
 	'js/system/events',
 	'js/objects/objects',
-	'js/rendering/renderer'
+	'js/rendering/renderer',
+	'js/config'
 ], function (
 	events,
 	objects,
-	renderer
+	renderer,
+	config
 ) {
 	const elementColors = {
-		arcane: '0xFC66F7',
-		frost: '0x48EDFF',
-		fire: '0xFF4252',
-		holy: '0xFFEB38',
-		poison: '0x51FC9A'
+		arcane: 0xFC66F7,
+		frost: 0x48EDFF,
+		fire: 0xFF4252,
+		holy: 0xFFEB38,
+		poison: 0x51FC9A
 	}
 
 	return {
@@ -23,6 +25,9 @@ define([
 		},
 
 		onGetDamage: function (msg) {
+			if (config.damageNumbers == 'off')
+				return;
+
 			let target = objects.objects.find(function (o) {
 				return (o.id === msg.id);
 			});
@@ -59,13 +64,18 @@ define([
 				text = (numberObj.heal ? '+' : '') + (~~(amount * div) / div);
 			}
 
+			let damageColor = 0xF2F5F5;
+			if (config.damageNumbers == 'element')
+				damageColor = elementColors[numberObj.element]
+				
+
 			numberObj.sprite = renderer.buildText({
 				fontSize: numberObj.crit ? 22 : 18,
 				layerName: 'effects',
 				x: numberObj.x,
 				y: numberObj.y,
 				text: text,
-				color: elementColors[numberObj.element]
+				color: damageColor
 			});
 
 			this.list.push(numberObj);

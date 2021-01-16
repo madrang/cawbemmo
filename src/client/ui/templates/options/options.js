@@ -38,6 +38,7 @@ define([
 			this.find('.item.unusable .name').on('click', this.toggleUnusableIndicators.bind(this));
 			this.find('.item.lastChannel .name').on('click', this.toggleLastChannel.bind(this));
 			this.find('.item.partyView .name').on('click', this.togglePartyView.bind(this));
+			this.find('.item.damageNumbers .name').on('click', this.toggleDamageNumbers.bind(this));
 
 			//Can only toggle fullscreen directly in a listener, not deferred the way jQuery does it,
 			// so we register this handler in a different way
@@ -55,7 +56,8 @@ define([
 				'onToggleQuestsVisibility',
 				'onToggleLastChannel',
 				'onVolumeChange',
-				'onTogglePartyView'
+				'onTogglePartyView',
+				'onToggleDamageNumbers'
 			].forEach(e => {
 				this.onEvent(e, this[e].bind(this));
 			});
@@ -189,6 +191,18 @@ define([
 			const newValue = state[0].toUpperCase() + state.substr(1);
 
 			this.find('.item.partyView .value').html(newValue);
+		},
+
+		toggleDamageNumbers: function() {
+			config.toggle('damageNumbers');
+
+			events.emit('onToggleDamageNumbers', config.damageNumbers);
+		},
+
+		onToggleDamageNumbers: function(state) {
+			const newValue = state[0].toUpperCase() + state.substr(1);
+
+			this.find('.item.damageNumbers .value').html(newValue);
 		},
 
 		onVolumeChange: function ({ soundType, volume }) {
