@@ -133,9 +133,8 @@ define([], function () {
 	window.scale = isMobile ? 32 : 40;
 	window.scaleMult = isMobile ? 4 : 5;
 
-	if (!window.navigator.vibrate) {
+	if (!window.navigator.vibrate)
 		window.navigator.vibrate = () => {};
-	}	
 
 	return window._;
 });
