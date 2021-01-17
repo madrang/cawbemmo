@@ -193,13 +193,13 @@ define([
 			this.find('.item.partyView .value').html(newValue);
 		},
 
-		toggleDamageNumbers: function() {
+		toggleDamageNumbers: function () {
 			config.toggle('damageNumbers');
 
 			events.emit('onToggleDamageNumbers', config.damageNumbers);
 		},
 
-		onToggleDamageNumbers: function(state) {
+		onToggleDamageNumbers: function (state) {
 			const newValue = state[0].toUpperCase() + state.substr(1);
 
 			this.find('.item.damageNumbers .value').html(newValue);
