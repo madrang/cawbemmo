@@ -22,7 +22,7 @@ define([
 		showQuests: ['on', 'minimal', 'off'],
 		qualityIndicators: ['border', 'bottom', 'background', 'off'],
 		unusableIndicators: ['off', 'border', 'top', 'background'],
-		damageNumbers: ['element', 'on', 'off']
+		damageNumbers: ['element', 'white', 'off']
 	};
 
 	const getNextValue = key => {
