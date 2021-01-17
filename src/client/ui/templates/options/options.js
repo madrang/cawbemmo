@@ -219,6 +219,7 @@ define([
 			this.onToggleQualityIndicators(config.qualityIndicators);
 			this.onToggleUnusableIndicators(config.unusableIndicators);
 			this.onToggleLastChannel(config.rememberChatChannel);
+			this.onTogglePartyView(config.partyView);
 			
 			this.onVolumeChange({
 				soundType: 'sound',
