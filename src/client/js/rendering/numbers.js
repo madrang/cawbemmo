@@ -9,13 +9,18 @@ define([
 	renderer,
 	config
 ) {
-	const elementColors = {
-		arcane: 0xFC66F7,
-		frost: 0x48EDFF,
-		fire: 0xFF4252,
-		holy: 0xFFEB38,
-		poison: 0x51FC9A
-	};
+	//Create an object of the form: { elementName: elementIntegerColor, ... } from corresponding variable values.
+	// These variables are defiend in main.less and take the form: var(--color-element-elementName)
+	const elementColors = Object.fromEntries(
+		['default', 'arcane', 'frost', 'fire', 'holy', 'poison'].map(e => {
+			const variableName = `--color-element-${e}`;
+			const variableValue = getComputedStyle(document.documentElement).getPropertyValue(variableName);
+
+			const integerColor = `0x${variableValue.replace('#', '')}`;
+
+			return [e, integerColor];
+		})
+	);
 
 	return {
 		list: [],
@@ -64,9 +69,7 @@ define([
 				text = (numberObj.heal ? '+' : '') + (~~(amount * div) / div);
 			}
 
-			let damageColor = 0xF2F5F5;
-			if (config.damageNumbers === 'element')
-				damageColor = elementColors[numberObj.element];
+			const colorVariableName = config.damageNumbers === 'element' ? numberObj.element : 'default';
 				
 			numberObj.sprite = renderer.buildText({
 				fontSize: numberObj.crit ? 22 : 18,
@@ -74,7 +77,7 @@ define([
 				x: numberObj.x,
 				y: numberObj.y,
 				text: text,
-				color: damageColor
+				color: elementColors[colorVariableName]
 			});
 
 			this.list.push(numberObj);
