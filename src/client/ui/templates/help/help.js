@@ -19,7 +19,7 @@ define([
 			this.onEvent('onKeyDown', this.onKeyDown.bind(this));
 			this.onEvent('onShowHelp', this.toggle.bind(this));
 
-			$('.uiHelp').find('.toslink').on('click', this.redirect.bind(this));
+			this.on('.toslink', 'click', this.redirect.bind(this));
 		},
 
 		onKeyDown: function (key) {
