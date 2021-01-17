@@ -1,6 +1,4 @@
 let zoom = 1;
-if (isMobile)
-	zoom /= 2;
 
 define([
 	'js/system/events',

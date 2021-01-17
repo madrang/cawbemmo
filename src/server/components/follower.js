@@ -35,8 +35,8 @@ module.exports = {
 		let obj = this.obj;
 		let mob = obj.mob;
 
-		mob.originX = master.x + ~~((Math.random() * 2) * 2) - 1;
-		mob.originY = master.y + ~~((Math.random() * 2) * 2) - 1;
+		mob.originX = master.x;
+		mob.originY = master.y;
 
 		return null;
 	},
