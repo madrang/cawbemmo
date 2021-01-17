@@ -64,6 +64,8 @@ define([
 		},
 
 		clickKey: function (key) {
+			window.navigator.vibrate(20);
+
 			let elInput = this.find('input');
 
 			const handler = {
