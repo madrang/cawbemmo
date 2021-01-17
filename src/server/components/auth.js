@@ -239,8 +239,6 @@ module.exports = {
 			return;
 		}
 
-		this.username = credentials.username;
-
 		let storedPassword = await io.getAsync({
 			key: credentials.username,
 			table: 'login',
