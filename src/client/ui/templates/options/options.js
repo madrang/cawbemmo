@@ -233,6 +233,7 @@ define([
 			this.onToggleQualityIndicators(config.qualityIndicators);
 			this.onToggleUnusableIndicators(config.unusableIndicators);
 			this.onToggleLastChannel(config.rememberChatChannel);
+			this.onToggleDamageNumbers(config.damageNumbers);
 			
 			this.onVolumeChange({
 				soundType: 'sound',
