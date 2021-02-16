@@ -43,6 +43,12 @@ module.exports = {
 			});
 
 		items
+			.filter(i => i.name === 'Enchanted Wreath')
+			.forEach(i => {
+				delete i.noDrop;
+			});
+
+		items
 			.filter(i => (i.name === 'Elixir of Infatuation'))
 			.forEach(function (i) {
 				i.cdMax = 342;
