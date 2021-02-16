@@ -1,12 +1,27 @@
 define([
 	'js/system/events',
 	'js/objects/objects',
-	'js/rendering/renderer'
+	'js/rendering/renderer',
+	'js/config'
 ], function (
 	events,
 	objects,
-	renderer
+	renderer,
+	config
 ) {
+	//Create an object of the form: { elementName: elementIntegerColor, ... } from corresponding variable values.
+	// These variables are defiend in main.less and take the form: var(--color-element-elementName)
+	const elementColors = Object.fromEntries(
+		['default', 'arcane', 'frost', 'fire', 'holy', 'poison'].map(e => {
+			const variableName = `--color-element-${e}`;
+			const variableValue = getComputedStyle(document.documentElement).getPropertyValue(variableName);
+
+			const integerColor = `0x${variableValue.replace('#', '')}`;
+
+			return [e, integerColor];
+		})
+	);
+
 	return {
 		list: [],
 
@@ -15,6 +30,9 @@ define([
 		},
 
 		onGetDamage: function (msg) {
+			if (config.damageNumbers === 'off')
+				return;
+
 			let target = objects.objects.find(function (o) {
 				return (o.id === msg.id);
 			});
@@ -33,7 +51,8 @@ define([
 				event: msg.event,
 				text: msg.text,
 				crit: msg.crit,
-				heal: msg.heal
+				heal: msg.heal,
+				element: msg.element
 			};
 
 			if (numberObj.event) 
@@ -50,12 +69,15 @@ define([
 				text = (numberObj.heal ? '+' : '') + (~~(amount * div) / div);
 			}
 
+			const colorVariableName = config.damageNumbers === 'element' ? numberObj.element : 'default';
+				
 			numberObj.sprite = renderer.buildText({
 				fontSize: numberObj.crit ? 22 : 18,
 				layerName: 'effects',
 				x: numberObj.x,
 				y: numberObj.y,
-				text: text
+				text: text,
+				color: elementColors[colorVariableName]
 			});
 
 			this.list.push(numberObj);

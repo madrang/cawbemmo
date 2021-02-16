@@ -13,14 +13,16 @@ define([
 		rememberChatChannel: true,
 		soundVolume: 100,
 		musicVolume: 100,
-		partyView: 'full'
+		partyView: 'full',
+		damageNumbers: 'element'
 	};
 
 	const valueChains = {
 		partyView: ['full', 'compact', 'minimal'],
 		showQuests: ['on', 'minimal', 'off'],
 		qualityIndicators: ['border', 'bottom', 'background', 'off'],
-		unusableIndicators: ['off', 'border', 'top', 'background']
+		unusableIndicators: ['off', 'border', 'top', 'background'],
+		damageNumbers: ['element', 'white', 'off']
 	};
 
 	const getNextValue = key => {

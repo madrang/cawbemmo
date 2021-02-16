@@ -48,6 +48,10 @@ define([
 			this.registerUiEvents();
 
 			this.shown = this.el.is(':visible');
+
+			events.emit('onAfterRenderUi', {
+				ui: this
+			});
 		},
 
 		registerUiEvents: function () {
@@ -69,11 +73,8 @@ define([
 			else
 				el = $(el);
 
-			el.on(eventName, function () {
-				let args = [].slice.call(arguments, 1);
-				args.splice(0, 0, eventName);
-
-				callback.apply(null, args);
+			el.on(eventName, function (e) {
+				callback(e, eventName);
 			});
 		},
 

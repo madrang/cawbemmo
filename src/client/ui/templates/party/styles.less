@@ -1,10 +1,11 @@
 @import "../../../css/colors.less";
+@topPosition: 154px;
 
 .uiParty {
 	.party {
 		position: absolute;
 		left: 16px;
-		top: 154px;
+		top: @topPosition;
 
 		.list {
 			overflow-y: auto;
@@ -201,4 +202,8 @@
 
 	}
 
+}
+
+.mobile .uiParty .list {
+	max-height: calc(100% - @topPosition - 10px);
 }
