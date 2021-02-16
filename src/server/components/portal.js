@@ -24,6 +24,26 @@ module.exports = {
 				return;
 		}
 
+		if (obj.zoneName === this.toZone) {
+			obj.x = this.toPos.x;
+			obj.y = this.toPos.y;
+
+			const syncO = this.obj.syncer.o;
+			syncO.x = obj.x;
+			syncO.y = obj.y;
+
+			process.send({
+				method: 'rezone',
+				id: obj.serverId,
+				args: {
+					obj: simpleObj,
+					newZone: this.toZone
+				}
+			});
+
+			return;
+		}
+
 		obj.fireEvent('beforeRezone');
 
 		obj.destroyed = true;

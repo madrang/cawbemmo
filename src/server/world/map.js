@@ -459,6 +459,7 @@ module.exports = {
 				}
 			} else if (layerName === 'hiddenRooms') {
 				blueprint.fog = (cell.properties || {}).fog;
+				blueprint.interior = (cell.properties || {}).interior;
 				blueprint.discoverable = (cell.properties || {}).discoverable;
 				blueprint.layer = ~~((cell.properties || {}).layer || 0);
 

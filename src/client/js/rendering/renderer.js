@@ -374,7 +374,7 @@ define([
 			let foundHiddenLayer = null;
 
 			hiddenRooms.forEach(h => {
-				const { discovered, layer } = h;
+				const { discovered, layer, interior } = h;
 				const { x: hx, y: hy, width, height, area } = h;
 
 				//Is the tile outside the hider
@@ -383,8 +383,15 @@ define([
 					x >= hx + width ||
 					y < hy ||
 					y >= hy + height
-				)
+				) {
+					//If the hider is an interior, the tile should be hidden if the player is inside the hider
+					if (interior) {
+						if (physics.isInPolygon(px, py, area))
+							foundHiddenLayer = layer;
+					}
+
 					return;
+				}
 
 				//Is the tile inside the hider
 				if (!physics.isInPolygon(x, y, area))
