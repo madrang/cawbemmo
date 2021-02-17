@@ -201,6 +201,8 @@ module.exports = (cpnSocial, msg) => {
 		source: obj.auth.charname,
 		sourceObj: obj,
 		msg: messageString,
+		type: msgData.type,
+		subType: msgData.subType,
 		ignore: false,
 		error: null
 	};
