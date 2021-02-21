@@ -18,7 +18,6 @@ let commandRoles = {
 	join: 0,
 	leave: 0,
 	unEq: 0,
-	roll: 0,
 	block: 0,
 	unblock: 0,
 	help: 0,
@@ -45,7 +44,8 @@ let commandRoles = {
 	rezone: 10,
 	startEvent: 10,
 	stopEvent: 10,
-	teleport: 10
+	teleport: 10,
+	roll: 10,
 };
 
 //Commands that should be run on the main thread (not the zone thread)
