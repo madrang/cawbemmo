@@ -45,7 +45,7 @@ let commandRoles = {
 	startEvent: 10,
 	stopEvent: 10,
 	teleport: 10,
-	roll: 10,
+	roll: 10
 };
 
 //Commands that should be run on the main thread (not the zone thread)
