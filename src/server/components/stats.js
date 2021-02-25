@@ -557,8 +557,10 @@ module.exports = {
 
 		let obj = this.obj;
 
-		source.fireEvent('beforeDealDamage', damage, obj);
-		obj.fireEvent('beforeTakeDamage', damage, source);
+		if (!damage.noEvents) {
+			source.fireEvent('beforeDealDamage', damage, obj);
+			obj.fireEvent('beforeTakeDamage', damage, source);
+		}
 
 		if (damage.failed || obj.destroyed)
 			return;
