@@ -317,10 +317,13 @@ module.exports = {
 			} else 
 				return false;
 		} else {
-			physics.removeObject(this, this.x, this.y, data.x, data.y);
-			physics.addObject(this, data.x, data.y, this.x, this.y);
-			this.x = data.x;
-			this.y = data.y;
+			const { x: xOld, y: yOld } = this;
+			const { x: xNew, y: yNew } = data;
+
+			physics.removeObject(this, xOld, yOld, xNew, yNew);
+			this.x = xNew;
+			this.y = yNew;
+			physics.addObject(this, xNew, yNew, xOld, yOld);
 		}
 
 		let syncer = this.syncer;
