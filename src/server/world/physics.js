@@ -123,10 +123,8 @@ module.exports = {
 
 		//Perhaps a collisionEvent caused us to move somewhere else, in which case, we don't push to the cell
 		// as we assume that the collisionEvent handled it for us
-		if (x === obj.x && y === obj.y) 
+		if (obj.x === x && obj.y === y)
 			cell.push(obj);
-		 else 
-			console.log('nopers');
 		
 		return true;
 	},
