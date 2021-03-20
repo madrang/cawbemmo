@@ -169,7 +169,7 @@ define([
 				}
 
 				//Exponential fall-off
-				const volume = s.volume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
+				const volume = s.maxVolume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
 				this.playSoundHelper(s, volume);
 			});
 		},
@@ -230,6 +230,7 @@ define([
 				x,
 				y,
 				volume,
+				maxVolume: volume,
 				area,
 				music,
 				defaultMusic
