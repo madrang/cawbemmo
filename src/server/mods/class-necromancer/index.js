@@ -18,7 +18,7 @@ module.exports = {
 	},
 
 	onAfterGetZone: function (zone, config) {
-		if (zone !== 'fjolarok')
+		if (zone !== 'fjolgard')
 			return;
 
 		let newRunes = [{
