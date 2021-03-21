@@ -126,7 +126,7 @@ define([
 		},
 
 		buildSpritesTexture: function () {
-			const { clientConfig: { atlasTextures } } = globals;
+			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
 
 			let container = new pixi.Container();
 
@@ -139,7 +139,7 @@ define([
 				tile.x = 0;
 				tile.y = totalHeight;
 
-				tileOpacity.atlasTextureDimensions[t] = {
+				atlasTextureDimensions[t] = {
 					w: texture.width / 8,
 					h: texture.height / 8
 				};

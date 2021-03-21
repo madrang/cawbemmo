@@ -300,7 +300,7 @@ module.exports = {
 	},
 
 	getOffsetCellPos: function (sheetName, cell) {
-		const { atlasTextureDimensions, config: { atlasTextures } } = clientConfig;
+		const { config: { atlasTextureDimensions, atlasTextures } } = clientConfig;
 		const indexInAtlas = atlasTextures.indexOf(sheetName);
 
 		let offset = 0;
@@ -378,11 +378,8 @@ module.exports = {
 
 			if (layerName.indexOf('walls') > -1)
 				this.collisionMap[x][y] = 1;
-			else if (layerName === 'tiles' && sheetName === 'tiles') {
-				//Check for water and water-like tiles
-				if ([6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197].includes(offsetCell))
-					this.collisionMap[x][y] = 1;
-			}
+			else if (clientConfig.config.blockingTileIndices.includes(offsetCell))
+				this.collisionMap[x][y] = 1;
 		},
 
 		object: function (layerName, cell) {
