@@ -186,12 +186,10 @@ define([
 			//Stop or start defaultMusic, depending on whether anything else was found
 			const defaultMusic = sounds.filter(a => a.defaultMusic);
 			if (defaultMusic) {
-				if (!playMusic.length) {
+				if (!playMusic.length)
 					defaultMusic.forEach(m => this.playMusicHelper(m));
-				}
-				else {
+				else
 					defaultMusic.forEach(m => this.stopSoundHelper(m));
-				}
 			}
 
 			//If there's a music entry in both 'play' and 'stop' that shares a fileName, we'll just ignore it. This happens when you
