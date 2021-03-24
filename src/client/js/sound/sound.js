@@ -187,14 +187,10 @@ define([
 			const defaultMusic = sounds.filter(a => a.defaultMusic);
 			if (defaultMusic) {
 				if (!playMusic.length) {
-					defaultMusic.forEach(m => {
-						this.playMusicHelper(m);
-					});
+					defaultMusic.forEach(m => this.playMusicHelper(m));
 				}
 				else {
-					defaultMusic.forEach(m => {
-						this.stopSoundHelper(m);
-					});
+					defaultMusic.forEach(m => this.stopSoundHelper(m));
 				}
 			}
 
