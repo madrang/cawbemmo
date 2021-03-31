@@ -184,12 +184,12 @@ define([
 			const stopMusic = areaMusic.filter(s => s.sound && s.sound.playing() && !playMusic.some(m => m === s));
 
 			//Stop or start defaultMusic, depending on whether anything else was found
-			const defaultMusic = sounds.find(a => a.defaultMusic);
+			const defaultMusic = sounds.filter(a => a.defaultMusic);
 			if (defaultMusic) {
 				if (!playMusic.length)
-					this.playMusicHelper(defaultMusic);
+					defaultMusic.forEach(m => this.playMusicHelper(m));
 				else
-					this.stopSoundHelper(defaultMusic);
+					defaultMusic.forEach(m => this.stopSoundHelper(m));
 			}
 
 			//If there's a music entry in both 'play' and 'stop' that shares a fileName, we'll just ignore it. This happens when you
