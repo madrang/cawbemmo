@@ -1224,7 +1224,7 @@
                  "visible":true,
                  "width":8,
                  "x":936,
-                 "y":1080
+                 "y":1112
                 }, 
                 {
                  "gid":301,
@@ -1729,6 +1729,30 @@
                  "width":8,
                  "x":736,
                  "y":816
+                }, 
+                {
+                 "gid":293,
+                 "height":8,
+                 "id":1005,
+                 "name":"Crazed Seagull",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":992,
+                 "y":1056
+                }, 
+                {
+                 "gid":293,
+                 "height":8,
+                 "id":1006,
+                 "name":"Crazed Seagull",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":928,
+                 "y":1008
                 }],
          "opacity":1,
          "properties":[
@@ -2847,7 +2871,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1004,
+ "nextobjectid":1007,
  "orientation":"orthogonal",
  "properties":[
         {
