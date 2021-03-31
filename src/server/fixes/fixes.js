@@ -46,6 +46,7 @@ module.exports = {
 			.filter(i => i.name === 'Enchanted Wreath')
 			.forEach(i => {
 				delete i.noDrop;
+				delete i.noDestroy;
 			});
 
 		items
