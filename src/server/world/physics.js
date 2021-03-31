@@ -114,14 +114,18 @@ module.exports = {
 					obj.collisionEnter(c);
 				}
 			} else {
-			//If a callback returns true, it means we collide
+				//If a callback returns true, it means we collide
 				if (c.collisionEnter(obj))
 					return;
 				obj.collisionEnter(c);
 			}
 		}
 
-		cell.push(obj);
+		//Perhaps a collisionEvent caused us to move somewhere else, in which case, we don't push to the cell
+		// as we assume that the collisionEvent handled it for us
+		if (obj.x === x && obj.y === y)
+			cell.push(obj);
+		
 		return true;
 	},
 

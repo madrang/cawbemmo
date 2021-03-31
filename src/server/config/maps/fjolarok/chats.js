@@ -1,27 +1,4 @@
 module.exports = {
-	estrid: [{
-		msg: '*polishes some vials*'
-	}, {
-		msg: 'Where did I put that flask?'
-	}, {
-		msg: '*coughs*'
-	}, {
-		msg: 'Hm...'
-	}],
-	priest: [{
-		msg: 'peace be with you'
-	}, {
-		msg: 'walk in the light'
-	}],
-	cow: [{
-		msg: '*moos*'
-	}],
-	goat: [{
-		msg: '*bleats*'
-	}],
-	pig: [{
-		msg: '*oinks*'
-	}],
 	hermit: [{
 		msg: '*strokes his beard*'
 	}, {

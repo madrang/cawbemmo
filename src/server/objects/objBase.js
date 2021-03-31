@@ -275,10 +275,12 @@ module.exports = {
 	},
 
 	performMove: function (action) {
-		let data = action.data;
-		let physics = this.instance.physics;
+		const { x: xOld, y: yOld, syncer, aggro, mob, instance: { physics } } = this;
 
-		if (!action.force) {
+		const { maxDistance = 1, force, data } = action;
+		const { x: xNew, y: yNew } = data;
+
+		if (!force) {
 			if (physics.isTileBlocking(data.x, data.y))
 				return true;
 
@@ -290,10 +292,8 @@ module.exports = {
 				return true;
 			}
 
-			let maxDistance = action.maxDistance || 1;
-
-			let deltaX = Math.abs(this.x - data.x);
-			let deltaY = Math.abs(this.y - data.y);
+			let deltaX = Math.abs(xOld - xNew);
+			let deltaY = Math.abs(yOld - yNew);
 			if (
 				(
 					(deltaX > maxDistance) ||
@@ -308,27 +308,33 @@ module.exports = {
 		}
 
 		//Don't allow mob overlap during combat
-		if ((this.mob) && (this.mob.target)) {
-			if (physics.addObject(this, data.x, data.y)) {
-				physics.removeObject(this, this.x, this.y);
+		if (mob && mob.target) {
+			this.x = xNew;
+			this.y = yNew;
 
-				this.x = data.x;
-				this.y = data.y;
-			} else 
+			if (physics.addObject(this, xNew, yNew)) 
+				physics.removeObject(this, xOld, yOld);
+			else {
+				this.x = xOld;
+				this.y = yOld;
+
 				return false;
+			}
 		} else {
-			physics.removeObject(this, this.x, this.y, data.x, data.y);
-			physics.addObject(this, data.x, data.y, this.x, this.y);
-			this.x = data.x;
-			this.y = data.y;
+			physics.removeObject(this, xOld, yOld, xNew, yNew);
+
+			this.x = xNew;
+			this.y = yNew;
+
+			physics.addObject(this, xNew, yNew, xOld, yOld);
 		}
 
-		let syncer = this.syncer;
+		//We can't use xNew and yNew because addObject could have changed the position (like entering a building interior with stairs)
 		syncer.o.x = this.x;
 		syncer.o.y = this.y;
 
-		if (this.aggro)
-			this.aggro.move();
+		if (aggro)
+			aggro.move();
 
 		this.fireEvent('afterMove');
 

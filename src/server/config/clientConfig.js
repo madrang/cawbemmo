@@ -33,10 +33,14 @@ const config = {
 		'bosses',
 		'auras'
 	],
+	atlasTextureDimensions: {},
 	atlasTextures: [
 		'tiles',
 		'walls',
 		'objects'
+	],
+	blockingTileIndices: [
+		6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197
 	],
 	tileOpacities: {
 		default: {
@@ -196,8 +200,6 @@ const config = {
 module.exports = {
 	config,
 
-	atlasTextureDimensions: {},
-
 	init: async function () {
 		events.emit('onBeforeGetClientConfig', config);
 
@@ -213,14 +215,43 @@ module.exports = {
 
 	//The client needs to know this as well as the map loader
 	calculateAtlasTextureDimensions: async function () {
-		for (const tex of config.atlasTextures) {
+		const { atlasTextures, atlasTextureDimensions } = config;
+
+		for (const tex of atlasTextures) {
+			if (atlasTextureDimensions[tex])
+				return;
+
 			const path = tex.includes('.png') ? `../${tex}` : `../client/images/${tex}.png`;
 			const dimensions = await imageSize(path);
 
 			delete dimensions.type;
 
-			this.atlasTextureDimensions[tex] = dimensions;
+			atlasTextureDimensions[tex] = dimensions;
 		}
+	},
+
+	getTileIndexInAtlas: async function (spriteSheet, tileIndexInSource) {
+		const { atlasTextures, atlasTextureDimensions } = config;
+
+		//We need to perform this check because once mods start adding sheets to atlasTextures,
+		// things get out of control. We need to fix this in the future as it will become screwy.
+		if (Object.keys(atlasTextureDimensions).length !== atlasTextures)
+			await this.calculateAtlasTextureDimensions();
+
+		const indexOfSheet = atlasTextures.indexOf(spriteSheet);
+
+		let tileCountBeforeSheet = 0;
+
+		for (let i = 0; i < indexOfSheet; i++) {
+			const sheet = atlasTextures[i];
+			const { width, height } = atlasTextureDimensions[sheet];
+
+			tileCountBeforeSheet += ((width / 8) * (height / 8));
+		}
+
+		const result = tileCountBeforeSheet + tileIndexInSource;
+
+		return result;
 	},
 
 	//Used to send to clients

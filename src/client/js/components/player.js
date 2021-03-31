@@ -68,8 +68,9 @@ define([
 			}, instant);		
 		},
 
-		onRespawn: function (position) {
-			this.positionCamera(position.x, position.y, true);
+		onRespawn: function ({ x, y }) {
+			this.positionCamera(x, y, true);
+			sound.update(x, y);
 		},
 
 		destroy: function () {

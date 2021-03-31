@@ -17,11 +17,32 @@ module.exports = {
 	},
 
 	collisionEnter: async function (obj) {
-		if (!obj.player)
+		const { player, syncer, instance: { physics, syncer: globalSyncer } } = obj;
+
+		if (!player)
 			return;
 		else if (this.patronLevel) {
 			if (!roles.isRoleLevel(obj, this.patronLevel, 'enter this area'))
 				return;
+		}
+
+		if (obj.zoneName === this.toZone) {
+			physics.removeObject(obj, obj.x, obj.y);
+
+			obj.x = this.toPos.x;
+			obj.y = this.toPos.y;
+
+			syncer.set(false, null, 'x', obj.x);
+			syncer.set(false, null, 'y', obj.y);
+
+			physics.addObject(obj, obj.x, obj.y);
+
+			globalSyncer.queue('onRespawn', {
+				x: obj.x,
+				y: obj.y
+			}, [obj.serverId]);
+
+			return;
 		}
 
 		obj.fireEvent('beforeRezone');

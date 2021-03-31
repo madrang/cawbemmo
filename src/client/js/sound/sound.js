@@ -125,8 +125,6 @@ define([
 			if (this.currentMusic === soundEntry && sound.volume() === musicVolume / 100)
 				return;
 
-			soundEntry.volume = 1;
-
 			this.currentMusic = soundEntry;
 
 			sound.fade(sound.volume(), (musicVolume / 100), fadeDuration);
@@ -169,7 +167,7 @@ define([
 				}
 
 				//Exponential fall-off
-				const volume = s.volume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
+				const volume = s.maxVolume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
 				this.playSoundHelper(s, volume);
 			});
 		},
@@ -178,23 +176,31 @@ define([
 			const sounds = this.sounds;
 
 			const areaMusic = sounds.filter(s => s.music && s.area);
-			const currentMusic = areaMusic.find(s => physics.isInPolygon(playerX, playerY, s.area));
-			
-			const defaultMusic = sounds.find(s => s.music && s.defaultMusic);
 
-			if (!currentMusic) {
-				if (defaultMusic)
-					this.playMusicHelper(defaultMusic);
+			//All music that should be playing because we're in the correct polygon
+			const playMusic = areaMusic.filter(s => physics.isInPolygon(playerX, playerY, s.area));
 
-				const activeMusic = sounds.filter(s => s.music && s !== defaultMusic);
-				activeMusic.forEach(s => this.stopSoundHelper(s));
-			} else {
-				if (defaultMusic)
-					this.stopSoundHelper(defaultMusic);
+			//All music that should stop playing because we're in the incorrect polygon
+			const stopMusic = areaMusic.filter(s => s.sound && s.sound.playing() && !playMusic.some(m => m === s));
 
-				if (currentMusic)
-					this.playMusicHelper(currentMusic);
+			//Stop or start defaultMusic, depending on whether anything else was found
+			const defaultMusic = sounds.filter(a => a.defaultMusic);
+			if (defaultMusic) {
+				if (!playMusic.length)
+					defaultMusic.forEach(m => this.playMusicHelper(m));
+				else
+					defaultMusic.forEach(m => this.stopSoundHelper(m));
 			}
+
+			//If there's a music entry in both 'play' and 'stop' that shares a fileName, we'll just ignore it. This happens when you
+			// move to a building interior, for example. Unfortunately, we can't have different volume settings for these kinds of entries.
+			// The one that starts playing first will get priority
+			const filesPlaying = [...playMusic.map(p => p.file), ...stopMusic.map(p => p.file)];
+			playMusic.spliceWhere(p => filesPlaying.filter(f => f === p.file).length > 1);
+			stopMusic.spliceWhere(p => filesPlaying.filter(f => f === p.file).length > 1);
+
+			stopMusic.forEach(m => this.stopSoundHelper(m));
+			playMusic.forEach(m => this.playMusicHelper(m));
 		},
 
 		update: function (playerX, playerY) {
@@ -230,6 +236,7 @@ define([
 				x,
 				y,
 				volume,
+				maxVolume: volume,
 				area,
 				music,
 				defaultMusic

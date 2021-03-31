@@ -27,6 +27,7 @@ define([
 		lastY: 0,
 
 		init: function () {
+			events.on('onRespawn', this.onDeath.bind(this));
 			events.on('onDeath', this.onDeath.bind(this));
 			events.on('onClearQueue', this.onDeath.bind(this));
 

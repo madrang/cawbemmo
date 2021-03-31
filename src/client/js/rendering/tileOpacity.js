@@ -4,9 +4,6 @@ define([
 	globals
 ) {
 	return {
-		//Set by renderer
-		atlasTextureDimensions: {},
-
 		getSheetNum: function (tile) {
 			if (tile < 224)
 				return 0;
@@ -25,8 +22,7 @@ define([
 		},
 
 		getOffsetAndSheet: function (tile) {
-			const { clientConfig: { atlasTextures } } = globals;
-			const { atlasTextureDimensions } = this;
+			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
 
 			let offset = 0;
 			let sheetName = null;
