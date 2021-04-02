@@ -249,7 +249,8 @@ module.exports = {
 			tileCountBeforeSheet += ((width / 8) * (height / 8));
 		}
 
-		const result = tileCountBeforeSheet + tileIndexInSource;
+		//Tile index 0 is 'no tile' in map files so we need to increment by 1
+		const result = tileCountBeforeSheet + tileIndexInSource + 1;
 
 		return result;
 	},
