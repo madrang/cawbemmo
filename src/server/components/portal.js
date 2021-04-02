@@ -17,7 +17,7 @@ module.exports = {
 	},
 
 	collisionEnter: async function (obj) {
-		const { player, syncer, instance: { physics, syncer: globalSyncer } } = obj;
+		const { player, instance: { physics, syncer: globalSyncer } } = obj;
 
 		if (!player)
 			return;
@@ -31,9 +31,6 @@ module.exports = {
 
 			obj.x = this.toPos.x;
 			obj.y = this.toPos.y;
-
-			syncer.set(false, null, 'x', obj.x);
-			syncer.set(false, null, 'y', obj.y);
 
 			physics.addObject(obj, obj.x, obj.y);
 
