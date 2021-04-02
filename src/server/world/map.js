@@ -366,20 +366,23 @@ module.exports = {
 
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
 
-			if ((layerName !== 'hiddenWalls') && (layerName !== 'hiddenTiles')) {
-				let layer = this.layers;
+			const isHiddenLayer = layerName.indexOf('hidden') === 0;
+
+			if (isHiddenLayer)
+				this[layerName][x][y] = offsetCell;
+			else {
+				const layer = this.layers;
+
 				if (this.oldLayers[layerName])
 					this.oldLayers[layerName][x][y] = offsetCell;
-				layer[x][y] = (layer[x][y] === null) ? offsetCell : layer[x][y] + ',' + offsetCell;
-			} else if (layerName === 'hiddenWalls')
-				this.hiddenWalls[x][y] = offsetCell;
-			else if (layerName === 'hiddenTiles')
-				this.hiddenTiles[x][y] = offsetCell;
 
-			if (layerName.indexOf('walls') > -1)
-				this.collisionMap[x][y] = 1;
-			else if (clientConfig.config.blockingTileIndices.includes(offsetCell))
-				this.collisionMap[x][y] = 1;
+				layer[x][y] = (layer[x][y] === null) ? offsetCell : layer[x][y] + ',' + offsetCell;
+
+				if (layerName.indexOf('walls') > -1)
+					this.collisionMap[x][y] = 1;
+				else if (clientConfig.config.blockingTileIndices.includes(offsetCell))
+					this.collisionMap[x][y] = 1;
+			}
 		},
 
 		object: function (layerName, cell) {
