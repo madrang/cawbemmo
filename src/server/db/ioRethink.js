@@ -4,7 +4,9 @@ const tableNames = require('./tableNames');
 const r = require('rethinkdbdash')({
 	host: serverConfig.dbHost,
 	port: serverConfig.dbPort,
-	db: serverConfig.dbName
+	db: serverConfig.dbName,
+	user: serverConfig.dbUser,
+	password: serverConfig.dpPass
 });
 
 module.exports = {
