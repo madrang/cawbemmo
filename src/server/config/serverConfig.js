@@ -14,5 +14,9 @@ module.exports = {
 	//eslint-disable-next-line no-process-env
 	dbPort: process.env.IWD_DB_PORT || 28015,
 	//eslint-disable-next-line no-process-env
-	dbName: process.env.IWD_DB_NAME || 'live'
+	dbName: process.env.IWD_DB_NAME || 'live',
+	//eslint-disable-next-line no-process-env
+	dbUser: process.env.IWD_DB_USER || 'admin',
+	//eslint-disable-next-line no-process-env
+	dbPass: process.env.IWD_DB_PASS || ''
 };
