@@ -13,6 +13,25 @@ module.exports = {
 		}
 	},
 	objects: {
+		shophermit: {
+			properties: {
+				cpnNotice: {
+					actions: {
+						enter: {
+							cpn: 'dialogue',
+							method: 'talk',
+							args: [{
+								targetName: 'hermit'
+							}]
+						},
+						exit: {
+							cpn: 'dialogue',
+							method: 'stopTalk'
+						}
+					}
+				}
+			}
+		},
 		'sun carp school': {
 			max: 9,
 			type: 'fish',
