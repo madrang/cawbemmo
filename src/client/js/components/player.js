@@ -36,11 +36,18 @@ define([
 		},
 
 		extend: function (blueprint) {
-			let collisionChanges = blueprint.collisionChanges;
+			const { collisionChanges, mapChanges } = blueprint;
 			delete blueprint.collisionChanges;
+			delete blueprint.mapChanges;
 
 			if (collisionChanges)
 				collisionChanges.forEach(c => physics.setCollision(c));
+
+			if (mapChanges) {
+				mapChanges.forEach(({ x, y, mapCellString }) => {
+					renderer.updateMapAtPosition(x, y, mapCellString);
+				});
+			}
 		},
 
 		update: function () {
