@@ -148,6 +148,10 @@ module.exports = {
 		return this.objects.find(callback);
 	},
 
+	filter: function (callback) {
+		return this.objects.filter(callback);
+	},
+
 	removeObject: function (obj, callback, useServerId) {
 		let found = this.objects.spliceFirstWhere(o => obj.id === (useServerId ? o.serverId : o.id));
 		if (!found)
