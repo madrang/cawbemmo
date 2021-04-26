@@ -1,14 +1,95 @@
-let compression = require('compression');
-let minify = require('express-minify');
-let config = require('./config/serverConfig');
-let router = require('./security/router');
-let rest = require('./security/rest');
+//Imports
+const http = require('http');
 
-module.exports = {
-	init: function (callback) {
-		let app = require('express')();
-		let server = require('http').createServer(app);
-		let socketServer = require('socket.io')(server, {
+const socketIo = require('socket.io');
+
+const express = require('express');
+const compression = require('compression');
+const minify = require('express-minify');
+
+const router = require('./security/router');
+const rest = require('./security/rest');
+
+const {
+	port = 4000,
+	startupMessage = 'Server: Ready'
+} = require('./config/serverConfig');
+
+//Methods
+const listeners = {
+	onConnection: function (socket) {
+		socket.on('handshake', listeners.onHandshake.bind(null, socket));
+		socket.on('disconnect', listeners.onDisconnect.bind(null, socket));
+		socket.on('request', listeners.onRequest.bind(null, socket));
+
+		socket.emit('handshake');
+	},
+	onHandshake: function (socket) {
+		cons.onHandshake(socket);
+	},
+	onDisconnect: function (socket) {
+		cons.onDisconnect(socket);
+	},
+	onRequest: function (socket, msg, callback) {
+		msg.callback = callback;
+
+		if (!msg.data)
+			msg.data = {};
+
+		if (msg.cpn) {
+			if (!router.allowedCpn(msg))
+				return;
+
+			cons.route(socket, msg);
+		} else if (msg.threadModule) {
+			if (!router.allowedGlobalCall(msg.threadModule, msg.method))
+				return;
+
+			cons.route(socket, msg);
+		} else {
+			if (!router.allowedGlobal(msg))
+				return;
+
+			msg.socket = socket;
+			global[msg.module][msg.method](msg);
+		}
+	}
+};
+
+const requests = {
+	root: function (req, res) {
+		res.sendFile('index.html');
+	},
+	default: function (req, res) {
+		let root = req.url.split('/')[1];
+		let file = req.params[0];
+		
+		file = file.replace('/' + root + '/', '');
+		
+		const validModPatterns = ['.png', '/ui/', '/clientComponents/', '/audio/'];
+		
+		const validRequest = (
+			root !== 'server' ||
+				(
+					file.includes('mods/') &&
+					validModPatterns.some(v => file.includes(v))
+				)
+		);
+		
+		if (!validRequest)
+			return null;
+		
+		res.sendFile(file, {
+			root: '../' + root
+		});
+	}
+};
+
+const init = async () => {
+	return new Promise(resolve => {
+		const app = express();
+		const server = http.createServer(app);
+		const socketServer = socketIo(server, {
 			transports: ['websocket']
 		});
 
@@ -28,93 +109,22 @@ module.exports = {
 			next();
 		});
 
-		let lessMiddleware = require('less-middleware');
-		app.use(lessMiddleware('../', {
-			render: {
-				strictMath: true
-			}
-		}));
-
 		rest.init(app);
 
-		app.get('/', this.requests.root.bind(this));
-		app.get(/^(.*)$/, this.requests.default.bind(this));
+		app.get('/', requests.root);
+		app.get(/^(.*)$/, requests.default);
 
-		socketServer.on('connection', this.listeners.onConnection.bind(this));
+		socketServer.on('connection', listeners.onConnection);
 
-		let port = config.port || 4000;
 		server.listen(port, function () {
-			let message = config.startupMessage || 'Server: Ready';
-			_.log(message);
+			_.log(startupMessage);
 
-			callback();
+			resolve();
 		});
-	},
-	listeners: {
-		onConnection: function (socket) {
-			socket.on('handshake', this.listeners.onHandshake.bind(this, socket));
-			socket.on('disconnect', this.listeners.onDisconnect.bind(this, socket));
-			socket.on('request', this.listeners.onRequest.bind(this, socket));
+	});
+};
 
-			socket.emit('handshake');
-		},
-		onHandshake: function (socket) {
-			cons.onHandshake(socket);
-		},
-		onDisconnect: function (socket) {
-			cons.onDisconnect(socket);
-		},
-		onRequest: function (socket, msg, callback) {
-			msg.callback = callback;
-
-			if (!msg.data)
-				msg.data = {};
-
-			if (msg.cpn) {
-				if (!router.allowedCpn(msg))
-					return;
-
-				cons.route(socket, msg);
-			} else if (msg.threadModule) {
-				if (!router.allowedGlobalCall(msg.threadModule, msg.method))
-					return;
-
-				cons.route(socket, msg);
-			} else {
-				if (!router.allowedGlobal(msg))
-					return;
-
-				msg.socket = socket;
-				global[msg.module][msg.method](msg);
-			}
-		}
-	},
-	requests: {
-		root: function (req, res) {
-			res.sendFile('index.html');
-		},
-		default: function (req, res) {
-			let root = req.url.split('/')[1];
-			let file = req.params[0];
-		
-			file = file.replace('/' + root + '/', '');
-		
-			const validModPatterns = ['.png', '/ui/', '/clientComponents/', '/audio/'];
-		
-			const validRequest = (
-				root !== 'server' ||
-				(
-					file.includes('mods/') &&
-					validModPatterns.some(v => file.includes(v))
-				)
-			);
-		
-			if (!validRequest)
-				return null;
-		
-			res.sendFile(file, {
-				root: '../' + root
-			});
-		}
-	}
+//Exports
+module.exports = {
+	init
 };

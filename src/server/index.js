@@ -49,11 +49,11 @@ let startup = {
 	onComponentsReady: async function () {
 		skins.init();
 		factions.init();
-		await clientConfig.init();
-		server.init(this.onServerReady.bind(this));
-	},
 
-	onServerReady: async function () {
+		await clientConfig.init();
+
+		await server.init();
+
 		await leaderboard.init();
 
 		atlas.init();
