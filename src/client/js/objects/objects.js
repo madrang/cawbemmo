@@ -167,8 +167,6 @@ define([
 				}
 			}
 
-			this.objects.push(obj);
-
 			if (obj.self) {
 				events.emit('onGetPlayer', obj);
 				window.player = obj;
@@ -202,6 +200,8 @@ define([
 
 				obj.setVisible(isVisible);
 			}
+
+			this.objects.push(obj);
 
 			return obj;
 		},

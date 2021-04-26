@@ -7,10 +7,12 @@ module.exports = {
 	playing: 0,
 
 	onHandshake: function (socket) {
-		let p = objects.build();
+		const p = objects.build();
 		p.socket = socket;
 		p.addComponent('auth');
 		p.addComponent('player');
+
+		objects.pushObjectToList(p);
 
 		this.players.push(p);
 	},
