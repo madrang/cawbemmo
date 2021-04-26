@@ -4,7 +4,6 @@ package-lock.json
 storage.db
 *.sublime-project
 *.sublime-workspace
-*.css
 src/server/mods/iwd-*
 !helpers/item-tooltip/styles.css
 !helpers/passives/**/*.css
