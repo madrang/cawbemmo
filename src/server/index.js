@@ -1,6 +1,6 @@
 require('./globals');
 
-let server = require('./server');
+let server = require('./server/index');
 let components = require('./components/components');
 let mods = require('./misc/mods');
 let animations = require('./config/animations');
