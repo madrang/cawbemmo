@@ -62,7 +62,6 @@ module.exports = {
 		},
 		seagull: {
 			level: 2,
-			spawnCd: 50,
 			regular: {
 				drops: {
 					chance: 60,
@@ -79,7 +78,6 @@ module.exports = {
 		},
 		bunny: {
 			level: 3,
-			spawnCd: 50,
 			regular: {
 				drops: {
 					chance: 56,
@@ -114,7 +112,6 @@ module.exports = {
 		},
 		elk: {
 			level: 4,
-			spawnCd: 50,
 			regular: {
 				drops: {
 					chance: 50,
@@ -131,7 +128,6 @@ module.exports = {
 		},
 		flamingo: {
 			level: 5,
-			spawnCd: 50,
 			regular: {
 				drops: {
 					chance: 45,
