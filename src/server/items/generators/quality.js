@@ -1,6 +1,6 @@
 module.exports = {
 	qualities: [
-		0,
+		2000,
 		350,
 		80,
 		17,

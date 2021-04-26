@@ -37,7 +37,6 @@ module.exports = {
 		},
 		'crazed seagull': {
 			level: 1,
-			spawnCd: 50,
 
 			rare: {
 				count: 0
