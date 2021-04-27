@@ -27,8 +27,8 @@ const mitigateArmor = ({ element, tgtValues, srcValues }, result) => {
 
 const mitigatePvp = ({ source, target, srcValues }, result) => {
 	const isPvp = (
-		source.player || (source.follower && source.follower.master && source.follower.master.player) &&
-		target.player || (target.follower && target.follower.master && target.follower.master.player)
+		(source.player || (source.follower && source.follower.master && source.follower.master.player)) &&
+		(target.player || (target.follower && target.follower.master && target.follower.master.player))
 	);
 
 	if (!isPvp)
