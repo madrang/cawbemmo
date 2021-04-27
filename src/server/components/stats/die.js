@@ -5,8 +5,9 @@ const loseXpOnDeath = ({ stats: { values }, syncer }, deathSource) => {
 		level < 5 ||
 		deathSource.player ||
 		(
-			deathSource.master &&
-			deathSource.master.player
+			deathSource.follower &&
+			deathSource.follower.master &&
+			deathSource.follower.master.player
 		)
 	);
 
