@@ -34,7 +34,7 @@ const mitigatePvp = ({ source, target, srcValues }, result) => {
 	if (!isPvp)
 		return;
 
-	const multiplier = pow(2, srcValues.level / 5);
+	const multiplier = 1 / pow(2, srcValues.level / 5);
 
 	result.amount *= multiplier;
 };
