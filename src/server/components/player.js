@@ -229,6 +229,12 @@ module.exports = {
 			syncer.o.x = obj.x;
 			syncer.o.y = obj.y;
 
+			obj.effects.addEffect({
+				type: 'invulnerability',
+				force: true,
+				ttl: 28
+			});
+
 			obj.aggro.move();
 
 			obj.instance.physics.addObject(obj, obj.x, obj.y);
