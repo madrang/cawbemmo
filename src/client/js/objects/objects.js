@@ -136,6 +136,31 @@ define([
 					obj[p] = value;
 			}
 
+			if (obj.sheetName) {
+				obj.sprite = renderer.buildObject(obj);
+				if (template.hidden) {
+					obj.sprite.visible = false;
+					if (obj.nameSprite)
+						obj.nameSprite.visible = false;
+					if ((obj.stats) && (obj.stats.hpSprite)) {
+						obj.stats.hpSprite.visible = false;
+						obj.stats.hpSpriteInner.visible = false;
+					}
+				}
+			}
+
+			if ((obj.name) && (obj.sprite)) {
+				obj.nameSprite = renderer.buildText({
+					layerName: 'effects',
+					text: obj.name,
+					x: (obj.x * scale) + (scale / 2),
+					y: (obj.y * scale) + scale
+				});
+			}
+
+			//We need to set visibility before components kick in as they sometimes need access to isVisible
+			obj.updateVisibility();
+
 			components.forEach(function (c) {
 				//Map ids to objects
 				let keys = Object.keys(c).filter(function (k) {
@@ -154,19 +179,6 @@ define([
 				obj.addComponent(c.type, c);
 			}, this);
 
-			if (obj.sheetName) {
-				obj.sprite = renderer.buildObject(obj);
-				if (template.hidden) {
-					obj.sprite.visible = false;
-					if (obj.nameSprite)
-						obj.nameSprite.visible = false;
-					if ((obj.stats) && (obj.stats.hpSprite)) {
-						obj.stats.hpSprite.visible = false;
-						obj.stats.hpSpriteInner.visible = false;
-					}
-				}
-			}
-
 			if (obj.self) {
 				events.emit('onGetPlayer', obj);
 				window.player = obj;
@@ -177,28 +189,6 @@ define([
 					x: (obj.x - (renderer.width / (scale * 2))) * scale,
 					y: (obj.y - (renderer.height / (scale * 2))) * scale
 				}, true);
-			}
-
-			if ((obj.name) && (obj.sprite)) {
-				obj.nameSprite = renderer.buildText({
-					layerName: 'effects',
-					text: obj.name,
-					x: (obj.x * scale) + (scale / 2),
-					y: (obj.y * scale) + scale
-				});
-			}
-
-			if (renderer.sprites) {
-				let isVisible = (
-					obj.self || 
-					(
-						renderer.sprites[obj.x] && 
-						renderer.sprites[obj.x][obj.y].length > 0 &&
-						!renderer.isHidden(obj.x, obj.y)
-					)
-				);
-
-				obj.setVisible(isVisible);
 			}
 
 			this.objects.push(obj);
@@ -265,22 +255,6 @@ define([
 
 			if (((template.sheetName) || (template.cell)) && (sprite))
 				renderer.setSprite(obj);
-			if (sprite) {
-				if (template.hidden !== null) {
-					sprite.visible = !template.hidden;
-					if (obj.nameSprite)
-						obj.nameSprite.visible = config.showNames;
-					if ((obj.stats) && (obj.stats.hpSprite)) {
-						obj.stats.hpSprite.visible = !template.hidden;
-						obj.stats.hpSpriteInner.visible = !template.hidden;
-					}
-				}
-			}
-
-			if ((template.x !== 0) || (template.y !== 0)) {
-				if (obj.stats)
-					obj.stats.updateHpSprite();
-			}
 
 			if ((!obj.sprite) && (template.sheetName))
 				obj.sprite = renderer.buildObject(obj);
@@ -292,27 +266,15 @@ define([
 					x: (obj.x * scale) + (scale / 2),
 					y: (obj.y * scale) + scale
 				});
-				obj.nameSprite.visible = config.showNames;
 			}
 
-			if (obj.sprite) {
-				let ix = ~~obj.x;
-				let iy = ~~obj.y;
+			if ((template.x !== 0) || (template.y !== 0)) {
+				obj.updateVisibility();
+				obj.setSpritePosition();
 
-				let isVisible = (
-					!!obj.player || 
-					(
-						!obj.hidden &&
-						renderer.sprites[ix] &&
-						renderer.sprites[ix][iy] &&
-						renderer.sprites[ix][iy].length > 0 &&
-						!renderer.isHidden(obj.x, obj.y)
-					)
-				);
-				obj.setVisible(isVisible);
+				if (obj.stats)
+					obj.stats.updateHpSprite();
 			}
-
-			obj.setSpritePosition();
 		},
 
 		update: function () {

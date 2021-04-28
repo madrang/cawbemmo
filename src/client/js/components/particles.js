@@ -17,6 +17,8 @@ define([
 			this.blueprint.obj = this.obj;
 
 			this.emitter = renderer.buildEmitter(this.blueprint);
+
+			this.setVisible(this.obj.isVisible);
 		},
 
 		setVisible: function (visible) {

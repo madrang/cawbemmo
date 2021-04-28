@@ -52,6 +52,8 @@ define([
 
 			if (this.noSprite)
 				this.obj.sheetName = null;
+
+			this.sprite.visible = this.obj.isVisible;
 		},
 
 		renderManual: function () {
@@ -66,7 +68,7 @@ define([
 						if (this.destroyObject)
 							this.obj.destroyed = true;
 						else {
-							if (this.obj.sprite && this.hideSprite)
+							if (this.obj.isVisible && this.obj.sprite)
 								this.obj.sprite.visible = true;
 
 							this.destroyed = true;
