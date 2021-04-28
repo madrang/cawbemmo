@@ -136,18 +136,8 @@ define([
 					obj[p] = value;
 			}
 
-			if (obj.sheetName) {
+			if (obj.sheetName)
 				obj.sprite = renderer.buildObject(obj);
-				if (template.hidden) {
-					obj.sprite.visible = false;
-					if (obj.nameSprite)
-						obj.nameSprite.visible = false;
-					if ((obj.stats) && (obj.stats.hpSprite)) {
-						obj.stats.hpSprite.visible = false;
-						obj.stats.hpSpriteInner.visible = false;
-					}
-				}
-			}
 
 			if ((obj.name) && (obj.sprite)) {
 				obj.nameSprite = renderer.buildText({
