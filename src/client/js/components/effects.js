@@ -113,7 +113,9 @@ define([
 				});
 
 				e.sprite.alpha = useAlpha;
-			}, this);
+
+				e.sprite.visible = this.obj.isVisible;
+			});
 		},
 
 		setVisible: function (visible) {

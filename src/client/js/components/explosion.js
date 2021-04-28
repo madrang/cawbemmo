@@ -65,6 +65,9 @@ define([
 		},
 
 		explode: function (blueprint) {
+			if (!this.obj.isVisible)
+				return;
+
 			let particles = this.obj.addComponent('particles', this.blueprint);
 
 			particles.emitter.update(0.2);

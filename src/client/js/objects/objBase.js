@@ -108,6 +108,28 @@ define([
 				stats.updateHpSprite();
 		},
 
+		updateVisibility: function () {
+			const { x, y, hidden, isVisible } = this;
+
+			const vis = (
+				!hidden &&
+				(
+					this.self ||
+					(
+						renderer.sprites[x] &&
+						renderer.sprites[x][y].length > 0 &&
+						!renderer.isHidden(x, y)
+					)
+				)
+			);
+
+			if (vis === isVisible)
+				return;
+
+			this.isVisible = vis;
+			this.setVisible(vis);
+		},
+
 		setVisible: function (visible) {
 			if (this.sprite)
 				this.sprite.visible = visible;
@@ -115,10 +137,17 @@ define([
 			if (this.nameSprite)
 				this.nameSprite.visible = (visible && config.showNames);
 
-			this.components.forEach(c => {
-				if (c.setVisible)
-					c.setVisible(visible);
-			});
+			if (!visible && this.stats && this.stats.hpSprite && this.stats.hpSprite.visible) {
+				this.stats.hpSprite.visible = false;
+				this.stats.hpSpriteInner.visible = false;
+			}
+
+			if (!visible && this) {
+				this.components.forEach(c => {
+					if (c.setVisible)
+						c.setVisible(visible);
+				});
+			}
 		},
 
 		destroy: function () {

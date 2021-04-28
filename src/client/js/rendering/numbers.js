@@ -36,7 +36,7 @@ define([
 			let target = objects.objects.find(function (o) {
 				return (o.id === msg.id);
 			});
-			if (!target)
+			if (!target || !target.isVisible)
 				return;
 
 			let ttl = 35;
