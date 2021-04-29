@@ -58,6 +58,7 @@ module.exports = {
 					delete o.messageprefix;
 
 					o.extraStashSlots = ~~o.extrastashslots;
+					o.level = ~~o.level;
 
 					if (typeof (o.items) === 'string')
 						o.items = JSON.parse(o.items || '[]');
