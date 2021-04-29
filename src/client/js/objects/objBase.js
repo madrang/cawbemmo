@@ -142,12 +142,10 @@ define([
 				this.stats.hpSpriteInner.visible = false;
 			}
 
-			if (!visible && this) {
-				this.components.forEach(c => {
-					if (c.setVisible)
-						c.setVisible(visible);
-				});
-			}
+			this.components.forEach(c => {
+				if (c.setVisible)
+					c.setVisible(visible);
+			});
 		},
 
 		destroy: function () {

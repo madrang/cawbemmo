@@ -50,7 +50,7 @@ define([
 		getClosest: function (x, y, maxDistance, reverse, fromMob) {
 			let objects = this.objects;
 
-			let list = objects.filter(function (o) {
+			let list = objects.filter(o => {
 				if ((!o.stats) || (o.nonSelectable) || (o === window.player) || (!o.sprite.visible))
 					return false;
 
@@ -65,7 +65,7 @@ define([
 			if (list.length === 0)
 				return null;
 
-			list.sort(function (a, b) {
+			list.sort((a, b) => {
 				let aDistance = Math.max(Math.abs(x - a.x), Math.abs(y - a.y));
 				let bDistance = Math.max(Math.abs(x - b.x), Math.abs(y - b.y));
 
@@ -77,9 +77,7 @@ define([
 			if (!fromMob)
 				return list[0];
 
-			let fromIndex = list.findIndex(function (l) {
-				return (l.id === fromMob.id);
-			});
+			let fromIndex = list.findIndex(l => l.id === fromMob.id);
 
 			if (reverse) 
 				fromIndex = (fromIndex === 0 ? list.length : fromIndex) - 1;
@@ -151,23 +149,21 @@ define([
 			//We need to set visibility before components kick in as they sometimes need access to isVisible
 			obj.updateVisibility();
 
-			components.forEach(function (c) {
+			components.forEach(c => {
 				//Map ids to objects
-				let keys = Object.keys(c).filter(function (k) {
-					return ((k.indexOf('id') === 0) && (k.length > 2));
+				let keys = Object.keys(c).filter(k => {
+					return (k.indexOf('id') === 0 && k.length > 2);
 				});
-				keys.forEach(function (k) {
+				keys.forEach(k => {
 					let value = c[k];
 					let newKey = k.substr(2, k.length).toLowerCase();
 
-					c[newKey] = this.objects.find(function (o) {
-						return (o.id === value);
-					});
+					c[newKey] = this.objects.find(o => o.id === value);
 					delete c[k];
-				}, this);
+				});
 
 				obj.addComponent(c.type, c);
-			}, this);
+			});
 
 			if (obj.self) {
 				events.emit('onGetPlayer', obj);
@@ -189,28 +185,26 @@ define([
 		updateObject: function (obj, template) {
 			let components = template.components || [];
 
-			components.forEach(function (c) {
+			components.forEach(c => {
 				//Map ids to objects
-				let keys = Object.keys(c).filter(function (k) {
-					return ((k.indexOf('id') === 0) && (k.length > 2));
+				let keys = Object.keys(c).filter(k => {
+					return (k.indexOf('id') === 0 && k.length > 2);
 				});
-				keys.forEach(function (k) {
+				keys.forEach(k => {
 					let value = c[k];
 					let newKey = k.substr(2, k.length).toLowerCase();
 
-					c[newKey] = this.objects.find(function (o) {
-						return (o.id === value);
-					});
+					c[newKey] = this.objects.find(o => o.id === value);
 					delete c[k];
-				}, this);
+				});
 
 				obj.addComponent(c.type, c);
-			}, this);
+			});
 
 			delete template.components;
 
 			if (template.removeComponents) {
-				template.removeComponents.forEach(function (r) {
+				template.removeComponents.forEach(r => {
 					obj.removeComponent(r);
 				});
 				delete template.removeComponents;
@@ -292,7 +286,7 @@ define([
 			for (let i = 0; i < oLen; i++) {
 				let o = objects[i];
 
-				let onPos = tiles.some(function (t) {
+				let onPos = tiles.some(t => {
 					return (!(t.x !== o.x || t.y !== o.y));
 				});
 				if (!onPos)
