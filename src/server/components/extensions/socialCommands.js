@@ -137,6 +137,20 @@ module.exports = {
 			return;
 		}
 
+		io.setAsync({
+			key: new Date(),
+			table: 'modLog',
+			value: {
+				source: this.obj.name,
+				command: actionName,
+				target: 'roleLevel: ' + this.roleLevel,
+				reason: 'commandRole: ' + commandRoles[actionName]
+			},
+			serialize: true
+		});
+
+		return;
+
 		let config = {};
 		const originalConfig = messageText.join(' ');
 		if ((messageText.length === 1) && (messageText[0].indexOf('=') === -1))
