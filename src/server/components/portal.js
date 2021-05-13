@@ -1,4 +1,6 @@
-let roles = require('../config/roles');
+const roles = require('../config/roles');
+
+const sendObjToZone = require('./portal/sendObjToZone');
 
 module.exports = {
 	type: 'portal',
@@ -17,55 +19,21 @@ module.exports = {
 	},
 
 	collisionEnter: async function (obj) {
-		const { player, instance: { physics, syncer: globalSyncer } } = obj;
-
-		if (!player)
+		if (!obj.player)
 			return;
 		else if (this.patronLevel) {
 			if (!roles.isRoleLevel(obj, this.patronLevel, 'enter this area'))
 				return;
 		}
 
-		if (obj.zoneName === this.toZone) {
-			physics.removeObject(obj, obj.x, obj.y);
+		const { toZone: zoneName, toPos, toRelativePos } = this;
 
-			obj.x = this.toPos.x;
-			obj.y = this.toPos.y;
-
-			physics.addObject(obj, obj.x, obj.y);
-
-			globalSyncer.queue('onRespawn', {
-				x: obj.x,
-				y: obj.y
-			}, [obj.serverId]);
-
-			return;
-		}
-
-		obj.fireEvent('beforeRezone');
-
-		obj.destroyed = true;
-
-		await obj.auth.doSave();
-
-		const simpleObj = obj.getSimple(true, false, true);
-
-		const { toPos, toRelativePos } = this;
-		if (toPos) {
-			simpleObj.x = this.toPos.x;
-			simpleObj.y = this.toPos.y;
-		} else if (toRelativePos) {
-			simpleObj.x = this.obj.x + toRelativePos.x;
-			simpleObj.y = this.obj.y + toRelativePos.y;
-		}
-
-		process.send({
-			method: 'rezone',
-			id: obj.serverId,
-			args: {
-				obj: simpleObj,
-				newZone: this.toZone
-			}
+		await sendObjToZone({
+			obj,
+			invokingObj: this,
+			zoneName,
+			toPos,
+			toRelativePos
 		});
 	}
 };
