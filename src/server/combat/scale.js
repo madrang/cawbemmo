@@ -61,7 +61,7 @@ const scaleCrit = ({ noCrit, isAttack, crit: forceCrit, srcValues }, result) => 
 	const didCrit = forceCrit || mathRandom() * 100 < totalCritChance;
 
 	if (didCrit) {
-		result.isCrit = true;
+		result.crit = true;
 		result.amount *= (totalCritMultiplier / 100);
 	}
 };
