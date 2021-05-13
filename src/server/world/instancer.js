@@ -193,7 +193,7 @@ module.exports = {
 		//If a player is added, destroy any player objects with the same name
 		const existing = objects.filter(o => o.player && o.name === msg.obj.name);
 		existing.forEach(o => {
-			o.destroyed = true;
+			//o.destroyed = true;
 		});
 
 		if (spawnEvent.changed)
