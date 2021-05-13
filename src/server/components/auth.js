@@ -1,3 +1,4 @@
+//Imports
 const bcrypt = require('bcrypt-nodejs');
 const messages = require('../misc/messages');
 const skins = require('../config/skins');
@@ -10,6 +11,40 @@ const events = require('../misc/events');
 
 const checkLoginRewards = require('./auth/checkLoginRewards');
 
+//This section of code is in charge of ensuring that we only ever create one account at a time,
+// since we don't have a read/write lock on the characters table, we have to address it in code
+const createLockBuffer = [];
+const getCreateLock = async () => {
+	const releaseLock = res => {
+		createLockBuffer.spliceWhere(r => r === res);
+
+		const nextEntry = createLockBuffer[0];
+
+		if (!nextEntry)
+			return;
+
+		nextEntry.takeLock();
+	};
+
+	const promise = new Promise(async res => {
+		let lockEntry = {};
+		lockEntry.takeLock = res.bind(null, releaseLock.bind(null, lockEntry));
+
+		if (!createLockBuffer.length) {
+			createLockBuffer.push(lockEntry);
+
+			lockEntry.takeLock();
+
+			return;
+		}
+
+		createLockBuffer.push(lockEntry);
+	});
+
+	return promise;
+};
+
+//Component Definition
 module.exports = {
 	type: 'auth',
 
@@ -348,6 +383,8 @@ module.exports = {
 	},
 
 	createCharacter: async function (msg) {
+		const releaseCreateLock = await getCreateLock();
+
 		let data = msg.data;
 		let name = data.name;
 
@@ -434,6 +471,8 @@ module.exports = {
 			value: this.characterList,
 			serialize: true
 		});
+
+		releaseCreateLock();
 
 		this.initTracker();
 
