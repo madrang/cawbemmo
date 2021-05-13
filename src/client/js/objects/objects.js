@@ -292,7 +292,7 @@ define([
 				if (!onPos)
 					continue;
 
-				o.setVisible(visible);
+				o.updateVisibility();
 			}
 		},
 
