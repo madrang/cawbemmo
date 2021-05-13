@@ -15,8 +15,8 @@ const checkLoginRewards = require('./auth/checkLoginRewards');
 // since we don't have a read/write lock on the characters table, we have to address it in code
 const createLockBuffer = [];
 const getCreateLock = async () => {
-	const releaseLock = res => {
-		createLockBuffer.spliceWhere(r => r === res);
+	const releaseLock = lockEntry => {
+		createLockBuffer.spliceWhere(c => c === lockEntry);
 
 		const nextEntry = createLockBuffer[0];
 
@@ -383,8 +383,6 @@ module.exports = {
 	},
 
 	createCharacter: async function (msg) {
-		const releaseCreateLock = await getCreateLock();
-
 		let data = msg.data;
 		let name = data.name;
 
@@ -417,6 +415,8 @@ module.exports = {
 			return;
 		}
 
+		const releaseCreateLock = await getCreateLock();
+
 		let exists = await io.getAsync({
 			key: name,
 			ignoreCase: true,
@@ -425,7 +425,9 @@ module.exports = {
 		});
 
 		if (exists) {
+			releaseCreateLock();
 			msg.callback(messages.login.charExists);
+
 			return;
 		}
 
