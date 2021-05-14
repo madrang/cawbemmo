@@ -3,7 +3,7 @@ require.config({
 	waitSeconds: 120,
 	paths: {
 		socket: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim',
-		jquery: 'https://code.jquery.com/jquery-3.4.1.slim.min',
+		jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min',
 		text: 'https://cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min',
 		html: 'plugins/html',
 		css: 'https://cdnjs.cloudflare.com/ajax/libs/require-css/0.1.10/css.min',
