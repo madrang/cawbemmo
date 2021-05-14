@@ -1,6 +1,6 @@
-let mobBuilder = require('./mobBuilder');
-let animations = require('../config/animations');
-let scheduler = require('../misc/scheduler');
+const mobBuilder = require('./mobBuilder');
+const animations = require('../config/animations');
+const scheduler = require('../misc/scheduler');
 
 module.exports = {
 	list: [],
@@ -21,7 +21,7 @@ module.exports = {
 	},
 
 	register: function (blueprint, cdMax) {
-		let spawner = extend({
+		const spawner = extend({
 			cdMax: cdMax || 171,
 			cron: blueprint.cron,
 			lifetime: blueprint.lifetime,
@@ -34,7 +34,7 @@ module.exports = {
 		if (blueprint.layerName !== 'mobs')
 			return;
 
-		let name = blueprint.name.toLowerCase();
+		const name = blueprint.name.toLowerCase();
 		if (!this.mobTypes[name])
 			this.mobTypes[name] = 1;
 		else
@@ -47,14 +47,14 @@ module.exports = {
 		if (spawner.amountLeft === 0)
 			return;
 
-		let blueprint = spawner.blueprint;
-		let obj = this.objects.buildObjects([blueprint]);
+		const blueprint = spawner.blueprint;
+		const obj = this.objects.buildObjects([blueprint]);
 
 		let customSpawn = false;
 
-		let sheetName = blueprint.sheetName;
+		const sheetName = blueprint.sheetName;
 		if ((sheetName) && (blueprint.sheetName.indexOf('/'))) {
-			let spawnAnimation = _.getDeepProperty(animations, ['mobs', sheetName, blueprint.cell, 'spawn']);
+			const spawnAnimation = _.getDeepProperty(animations, ['mobs', sheetName, blueprint.cell, 'spawn']);
 			if (spawnAnimation) {
 				customSpawn = true;
 
@@ -85,65 +85,53 @@ module.exports = {
 	},
 
 	update: function () {
-		let list = this.list;
-		let lLen = list.length;
+		this.list.forEach(l => {
+			if (l.lifetime && l.mob) {
+				if (!l.age)
+					l.age = 1;
+				else
+					l.age++;
 
-		for (let i = 0; i < lLen; i++) {
-			let l = list[i];
+				if (l.age >= l.lifetime) {
+					this.syncer.queue('onGetObject', {
+						x: l.mob.x,
+						y: l.mob.y,
+						components: [{
+							type: 'attackAnimation',
+							row: 0,
+							col: 4
+						}]
+					}, -1);
 
-			if ((l.lifetime) && (l.mob)) {
-				if (l.mob.destroyed) {
-					delete l.age;
-					delete l.mob;
-				} else {
-					if (!l.age)
-						l.age = 1;
-					else
-						l.age++;
-
-					if (l.age >= l.lifetime) {
-						this.syncer.queue('onGetObject', {
-							x: l.mob.x,
-							y: l.mob.y,
-							components: [{
-								type: 'attackAnimation',
-								row: 0,
-								col: 4
-							}]
-						}, -1);
-
-						l.mob.destroyed = true;
-						delete l.age;
-						delete l.mob;
-					}
+					l.mob.destroyed = true;
 				}
 			}
 
 			if (!l.cron) {
 				if (l.cd > 0) 
 					l.cd--;
-				else if ((l.mob) && (l.mob.destroyed))
+				else if (l.mob && l.mob.destroyed)
 					l.cd = l.cdMax;
 			}
 
-			let cronInfo = {
+			if (l.mob && l.mob.destroyed) {
+				delete l.age;
+				delete l.mob;
+			}
+
+			const cronInfo = {
 				cron: l.cron,
 				lastRun: l.lastRun
 			};
 
-			let doSpawn = (
+			const doSpawn = (
 				(
-					(!l.cron) &&
-					(!l.mob)
-				) ||
-				(
-					(!l.cron) &&
-					(l.cd === 0)
-				) ||
-				(
-					(!l.mob) &&
-					(l.cron) &&
-					(scheduler.shouldRun(cronInfo))
+					!l.cron &&
+					!l.cd
+				) || (
+					l.cron &&
+					!l.mob &&
+					scheduler.shouldRun(cronInfo)
 				)
 			);
 
@@ -153,16 +141,16 @@ module.exports = {
 				else
 					l.lastRun = cronInfo.lastRun;
 
-				let mob = this.spawn(l);
+				const mob = this.spawn(l);
 				if (!mob)
-					continue;
+					return;
 
-				let name = (l.blueprint.objZoneName || l.blueprint.name).toLowerCase();
+				const name = (l.blueprint.objZoneName || l.blueprint.name).toLowerCase();
 
 				if (l.blueprint.layerName === 'mobs') 
 					this.setupMob(mob, l.zonePrint);
 				else {
-					let blueprint = extend({}, this.zone.objects.default, this.zone.objects[name] || {});
+					const blueprint = extend({}, this.zone.objects.default, this.zone.objects[name] || {});
 					this.setupObj(mob, blueprint);
 				}
 
@@ -171,7 +159,7 @@ module.exports = {
 
 				l.mob = mob;
 			}
-		}
+		});
 	},
 
 	setupMob: function (mob, blueprint) {
@@ -179,14 +167,14 @@ module.exports = {
 		if (blueprint.isChampion)
 			type = 'champion';
 		else if (blueprint.rare.count > 0) {
-			let rareCount = this.list.filter(l => (
+			const rareCount = this.list.filter(l => (
 				(l.mob) &&
 				(!l.mob.destroyed) &&
 				(l.mob.isRare) &&
 				(l.mob.baseName === mob.name)
 			));
 			if (rareCount.length < blueprint.rare.count) {
-				let roll = Math.random() * 100;
+				const roll = Math.random() * 100;
 				if (roll < blueprint.rare.chance)
 					type = 'rare';
 			}
@@ -198,17 +186,17 @@ module.exports = {
 	},
 
 	setupObj: function (obj, blueprint) {
-		let cpns = blueprint.components;
+		const cpns = blueprint.components;
 		if (!cpns)
 			return;
 
 		for (let c in cpns) {
-			let cpn = cpns[c];
+			const cpn = cpns[c];
 
 			let cType = c.replace('cpn', '');
 			cType = cType[0].toLowerCase() + cType.substr(1);
 
-			let builtCpn = obj.addComponent(cType, cpn);
+			const builtCpn = obj.addComponent(cType, cpn);
 
 			if (cpn.simplify)
 				builtCpn.simplify = cpn.simplify.bind(builtCpn);
