@@ -47,7 +47,7 @@ module.exports = {
 			if (blueprint.level < 5)
 				currencyChance = 0;
 			else if (blueprint.level < 14)
-				currencyChance = (blueprint.level - 5) / 15;
+				currencyChance = (blueprint.level - 4) / 11;
 
 			//If you kill a mob that's too low of a level, idols are much more rare
 			if (
