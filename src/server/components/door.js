@@ -129,6 +129,8 @@ module.exports = {
 				const message = `The ${key.name} disintegrates on use`;
 				obj.social.notifySelf({ message });
 			}
+
+			this.obj.instance.syncer.queue('onDoorUnlock', null, [obj.serverId]);
 		}
 
 		if (this.closed) {
@@ -139,6 +141,8 @@ module.exports = {
 
 			this.closed = false;
 			this.enterArea(obj);
+
+			this.obj.instance.syncer.queue('onDoorOpen', null, [obj.serverId]);
 		} else {
 			thisObj.cell = this.closedSprite;
 			syncO.cell = this.closedSprite;
@@ -147,6 +151,8 @@ module.exports = {
 
 			this.closed = true;
 			this.enterArea(obj);
+
+			this.obj.instance.syncer.queue('onDoorClose', null, [obj.serverId]);
 		}
 	},
 

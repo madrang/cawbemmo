@@ -300,7 +300,7 @@ module.exports = {
 	},
 
 	getOffsetCellPos: function (sheetName, cell) {
-		const { atlasTextureDimensions, config: { atlasTextures } } = clientConfig;
+		const { config: { atlasTextureDimensions, atlasTextures } } = clientConfig;
 		const indexInAtlas = atlasTextures.indexOf(sheetName);
 
 		let offset = 0;
@@ -366,21 +366,21 @@ module.exports = {
 
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
 
-			if ((layerName !== 'hiddenWalls') && (layerName !== 'hiddenTiles')) {
-				let layer = this.layers;
+			const isHiddenLayer = layerName.indexOf('hidden') === 0;
+
+			if (isHiddenLayer)
+				this[layerName][x][y] = offsetCell;
+			else {
+				const layer = this.layers;
+
 				if (this.oldLayers[layerName])
 					this.oldLayers[layerName][x][y] = offsetCell;
-				layer[x][y] = (layer[x][y] === null) ? offsetCell : layer[x][y] + ',' + offsetCell;
-			} else if (layerName === 'hiddenWalls')
-				this.hiddenWalls[x][y] = offsetCell;
-			else if (layerName === 'hiddenTiles')
-				this.hiddenTiles[x][y] = offsetCell;
 
-			if (layerName.indexOf('walls') > -1)
-				this.collisionMap[x][y] = 1;
-			else if (layerName === 'tiles' && sheetName === 'tiles') {
-				//Check for water and water-like tiles
-				if ([6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197].includes(offsetCell))
+				layer[x][y] = (layer[x][y] === null) ? offsetCell : layer[x][y] + ',' + offsetCell;
+
+				if (layerName.indexOf('walls') > -1)
+					this.collisionMap[x][y] = 1;
+				else if (clientConfig.config.blockingTileIndices.includes(offsetCell))
 					this.collisionMap[x][y] = 1;
 			}
 		},
@@ -459,6 +459,7 @@ module.exports = {
 				}
 			} else if (layerName === 'hiddenRooms') {
 				blueprint.fog = (cell.properties || {}).fog;
+				blueprint.interior = (cell.properties || {}).interior;
 				blueprint.discoverable = (cell.properties || {}).discoverable;
 				blueprint.layer = ~~((cell.properties || {}).layer || 0);
 

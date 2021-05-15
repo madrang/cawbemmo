@@ -18,37 +18,41 @@ module.exports = {
 	noTargetSelf: true,
 
 	cast: function (action) {
-		let obj = this.obj;
-		let target = action.target;
+		const { target } = action;
 
 		this.sendBump(target);
 
-		this.queueCallback(this.explode.bind(this, target), 1, null, target);
-
-		this.sendBump({
-			x: obj.x,
-			y: obj.y - 1
-		});
+		this.queueCallback(this.explode.bind(this, action), 1, null, target);
 
 		return true;
 	},
-	explode: function (target) {
-		if ((this.obj.destroyed) || (target.destroyed))
+
+	explode: function (action) {
+		const { obj } = this;
+		const { target } = action;
+
+		if ((obj.destroyed) || (target.destroyed))
 			return;
 
-		let amount = (this.obj.stats.values.hpMax / 100) * this.drainPercentage;
-		let damage = {
-			amount: amount
-		};
-		this.obj.stats.takeDamage(damage, 0, this.obj);
+		let amount = (obj.stats.values.hpMax / 100) * this.drainPercentage;
+		const damage = { amount };
+		obj.stats.takeDamage(damage, 0, obj);
 
 		amount = amount * this.shieldMultiplier;
-		let heal = {
-			amount: amount
-		};
-		target.stats.getHp(heal, this.obj);
+		const heal = { amount };
+		target.stats.getHp(heal, obj);
 
-		target.spellbook.spells[0].cd = 0;
+		//Only reset the first spell's cooldown if it's an auto attack and not a spell
+		const firstSpell = target.spellbook.spells[0];
+		const resetFirstSpell = (
+			firstSpell &&
+			firstSpell.isAttack &&
+			firstSpell.auto
+		);
+
+		if (resetFirstSpell)
+			target.spellbook.spells[0].cd = 0;
+
 		target.effects.addEffect({
 			type: 'frenzy',
 			ttl: this.frenzyDuration,

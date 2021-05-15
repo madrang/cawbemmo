@@ -76,6 +76,8 @@ define([
 					});
 				}
 			}
+
+			this.setVisible(this.obj.isVisible);
 		},
 
 		update: function () {

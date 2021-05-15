@@ -168,6 +168,7 @@ define([
 				this.dragItem = el;
 
 				events.emit('onHideItemTooltip', this.hoverItem);
+				events.emit('onStartMoveItem', this.dragItem.data('item'));
 				this.hoverItem = null;
 			} else if (this.dragItem) {
 				let method = 'moveItem';
@@ -218,6 +219,8 @@ define([
 							data: msgs
 						}
 					});
+
+					events.emit('onStopMoveItem', this.dragItem.data('item'));
 
 					this.build();
 				}

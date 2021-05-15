@@ -15,25 +15,26 @@ module.exports = {
 		return ++this.lastId;
 	},
 
-	build: function (skipPush, clientObj, id) {
+	build: function (isClientObj, id) {
 		let o = extend({}, objBase);
 
-		if (clientObj)
+		if (isClientObj)
 			o.update = null;
 		else {
 			o.id = id || this.getNextId();
 			o.addComponent('syncer');
 			o.instance = this.instance;
-
-			if (!skipPush)
-				this.objects.push(o);
 		}
 
 		return o;
 	},
 
+	pushObjectToList: function (obj) {
+		this.objects.push(obj);
+	},
+
 	transferObject: function (o) {
-		let obj = this.build();
+		const obj = this.build();
 
 		let components = o.components;
 		delete o.components;
@@ -42,11 +43,11 @@ module.exports = {
 		for (let p in o) 
 			obj[p] = o[p];
 
-		let cLen = components.length;
+		const cLen = components.length;
 		for (let i = 0; i < cLen; i++) {
 			let c = components[i];
 
-			let cpn = obj.addComponent(c.type, null, true);
+			const cpn = obj.addComponent(c.type, null, true);
 
 			for (let p in c) 
 				cpn[p] = c[p];
@@ -55,7 +56,8 @@ module.exports = {
 				cpn.transfer();
 		}
 
-		//this.physics.addObject(obj, obj.x, obj.y);
+		this.pushObjectToList(obj);
+		this.physics.addObject(obj, obj.x, obj.y);
 
 		return obj;
 	},
@@ -65,7 +67,7 @@ module.exports = {
 		for (let i = 0; i < lLen; i++) {
 			let l = list[i];
 
-			let obj = this.build(skipPush, l.clientObj, l.id);
+			let obj = this.build(l.clientObj, l.id);
 
 			obj.sheetName = l.sheetName;
 			obj.cell = l.cell;
@@ -139,6 +141,9 @@ module.exports = {
 			if (obj.aggro)
 				obj.aggro.move();
 
+			if (!skipPush)
+				this.pushObjectToList(obj);
+
 			if (lLen === 1)
 				return obj;
 		}
@@ -146,6 +151,10 @@ module.exports = {
 
 	find: function (callback) {
 		return this.objects.find(callback);
+	},
+
+	filter: function (callback) {
+		return this.objects.filter(callback);
 	},
 
 	removeObject: function (obj, callback, useServerId) {
@@ -168,24 +177,25 @@ module.exports = {
 	},
 
 	addObject: function (o, callback) {
-		let newO = this.build(true);
+		const newO = this.build();
 
-		let components = o.components;
+		const components = o.components;
 
 		delete o.components;
 
 		for (let p in o) 
 			newO[p] = o[p];
 
-		let len = components.length;
+		const len = components.length;
 		for (let i = 0; i < len; i++) {
-			let c = components[i];
+			const c = components[i];
 
-			let newC = newO.addComponent(c.type, c);
+			const newC = newO.addComponent(c.type, c);
 			extend(newC, c);
 		}
 
-		this.objects.push(newO);
+		this.pushObjectToList(newO);
+
 		if (!newO.dead)
 			this.physics.addObject(newO, newO.x, newO.y);
 

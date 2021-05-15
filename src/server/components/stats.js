@@ -1,3 +1,6 @@
+//Methods
+const die = require('./stats/die');
+
 let animations = require('../config/animations');
 let spirits = require('../config/spirits');
 let scheduler = require('../misc/scheduler');
@@ -460,43 +463,7 @@ module.exports = {
 	},
 
 	die: function (source) {
-		let obj = this.obj;
-		let values = this.values;
-
-		this.syncer.queue('onGetDamage', {
-			id: obj.id,
-			event: true,
-			text: 'death'
-		}, -1);
-
-		obj.syncer.set(true, null, 'dead', true);
-
-		let syncO = obj.syncer.o;
-
-		obj.hidden = true;
-		obj.nonSelectable = true;
-		syncO.hidden = true;
-		syncO.nonSelectable = true;
-
-		let xpLoss = ~~Math.min(values.xp, values.xpMax * 0.05);
-
-		values.xp -= xpLoss;
-		obj.syncer.setObject(true, 'stats', 'values', 'xp', values.xp);
-
-		this.syncer.queue('onDeath', {
-			source: source.name,
-			xpLoss: xpLoss
-		}, [obj.serverId]);
-
-		obj.instance.syncer.queue('onGetObject', {
-			x: obj.x,
-			y: obj.y,
-			components: [{
-				type: 'attackAnimation',
-				row: 0,
-				col: 4
-			}]
-		}, -1);
+		die(this, source);
 	},
 
 	respawn: function () {

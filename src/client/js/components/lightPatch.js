@@ -79,6 +79,8 @@ define([
 					ray.blendMode = PIXI.BLEND_MODES.ADD;
 				}
 			}
+
+			this.setVisible(this.obj.isVisible);
 		},
 
 		update: function () {

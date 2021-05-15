@@ -67,8 +67,8 @@ define([
 			return;
 
 		t.eventList = {};
-		t.hookEvent = hookEvent.bind(t);
-		t.unhookEvents = unhookEvents.bind(t);
+		t.hookEvent = hookEvent;
+		t.unhookEvents = unhookEvents;
 
 		templates[t.type] = t;
 	});

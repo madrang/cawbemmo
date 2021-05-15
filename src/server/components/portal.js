@@ -1,4 +1,6 @@
-let roles = require('../config/roles');
+const roles = require('../config/roles');
+
+const sendObjToZone = require('./portal/sendObjToZone');
 
 module.exports = {
 	type: 'portal',
@@ -24,30 +26,14 @@ module.exports = {
 				return;
 		}
 
-		obj.fireEvent('beforeRezone');
+		const { toZone: zoneName, toPos, toRelativePos } = this;
 
-		obj.destroyed = true;
-
-		await obj.auth.doSave();
-
-		const simpleObj = obj.getSimple(true, false, true);
-
-		const { toPos, toRelativePos } = this;
-		if (toPos) {
-			simpleObj.x = this.toPos.x;
-			simpleObj.y = this.toPos.y;
-		} else if (toRelativePos) {
-			simpleObj.x = this.obj.x + toRelativePos.x;
-			simpleObj.y = this.obj.y + toRelativePos.y;
-		}
-
-		process.send({
-			method: 'rezone',
-			id: obj.serverId,
-			args: {
-				obj: simpleObj,
-				newZone: this.toZone
-			}
+		await sendObjToZone({
+			obj,
+			invokingObj: this,
+			zoneName,
+			toPos,
+			toRelativePos
 		});
 	}
 };

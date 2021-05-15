@@ -1,6 +1,6 @@
 require('./globals');
 
-let server = require('./server');
+let server = require('./server/index');
 let components = require('./components/components');
 let mods = require('./misc/mods');
 let animations = require('./config/animations');
@@ -49,11 +49,11 @@ let startup = {
 	onComponentsReady: async function () {
 		skins.init();
 		factions.init();
-		await clientConfig.init();
-		server.init(this.onServerReady.bind(this));
-	},
 
-	onServerReady: async function () {
+		await clientConfig.init();
+
+		await server.init();
+
 		await leaderboard.init();
 
 		atlas.init();

@@ -41,15 +41,24 @@ module.exports = {
 			global.instancer.instances[0].eventEmitter.emitNoSticky('onBeforeGetDropChances', dropChancesEvent);
 
 		let currencyChance = dropChancesEvent.currencyChance;
-		//If you kill a mob that's too low of a level, idols are much more rare
-		if (
-			blueprint.level && 
-			ownerLevel && 
-			ownerLevel - blueprint.level > 4
-		) {
-			const levelDelta = ownerLevel - blueprint.level;
-			currencyChance /= Math.pow(levelDelta - 3, 2);
+
+		if (blueprint.level) {
+			//Idol droprate before level 5 is 0, after which it slowly increases and flattens out at level 15
+			if (blueprint.level < 5)
+				currencyChance = 0;
+			else if (blueprint.level < 14)
+				currencyChance = (blueprint.level - 4) / 11;
+
+			//If you kill a mob that's too low of a level, idols are much more rare
+			if (
+				ownerLevel &&
+				ownerLevel - blueprint.level > 4
+			) {
+				const levelDelta = ownerLevel - blueprint.level;
+				currencyChance /= Math.pow(levelDelta - 3, 2);
+			}
 		}
+
 		if (blueprint.noCurrency)
 			currencyChance = 0;
 

@@ -226,7 +226,7 @@ define([
 			if (!target)
 				return;
 
-			if (this.target.destroyed || this.target.nonSelectable) {
+			if (this.target.destroyed || this.target.nonSelectable || !this.target.isVisible) {
 				this.target = null;
 				this.targetSprite.visible = false;
 			}

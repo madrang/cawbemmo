@@ -16,6 +16,71 @@ const teleportHome = (physics, obj, mob) => {
 	obj.aggro.move();
 };
 
+const performPatrolAction = ({ obj }, node) => {
+	const { action } = node;
+
+	const { chatter, syncer, instance: { scheduler } } = obj;
+
+	if (action === 'chat') {
+		if (!chatter)
+			obj.addComponent('chatter');
+
+		syncer.set(false, 'chatter', 'msg', node.msg);
+
+		return true;
+	}
+
+	if (action === 'wait') {
+		if (node.cron) {
+			const isActive = scheduler.isActive(node);
+
+			return isActive;
+		} else if (node.ttl === undefined) {
+			node.ttl = node.duration;
+
+			return false;
+		}
+
+		node.ttl--;
+
+		if (!node.ttl) {
+			delete node .ttl;
+			return true;
+		}
+	}
+};
+
+const getNextPatrolTarget = mob => {
+	const { patrol, obj: { x, y } } = mob;
+	let toX, toY;
+
+	do {
+		const toNode = patrol[mob.patrolTargetNode];
+		if (toNode.action) {
+			const nodeDone = performPatrolAction(mob, toNode);
+			if (!nodeDone)
+				return true;
+
+			mob.patrolTargetNode++;
+			if (mob.patrolTargetNode >= patrol.length)
+				mob.patrolTargetNode = 0;
+
+			continue;
+		}
+
+		toX = toNode[0];
+		toY = toNode[1];
+		if ((toX - x === 0) && (toY - y === 0)) {
+			mob.patrolTargetNode++;
+			if (mob.patrolTargetNode >= patrol.length)
+				mob.patrolTargetNode = 0;
+		} else
+			break;
+	} while (toX - x !== 0 || toY - y !== 0);
+
+	return [ toX, toY ];
+};
+
 module.exports = {
 	type: 'mob',
 
@@ -112,17 +177,13 @@ module.exports = {
 			toX = this.originX + ~~(rnd() * (walkDistance * 2)) - walkDistance;
 			toY = this.originY + ~~(rnd() * (walkDistance * 2)) - walkDistance;
 		} else if (this.patrol) {
-			do {
-				let toNode = this.patrol[this.patrolTargetNode];
-				toX = toNode[0];
-				toY = toNode[1];
-				if ((toX - obj.x === 0) && (toY - obj.y === 0)) {
-					this.patrolTargetNode++;
-					if (this.patrolTargetNode >= this.patrol.length)
-						this.patrolTargetNode = 0;
-				} else
-					break;
-			} while (toX - obj.x !== 0 || toY - obj.y !== 0);
+			const patrolResult = getNextPatrolTarget(this);
+
+			//When an action is performed, we will only get a boolean value back
+			if (!patrolResult.push)
+				return;
+
+			[toX, toY] = patrolResult;
 		}
 
 		//We use goHome to force followers to follow us around but they should never stay in that state
@@ -135,7 +196,8 @@ module.exports = {
 
 		if (dx + dy === 0)
 			return;
-		else if (dx <= 1 && dy <= 1) {
+
+		if (dx <= 1 && dy <= 1) {
 			obj.queue({
 				action: 'move',
 				data: {
@@ -143,27 +205,29 @@ module.exports = {
 					y: toY
 				}
 			});
-		} else {
-			let path = this.physics.getPath({
-				x: obj.x,
-				y: obj.y
-			}, {
-				x: toX,
-				y: toY
-			}, false);
 
-			let pLen = path.length;
-			for (let i = 0; i < pLen; i++) {
-				let p = path[i];
+			return;
+		}
 
-				obj.queue({
-					action: 'move',
-					data: {
-						x: p.x,
-						y: p.y
-					}
-				});
-			}
+		const path = this.physics.getPath({
+			x: obj.x,
+			y: obj.y
+		}, {
+			x: toX,
+			y: toY
+		}, false);
+
+		const pLen = path.length;
+		for (let i = 0; i < pLen; i++) {
+			let p = path[i];
+
+			obj.queue({
+				action: 'move',
+				data: {
+					x: p.x,
+					y: p.y
+				}
+			});
 		}
 	},
 
