@@ -58,11 +58,7 @@ define([
 				return;
 			}
 
-			let len = list.length;
-			for (let i = 0; i < len; i++) {
-				let l = list[i];
-				l.apply(null, args);
-			}
+			list.forEach(l => l.apply(null, args));
 		}
 	};
 
