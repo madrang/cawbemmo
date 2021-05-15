@@ -3,7 +3,7 @@ define([
 ], function (
 
 ) {
-	let colors = [
+	const colors = [
 		'929398',
 		'80f643',
 		'3fa7dd',
@@ -11,7 +11,7 @@ define([
 		'ffeb38'
 	];
 
-	let chances = [
+	const chances = [
 		0.0075,
 		0.02,
 		0.04,
@@ -19,7 +19,7 @@ define([
 		0.095
 	];
 
-	let indices = {
+	const indices = {
 		50: 0,
 		51: 1,
 		128: 2,
@@ -33,12 +33,7 @@ define([
 		ownerName: null,
 
 		init: function (blueprint) {
-			if (this.ownerName && (!window.player || window.player.name !== this.ownerName)) {
-				this.obj.sheetName = null;
-				return;
-			}
-
-			let index = indices[this.obj.cell] || 0;
+			const index = indices[this.obj.cell] || 0;
 
 			this.obj.addComponent('particles', {
 				chance: chances[index],
