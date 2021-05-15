@@ -1,6 +1,6 @@
 module.exports = {
 	name: 'Fjolarok',
-	level: [1, 10],
+	level: [1, 12],
 	resources: {
 		Skyblossom: {
 			type: 'herb',
