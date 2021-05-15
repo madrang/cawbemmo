@@ -599,6 +599,8 @@ module.exports = {
 			}
 		}]);
 
+		obj.canBeSeenBy = ownerName;
+
 		return obj;
 	},
 

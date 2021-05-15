@@ -48,6 +48,7 @@ module.exports = {
 
 		for (let i = 0; i < oLen; i++) {
 			let o = oList[i];
+			let canBeSeenBy = o.canBeSeenBy;
 			let oId = o.id;
 			let ox = o.x;
 			let oy = o.y;
@@ -87,7 +88,13 @@ module.exports = {
 				let px = p.x;
 				let py = p.y;
 
-				let canSee = (Math.abs(ox - px) <= viewDistanceX && Math.abs(oy - py) < viewDistanceY);
+				const canSee = (
+					Math.abs(ox - px) <= viewDistanceX && Math.abs(oy - py) < viewDistanceY &&
+					(
+						!canBeSeenBy ||
+						canBeSeenBy === p.name
+					)
+				);
 
 				let hasSeen = p.player.hasSeen(oId);
 
