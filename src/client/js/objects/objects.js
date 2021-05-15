@@ -137,7 +137,7 @@ define([
 			if (obj.sheetName)
 				obj.sprite = renderer.buildObject(obj);
 
-			if ((obj.name) && (obj.sprite)) {
+			if (obj.name && obj.sprite) {
 				obj.nameSprite = renderer.buildText({
 					layerName: 'effects',
 					text: obj.name,
