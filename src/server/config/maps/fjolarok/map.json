@@ -1,12 +1,5 @@
 { "backgroundcolor":"#32222e",
  "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":164,
  "infinite":false,
  "layers":[
@@ -2161,23 +2154,6 @@
                  "y":896
                 }, 
                 {
-                 "height":32,
-                 "id":651,
-                 "name":"sun carp school",
-                 "properties":[
-                        {
-                         "name":"resource",
-                         "type":"string",
-                         "value":"Sun Carp"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":24,
-                 "x":584,
-                 "y":768
-                }, 
-                {
                  "height":16,
                  "id":652,
                  "name":"",
@@ -2866,7 +2842,7 @@
          "value":"[{\"maxLevel\":1,\"x\":100,\"y\":150},{\"maxLevel\":999,\"x\":132,\"y\":82}]"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.3.3",
+ "tiledversion":"1.6.0",
  "tileheight":8,
  "tilesets":[
         {
@@ -3090,6 +3066,6 @@
         }],
  "tilewidth":8,
  "type":"map",
- "version":1.2,
+ "version":"1.6",
  "width":195
 }
