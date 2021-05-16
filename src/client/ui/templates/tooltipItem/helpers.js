@@ -2,14 +2,12 @@ define([
 	'js/input',
 	'js/system/events',
 	'js/misc/statTranslations',
-	'ui/templates/tooltipItem/getCompareItem',
-	'html!ui/templates/tooltipItem/templateTooltip'
+	'ui/templates/tooltipItem/getCompareItem'
 ], function (
 	input,
 	events,
 	statTranslations,
-	getCompareItem,
-	tplTooltip
+	getCompareItem
 ) {
 	let item = null;
 	let compare = null;
