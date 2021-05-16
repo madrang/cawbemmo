@@ -1,1 +1,104 @@
-.uiTooltipItem>*{z-index:999999}.uiTooltipItem .tooltip{display:none;position:absolute;margin-left:-4px;margin-top:-4px;background-color:rgba(60,63,76,0.95);pointer-events:none;padding:10px;color:#f2f5f5;text-align:center;line-height:18px;max-width:300px}.uiTooltipItem .tooltip .name{margin-bottom:8px}.uiTooltipItem .tooltip .name .type{color:#7f9c9c}.uiTooltipItem .tooltip .name .power{color:#80f643;display:none}.uiTooltipItem .tooltip>.implicitStats{color:#b8c9c9;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid #505360}.uiTooltipItem .tooltip>.implicitStats .gainStat{color:#80f643}.uiTooltipItem .tooltip>.implicitStats .loseStat{color:#d43346}.uiTooltipItem .tooltip>.stats{color:#b8c9c9;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid #505360}.uiTooltipItem .tooltip>.stats .gainStat{color:#80f643}.uiTooltipItem .tooltip>.stats .loseStat{color:#d43346}.uiTooltipItem .tooltip>.stats .enchanted{color:#44cb95 !important}.uiTooltipItem .tooltip .effects{color:#f2f5f5;margin-bottom:8px}.uiTooltipItem .tooltip .faction{color:#7f9c9c;margin-bottom:8px}.uiTooltipItem .tooltip .requires{margin-top:8px;color:#7f9c9c}.uiTooltipItem .tooltip .requires.high-level{color:#d43346}.uiTooltipItem .tooltip .requires .high-level{color:#d43346}.uiTooltipItem .tooltip .requires>*:not(.high-level){color:#7f9c9c}.uiTooltipItem .tooltip .material{color:#7f9c9c;display:none}.uiTooltipItem .tooltip .quest{color:#7f9c9c;display:none}.uiTooltipItem .tooltip .info{color:#4f6666}.uiTooltipItem .tooltip .damage .gainDamage{color:#80f643}.uiTooltipItem .tooltip .damage .loseDamage{color:#d43346}.uiTooltipItem .tooltip .worth{display:none}.uiTooltipItem .tooltip .worth.no-afford{color:#d43346}.uiTooltipItem .tooltip.no-compare .info{display:none}.uiTooltipItem>.btn{position:absolute;background-color:#3fa7dd;color:#f2f5f5;padding:10px;text-align:center}.mobile .uiTooltipItem{z-index:9999999999}.mobile .uiTooltipItem>*{z-index:9999999999}
+.uiTooltipItem > * {
+  z-index: 999999;
+}
+.uiTooltipItem .tooltip {
+  display: none;
+  position: absolute;
+  margin-left: -4px;
+  margin-top: -4px;
+  background-color: rgba(60, 63, 76, 0.95);
+  pointer-events: none;
+  padding: 10px;
+  color: #f2f5f5;
+  text-align: center;
+  line-height: 18px;
+  max-width: 300px;
+}
+.uiTooltipItem .tooltip .name {
+  margin-bottom: 8px;
+}
+.uiTooltipItem .tooltip .name .type {
+  color: #7f9c9c;
+}
+.uiTooltipItem .tooltip .name .power {
+  color: #80f643;
+}
+.uiTooltipItem .tooltip > .implicitStats {
+  color: #b8c9c9;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #505360;
+}
+.uiTooltipItem .tooltip > .implicitStats .gainStat {
+  color: #80f643;
+}
+.uiTooltipItem .tooltip > .implicitStats .loseStat {
+  color: #d43346;
+}
+.uiTooltipItem .tooltip > .stats {
+  color: #b8c9c9;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #505360;
+}
+.uiTooltipItem .tooltip > .stats .gainStat {
+  color: #80f643;
+}
+.uiTooltipItem .tooltip > .stats .loseStat {
+  color: #d43346;
+}
+.uiTooltipItem .tooltip > .stats .enchanted {
+  color: #44cb95 !important;
+}
+.uiTooltipItem .tooltip .effects {
+  color: #f2f5f5;
+  margin-bottom: 8px;
+}
+.uiTooltipItem .tooltip .faction {
+  color: #7f9c9c;
+  margin-bottom: 8px;
+}
+.uiTooltipItem .tooltip .requires {
+  margin-top: 8px;
+  color: #7f9c9c;
+}
+.uiTooltipItem .tooltip .requires.high-level {
+  color: #d43346;
+}
+.uiTooltipItem .tooltip .requires .high-level {
+  color: #d43346;
+}
+.uiTooltipItem .tooltip .requires > *:not(.high-level) {
+  color: #7f9c9c;
+}
+.uiTooltipItem .tooltip .material {
+  color: #7f9c9c;
+}
+.uiTooltipItem .tooltip .quest {
+  color: #7f9c9c;
+}
+.uiTooltipItem .tooltip .info {
+  color: #4f6666;
+}
+.uiTooltipItem .tooltip .damage .gainDamage {
+  color: #80f643;
+}
+.uiTooltipItem .tooltip .damage .loseDamage {
+  color: #d43346;
+}
+.uiTooltipItem .tooltip .worth.no-afford {
+  color: #d43346;
+}
+.uiTooltipItem > .btn {
+  position: absolute;
+  background-color: #3fa7dd;
+  color: #f2f5f5;
+  padding: 10px;
+  text-align: center;
+}
+.mobile .uiTooltipItem {
+  z-index: 9999999999;
+}
+.mobile .uiTooltipItem > * {
+  z-index: 9999999999;
+}
