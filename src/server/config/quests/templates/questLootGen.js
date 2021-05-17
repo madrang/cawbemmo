@@ -54,6 +54,14 @@ module.exports = {
 			}
 		}
 
+		if (!this.item) {
+			this.setAsync({
+				key: new Date(),
+				table: 'error',
+				value: this.obj.name + ' ' + this.mobType
+			});
+		}
+
 		this.name = this.item.name + ' Gatherer';
 		this.description = 'Loot ' + this.have + '/' + this.need + ' ' + this.item.name + ' from ' + this.mobName;
 
