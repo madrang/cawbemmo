@@ -1,1 +1,116 @@
-.uiCharacters{display:flex;flex-direction:column;align-items:center;position:absolute}.uiCharacters .logo{width:562px;height:200px;margin-bottom:60px}.uiCharacters .bottom{display:flex;height:300px}.uiCharacters .bottom .left,.uiCharacters .bottom .right{background-color:#3a3b4a;filter:drop-shadow(0 -2px 0 #2d2136) drop-shadow(0 2px 0 #2d2136) drop-shadow(2px 0 0 #2d2136) drop-shadow(-2px 0 0 #2d2136)}.uiCharacters .bottom .left{width:400px;overflow-y:auto}.uiCharacters .bottom .left .character{height:50px;width:100%;color:#f2f5f5;cursor:pointer;display:flex;justify-content:center;align-items:center}.uiCharacters .bottom .left .character:hover{background-color:#505360}.uiCharacters .bottom .left .character.selected{background-color:#69696e}.uiCharacters .bottom .right{width:400px;padding:10px;margin-left:30px;display:flex;flex-direction:column}.uiCharacters .bottom .right .portrait{height:205px;background-color:#2d2136;display:flex;justify-content:center;align-items:center}.uiCharacters .bottom .right .portrait .sprite{width:8px;height:8px;transform-origin:50% 50%;transform:scale(16);image-rendering:pixelated;image-rendering:optimizeSpeed;image-rendering:crisp-edges;display:none}.uiCharacters .bottom .right .info{height:30px;margin-bottom:10px;background-color:#2d2136;color:#f2f5f5;display:flex;justify-content:space-between;padding:0px 10px}.uiCharacters .bottom .right .info .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.uiCharacters .bottom .right .info .class{text-align:right;color:#aabebe}.uiCharacters .bottom .right .buttons{display:flex}.uiCharacters .bottom .right .buttons .btn{background-color:#3a71ba;width:calc((100% - (10px * 2)) / 3);float:left;margin-right:10px;color:#f2f5f5}.uiCharacters .bottom .right .buttons .btn:last-child{margin-right:0px}.uiCharacters .bottom .right .buttons .btn:hover{background-color:#42548d}.uiCharacters .bottom .right .buttons .btn.deleting{background-color:#d43346;color:#f2f5f5}.uiCharacters .message{height:30px;width:100%;margin-top:30px;float:left;text-align:center;color:#f2f5f5;filter:drop-shadow(0 -2px 0 #312136) drop-shadow(0 2px 0 #312136) drop-shadow(2px 0 0 #312136) drop-shadow(-2px 0 0 #312136)}.mobile .uiCharacters{height:300px}.mobile .uiCharacters .logo{display:none}
+.uiCharacters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+}
+.uiCharacters .logo {
+  width: 562px;
+  height: 200px;
+  margin-bottom: 60px;
+}
+.uiCharacters .bottom {
+  display: flex;
+  height: 300px;
+}
+.uiCharacters .bottom .left,
+.uiCharacters .bottom .right {
+  background-color: #3a3b4a;
+  filter: drop-shadow(0 -2px 0 #2d2136) drop-shadow(0 2px 0 #2d2136) drop-shadow(2px 0 0 #2d2136) drop-shadow(-2px 0 0 #2d2136);
+}
+.uiCharacters .bottom .left {
+  width: 400px;
+  overflow-y: auto;
+}
+.uiCharacters .bottom .left .character {
+  height: 50px;
+  width: 100%;
+  color: #f2f5f5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.uiCharacters .bottom .left .character:hover {
+  background-color: #505360;
+}
+.uiCharacters .bottom .left .character.selected {
+  background-color: #69696e;
+}
+.uiCharacters .bottom .right {
+  width: 400px;
+  padding: 10px;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+}
+.uiCharacters .bottom .right .portrait {
+  height: 205px;
+  background-color: #2d2136;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.uiCharacters .bottom .right .portrait .sprite {
+  width: 8px;
+  height: 8px;
+  transform-origin: 50% 50%;
+  transform: scale(16);
+  image-rendering: pixelated;
+  image-rendering: optimizeSpeed;
+  image-rendering: crisp-edges;
+  display: none;
+}
+.uiCharacters .bottom .right .info {
+  height: 30px;
+  margin-bottom: 10px;
+  background-color: #2d2136;
+  color: #f2f5f5;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+}
+.uiCharacters .bottom .right .info .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uiCharacters .bottom .right .info .class {
+  text-align: right;
+  color: #aabebe;
+}
+.uiCharacters .bottom .right .buttons {
+  display: flex;
+}
+.uiCharacters .bottom .right .buttons .btn {
+  background-color: #3a71ba;
+  width: calc((100% - (10px * 2)) / 3);
+  float: left;
+  margin-right: 10px;
+  color: #f2f5f5;
+}
+.uiCharacters .bottom .right .buttons .btn:last-child {
+  margin-right: 0px;
+}
+.uiCharacters .bottom .right .buttons .btn:hover {
+  background-color: #42548d;
+}
+.uiCharacters .bottom .right .buttons .btn.deleting {
+  background-color: #d43346;
+  color: #f2f5f5;
+}
+.uiCharacters .message {
+  height: 30px;
+  width: 100%;
+  margin-top: 30px;
+  float: left;
+  text-align: center;
+  color: #f2f5f5;
+  filter: drop-shadow(0px -2px 0px #312136) drop-shadow(0px 2px 0px #312136) drop-shadow(2px 0px 0px #312136) drop-shadow(-2px 0px 0px #312136);
+}
+.mobile .uiCharacters {
+  height: 300px;
+}
+.mobile .uiCharacters .logo {
+  display: none;
+}

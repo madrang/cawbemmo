@@ -18,6 +18,7 @@
 			padding-top: 8px;
 			margin: auto;
 		}
+
 	}
 
 	.bottom {
@@ -29,7 +30,7 @@
 			width: 100%;
 			height: 100%;
 			overflow-y: auto;
-			background-color: @darkGray;
+			background-color: @blackC;
 			display: flex;
 			flex-direction: column;
 
@@ -41,7 +42,7 @@
 					float: left;
 					padding: 4px;
 					height: 24px;
-					
+
 					&:nth-child(1) {
 						width: 10%;
 					}
@@ -50,12 +51,13 @@
 						width: 55%;
 					}
 
-					&:nth-child(3) {	
+					&:nth-child(3) {
 						width: 35%;
 					}
-				}
-			}
 
+				}
+
+			}
 
 			.onlineUser {
 				color: @grayC;
@@ -66,7 +68,7 @@
 					float: left;
 					padding: 4px;
 					height: 24px;
-					
+
 					&:nth-child(1) {
 						width: 10%;
 					}
@@ -75,17 +77,22 @@
 						width: 55%;
 					}
 
-					&:nth-child(3) {	
+					&:nth-child(3) {
 						width: 35%;
 					}
+
 				}
 
 				&:hover {
-					background-color: lighten(@darkGray, 25%);
+					background-color: @blackB;
 				}
+
 			}
+
 		}
+
 	}
+
 }
 
 .mobile .uiOnline {

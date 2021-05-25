@@ -160,7 +160,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-	background-color: @gray;
+	background-color: @grayB;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 }
@@ -168,18 +168,17 @@ body {
 ::-webkit-scrollbar-thumb {
 	-webkit-border-radius: 10px;
 	border-radius: 0px;
-	background: @lightGray;
+	background: @grayC;
 }
 
 :root {
-	scrollbar-color: @lightGray @gray !important;
+	scrollbar-color: @grayC @grayB !important;
 	scrollbar-width: thin !important;
-
 	--color-element-default: @white;
 	--color-element-arcane: @pinkA;
 	--color-element-frost: @blueA;
 	--color-element-fire: @redA;
-	--color-element-holy: @yellow;
+	--color-element-holy: @yellowA;
 	--color-element-poison: @tealB;
 }
 
@@ -204,7 +203,7 @@ body {
 }
 
 .color-red {
-	color: @red !important;
+	color: @redB !important;
 }
 
 .color-redA {
@@ -228,7 +227,7 @@ body {
 }
 
 .color-green {
-	color: @green !important;
+	color: @greenA !important;
 }
 
 .color-brownC {
@@ -331,14 +330,14 @@ body {
 
 	&.eq {
 		.quantity {
-			color: @yellow;
+			color: @yellowA;
 		}
 
 	}
 
 	&.new {
 		.quantity {
-			color: @green;
+			color: @greenA;
 		}
 
 	}

@@ -1,1 +1,112 @@
-.uiWardrobe{display:none;width:600px;height:350px;border:5px solid #3c3f4c;text-align:center;background-color:#373041}.uiWardrobe>.heading{color:#48edff;width:100%;height:36px;background-color:#3c3f4c;position:relative}.uiWardrobe>.heading .heading-text{padding-top:8px;margin:auto}.uiWardrobe .bottom{height:calc(100% - 36px)}.uiWardrobe .bottom .left,.uiWardrobe .bottom .right{float:left;height:100%}.uiWardrobe .bottom .left{width:calc(100% * .4)}.uiWardrobe .bottom .left .heading{width:100%;height:30px;color:#ffeb38;padding-top:7px}.uiWardrobe .bottom .left .list{width:100%;height:calc(100% - 30px);overflow:auto}.uiWardrobe .bottom .left .list .skinName{width:100%;cursor:pointer;color:white;padding:5px}.uiWardrobe .bottom .left .list .skinName:hover{background-color:#3c3f4c}.uiWardrobe .bottom .left .list .skinName.active{color:#48edff}.uiWardrobe .bottom .left .list .skinName.current:after{content:' (x)'}.uiWardrobe .bottom .right{width:calc(100% * .6);position:relative;background-color:#2d2136}.uiWardrobe .bottom .right .heading{width:100%;height:30px;color:#ffeb38;padding-top:7px}.uiWardrobe .bottom .right .preview{padding-left:calc((100% - (8 * 16px)) / 2);position:relative;height:calc(100% - 80px)}.uiWardrobe .bottom .right .preview .sprite{width:8px;height:8px;position:absolute;left:calc((100% - (8 * 16px)) / 2);top:calc((100% - (8 * 16px)) / 2);transform:scale(16);transform-origin:0% 0%;image-rendering:optimizeSpeed;image-rendering:pixelated;image-rendering:crisp-edges}.uiWardrobe .bottom .right .buttons{width:100%;padding:0px 10px;height:50px}.uiWardrobe .bottom .right .buttons .btn{float:left;width:calc((100% - 50px) / 2);height:40px;padding-top:12px;color:white;cursor:pointer}.uiWardrobe .bottom .right .buttons .btn:first-child{margin-right:50px}.uiWardrobe .bottom .right .buttons .btnCancel{background-color:#d43346}.uiWardrobe .bottom .right .buttons .btnCancel:hover{background-color:#ff4252}.uiWardrobe .bottom .right .buttons .btnApply{background-color:#4ac441}.uiWardrobe .bottom .right .buttons .btnApply:hover{background-color:#80f643}
+.uiWardrobe {
+  display: none;
+  width: 600px;
+  height: 350px;
+  border: 5px solid #3c3f4c;
+  text-align: center;
+  background-color: #373041;
+}
+.uiWardrobe > .heading {
+  color: #48edff;
+  width: 100%;
+  height: 36px;
+  background-color: #3c3f4c;
+  position: relative;
+}
+.uiWardrobe > .heading .heading-text {
+  padding-top: 8px;
+  margin: auto;
+}
+.uiWardrobe .bottom {
+  height: calc(100% - 36px);
+}
+.uiWardrobe .bottom .left,
+.uiWardrobe .bottom .right {
+  float: left;
+  height: 100%;
+}
+.uiWardrobe .bottom .left {
+  width: calc(100% * 0.4);
+}
+.uiWardrobe .bottom .left .heading {
+  width: 100%;
+  height: 30px;
+  color: #ffeb38;
+  padding-top: 7px;
+}
+.uiWardrobe .bottom .left .list {
+  width: 100%;
+  height: calc(100% - 30px);
+  overflow: auto;
+}
+.uiWardrobe .bottom .left .list .skinName {
+  width: 100%;
+  cursor: pointer;
+  color: white;
+  padding: 5px;
+}
+.uiWardrobe .bottom .left .list .skinName:hover {
+  background-color: #3c3f4c;
+}
+.uiWardrobe .bottom .left .list .skinName.active {
+  color: #48edff;
+}
+.uiWardrobe .bottom .left .list .skinName.current:after {
+  content: ' (x)';
+}
+.uiWardrobe .bottom .right {
+  width: calc(100% * 0.6);
+  position: relative;
+  background-color: #2d2136;
+}
+.uiWardrobe .bottom .right .heading {
+  width: 100%;
+  height: 30px;
+  color: #ffeb38;
+  padding-top: 7px;
+}
+.uiWardrobe .bottom .right .preview {
+  padding-left: calc((100% - (8 * 16px)) / 2);
+  position: relative;
+  height: calc(100% - 80px);
+}
+.uiWardrobe .bottom .right .preview .sprite {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  left: calc((100% - (8 * 16px)) / 2);
+  top: calc((100% - (8 * 16px)) / 2);
+  transform: scale(16);
+  transform-origin: 0% 0%;
+  image-rendering: optimizeSpeed;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.uiWardrobe .bottom .right .buttons {
+  width: 100%;
+  padding: 0px 10px;
+  height: 50px;
+}
+.uiWardrobe .bottom .right .buttons .btn {
+  float: left;
+  width: calc((100% - 50px) / 2);
+  height: 40px;
+  padding-top: 12px;
+  color: white;
+  cursor: pointer;
+}
+.uiWardrobe .bottom .right .buttons .btn:first-child {
+  margin-right: 50px;
+}
+.uiWardrobe .bottom .right .buttons .btnCancel {
+  background-color: #d43346;
+}
+.uiWardrobe .bottom .right .buttons .btnCancel:hover {
+  background-color: #ff4252;
+}
+.uiWardrobe .bottom .right .buttons .btnApply {
+  background-color: #4ac441;
+}
+.uiWardrobe .bottom .right .buttons .btnApply:hover {
+  background-color: #80f643;
+}
