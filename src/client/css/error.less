@@ -1,9 +1,8 @@
 @import "colors.less";
 
-@font-face
-{
-    font-family: bitty;
-    src: url('../fonts/bitty.ttf');
+@font-face {
+	font-family: bitty;
+	src: url('../fonts/bitty.ttf');
 }
 
 * {
@@ -37,21 +36,26 @@ body {
 	margin-bottom: 20px;
 }
 
-.error, .discord {
-	color: @red;
+.error,
+.discord {
+	color: @redB;
 	font-size: 24px;
 	padding: 10px;
-	filter:
-		drop-shadow(0px -6px 0px @blackD) 
-		drop-shadow(0px 6px 0px @blackD)
-		drop-shadow(6px 0px 0px @blackD) 
-		drop-shadow(-6px 0px 0px @blackD);
+	filter: drop-shadow(0px -6px 0px @blackD) 
+	drop-shadow(0px 6px 0px @blackD)
+	drop-shadow(6px 0px 0px @blackD) 
+	drop-shadow(-6px 0px 0px @blackD);
 }
 
 .discord {
 	justify-self: end;
-	a:visited, a:link, a:active, a:hover {
+
+	a:visited,
+	a:link,
+	a:active,
+	a:hover {
 		color: @yellowB;
 		text-decoration: none;
 	}
+
 }

@@ -393,6 +393,9 @@ module.exports = {
 		if (config.name)
 			config.name = config.name.split('_').join(' ');
 
+		if (config.description)
+			config.description = config.description.split('_').join(' ');
+
 		if (config.spellName)
 			config.spellName = config.spellName.split('_').join(' ');
 

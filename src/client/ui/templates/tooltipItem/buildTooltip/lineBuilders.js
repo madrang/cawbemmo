@@ -1,53 +1,14 @@
 define([
-	'js/input',
-	'js/system/events',
 	'js/misc/statTranslations',
-	'ui/templates/tooltipItem/getCompareItem'
+	'ui/templates/tooltipItem/buildTooltip/stringifyStatValue'
 ], function (
-	input,
-	events,
 	statTranslations,
-	getCompareItem
+	stringifyStatValue
 ) {
 	let item = null;
 	let compare = null;
 	let shiftDown = null;
 	let equipErrors = null;
-
-	const percentageStats = [
-		'addCritChance',
-		'addCritemultiplier',
-		'addAttackCritChance',
-		'addAttackCritemultiplier',
-		'addSpellCritChance',
-		'addSpellCritemultiplier',
-		'sprintChance',
-		'xpIncrease',
-		'blockAttackChance',
-		'blockSpellChance',
-		'dodgeAttackChance',
-		'dodgeSpellChance',
-		'attackSpeed',
-		'castSpeed',
-		'itemQuantity',
-		'magicFind',
-		'catchChance',
-		'catchSpeed',
-		'fishRarity',
-		'fishWeight',
-		'fishItems'
-	];
-
-	const getStatStringValue = (statName, statValue) => {
-		let res = statValue;
-		if (statName.indexOf('CritChance') > -1)
-			res = res / 20;
-
-		if (percentageStats.includes(statName) || statName.indexOf('Percent') > -1 || (statName.indexOf('element') === 0 && statName.indexOf('Resist') === -1))
-			res += '%';
-
-		return res + '';
-	};
 
 	const init = (_item, _compare, _shiftDown, _equipErrors) => {
 		item = _item;
@@ -56,10 +17,16 @@ define([
 		equipErrors = _equipErrors;
 	};
 
-	const helpers = {
-		div: (className, children = '') => {
+	const lineBuilders = {
+		div: (className, children) => {
+			if (!children)
+				return null;
+
 			if (children.join)
 				children = children.join('');
+
+			if (!children.length)
+				return null;
 
 			return `<div class="${className}">${children}</div>`;
 		},
@@ -74,21 +41,21 @@ define([
 
 		type: () => {
 			if (!item.type || item.type === item.name)
-				return;
+				return null;
 
 			return item.type;
 		},
 
 		power: () => {
 			if (!item.power)
-				return;
+				return null;
 
 			return (new Array(item.power + 1)).join('+');
 		},
 
 		implicitStats: () => {
 			if (!item.implicitStats)
-				return;
+				return null;
 
 			const tempImplicitStats = $.extend(true, [], item.implicitStats);
 
@@ -127,7 +94,7 @@ define([
 				.map(({ stat, value }) => {
 					let statName = statTranslations.translate(stat);
 
-					const prettyValue = getStatStringValue(statName, value);
+					const prettyValue = stringifyStatValue(statName, value);
 
 					let rowClass = '';
 
@@ -142,7 +109,12 @@ define([
 				})
 				.join('');
 
-			return html;
+			const result = (
+				lineBuilders.div('space', ' ') +
+				html
+			);
+
+			return result;
 		},
 
 		stats: () => {
@@ -186,7 +158,7 @@ define([
 					if (isEnchanted)
 						statName = statName.substr(1);
 
-					const prettyValue = getStatStringValue(statName, tempStats[s]);
+					const prettyValue = stringifyStatValue(statName, tempStats[s]);
 					statName = statTranslations.translate(statName);
 
 					let rowClass = '';
@@ -215,15 +187,24 @@ define([
 				})
 				.join('');
 
-			return html;
+			if (!html)
+				return null;
+
+			const result = (
+				lineBuilders.div('space', ' ') +
+				lineBuilders.div('line', ' ') +
+				lineBuilders.div('smallSpace', ' ') +
+				html + 
+				lineBuilders.div('smallSpace', ' ') +
+				lineBuilders.div('line', ' ')
+			);
+
+			return result;
 		},
 
 		effects: () => {
-			if (item.description)
-				return item.description;
-
 			if (!item.effects || !item.effects.length || !item.effects[0].text || item.type === 'mtx')
-				return;
+				return null;
 
 			let html = '';
 
@@ -248,14 +229,17 @@ define([
 
 		spellName: () => {
 			if (!item.spell || item.ability)
-				return;
+				return null;
 
-			return helpers.div(`spellName q${item.spell.quality}`, item.spell.name);
+			return (
+				lineBuilders.div('space', ' ') +
+				lineBuilders.div(`spellName q${item.spell.quality}`, item.spell.name)
+			);
 		},
 
 		damage: () => {
 			if (!item.spell || !item.spell.values)
-				return;
+				return null;
 
 			const abilityValues = Object.entries(item.spell.values)
 				.map(([k, v]) => {
@@ -287,41 +271,44 @@ define([
 
 		requires: (className, children) => {
 			if (!item.requires && !item.level && (!item.factions || !item.factions.length))
-				return;
+				return null;
 
 			if (equipErrors.length)
 				className += ' high-level';
 
-			return helpers.div(className, children);
+			return (
+				lineBuilders.div('space', ' ') +
+				lineBuilders.div(className, 'requires')
+			);
 		},
 
 		requireLevel: className => {
 			if (!item.level)
-				return;
+				return null;
 
 			if (equipErrors.includes('level'))
 				className += ' high-level';
 
 			const level = item.level.push ? `${item.level[0]} - ${item.level[1]}` : item.level;
 
-			return helpers.div(className, `level: ${level}`);
+			return lineBuilders.div(className, `level: ${level}`);
 		},
 
 		requireStats: className => {
 			if (!item.requires || !item.requires[0])
-				return;
+				return null;
 
 			if (equipErrors.includes('stats'))
 				className += ' high-level';
 			
 			let html = `${item.requires[0].stat}: ${item.requires[0].value}`;
 
-			return helpers.div(className, html);
+			return lineBuilders.div(className, html);
 		},
 
 		requireFaction: () => {
 			if (!item.factions)
-				return;
+				return null;
 
 			let htmlFactions = '';
 
@@ -340,28 +327,58 @@ define([
 
 		worth: () => {
 			if (!item.worthText)
-				return;
+				return null;
 
 			return `<br />value: ${item.worthText}`;
 		},
 
 		info: () => {
-			if (item.material || item.quest || item.eq || item.ability)
-				return;
+			if (!item.slot)
+				return null;
 
-			if (item.cd)
-				return `cooldown: ${item.cd}`;
-			else if (item.uses)
-				return `uses: ${item.uses}`;
-			else if (!shiftDown && compare)
-				return '[shift] to compare'; 
+			let text = null;
+
+			if (!shiftDown && compare)
+				text = '[shift] to compare'; 
 			else if (isMobile && compare && !shiftDown)
-				return 'tap again to compare';
+				text = 'tap again to compare';
+
+			if (!text)
+				return null;
+
+			return (
+				lineBuilders.div('space', ' ') +
+				text
+			);
+		},
+
+		description: () => {
+			if (!item.description)
+				return null;
+
+			return (
+				lineBuilders.div('space', ' ') +
+				item.description
+			);
+		},
+
+		cd: () => {
+			if (!item.cd)
+				return null;
+
+			return `cooldown: ${item.cd}`;
+		},
+
+		uses: () => {
+			if (!item.uses)
+				return null;
+			
+			return `uses: ${item.uses}`;
 		}
 	};
 
 	return {
 		init,
-		helpers
+		lineBuilders
 	};
 });
