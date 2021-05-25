@@ -187,6 +187,9 @@ define([
 				})
 				.join('');
 
+			if (!html)
+				return null;
+
 			const result = (
 				lineBuilders.div('space', ' ') +
 				lineBuilders.div('line', ' ') +

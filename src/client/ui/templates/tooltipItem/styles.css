@@ -10,7 +10,7 @@
   background-color: rgba(60, 63, 76, 0.95);
   pointer-events: none;
   padding: 10px;
-  color: #f2f5f5;
+  color: #fcfcfc;
   align-items: center;
   line-height: 18px;
   max-width: 300px;
@@ -73,7 +73,7 @@
   color: #44cb95 !important;
 }
 .uiTooltipItem .tooltip .effects {
-  color: #f2f5f5;
+  color: #fcfcfc;
 }
 .uiTooltipItem .tooltip .faction {
   color: #929398;
@@ -98,6 +98,7 @@
 }
 .uiTooltipItem .tooltip .description {
   color: #ca752f;
+  text-align: center;
 }
 .uiTooltipItem .tooltip .worth.no-afford {
   color: #d43346;
@@ -105,7 +106,7 @@
 .uiTooltipItem > .btn {
   position: absolute;
   background-color: #3fa7dd;
-  color: #f2f5f5;
+  color: #fcfcfc;
   padding: 10px;
   text-align: center;
 }

@@ -123,7 +123,7 @@ body {
   width: 16px;
 }
 ::-webkit-scrollbar-track {
-  background-color: #c0c3cf;
+  background-color: #3c3f4c;
   -webkit-border-radius: 0px;
   border-radius: 0px;
 }
@@ -133,9 +133,9 @@ body {
   background: #929398;
 }
 :root {
-  scrollbar-color: #929398 #c0c3cf !important;
+  scrollbar-color: #929398 #3c3f4c !important;
   scrollbar-width: thin !important;
-  --color-element-default: #f2f5f5;
+  --color-element-default: #fcfcfc;
   --color-element-arcane: #fc66f7;
   --color-element-frost: #48edff;
   --color-element-fire: #ff4252;
@@ -143,7 +143,7 @@ body {
   --color-element-poison: #51fc9a;
 }
 .q0 {
-  color: #f2f5f5;
+  color: #fcfcfc;
 }
 .q1 {
   color: #4ac441;
@@ -185,7 +185,7 @@ body {
   color: #763b3b !important;
 }
 .color-grayA {
-  color: #f2f5f5 !important;
+  color: #fcfcfc !important;
 }
 .color-grayB {
   color: #c0c3cf !important;
@@ -235,7 +235,7 @@ body {
   left: 6px;
   bottom: 3px;
   position: absolute;
-  color: #f2f5f5;
+  color: #fcfcfc;
   filter: drop-shadow(0px -2px 0px #312136) drop-shadow(0px 2px 0px #312136) drop-shadow(2px 0px 0px #312136) drop-shadow(-2px 0px 0px #312136);
   -moz-filter: drop-shadow(0px -2px 0px #312136) drop-shadow(0px 2px 0px #312136) drop-shadow(2px 0px 0px #312136) drop-shadow(-2px 0px 0px #312136);
 }

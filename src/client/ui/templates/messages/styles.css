@@ -53,7 +53,7 @@
   color: #c0c3cf;
 }
 .uiMessages .list .list-message.q0 {
-  color: #f2f5f5;
+  color: #fcfcfc;
 }
 .uiMessages .list .list-message.q1 {
   color: #4ac441;
@@ -101,7 +101,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #f2f5f5;
+  color: #fcfcfc;
   background-color: #3a71ba;
   cursor: pointer;
   padding: 0px 10px;
@@ -116,11 +116,11 @@
 .uiMessages .bottom .el {
   flex: 1;
   width: 100%;
-  color: #f2f5f5;
+  color: #fcfcfc;
 }
 .uiMessages .bottom .el.textbox.message {
   display: none;
-  background-color: #c0c3cf;
+  background-color: #3c3f4c;
   text-align: left;
   padding: 5px 10px;
 }
@@ -130,7 +130,7 @@
   padding-left: 10px;
   background-color: transparent;
   height: 35px;
-  color: #f2f5f5;
+  color: #fcfcfc;
   text-align: left;
   filter: drop-shadow(0px -2px 0px #312136) drop-shadow(0px 2px 0px #312136) drop-shadow(2px 0px 0px #312136) drop-shadow(-2px 0px 0px #312136);
   -moz-filter: drop-shadow(0px -2px 0px #312136) drop-shadow(0px 2px 0px #312136) drop-shadow(2px 0px 0px #312136) drop-shadow(-2px 0px 0px #312136);
@@ -161,7 +161,7 @@
 .uiMessages .bottom.channelOptions .option:hover,
 .uiMessages .bottom.channelOptions .option.selected {
   background-color: #69696e;
-  color: #f2f5f5;
+  color: #fcfcfc;
 }
 .uiMessages.typing {
   box-shadow: 0 -2px 0 #2d2136, 0 2px 0 #2d2136, 2px 0 0 #2d2136, -2px 0 0 #2d2136;
@@ -266,7 +266,7 @@
 .mobile .uiMessages.typing .keyboard .key {
   flex: 1;
   background-color: #505360;
-  color: #f2f5f5;
+  color: #fcfcfc;
   padding: 8px 10px;
   text-align: center;
 }
