@@ -66,11 +66,11 @@
 		/* We duplicate this for firefox which doesn't like the webkit selector */
 		input,
 		.textbox {
-			-webkit-appearance: none;
-			box-shadow: 0 0 0px 20px @black inset;
+			background-color: @black;
 			color: @white;
 			-webkit-text-fill-color: @white;
 			margin-bottom: @boxPadding;
+			filter: none;
 		}
 
 		.message {
