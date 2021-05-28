@@ -30,7 +30,13 @@ const onRequest = (socket, msg, callback) => {
 		if (!router.allowedGlobal(msg))
 			return;
 
+		const source = cons.players.find(p => p.socket.id === socket.id);
+
 		msg.socket = socket;
+
+		if (source)
+			msg.data.sourceId = source.id;
+
 		global[msg.module][msg.method](msg);
 	}
 };
