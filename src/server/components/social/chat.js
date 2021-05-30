@@ -4,17 +4,30 @@ const profanities = require('../../misc/profanities');
 const canChat = require('./canChat');
 
 const sendRegularMessage = ({ obj }, msg) => {
-	let charname = obj.auth.charname;
+	const charname = obj.auth.charname;
 
-	let prefix = roles.getRoleMessagePrefix(obj) || '';
-	let msgStyle = roles.getRoleMessageStyle(obj) || 'color-grayB';
+	const msgEvent = {
+		username: obj.account,
+		tagPrefix: '(',
+		tagSuffix: ')',
+		tags: [],
+		msgStyle: 'color-grayB'
+	};
+
+	events.emit('onBeforeGetChatStyles', msgEvent);
+
+	let usePrefix = '';
+	if (msgEvent.tags.length)
+		usePrefix = `${msgEvent.tagPrefix}${msgEvent.tags.join(' ')}${msgEvent.tagSuffix} `;
+
+	const finalMessage = `${usePrefix}${charname}: ${msg.data.message}`;
 
 	cons.emit('event', {
 		event: 'onGetMessages',
 		data: {
 			messages: [{
-				class: msgStyle,
-				message: prefix + charname + ': ' + msg.data.message,
+				class: msgEvent.msgStyle,
+				message: finalMessage,
 				item: msg.data.item,
 				type: 'chat',
 				source: obj.name
