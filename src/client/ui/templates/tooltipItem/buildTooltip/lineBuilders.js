@@ -329,7 +329,10 @@ define([
 			if (!item.worthText)
 				return null;
 
-			return `<br />value: ${item.worthText}`;
+			return (
+				lineBuilders.div('space', ' ') +
+				`value: ${item.worthText}`
+			);
 		},
 
 		info: () => {
