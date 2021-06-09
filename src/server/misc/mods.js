@@ -49,7 +49,7 @@ module.exports = {
 		if (mod.disabled)
 			return;
 
-		const isMapThread = !!process.send;
+		const isMapThread = global.instancer;
 		mod.isMapThread = isMapThread;
 
 		mod.events = events;
