@@ -109,7 +109,8 @@ module.exports = {
 			o = this;
 		}
 
-		let syncTypes = ['portrait', 'area'];
+		const syncTypes = ['portrait', 'area'];
+		const ignoreKeysWhenNotSelf = ['account'];
 
 		for (let p in o) {
 			let value = o[p];
@@ -119,9 +120,10 @@ module.exports = {
 			let type = typeof (value);
 			if (type === 'function')
 				continue;
-			else if (type !== 'object')
-				result[p] = value;
-			else if (type === 'undefined')
+			else if (type !== 'object') {
+				if (self || !ignoreKeysWhenNotSelf.includes(p))
+					result[p] = value;
+			} else if (type === 'undefined')
 				continue;
 			else {
 				if (value.type) {
