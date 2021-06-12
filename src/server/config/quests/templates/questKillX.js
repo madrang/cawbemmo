@@ -61,6 +61,7 @@ module.exports = {
 	events: {
 		afterKillMob: function (mob) {
 			if (
+				!mob.name ||
 				this.obj.zoneName !== this.zoneName ||
 				mob.name.toLowerCase() !== this.mobName.toLowerCase() || 
 				this.have >= this.need
