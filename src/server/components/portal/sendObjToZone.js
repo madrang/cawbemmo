@@ -4,6 +4,13 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	if (obj.zoneName === zoneName) {
 		physics.removeObject(obj, obj.x, obj.y);
 
+		if (toRelativePos) {
+			toPos = {
+				x: invokingObj.obj.x + toRelativePos.x,
+				y: invokingObj.obj.y + toRelativePos.y
+			};
+		}
+
 		obj.x = toPos.x;
 		obj.y = toPos.y;
 
