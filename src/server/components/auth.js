@@ -121,7 +121,10 @@ module.exports = {
 		});
 	},
 
-	simplify: function () {
+	simplify: function (self) {
+		if (!self)
+			return;
+		
 		return {
 			type: 'auth',
 			username: this.username,

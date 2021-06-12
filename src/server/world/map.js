@@ -313,11 +313,12 @@ module.exports = {
 		return cell + offset;
 	},
 
-	getCellInfo: function (gid, x, y) {
+	getCellInfo: function (gid, x, y, layerName) {
 		const cellInfoMsg = {
 			mapName: this.name,
 			x,
 			y,
+			layerName,
 			tilesets: mapFile.tilesets
 		};
 		events.emit('onBeforeGetCellInfo', cellInfoMsg);
@@ -361,7 +362,7 @@ module.exports = {
 				return;
 			}
 
-			let cellInfo = this.getCellInfo(cell, x, y);
+			let cellInfo = this.getCellInfo(cell, x, y, layerName);
 			let sheetName = cellInfo.sheetName;
 
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
@@ -394,7 +395,7 @@ module.exports = {
 			const y = (cell.y / mapScale) - 1;
 
 			let clientObj = (layerName === 'clientObjects');
-			let cellInfo = this.getCellInfo(cell.gid, x, y);
+			let cellInfo = this.getCellInfo(cell.gid, x, y, layerName);
 
 			let name = (cell.name || '');
 			let objZoneName = name;

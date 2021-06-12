@@ -1,5 +1,5 @@
-# Base image on Node.js 10.x LTS (dubnium)
-FROM node:12-alpine
+# Base image on Node.js latest LTS
+FROM node:lts-alpine
 
 # Create app directory
 WORKDIR /usr/src/isleward

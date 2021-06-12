@@ -108,6 +108,9 @@ module.exports = {
 		if (blueprint.uses)
 			item.uses = blueprint.uses;
 
+		if (blueprint.description)
+			item.description = blueprint.description;
+
 		return item;
 	},
 
