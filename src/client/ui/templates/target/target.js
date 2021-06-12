@@ -71,6 +71,8 @@ define([
 						});
 					});
 
+					events.emit('onBeforePlayerContext', target, inspectContext);
+
 					events.emit('onContextMenu', inspectContext, originalEvent);
 				}
 
@@ -91,6 +93,8 @@ define([
 					callback: this.onAction.bind(this, action, false)
 				});
 			});
+
+			events.emit('onBeforeNpcContext', target, talkContext);
 
 			events.emit('onContextMenu', talkContext, originalEvent);
 
