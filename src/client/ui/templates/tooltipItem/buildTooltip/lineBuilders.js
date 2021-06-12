@@ -94,7 +94,7 @@ define([
 				.map(({ stat, value }) => {
 					let statName = statTranslations.translate(stat);
 
-					const prettyValue = stringifyStatValue(statName, value);
+					const prettyValue = stringifyStatValue(stat, value);
 
 					let rowClass = '';
 
