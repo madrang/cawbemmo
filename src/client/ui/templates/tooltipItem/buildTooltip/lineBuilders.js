@@ -341,10 +341,10 @@ define([
 
 			let text = null;
 
-			if (!shiftDown && compare)
-				text = '[shift] to compare'; 
-			else if (isMobile && compare && !shiftDown)
+			if (isMobile && compare && !shiftDown)
 				text = 'tap again to compare';
+			else if (!shiftDown && compare)
+				text = '[shift] to compare';
 
 			if (!text)
 				return null;
