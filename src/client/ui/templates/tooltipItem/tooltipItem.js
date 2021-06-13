@@ -31,10 +31,11 @@ define([
 		},
 
 		onShowItemTooltip: function (item, pos, canCompare, bottomAlign) {
-			this.item = item;
 			this.removeButton();
 
 			const html = buildTooltip(this, item, pos, canCompare, bottomAlign);
+
+			this.item = item;
 
 			const el = this.tooltip;
 			el.html(html);
