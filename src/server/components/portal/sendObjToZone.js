@@ -1,5 +1,7 @@
 const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos }) => {
-	const { instance: { physics, syncer: globalSyncer } } = obj;
+	const { serverId, instance: { physics, syncer: globalSyncer } } = obj;
+
+	globalSyncer.flushForTarget(serverId);
 
 	if (obj.zoneName === zoneName) {
 		physics.removeObject(obj, obj.x, obj.y);

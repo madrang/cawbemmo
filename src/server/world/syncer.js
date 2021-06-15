@@ -14,7 +14,7 @@ module.exports = {
 		let oList = objects.objects;
 		let oLen = oList.length;
 
-		let pList = oList.filter(f => f.player);
+		let pList = oList.filter(f => f.player && !f.destroyed);
 		let pLen = pList.length;
 
 		if (pLen === 0)
@@ -164,6 +164,16 @@ module.exports = {
 			to: to,
 			obj: obj
 		});
+	},
+
+	flushForTarget: function (targetServerId) {
+		const buffer = this.buffer;
+
+		for (let p in buffer) {
+			const list = buffer[p];
+
+			list.spliceWhere(l => l.to === targetServerId);
+		}
 	},
 
 	send: function () {
