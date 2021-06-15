@@ -1,7 +1,7 @@
 module.exports = {
 	id: 'example',
 	name: 'Example',
-	decription: 'An example faction.',
+	description: 'An example faction.',
 
 	initialRep: 1000,
 	tiers: [{
