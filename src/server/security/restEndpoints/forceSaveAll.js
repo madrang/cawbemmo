@@ -1,14 +1,22 @@
 const bcrypt = require('bcrypt-nodejs');
-const roles = require('../../config/roles');
 
 const doSaveAll = async (res, config, err, compareResult) => {
 	if (!compareResult)
 		return;
 
-	let roleLevel = roles.getRoleLevel({
-		account: config.username
+	const char = await io.getAsync({
+		table: 'character',
+		key: config.username
 	});
-	if (roleLevel < 9)
+
+	if (!char)
+		return;
+
+	const auth = (char.components || []).find(c => c.type === 'auth');
+	if (!auth)
+		return;
+
+	if (auth.accountLevel < 9)
 		return;
 
 	await atlas.returnWhenZonesIdle();
@@ -42,7 +50,7 @@ module.exports = async (req, res, next) => {
 			.join(' ');
 	});
 
-	if (['msg', 'username', 'pwd'].some(p => !config[p]))
+	if (['msg', 'username', 'pwd', 'character'].some(p => !config[p]))
 		return;
 
 	let storedPassword = await io.getAsync({

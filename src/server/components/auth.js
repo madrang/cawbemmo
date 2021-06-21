@@ -2,7 +2,6 @@
 const bcrypt = require('bcrypt-nodejs');
 const messages = require('../misc/messages');
 const skins = require('../config/skins');
-const roles = require('../config/roles');
 const profanities = require('../misc/profanities');
 const fixes = require('../fixes/fixes');
 const spirits = require('../config/spirits');
@@ -47,6 +46,8 @@ const getCreateLock = async () => {
 //Component Definition
 module.exports = {
 	type: 'auth',
+
+	accountLevel: 1,
 
 	username: null,
 	charname: null,
@@ -129,7 +130,8 @@ module.exports = {
 			type: 'auth',
 			username: this.username,
 			charname: this.charname,
-			skins: this.skins
+			skins: this.skins,
+			accountLevel: this.accountLevel
 		};
 	},
 
@@ -222,8 +224,7 @@ module.exports = {
 	},
 
 	getSkinList: function (msg) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
+		const skinList = skins.getSkinList(this.skins);
 
 		msg.callback(skinList);
 	},
@@ -252,8 +253,7 @@ module.exports = {
 	},
 
 	verifySkin: function (character) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
+		const skinList = skins.getSkinList(this.skins);
 
 		if (!skinList.some(s => (s.id === character.skinId))) {
 			character.skinId = '1.0';
@@ -263,8 +263,7 @@ module.exports = {
 	},
 
 	doesOwnSkin: function (skinId) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
+		const skinList = skins.getSkinList(this.skins);
 
 		return skinList.some(s => s.id === (skinId + '') || s === '*');
 	},

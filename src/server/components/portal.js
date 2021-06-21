@@ -1,5 +1,3 @@
-const roles = require('../config/roles');
-
 const sendObjToZone = require('./portal/sendObjToZone');
 
 module.exports = {
@@ -21,10 +19,6 @@ module.exports = {
 	collisionEnter: async function (obj) {
 		if (!obj.player)
 			return;
-		else if (this.patronLevel) {
-			if (!roles.isRoleLevel(obj, this.patronLevel, 'enter this area'))
-				return;
-		}
 
 		const { toZone: zoneName, toPos, toRelativePos } = this;
 

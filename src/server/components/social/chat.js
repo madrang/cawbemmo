@@ -1,4 +1,3 @@
-const roles = require('../../config/roles');
 const events = require('../../misc/events');
 const profanities = require('../../misc/profanities');
 const canChat = require('./canChat');
