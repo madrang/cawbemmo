@@ -2,7 +2,6 @@ const tableNames = [
 	'character',
 	'characterList',
 	'stash',
-	'skins',
 	'login',
 	'leaderboard',
 	'customMap',

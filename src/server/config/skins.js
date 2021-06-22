@@ -1,6 +1,6 @@
-let events = require('../misc/events');
+const events = require('../misc/events');
 
-let config = {
+const config = {
 	wizard: {
 		name: 'Wizard',
 		sprite: [0, 0],
@@ -35,27 +35,22 @@ module.exports = {
 		return config[skinId];
 	},
 
-	getSkinList: function (skins) {
-		let list = Object.keys(config)
-			.filter(function (s) {
-				return ((config[s].default) || (skins.some(f => ((f === s) || (f === '*')))));
-			})
-			.map(function (s) {
-				let res = extend({}, config[s]);
-				res.id = s;
-				return res;
-			});
+	getList: function (skins) {
+		const result = Object
+			.entries(config)
+			.map(([skinId, skinConfig]) => {
+				const { sprite: [ spriteX, spriteY ] } = skinConfig;
 
-		let result = [];
-		list.forEach(function (skin) {
-			result.push({
-				name: skin.name,
-				id: skin.id,
-				sprite: skin.sprite[0] + ',' + skin.sprite[1],
-				spritesheet: skin.spritesheet,
-				defaultSpirit: skin.defaultSpirit
+				const serializedSprite = `${spriteX},${spriteY}`;
+
+				const skin = {
+					id: skinId,
+					...skinConfig,
+					sprite: serializedSprite
+				};
+
+				return skin;
 			});
-		}, this);
 
 		return result;
 	},
