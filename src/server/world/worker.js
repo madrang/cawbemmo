@@ -17,7 +17,6 @@ let spells = require('../config/spells');
 let recipes = require('../config/recipes/recipes');
 let itemTypes = require('../items/config/types');
 let mapList = require('../config/maps/mapList');
-let sheets = require('../security/sheets');
 let itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
 
@@ -31,7 +30,6 @@ let onCpnsReady = async function () {
 	itemTypes.init();
 	mapList.init();
 	recipes.init();
-	sheets.init();
 	itemEffects.init();
 	profanities.init();
 	await clientConfig.init();

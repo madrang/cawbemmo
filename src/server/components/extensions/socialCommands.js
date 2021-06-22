@@ -1,4 +1,3 @@
-const roles = require('../../config/roles');
 const generator = require('../../items/generator');
 const configSlots = require('../../items/config/slots');
 const configMaterials = require('../../items/config/materials');
@@ -68,15 +67,18 @@ const contextActions = [];
 const commandActions = {};
 
 module.exports = {
+	actions: [],
+
 	customChannels: [],
-	roleLevel: null,
 
 	init: function (blueprint) {
 		if (this.customChannels) {
 			this.customChannels = this.customChannels
 				.filter((c, i) => (this.customChannels.indexOf(c) === i));
 		}
+	},
 
+	calculateActions: function () {
 		const chatCommandConfig = {
 			localCommands,
 			contextActions: extend([], contextActions),
@@ -93,14 +95,8 @@ module.exports = {
 			this[actionName] = actionHandler.bind(this);
 		});
 
-		this.roleLevel = roles.getRoleLevel(this.obj);
-
-		this.calculateActions(chatCommandConfig.contextActions);
-	},
-
-	calculateActions: function (actions) {
-		this.actions = actions
-			.filter(c => this.roleLevel >= commandRoles[c.command]);
+		this.actions = chatCommandConfig.contextActions
+			.filter(c => this.obj.auth.accountLevel >= commandRoles[c.command]);
 	},
 
 	onBeforeChat: function (msg) {
@@ -124,7 +120,7 @@ module.exports = {
 				}]
 			});
 			return;
-		} else if (this.roleLevel < commandRoles[actionName]) {
+		} else if (this.obj.auth.accountLevel < commandRoles[actionName]) {
 			this.obj.socket.emit('events', {
 				onGetMessages: [{
 					messages: [{
@@ -321,7 +317,7 @@ module.exports = {
 		const msg = [
 			'You can use the following commands:', 
 			...Object.keys(commandRoles)
-				.filter(c => this.roleLevel >= commandRoles[c])
+				.filter(c => this.obj.auth.accountLevel >= commandRoles[c])
 				.map(c => `/${c}`)
 		].join('<br />');
 	

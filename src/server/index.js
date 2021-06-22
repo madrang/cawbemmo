@@ -12,7 +12,6 @@ let spells = require('./config/spells');
 let itemTypes = require('./items/config/types');
 let recipes = require('./config/recipes/recipes');
 let mapList = require('./config/maps/mapList');
-let sheets = require('./security/sheets');
 let fixes = require('./fixes/fixes');
 let profanities = require('./misc/profanities');
 const routerConfig = require('./security/routerConfig');
@@ -57,7 +56,6 @@ let startup = {
 		await leaderboard.init();
 
 		atlas.init();
-		sheets.init();
 	},
 
 	onError: async function (e) {
