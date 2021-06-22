@@ -131,7 +131,7 @@ module.exports = {
 			username: this.username,
 			charname: this.charname,
 			skins: this.skins,
-			accountLevel: this.accountLevel
+			accountInfo: this.accountInfo
 		};
 	},
 
