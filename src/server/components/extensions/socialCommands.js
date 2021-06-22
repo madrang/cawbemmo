@@ -96,7 +96,7 @@ module.exports = {
 		});
 
 		this.actions = chatCommandConfig.contextActions
-			.filter(c => this.obj.auth.accountLevel >= commandRoles[c.command]);
+			.filter(c => this.obj.auth.getAccountLevel() >= commandRoles[c.command]);
 	},
 
 	onBeforeChat: function (msg) {
@@ -120,7 +120,7 @@ module.exports = {
 				}]
 			});
 			return;
-		} else if (this.obj.auth.accountLevel < commandRoles[actionName]) {
+		} else if (this.obj.auth.getAccountLevel() < commandRoles[actionName]) {
 			this.obj.socket.emit('events', {
 				onGetMessages: [{
 					messages: [{
@@ -317,7 +317,7 @@ module.exports = {
 		const msg = [
 			'You can use the following commands:', 
 			...Object.keys(commandRoles)
-				.filter(c => this.obj.auth.accountLevel >= commandRoles[c])
+				.filter(c => this.obj.auth.getAccountLevel() >= commandRoles[c])
 				.map(c => `/${c}`)
 		].join('<br />');
 	

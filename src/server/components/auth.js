@@ -286,25 +286,36 @@ module.exports = {
 	},
 
 	onLogin: async function (msg, storedPassword, err, compareResult) {
+		const { data: { username } } = msg;
+
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
 			return;
 		}
 		
-		this.username = msg.data.username;
+		this.username = username;
 		cons.logOut(this.obj);
 
 		this.initTracker();
 
 		await this.getSkins();
 
-		this.accountInfo = await io.getAsync({
-			key: msg.data.username,
+		const accountInfo = await io.getAsync({
+			key: username,
 			table: 'accountInfo',
 			noDefault: true
 		}) || {
 			loginStreak: 0
 		};
+
+		const msgAccountInfo = {
+			username,
+			accountInfo
+		};
+
+		events.emit('onBeforeGetAccountInfo', msgAccountInfo);
+
+		this.accountInfo = msgAccountInfo.accountInfo;
 
 		msg.callback();
 	},
@@ -544,5 +555,9 @@ module.exports = {
 				dead: true
 			}
 		});
+	},
+
+	getAccountLevel: function () {
+		return this.accountInfo.level;
 	}
 };

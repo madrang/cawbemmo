@@ -1,6 +1,6 @@
 module.exports = (obj, time) => {
-	const roleLevel = obj.auth.accountLevel;
-	if (roleLevel >= 5)
+	const accountLevel = obj.auth.getAccountLevel();
+	if (accountLevel >= 5)
 		return true;
 
 	if (!time)

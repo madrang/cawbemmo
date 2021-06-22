@@ -4,19 +4,12 @@ const doSaveAll = async (res, config, err, compareResult) => {
 	if (!compareResult)
 		return;
 
-	const char = await io.getAsync({
-		table: 'character',
+	const accountInfo = await io.getAsync({
+		table: 'accountInfo',
 		key: config.username
 	});
 
-	if (!char)
-		return;
-
-	const auth = (char.components || []).find(c => c.type === 'auth');
-	if (!auth)
-		return;
-
-	if (auth.accountLevel < 9)
+	if (!accountInfo || !accountInfo.level || accountInfo.level < 9)
 		return;
 
 	await atlas.returnWhenZonesIdle();
@@ -50,7 +43,7 @@ module.exports = async (req, res, next) => {
 			.join(' ');
 	});
 
-	if (['msg', 'username', 'pwd', 'character'].some(p => !config[p]))
+	if (['msg', 'username', 'pwd'].some(p => !config[p]))
 		return;
 
 	let storedPassword = await io.getAsync({
