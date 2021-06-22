@@ -1,3 +1,5 @@
+const eventEmitter = require('../misc/events');
+
 module.exports = {
 	type: 'door',
 
@@ -49,6 +51,23 @@ module.exports = {
 		}]);
 	},
 
+	canActorUnlockThis: function (obj) {
+		const actorHasKey = obj.inventory.items.some(({ keyId }) => keyId === this.key);
+
+		if (actorHasKey)
+			return true;
+
+		const unlockEventMsg = {
+			source: obj,
+			target: this,
+			canUnlock: false
+		};
+
+		eventEmitter.emit('onBeforeUnlockObject', unlockEventMsg);
+
+		return unlockEventMsg.canUnlock;
+	},
+
 	exitArea: function (obj) {
 		if (!obj.player)
 			return;
@@ -71,12 +90,9 @@ module.exports = {
 		let msg = 'Press U to open this door';
 
 		if (this.closed) {
-			if (this.locked) {
-				let key = obj.inventory.items.find(i => ((i.keyId === this.key) || (i.keyId === 'world')));
-				if (!key) {
-					canAction = false;
-					msg = 'You don\'t have the key to unlock this door';
-				}
+			if (this.locked && !this.canActorUnlockThis(obj)) {
+				canAction = false;
+				msg = 'You don\'t have the key to unlock this door';
 			}
 		} else
 			msg = 'Press U to close this door';
@@ -119,11 +135,14 @@ module.exports = {
 			if (this.autoClose)
 				this.autoCloseCd = this.autoClose;
 
-			let key = obj.inventory.items.find(i => (i.keyId === this.key || i.keyId === 'world'));
-			if (!key)
+			const canUnlock = this.canActorUnlockThis(obj);
+
+			if (!canUnlock)
 				return;
 
-			if ((key.singleUse || this.destroyKey) && key.keyId !== 'world') {
+			const key = obj.inventory.items.find(i => i.keyId === this.key);
+
+			if (key && (key.singleUse || this.destroyKey)) {
 				obj.inventory.destroyItem(key.id, 1);
 
 				const message = `The ${key.name} disintegrates on use`;
