@@ -300,11 +300,9 @@ module.exports = {
 			accountInfo
 		};
 
-		eventEmitter.emit('onBeforeGetAccountInfo', msgAccountInfo);
+		await eventEmitter.emit('onBeforeGetAccountInfo', msgAccountInfo);
 
-		await eventEmitter.emit('onAfterLogin', {
-			username
-		});
+		await eventEmitter.emit('onAfterLogin', { username });
 
 		this.accountInfo = msgAccountInfo.accountInfo;
 

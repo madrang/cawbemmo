@@ -1,16 +1,10 @@
 module.exports = {
 	events: {},
 
-	on: function (event, callback) {
+	//The only supported option right now is isAsync: boolean
+	on: function (event, callback, options) {
 		let list = this.events[event] || (this.events[event] = []);
-		list.push({ callback });
-
-		return callback;
-	},
-
-	onAsync: function (event, callback) {
-		let list = this.events[event] || (this.events[event] = []);
-		list.push({ isAsync: true, callback });
+		list.push({ callback, ...options });
 
 		return callback;
 	},
