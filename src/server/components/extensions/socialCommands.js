@@ -53,7 +53,6 @@ const localCommands = [
 	'leave',
 	'setPassword',
 	'roll',
-	'giveSkin',
 	'broadcast',
 	'saveAll',
 	'help',
@@ -566,27 +565,6 @@ module.exports = {
 			key: username,
 			table: 'login',
 			value: hashedPassword
-		});
-	},
-
-	giveSkin: async function (config) {
-		let keys = Object.keys(config);
-		let username = keys[0];
-		let skinId = keys[1];
-
-		let skins = await io.getAsync({
-			key: username,
-			table: 'skins',
-			isArray: true
-		});
-
-		skins.push(skinId);
-
-		await io.setAsync({
-			key: username,
-			table: 'skins',
-			value: skins,
-			serialize: true
 		});
 	},
 

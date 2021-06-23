@@ -6,7 +6,7 @@ const profanities = require('../misc/profanities');
 const fixes = require('../fixes/fixes');
 const spirits = require('../config/spirits');
 const ga = require('../security/ga');
-const events = require('../misc/events');
+const eventEmitter = require('../misc/events');
 
 const checkLoginRewards = require('./auth/checkLoginRewards');
 
@@ -130,7 +130,6 @@ module.exports = {
 			type: 'auth',
 			username: this.username,
 			charname: this.charname,
-			skins: this.skins,
 			accountInfo: this.accountInfo
 		};
 	},
@@ -164,7 +163,7 @@ module.exports = {
 			clean: true
 		});
 
-		events.emit('onAfterGetCharacter', {
+		eventEmitter.emit('onAfterGetCharacter', {
 			obj: this.obj,
 			character
 		});
@@ -207,65 +206,55 @@ module.exports = {
 
 		fixes.fixStash(this.stash);
 
-		events.emit('onAfterGetStash', {
+		eventEmitter.emit('onAfterGetStash', {
 			obj: this.obj,
 			stash: this.stash
 		});
 	},
 
-	getSkins: async function (character) {
-		this.skins = await io.getAsync({
-			key: this.username,
-			table: 'skins',
-			isArray: true
-		});
-
-		fixes.fixSkins(this.username, this.skins);
-	},
-
-	getSkinList: function (msg) {
-		const skinList = skins.getSkinList(this.skins);
-
-		msg.callback(skinList);
-	},
-
-	saveSkin: async function (skinId) {
-		if (!this.skins) {
-			this.getSkins({
-				callback: this.saveSkin.bind(this, skinId)
-			});
-
-			return;
-		}
-
-		this.skins.push(skinId);
-
-		await io.setAsync({
-			key: this.username,
-			table: 'skins',
-			value: this.skins,
-			serialize: true
-		});
-	},
-
-	onSaveSkin: function () {
-
-	},
-
 	verifySkin: function (character) {
-		const skinList = skins.getSkinList(this.skins);
+		const doesOwn = this.doesOwnSkin(character.skinId);
 
-		if (!skinList.some(s => (s.id === character.skinId))) {
-			character.skinId = '1.0';
-			character.cell = skins.getCell(character.skinId);
-			character.sheetName = skins.getSpritesheet(character.skinId);
-		}
+		if (doesOwn)
+			return;
+
+		const defaultTo = 'wizard';
+
+		character.skinId = defaultTo;
+		character.cell = skins.getCell(defaultTo);
+		character.sheetName = skins.getSpritesheet(defaultTo);
 	},
 
 	doesOwnSkin: function (skinId) {
-		const skinList = skins.getSkinList(this.skins);
+		const allSkins = skins.getList();
+		const filteredSkins = allSkins.filter(({ default: isDefaultSkin }) => isDefaultSkin);
 
-		return skinList.some(s => s.id === (skinId + '') || s === '*');
+		const msgSkinList = {
+			obj: this,
+			allSkins,
+			filteredSkins
+		};
+
+		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+
+		const result = filteredSkins.some(f => f.id === skinId);
+
+		return result;
+	},
+
+	getSkinList: async function ({ callback }) {
+		const allSkins = skins.getList();
+		const filteredSkins = allSkins.filter(({ default: isDefaultSkin }) => isDefaultSkin);
+
+		const msgSkinList = {
+			obj: this,
+			allSkins,
+			filteredSkins
+		};
+
+		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+
+		callback(filteredSkins);
 	},
 
 	login: async function (msg) {
@@ -298,8 +287,6 @@ module.exports = {
 
 		this.initTracker();
 
-		await this.getSkins();
-
 		const accountInfo = await io.getAsync({
 			key: username,
 			table: 'accountInfo',
@@ -313,7 +300,9 @@ module.exports = {
 			accountInfo
 		};
 
-		events.emit('onBeforeGetAccountInfo', msgAccountInfo);
+		await eventEmitter.emit('onBeforeGetAccountInfo', msgAccountInfo);
+
+		await eventEmitter.emit('onAfterLogin', { username });
 
 		this.accountInfo = msgAccountInfo.accountInfo;
 
@@ -389,8 +378,6 @@ module.exports = {
 
 		this.username = msg.data.username;
 		cons.logOut(this.obj);
-
-		await this.getSkins();
 
 		msg.callback();
 	},

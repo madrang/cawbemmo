@@ -236,9 +236,6 @@ module.exports = {
 
 			if (!item.infinite)
 				this.obj.syncer.setArray(true, 'trade', 'removeItems', item.id);
-		} else {
-			this.obj.auth.saveSkin(item.skinId);
-			sendMessage(this.obj, 'color-greenB', `Unlocked skin: ${item.name}.`);
 		}
 
 		if (item.worth.currency) {

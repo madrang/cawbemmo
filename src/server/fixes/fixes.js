@@ -1,5 +1,3 @@
-let configSkins = require('../config/skins');
-
 module.exports = {
 	fixDb: async function () {
 		await io.deleteAsync({
@@ -140,25 +138,5 @@ module.exports = {
 					delete i.enchantedStats.dmgPercent;
 				}
 			});
-	},
-
-	fixSkins: async function (username, skins) {
-		//Skin 2.0 because gaekatlan-druid
-		skins.forEach((s, i) => {
-			if (s === '2.0')
-				skins[i] = 'gaekatlan-druid';
-		});
-
-		let length = skins.length;
-		skins = skins.filter(s => !!configSkins.getBlueprint(s));
-
-		if (length !== skins.length) {
-			await io.setAsync({
-				key: username,
-				table: 'skins',
-				value: skins,
-				serialize: true
-			});
-		}
 	}
 };
