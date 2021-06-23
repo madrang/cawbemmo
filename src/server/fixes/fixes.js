@@ -1,5 +1,3 @@
-let configSkins = require('../config/skins');
-
 module.exports = {
 	fixDb: async function () {
 		await io.deleteAsync({
