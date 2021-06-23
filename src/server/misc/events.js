@@ -41,20 +41,5 @@ module.exports = {
 			else
 				callback.apply(null, args);
 		}
-	},
-
-	//In the future, all events should be non sticky
-	emitNoSticky: async function (event) {
-		let args = [].slice.call(arguments, 1);
-
-		let list = this.events[event];
-		if (!list)
-			return;
-
-		let len = list.length;
-		for (let i = 0; i < len; i++) {
-			const { callback } = list[i];
-			callback.apply(null, args);
-		}
 	}
 };

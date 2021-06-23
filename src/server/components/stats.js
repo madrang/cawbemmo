@@ -269,7 +269,7 @@ module.exports = {
 		if (xpEvent.amount === 0)
 			return;
 
-		obj.instance.eventEmitter.emitNoSticky('onBeforeGetGlobalXpMultiplier', xpEvent);
+		obj.instance.eventEmitter.emit('onBeforeGetGlobalXpMultiplier', xpEvent);
 
 		amount = ~~(xpEvent.amount * (1 + (values.xpIncrease / 100)) * xpEvent.multiplier);
 
@@ -409,7 +409,7 @@ module.exports = {
 			source: killSource
 		}; 
 
-		obj.instance.eventEmitter.emitNoSticky('onAfterActorDies', deathEvent);
+		obj.instance.eventEmitter.emit('onAfterActorDies', deathEvent);
 		obj.fireEvent('afterDeath', deathEvent);
 
 		if (obj.player) {
@@ -582,7 +582,7 @@ module.exports = {
 			let death = {
 				success: true
 			};
-			obj.instance.eventEmitter.emitNoSticky('onBeforeActorDies', death, obj, source);
+			obj.instance.eventEmitter.emit('onBeforeActorDies', death, obj, source);
 			obj.fireEvent('beforeDeath', death);
 
 			if (death.success) 

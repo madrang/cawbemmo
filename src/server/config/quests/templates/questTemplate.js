@@ -47,7 +47,7 @@ module.exports = {
 
 		const obj = this.obj;
 
-		obj.instance.eventEmitter.emitNoSticky('beforeCompleteAutoquest', this, obj);
+		obj.instance.eventEmitter.emit('beforeCompleteAutoquest', this, obj);
 
 		const message = `Quest completed (${this.name})`;
 		obj.social.notifySelf({

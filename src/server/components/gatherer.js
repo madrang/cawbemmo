@@ -35,7 +35,7 @@ module.exports = {
 			node,
 			obj: this
 		};
-		eventEmitter.emitNoSticky('beforeGatherResource', eGather);
+		eventEmitter.emit('beforeGatherResource', eGather);
 		obj.fireEvent('beforeGatherResource', eGather);
 
 		this.gathering = node;
@@ -110,7 +110,7 @@ module.exports = {
 			xp: resourceNode.xp,
 			items: gathering.inventory.items
 		});
-		this.obj.instance.eventEmitter.emitNoSticky('beforeGatherResourceComplete', gatherResult);
+		this.obj.instance.eventEmitter.emit('beforeGatherResourceComplete', gatherResult);
 		this.obj.fireEvent('beforeGatherResourceComplete', gatherResult);
 
 		this.obj.syncer.set(false, 'gatherer', 'progress', 100);
@@ -214,7 +214,7 @@ module.exports = {
 		let gatherResult = extend({
 			nodeName: node.name
 		});
-		obj.instance.eventEmitter.emitNoSticky('beforeEnterPool', gatherResult, obj);
+		obj.instance.eventEmitter.emit('beforeEnterPool', gatherResult, obj);
 
 		let nodeType = node.resourceNode.nodeType;
 

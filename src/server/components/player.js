@@ -176,7 +176,7 @@ module.exports = {
 					spawnPos = spawnPos[0];
 			}
 
-			obj.instance.eventEmitter.emitNoSticky('onBeforePlayerRespawn', obj, spawnPos);
+			obj.instance.eventEmitter.emit('onBeforePlayerRespawn', obj, spawnPos);
 
 			obj.x = spawnPos.x;
 			obj.y = spawnPos.y;
@@ -215,7 +215,7 @@ module.exports = {
 			x: obj.x,
 			y: obj.y
 		};
-		obj.instance.eventEmitter.emitNoSticky('onBeforePlayerRespawn', obj, spawnPos);
+		obj.instance.eventEmitter.emit('onBeforePlayerRespawn', obj, spawnPos);
 
 		if (!spawnPos.zone) {
 			obj.x = spawnPos.x;

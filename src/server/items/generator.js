@@ -38,7 +38,7 @@ module.exports = {
 		};
 
 		if (!blueprint.slot && !blueprint.type && !blueprint.spell)
-			global.instancer.instances[0].eventEmitter.emitNoSticky('onBeforeGetDropChances', dropChancesEvent);
+			global.instancer.instances[0].eventEmitter.emit('onBeforeGetDropChances', dropChancesEvent);
 
 		let currencyChance = dropChancesEvent.currencyChance;
 

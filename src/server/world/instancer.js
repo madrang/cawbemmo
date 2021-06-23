@@ -189,7 +189,7 @@ module.exports = {
 			spawnPos: extend({}, spawnPos),
 			changed: false
 		};
-		eventEmitter.emitNoSticky('onBeforePlayerSpawn', { name: obj.name, instance: { physics } }, spawnEvent);
+		eventEmitter.emit('onBeforePlayerSpawn', { name: obj.name, instance: { physics } }, spawnEvent);
 		//If a player is added, destroy any player objects with the same name
 		const existing = objects.filter(o => o.player && o.name === msg.obj.name);
 		existing.forEach(o => {
