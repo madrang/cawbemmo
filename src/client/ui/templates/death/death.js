@@ -24,7 +24,7 @@ define([
 		},
 
 		onLogout: function () {
-			$('.uiOptions').data('ui').charSelect();
+			$('.uiMainMenu').data('ui').charSelect();
 		},
 
 		onRespawn: function () {
