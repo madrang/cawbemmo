@@ -149,8 +149,6 @@ module.exports = {
 	},
 
 	onUnzone: async function (player, msg) {
-		await player.auth.getSkins();
-		
 		msg.callback();
 	},
 
