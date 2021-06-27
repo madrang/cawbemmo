@@ -843,6 +843,46 @@ define([
 			this.moveSpeedInc = 0.2 + (((maxValue - factor) / maxValue) * 0.3);
 		},
 
+		updateMapAtPosition: function (x, y, mapCellString) {
+			const { map, sprites, layers: { tileSprites: container } } = this;
+
+			const row = sprites[x];
+			if (!row)
+				return;
+
+			const cell = row[y];
+			if (!cell)
+				return;
+
+			cell.forEach(c => {
+				c.visible = false;
+				spritePool.store(c);
+			});
+
+			cell.length = 0;
+
+			map[x][y] = mapCellString.split(',');
+
+			map[x][y].forEach(m => {
+				m--;
+				
+				let tile = spritePool.getSprite(m);
+				if (!tile) {
+					tile = this.buildTile(m, x, y);
+					container.addChild(tile);
+					tile.type = m;
+					tile.sheetNum = tileOpacity.getSheetNum(m);
+				} else {
+					tile.position.x = x * scale;
+					tile.position.y = y * scale;
+					tile.visible = true;
+				}
+
+				cell.push(tile);
+				cell.visible = true;
+			});
+		},
+
 		render: function () {
 			if (!this.stage)
 				return;

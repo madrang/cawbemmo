@@ -293,9 +293,21 @@ module.exports = {
 			.filter(o => o.player)
 			.forEach(function (o) {
 				o.syncer.setArray(true, 'player', 'collisionChanges', {
-					x: x,
-					y: y,
-					collides: collides
+					x,
+					y,
+					collides
+				});
+			});
+	},
+
+	notifyMapChange: function (x, y, mapCellString) {
+		this.objects
+			.filter(o => o.player)
+			.forEach(function (o) {
+				o.syncer.setArray(true, 'player', 'mapChanges', {
+					x,
+					y,
+					mapCellString
 				});
 			});
 	},
