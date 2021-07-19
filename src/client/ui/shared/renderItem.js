@@ -6,9 +6,11 @@ const tplItem = `
 `;
 
 define([
-	'js/system/events'
+	'js/system/events',
+	'js/system/globals'
 ], function (
-	events
+	events,
+	globals
 ) {
 	const hideTooltip = (el, item, e) => {
 		events.emit('onHideItemTooltip', item);
@@ -100,6 +102,8 @@ define([
 	};
 
 	return (container, item, useEl, manageTooltip, getItemContextConfig, showNewIndicators = true) => {
+		const { clientConfig: { spriteSizes } } = globals;
+
 		const itemEl = useEl || $(tplItem).appendTo(container);
 
 		if (!item) {
@@ -107,18 +111,6 @@ define([
 
 			return itemEl;
 		}
-
-		let size = 64;
-		let margin = 0;
-
-		if (item.type === 'skin') {
-			size = 8;
-			margin = 16;
-		}
-
-		const imgX = (-item.sprite[0] * size);
-		const imgY = (-item.sprite[1] * size);
-		const backgroundPosition = `${imgX}px ${imgY}px`;
 
 		let spritesheet = item.spritesheet || '../../../images/items.png';
 		if (!item.spritesheet) {
@@ -132,13 +124,32 @@ define([
 				spritesheet = '../../../images/characters.png';
 		}
 
+		let size = 64;
+		let margin = '0px';
+
+		if (item.type === 'skin') {
+			size = 8;
+			margin = '16px';
+		}
+
+		if (item.spriteSize)
+			size = item.spriteSize;
+		if (item.spriteMargin)
+			margin = item.margin;
+
+		if (spriteSizes[spritesheet])
+			size = spriteSizes[spritesheet];
+
+		const imgX = (-item.sprite[0] * size);
+		const imgY = (-item.sprite[1] * size);
+		const backgroundPosition = `${imgX}px ${imgY}px`;
+
 		itemEl
 			.find('.icon')
 			.css({
 				background: `url(${spritesheet}) no-repeat scroll ${backgroundPosition} / auto`,
 				width: `${size}px`,
-				height: `${size}px`,
-				margin: `${margin}px`
+				height: `${size}px`
 			});
 
 		if (item.quantity > 1 || item.eq || item.active || item.has('quickSlot')) {
@@ -172,6 +183,8 @@ define([
 
 		if (getItemContextConfig)
 			addContextEvents(itemEl, item, getItemContextConfig);
+
+		itemEl.addClass(`spriteSize${size}`);
 
 		return itemEl;
 	};
