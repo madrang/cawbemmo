@@ -157,6 +157,10 @@ module.exports = {
 		this.threads.forEach(t => t.worker.send(message));
 	},
 
+	fireEventOnAllThreads: function ({ msg: { event, data } }) {
+		this.threads.forEach(t => t.worker.send({ event, data }));
+	},
+
 	thread: {
 		onReady: function (thread) {
 			thread.worker.send({

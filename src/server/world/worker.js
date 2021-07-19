@@ -6,19 +6,20 @@ global.instancer = require('./instancer');
 global.eventManager = require('../events/events');
 global.clientConfig = require('../config/clientConfig');
 
-let components = require('../components/components');
-let mods = require('../misc/mods');
-let animations = require('../config/animations');
-let skins = require('../config/skins');
-let factions = require('../config/factions');
-let classes = require('../config/spirits');
-let spellsConfig = require('../config/spellsConfig');
-let spells = require('../config/spells');
-let recipes = require('../config/recipes/recipes');
-let itemTypes = require('../items/config/types');
-let mapList = require('../config/maps/mapList');
-let itemEffects = require('../items/itemEffects');
+const components = require('../components/components');
+const mods = require('../misc/mods');
+const animations = require('../config/animations');
+const skins = require('../config/skins');
+const factions = require('../config/factions');
+const classes = require('../config/spirits');
+const spellsConfig = require('../config/spellsConfig');
+const spells = require('../config/spells');
+const recipes = require('../config/recipes/recipes');
+const itemTypes = require('../items/config/types');
+const mapList = require('../config/maps/mapList');
+const itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
+const eventEmitter = require('../misc/events');
 
 let onCpnsReady = async function () {
 	factions.init();
@@ -100,4 +101,6 @@ process.on('message', m => {
 		global[m.threadModule][m.method](m.data);
 	else if (m.method)
 		instancer[m.method](m.args);
+	else if (m.event)
+		eventEmitter.emit(m.event, m.data);
 });
