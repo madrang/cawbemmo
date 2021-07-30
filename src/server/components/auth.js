@@ -293,7 +293,7 @@ module.exports = {
 		}
 		
 		this.username = msg.data.username;
-		cons.logOut(this.obj);
+		await cons.logOut(this.obj);
 
 		this.initTracker();
 

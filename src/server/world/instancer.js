@@ -337,5 +337,23 @@ module.exports = {
 		process.send({
 			method: 'onZoneIdle'
 		});
+	},
+
+	forceSavePlayer: async function ({ playerName, callbackId }) {
+		const player = objects.objects.find(o => o.player && o.name === playerName);
+
+		if (!player?.auth)
+			return;
+
+		await player.auth.doSave();
+
+		process.send({
+			module: 'atlas',
+			method: 'resolveCallback',
+			msg: {
+				id: callbackId
+			}
+		});
 	}
+
 };

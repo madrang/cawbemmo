@@ -258,5 +258,25 @@ module.exports = {
 				});
 			});
 		});
+	},
+
+	forceSavePlayer: async function (playerName, zoneName) {
+		const thread = this.getThreadFromName(zoneName);
+
+		if (!thread)
+			return;
+
+		return new Promise(res => {
+			const callbackId = this.registerCallback(res);
+
+			thread.worker.send({
+				method: 'forceSavePlayer',
+				args: {
+					playerName,
+					callbackId
+				}
+			});
+		});
 	}
+
 };
