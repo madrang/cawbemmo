@@ -152,7 +152,7 @@ module.exports = {
 		msg.callback();
 	},
 
-	logOut: function (exclude) {
+	logOut: async function (exclude) {
 		let players = this.players;
 		let pLen = players.length;
 		for (let i = 0; i < pLen; i++) {
@@ -160,6 +160,9 @@ module.exports = {
 
 			if ((!p) || (p === exclude) || (!p.auth))
 				continue;
+
+			if (p.name && p.zoneName)
+				await atlas.forceSavePlayer(p.name, p.zoneName);
 
 			if (p.auth.username === exclude.auth.username)
 				p.socket.emit('dc', {});
