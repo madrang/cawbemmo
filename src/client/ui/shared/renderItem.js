@@ -125,17 +125,12 @@ define([
 		}
 
 		let size = 64;
-		let margin = '0px';
 
-		if (item.type === 'skin') {
+		if (item.type === 'skin')
 			size = 8;
-			margin = '16px';
-		}
 
 		if (item.spriteSize)
 			size = item.spriteSize;
-		if (item.spriteMargin)
-			margin = item.margin;
 
 		if (spriteSizes[spritesheet])
 			size = spriteSizes[spritesheet];
