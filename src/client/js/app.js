@@ -9,7 +9,7 @@ require.config({
 		css: 'https://cdnjs.cloudflare.com/ajax/libs/require-css/0.1.10/css.min',
 		main: 'js/main',
 		helpers: 'js/misc/helpers',
-		particles: 'plugins/PIXI.particles.min',
+		particles: 'plugins/pixi.particles.min',
 		howler: 'https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.3/howler.core.min',
 		longPress: 'plugins/long.press.min'
 	},
