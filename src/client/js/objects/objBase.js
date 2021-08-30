@@ -117,6 +117,7 @@ define([
 					this.self ||
 					(
 						renderer.sprites[x] &&
+						renderer.sprites[x][y] &&
 						renderer.sprites[x][y].length > 0 &&
 						!renderer.isHidden(x, y)
 					)
