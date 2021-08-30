@@ -22,6 +22,14 @@ define([
 			'shift', 'ctrl'
 		],
 
+		numericalKeyCodeMappings: {
+			Digit1: 49,
+			Digit2: 50,
+			Digit3: 51,
+			Digit4: 52,
+			Digit5: 53
+		},
+
 		mappings: {
 			8: 'backspace',
 			9: 'tab',
@@ -73,7 +81,7 @@ define([
 		onLoadShake: function (shake) {
 			let shaker = new shake({
 				threshold: 5,
-				timeout: 1000 
+				timeout: 1000
 			});
 
 			shaker.start();
@@ -81,7 +89,7 @@ define([
 		},
 
 		resetKeys: function () {
-			for (let k in this.keys) 
+			for (let k in this.keys)
 				events.emit('onKeyUp', k);
 
 			this.keys = {};
@@ -103,7 +111,7 @@ define([
 					return true;
 
 				let down = this.keys[key];
-				
+
 				this.keys[key] = 2;
 				return (down === 1);
 			} return false;
@@ -138,7 +146,8 @@ define([
 					if (!this.enabled)
 						return;
 
-					let key = this.getMapping(e.which);
+					let code = this.numericalKeyCodeMappings[e.code] || e.which;
+					let key = this.getMapping(code);
 					let isModifier = this.modifiers.indexOf(key) > -1;
 					let isBody = e.target === document.body;
 
@@ -176,7 +185,7 @@ define([
 					let key = this.getMapping(e.which);
 					let isModifier = this.modifiers.indexOf(key) > -1;
 					let isBody = e.target === document.body;
-					
+
 					if (!isModifier && !isBody)
 						return;
 
@@ -271,7 +280,7 @@ define([
 					let el = $(e.target);
 					if ((!el.hasClass('ui-container')) || (el.hasClass('blocking')))
 						return;
-					
+
 					events.emit('onTouchCancel');
 				}
 			},
