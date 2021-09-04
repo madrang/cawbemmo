@@ -1,5 +1,5 @@
 module.exports = {
-	version: '0.9.1',
+	version: '0.10.0',
 	port: 4000,
 	startupMessage: 'Server: ready',
 	defaultZone: 'fjolarok',
@@ -8,7 +8,7 @@ module.exports = {
 	// sqlite
 	// rethink
 	//eslint-disable-next-line no-process-env
-	db: process.env.IWD_DB || 'sqlite',
+	db: process.env.IWD_DB || 'rethink',
 	//eslint-disable-next-line no-process-env
 	dbHost: process.env.IWD_DB_HOST || 'localhost',
 	//eslint-disable-next-line no-process-env
