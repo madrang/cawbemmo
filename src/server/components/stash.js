@@ -1,7 +1,7 @@
 const cpnInventory = require('./inventory');
 const { isItemStackable } = require('./inventory/helpers');
 
-const maxItems = 50;
+const maxItemsBase = 50;
 
 module.exports = {
 	type: 'stash',
@@ -10,7 +10,7 @@ module.exports = {
 	items: [],
 	changed: false,
 
-	maxItems,
+	maxItems: maxItemsBase,
 
 	init: function (blueprint) {
 		let items = blueprint.items || [];
@@ -21,10 +21,6 @@ module.exports = {
 		delete blueprint.items;
 
 		this.blueprint = blueprint;
-	},
-
-	calculateMaxItems: function (extraSlots) {
-		this.maxItems = maxItems + extraSlots;
 	},
 
 	getItem: function (item) {
@@ -147,8 +143,10 @@ module.exports = {
 	},
 
 	open: function () {
-		if (this.active)
-			this.obj.instance.syncer.queue('onOpenStash', {}, [this.obj.serverId]);
+		const { active, obj } = this;
+
+		if (active)
+			obj.instance.syncer.queue('onOpenStash', {}, [obj.serverId]);
 	},
 
 	simplify: function (self) {

@@ -20,13 +20,12 @@ define([
 		init: function () {
 			const obj = this.obj;
 
-			if (isMobile) 
+			obj.addComponent('keyboardMover');
+			obj.addComponent('mouseMover');
+
+			if (isMobile)
 				obj.addComponent('touchMover');
-			else {
-				obj.addComponent('keyboardMover');
-				obj.addComponent('mouseMover');
-			}
-			
+
 			obj.addComponent('serverActions');
 			obj.addComponent('pather');
 
@@ -36,11 +35,18 @@ define([
 		},
 
 		extend: function (blueprint) {
-			let collisionChanges = blueprint.collisionChanges;
+			const { collisionChanges, mapChanges } = blueprint;
 			delete blueprint.collisionChanges;
+			delete blueprint.mapChanges;
 
 			if (collisionChanges)
 				collisionChanges.forEach(c => physics.setCollision(c));
+
+			if (mapChanges) {
+				mapChanges.forEach(({ x, y, mapCellString }) => {
+					renderer.updateMapAtPosition(x, y, mapCellString);
+				});
+			}
 		},
 
 		update: function () {
@@ -65,7 +71,7 @@ define([
 			renderer.setPosition({
 				x: (x - (renderer.width / (scale * 2))) * scale,
 				y: (y - (renderer.height / (scale * 2))) * scale
-			}, instant);		
+			}, instant);
 		},
 
 		onRespawn: function ({ x, y }) {

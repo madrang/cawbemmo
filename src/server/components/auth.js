@@ -2,12 +2,11 @@
 const bcrypt = require('bcrypt-nodejs');
 const messages = require('../misc/messages');
 const skins = require('../config/skins');
-const roles = require('../config/roles');
 const profanities = require('../misc/profanities');
 const fixes = require('../fixes/fixes');
 const spirits = require('../config/spirits');
 const ga = require('../security/ga');
-const events = require('../misc/events');
+const eventEmitter = require('../misc/events');
 
 const checkLoginRewards = require('./auth/checkLoginRewards');
 
@@ -47,6 +46,8 @@ const getCreateLock = async () => {
 //Component Definition
 module.exports = {
 	type: 'auth',
+
+	accountLevel: 1,
 
 	username: null,
 	charname: null,
@@ -129,7 +130,7 @@ module.exports = {
 			type: 'auth',
 			username: this.username,
 			charname: this.charname,
-			skins: this.skins
+			accountInfo: this.accountInfo
 		};
 	},
 
@@ -162,7 +163,7 @@ module.exports = {
 			clean: true
 		});
 
-		events.emit('onAfterGetCharacter', {
+		eventEmitter.emit('onAfterGetCharacter', {
 			obj: this.obj,
 			character
 		});
@@ -205,68 +206,55 @@ module.exports = {
 
 		fixes.fixStash(this.stash);
 
-		events.emit('onAfterGetStash', {
+		eventEmitter.emit('onAfterGetStash', {
 			obj: this.obj,
 			stash: this.stash
 		});
 	},
 
-	getSkins: async function (character) {
-		this.skins = await io.getAsync({
-			key: this.username,
-			table: 'skins',
-			isArray: true
-		});
-
-		fixes.fixSkins(this.username, this.skins);
-	},
-
-	getSkinList: function (msg) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
-
-		msg.callback(skinList);
-	},
-
-	saveSkin: async function (skinId) {
-		if (!this.skins) {
-			this.getSkins({
-				callback: this.saveSkin.bind(this, skinId)
-			});
-
-			return;
-		}
-
-		this.skins.push(skinId);
-
-		await io.setAsync({
-			key: this.username,
-			table: 'skins',
-			value: this.skins,
-			serialize: true
-		});
-	},
-
-	onSaveSkin: function () {
-
-	},
-
 	verifySkin: function (character) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
+		const doesOwn = this.doesOwnSkin(character.skinId);
 
-		if (!skinList.some(s => (s.id === character.skinId))) {
-			character.skinId = '1.0';
-			character.cell = skins.getCell(character.skinId);
-			character.sheetName = skins.getSpritesheet(character.skinId);
-		}
+		if (doesOwn)
+			return;
+
+		const defaultTo = 'wizard';
+
+		character.skinId = defaultTo;
+		character.cell = skins.getCell(defaultTo);
+		character.sheetName = skins.getSpritesheet(defaultTo);
 	},
 
 	doesOwnSkin: function (skinId) {
-		let list = [...this.skins, ...roles.getSkins(this.username)];
-		let skinList = skins.getSkinList(list);
+		const allSkins = skins.getList();
+		const filteredSkins = allSkins.filter(({ default: isDefaultSkin }) => isDefaultSkin);
 
-		return skinList.some(s => s.id === (skinId + '') || s === '*');
+		const msgSkinList = {
+			obj: this,
+			allSkins,
+			filteredSkins
+		};
+
+		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+
+		const result = filteredSkins.some(f => f.id === skinId);
+
+		return result;
+	},
+
+	getSkinList: async function ({ callback }) {
+		const allSkins = skins.getList();
+		const filteredSkins = allSkins.filter(({ default: isDefaultSkin }) => isDefaultSkin);
+
+		const msgSkinList = {
+			obj: this,
+			allSkins,
+			filteredSkins
+		};
+
+		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+
+		callback(filteredSkins);
 	},
 
 	login: async function (msg) {
@@ -287,25 +275,36 @@ module.exports = {
 	},
 
 	onLogin: async function (msg, storedPassword, err, compareResult) {
+		const { data: { username } } = msg;
+
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
 			return;
 		}
 		
-		this.username = msg.data.username;
+		this.username = username;
 		await cons.logOut(this.obj);
 
 		this.initTracker();
 
-		await this.getSkins();
-
-		this.accountInfo = await io.getAsync({
-			key: msg.data.username,
+		const accountInfo = await io.getAsync({
+			key: username,
 			table: 'accountInfo',
 			noDefault: true
 		}) || {
 			loginStreak: 0
 		};
+
+		const msgAccountInfo = {
+			username,
+			accountInfo
+		};
+
+		await eventEmitter.emit('onBeforeGetAccountInfo', msgAccountInfo);
+
+		await eventEmitter.emit('onAfterLogin', { username });
+
+		this.accountInfo = msgAccountInfo.accountInfo;
 
 		msg.callback();
 	},
@@ -335,7 +334,7 @@ module.exports = {
 			return;
 		}
 
-		let illegal = ["'", '"', '/', '(', ')', '[', ']', '{', '}', ':', ';', '<', '>', '+', '?', '*'];
+		let illegal = ["'", '"', '/', '\\', '(', ')', '[', ']', '{', '}', ':', ';', '<', '>', '+', '?', '*'];
 		for (let i = 0; i < illegal.length; i++) {
 			if (credentials.username.indexOf(illegal[i]) > -1) {
 				msg.callback(messages.login.illegal);
@@ -379,8 +378,6 @@ module.exports = {
 
 		this.username = msg.data.username;
 		cons.logOut(this.obj);
-
-		await this.getSkins();
 
 		msg.callback();
 	},
@@ -545,5 +542,9 @@ module.exports = {
 				dead: true
 			}
 		});
+	},
+
+	getAccountLevel: function () {
+		return this.accountInfo.level;
 	}
 };

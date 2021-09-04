@@ -21,7 +21,6 @@ define([
 	globals,
 	renderLoginBackground
 ) {
-	let pixi = PIXI;
 	let mRandom = Math.random.bind(Math);
 
 	return {
@@ -98,11 +97,11 @@ define([
 
 			$(this.renderer.view).appendTo('.canvas-container');
 
-			this.stage = new pixi.Container();
+			this.stage = new PIXI.Container();
 
 			let layers = this.layers;
 			Object.keys(layers).forEach(l => {
-				layers[l] = new pixi.Container();
+				layers[l] = new PIXI.Container();
 				layers[l].layer = (l === 'tileSprites') ? 'tiles' : l;
 
 				this.stage.addChild(layers[l]);
@@ -112,8 +111,8 @@ define([
 			const sprites = resources.sprites;
 
 			textureList.forEach(t => {
-				this.textures[t] = new pixi.BaseTexture(sprites[t]);
-				this.textures[t].scaleMode = pixi.SCALE_MODES.NEAREST;
+				this.textures[t] = new PIXI.BaseTexture(sprites[t]);
+				this.textures[t].scaleMode = PIXI.SCALE_MODES.NEAREST;
 			});
 
 			particles.init({
@@ -128,12 +127,12 @@ define([
 		buildSpritesTexture: function () {
 			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
 
-			let container = new pixi.Container();
+			let container = new PIXI.Container();
 
 			let totalHeight = 0;
 			atlasTextures.forEach(t => {
 				let texture = this.textures[t];
-				let tile = new pixi.Sprite(new pixi.Texture(texture));
+				let tile = new PIXI.Sprite(new PIXI.Texture(texture));
 				tile.width = texture.width;
 				tile.height = texture.height;
 				tile.x = 0;
@@ -149,11 +148,11 @@ define([
 				totalHeight += tile.height;
 			});
 
-			let renderTexture = pixi.RenderTexture.create(this.textures.tiles.width, totalHeight);
+			let renderTexture = PIXI.RenderTexture.create(this.textures.tiles.width, totalHeight);
 			this.renderer.render(container, renderTexture);
 
 			this.textures.sprites = renderTexture;
-			this.textures.scaleMult = pixi.SCALE_MODES.NEAREST;
+			this.textures.scaleMult = PIXI.SCALE_MODES.NEAREST;
 		},
 
 		toggleScreen: function () {
@@ -213,7 +212,7 @@ define([
 			if (!cached) {
 				let y = ~~(cell / 8);
 				let x = cell - (y * 8);
-				cached = new pixi.Texture(this.textures[baseTex], new pixi.Rectangle(x * size, y * size, size, size));
+				cached = new PIXI.Texture(this.textures[baseTex], new PIXI.Rectangle(x * size, y * size, size, size));
 				textureCache[textureName] = cached;
 			}
 
@@ -222,14 +221,14 @@ define([
 
 		clean: function () {
 			this.stage.removeChild(this.layers.hiders);
-			this.layers.hiders = new pixi.Container();
+			this.layers.hiders = new PIXI.Container();
 			this.layers.hiders.layer = 'hiders';
 			this.stage.addChild(this.layers.hiders);
 
 			let container = this.layers.tileSprites;
 			this.stage.removeChild(container);
 
-			this.layers.tileSprites = container = new pixi.Container();
+			this.layers.tileSprites = container = new PIXI.Container();
 			container.layer = 'tiles';
 			this.stage.addChild(container);
 
@@ -250,7 +249,7 @@ define([
 			let alpha = tileOpacity.map(c);
 			let canFlip = tileOpacity.canFlip(c);
 
-			let tile = new pixi.Sprite(this.getTexture('sprites', c));
+			let tile = new PIXI.Sprite(this.getTexture('sprites', c));
 
 			tile.alpha = alpha;
 			tile.position.x = i * scale;
@@ -672,14 +671,14 @@ define([
 		},
 
 		buildContainer: function (obj) {
-			let container = new pixi.Container();
+			let container = new PIXI.Container();
 			this.layers[obj.layerName || obj.sheetName].addChild(container);
 
 			return container;
 		},
 
 		buildRectangle: function (obj) {
-			let graphics = new pixi.Graphics();
+			let graphics = new PIXI.Graphics();
 
 			let alpha = obj.alpha;
 			if (obj.has('alpha'))
@@ -716,7 +715,7 @@ define([
 		buildObject: function (obj) {
 			const { sheetName, parent: container, layerName, visible = true } = obj;
 
-			const sprite = new pixi.Sprite();
+			const sprite = new PIXI.Sprite();
 
 			obj.sprite = sprite;
 
@@ -751,7 +750,7 @@ define([
 		},
 
 		buildText: function (obj) {
-			let textSprite = new pixi.Text(obj.text, {
+			let textSprite = new PIXI.Text(obj.text, {
 				fontFamily: 'bitty',
 				fontSize: (obj.fontSize || 14),
 				fill: obj.color || 0xF2F5F5,
@@ -841,6 +840,46 @@ define([
 
 			this.moveSpeedMax = 1.5 + ((moveSpeed / 200) * 3.5);
 			this.moveSpeedInc = 0.2 + (((maxValue - factor) / maxValue) * 0.3);
+		},
+
+		updateMapAtPosition: function (x, y, mapCellString) {
+			const { map, sprites, layers: { tileSprites: container } } = this;
+
+			const row = sprites[x];
+			if (!row)
+				return;
+
+			const cell = row[y];
+			if (!cell)
+				return;
+
+			cell.forEach(c => {
+				c.visible = false;
+				spritePool.store(c);
+			});
+
+			cell.length = 0;
+
+			map[x][y] = mapCellString.split(',');
+
+			map[x][y].forEach(m => {
+				m--;
+				
+				let tile = spritePool.getSprite(m);
+				if (!tile) {
+					tile = this.buildTile(m, x, y);
+					container.addChild(tile);
+					tile.type = m;
+					tile.sheetNum = tileOpacity.getSheetNum(m);
+				} else {
+					tile.position.x = x * scale;
+					tile.position.y = y * scale;
+					tile.visible = true;
+				}
+
+				cell.push(tile);
+				cell.visible = true;
+			});
 		},
 
 		render: function () {

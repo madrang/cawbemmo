@@ -22,26 +22,22 @@ module.exports = {
 			};
 		});
 
-		//Reorder mods so that mods that depend on others load later
-		loadList = loadList.sort((a, b) => {
-			const { id: idA, mod: { dependsOn: depA = [] } } = a;
-			const { id: idB, mod: { dependsOn: depB = [] } } = b;
+		while (loadList.length) {
+			for (const m of loadList) {
+				const { id, folderName, mod } = m;
+				const { dependsOn = [] } = mod;
 
-			if (depB.includes(idA) || !depA.length)
-				return -1;
-			else if (depA.includes(idB) || !depB.length)
-				return 1;
+				const wait = dependsOn.some(d => loadList.some(l => l.id === d));
 
-			return 0;
-		});
+				if (wait)
+					continue;
 
-		//Initialize mods
-		for (const m of loadList) {
-			const { folderName, mod } = m;
+				await this.onGetMod(folderName, mod);
 
-			await this.onGetMod(folderName, mod);
+				this.mods.push(mod);
 
-			this.mods.push(mod);
+				loadList.spliceWhere(l => l.id === id);
+			}
 		}
 	},
 
@@ -49,7 +45,7 @@ module.exports = {
 		if (mod.disabled)
 			return;
 
-		const isMapThread = global.instancer;
+		const isMapThread = !!global.instancer;
 		mod.isMapThread = isMapThread;
 
 		mod.events = events;

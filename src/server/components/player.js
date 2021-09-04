@@ -1,5 +1,4 @@
 let classes = require('../config/spirits');
-let roles = require('../config/roles');
 let serverConfig = require('../config/serverConfig');
 const eventEmitter = require('../misc/events');
 
@@ -42,8 +41,6 @@ module.exports = {
 
 		character.components = character.components || [];
 
-		roles.onBeforePlayerEnterGame(obj, character);
-
 		let blueprintStats = character.components.find(c => c.type === 'stats') || {};
 		extend(blueprintStats, classes.stats[obj.class]);
 		if (!blueprintStats.values.hp)
@@ -51,7 +48,7 @@ module.exports = {
 		let stats = obj.addComponent('stats');
 		for (let s in blueprintStats.values) 
 			stats.values[s] = blueprintStats.values[s];
-		
+
 		for (let s in blueprintStats.stats) 
 			stats.stats[s] = blueprintStats.stats[s];
 
@@ -76,7 +73,6 @@ module.exports = {
 		obj.addComponent('stash', {
 			items: character.stash
 		});
-		obj.stash.calculateMaxItems(roles.getExtraStashSlots(character.account));
 
 		let blueprintEffects = character.components.find(c => c.type === 'effects') || {};
 		if (blueprintEffects.effects) {
@@ -180,7 +176,7 @@ module.exports = {
 					spawnPos = spawnPos[0];
 			}
 
-			obj.instance.eventEmitter.emitNoSticky('onBeforePlayerRespawn', obj, spawnPos);
+			obj.instance.eventEmitter.emit('onBeforePlayerRespawn', obj, spawnPos);
 
 			obj.x = spawnPos.x;
 			obj.y = spawnPos.y;
@@ -219,7 +215,7 @@ module.exports = {
 			x: obj.x,
 			y: obj.y
 		};
-		obj.instance.eventEmitter.emitNoSticky('onBeforePlayerRespawn', obj, spawnPos);
+		obj.instance.eventEmitter.emit('onBeforePlayerRespawn', obj, spawnPos);
 
 		if (!spawnPos.zone) {
 			obj.x = spawnPos.x;

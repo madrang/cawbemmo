@@ -1,15 +1,13 @@
 define([
-	'pixi',
 	'js/rendering/shaders/outline/vert',
 	'js/rendering/shaders/outline/frag'
 ], function (
-	pixi,
 	vert,
 	frag
 ) {
 	let OutlineFilter = function (viewWidth, viewHeight, thickness, color) {
 		thickness = thickness || 1;
-		pixi.Filter.call(this,
+		PIXI.Filter.call(this,
 			vert,
 			frag.replace(/%THICKNESS%/gi, (1.0 / thickness).toFixed(7))
 		);
@@ -23,16 +21,16 @@ define([
 			this.color = color;
 	};
 
-	OutlineFilter.prototype = Object.create(pixi.Filter.prototype);
+	OutlineFilter.prototype = Object.create(PIXI.Filter.prototype);
 	OutlineFilter.prototype.constructor = OutlineFilter;
 
 	Object.defineProperties(OutlineFilter.prototype, {
 		color: {
 			get: function () {
-				return pixi.utils.rgb2hex(this.uniforms.outlineColor);
+				return PIXI.utils.rgb2hex(this.uniforms.outlineColor);
 			},
 			set: function (value) {
-				pixi.utils.hex2rgb(value, this.uniforms.outlineColor);
+				PIXI.utils.hex2rgb(value, this.uniforms.outlineColor);
 			}
 		},
 

@@ -330,6 +330,10 @@ body {
 		position: absolute;
 		left: 4px;
 		top: 4px;
+		image-rendering: optimizeSpeed;
+		image-rendering: pixelated;
+		image-rendering: crisp-edges;
+		transform-origin: 0 0;
 	}
 
 	&.eq {
@@ -350,6 +354,24 @@ body {
 		.icon {
 			filter: brightness(160%);
 			-moz-filter: brightness(160%);
+		}
+
+	}
+
+	&.spriteSize8 {
+		.icon {
+			transform: scale(4);
+			-webkit-transform: scale(4);
+			margin: 16px;
+		}
+
+	}
+
+	&.spriteSize24 {
+		.icon {
+			transform: scale(4);
+			-webkit-transform: scale(4);
+			margin: -44px -16px;
 		}
 
 	}

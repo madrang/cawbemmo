@@ -153,7 +153,19 @@ module.exports = {
 					let newCell = '';
 					for (let k = 0; k < cLen; k++) {
 						let c = cell[k];
-						let newC = this.randomMap.randomizeTile(c);
+						let newC = c;
+
+						//Randomize tile
+						const msgBeforeRandomizePosition = {
+							success: true,
+							x: i,
+							y: j,
+							map: this.name
+						};
+						events.emit('onBeforeRandomizePosition', msgBeforeRandomizePosition);
+						if (msgBeforeRandomizePosition.success)
+							newC = this.randomMap.randomizeTile(c);
+
 						newCell += newC;
 
 						//Wall?
@@ -235,7 +247,7 @@ module.exports = {
 
 		this.oldLayers.tiles = _.get2dArray(w, h, 0);
 		this.oldLayers.walls = _.get2dArray(w, h, 0);
-		this.oldLayers.objects = _.get2dArray(w, h, 0);
+		this.oldLayers.doodads = _.get2dArray(w, h, 0);
 
 		let builders = {
 			tile: this.builders.tile.bind(this),
@@ -244,16 +256,18 @@ module.exports = {
 
 		this.collisionMap = _.get2dArray(w, h);
 
+		const layers = [...mapFile.layers.filter(l => l.objects), ...mapFile.layers.filter(l => !l.objects)];
+
 		//Rooms need to be ahead of exits
-		mapFile.layers.rooms = (mapFile.layers.rooms || [])
+		layers.rooms = (layers.rooms || [])
 			.sort(function (a, b) {
 				if ((a.exit) && (!b.exit))
 					return 1;
 				return 0;
 			});
 
-		for (let i = 0; i < mapFile.layers.length; i++) {
-			let layer = mapFile.layers[i];
+		for (let i = 0; i < layers.length; i++) {
+			let layer = layers[i];
 			let layerName = layer.name;
 			if (!layer.visible)
 				continue;
@@ -264,8 +278,10 @@ module.exports = {
 					map: this.name,
 					layer: layerName,
 					objects: data,
-					mapScale
+					mapScale,
+					size: this.size
 				};
+
 				events.emit('onAfterGetLayerObjects', info);
 			}
 
@@ -281,18 +297,20 @@ module.exports = {
 					for (let y = 0; y < h; y++) {
 						let index = (y * oldW) + x;
 
-						const info = {
+						const msgBuild = {
 							map: this.name,
 							layer: layerName,
+							sheetName: null,
 							cell: 0,
 							x,
 							y
 						};
 						if (x < oldW && y < oldH)
-							info.cell = data[index];
+							msgBuild.cell = data[index];
 
-						events.emit('onBeforeBuildLayerTile', info);
-						builders.tile(info);
+						events.emit('onBeforeBuildLayerTile', msgBuild);
+						builders.tile(msgBuild);
+						events.emit('onAfterBuildLayerTile', msgBuild);
 					}
 				}
 			}
@@ -319,7 +337,8 @@ module.exports = {
 			x,
 			y,
 			layerName,
-			tilesets: mapFile.tilesets
+			tilesets: mapFile.tilesets,
+			sheetName: null
 		};
 		events.emit('onBeforeGetCellInfo', cellInfoMsg);
 
@@ -333,16 +352,19 @@ module.exports = {
 		}
 
 		let firstGid = 0;
-		let sheetName = null;
-		for (let s = 0; s < tilesets.length; s++) {
-			let tileset = tilesets[s];
-			if (tileset.firstgid <= gid) {
-				sheetName = tileset.name;
-				firstGid = tileset.firstgid;
-			}
-		}
+		let sheetName = cellInfoMsg.sheetName;
 
-		gid = gid - firstGid + 1;
+		if (!sheetName) {
+			for (let s = 0; s < tilesets.length; s++) {
+				let tileset = tilesets[s];
+				if (tileset.firstgid <= gid) {
+					sheetName = tileset.name;
+					firstGid = tileset.firstgid;
+				}
+			}
+
+			gid = gid - firstGid + 1;
+		}
 
 		return {
 			cell: gid,
@@ -353,7 +375,7 @@ module.exports = {
 
 	builders: {
 		tile: function (info) {
-			let { x, y, cell, layer: layerName } = info;
+			let { x, y, cell, layer: layerName, sheetName } = info;
 
 			if (cell === 0) {
 				if (layerName === 'tiles')
@@ -363,7 +385,10 @@ module.exports = {
 			}
 
 			let cellInfo = this.getCellInfo(cell, x, y, layerName);
-			let sheetName = cellInfo.sheetName;
+			if (!sheetName) {
+				info.sheetName = cellInfo.sheetName;
+				sheetName = cellInfo.sheetName;
+			}
 
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
 
@@ -406,6 +431,7 @@ module.exports = {
 			}
 
 			let blueprint = {
+				id: cell.properties.id,
 				clientObj: clientObj,
 				sheetName: cell.has('sheetName') ? cell.sheetName : cellInfo.sheetName,
 				cell: cell.has('cell') ? cell.cell : cellInfo.cell - 1,

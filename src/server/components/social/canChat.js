@@ -1,8 +1,6 @@
-const roles = require('../../config/roles');
-
 module.exports = (obj, time) => {
-	const roleLevel = roles.getRoleLevel(obj);
-	if (roleLevel >= 5)
+	const accountLevel = obj.auth.getAccountLevel();
+	if (accountLevel >= 5)
 		return true;
 
 	if (!time)

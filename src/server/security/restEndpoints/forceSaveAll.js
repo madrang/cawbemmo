@@ -1,14 +1,15 @@
 const bcrypt = require('bcrypt-nodejs');
-const roles = require('../../config/roles');
 
 const doSaveAll = async (res, config, err, compareResult) => {
 	if (!compareResult)
 		return;
 
-	let roleLevel = roles.getRoleLevel({
-		account: config.username
+	const accountInfo = await io.getAsync({
+		table: 'accountInfo',
+		key: config.username
 	});
-	if (roleLevel < 9)
+
+	if (!accountInfo || !accountInfo.level || accountInfo.level < 9)
 		return;
 
 	await atlas.returnWhenZonesIdle();

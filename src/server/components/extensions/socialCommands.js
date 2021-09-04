@@ -1,4 +1,3 @@
-const roles = require('../../config/roles');
 const generator = require('../../items/generator');
 const configSlots = require('../../items/config/slots');
 const configMaterials = require('../../items/config/materials');
@@ -54,7 +53,6 @@ const localCommands = [
 	'leave',
 	'setPassword',
 	'roll',
-	'giveSkin',
 	'broadcast',
 	'saveAll',
 	'help',
@@ -68,8 +66,9 @@ const contextActions = [];
 const commandActions = {};
 
 module.exports = {
+	actions: [],
+
 	customChannels: [],
-	roleLevel: null,
 
 	init: function (blueprint) {
 		if (this.customChannels) {
@@ -77,6 +76,10 @@ module.exports = {
 				.filter((c, i) => (this.customChannels.indexOf(c) === i));
 		}
 
+		this.calculateActions();
+	},
+
+	calculateActions: function () {
 		const chatCommandConfig = {
 			localCommands,
 			contextActions: extend([], contextActions),
@@ -93,14 +96,8 @@ module.exports = {
 			this[actionName] = actionHandler.bind(this);
 		});
 
-		this.roleLevel = roles.getRoleLevel(this.obj);
-
-		this.calculateActions(chatCommandConfig.contextActions);
-	},
-
-	calculateActions: function (actions) {
-		this.actions = actions
-			.filter(c => this.roleLevel >= commandRoles[c.command]);
+		this.actions = chatCommandConfig.contextActions
+			.filter(c => this.obj.auth.getAccountLevel() >= commandRoles[c.command]);
 	},
 
 	onBeforeChat: function (msg) {
@@ -124,7 +121,7 @@ module.exports = {
 				}]
 			});
 			return;
-		} else if (this.roleLevel < commandRoles[actionName]) {
+		} else if (this.obj.auth.getAccountLevel() < commandRoles[actionName]) {
 			this.obj.socket.emit('events', {
 				onGetMessages: [{
 					messages: [{
@@ -321,7 +318,7 @@ module.exports = {
 		const msg = [
 			'You can use the following commands:', 
 			...Object.keys(commandRoles)
-				.filter(c => this.roleLevel >= commandRoles[c])
+				.filter(c => this.obj.auth.getAccountLevel() >= commandRoles[c])
 				.map(c => `/${c}`)
 		].join('<br />');
 	
@@ -568,27 +565,6 @@ module.exports = {
 			key: username,
 			table: 'login',
 			value: hashedPassword
-		});
-	},
-
-	giveSkin: async function (config) {
-		let keys = Object.keys(config);
-		let username = keys[0];
-		let skinId = keys[1];
-
-		let skins = await io.getAsync({
-			key: username,
-			table: 'skins',
-			isArray: true
-		});
-
-		skins.push(skinId);
-
-		await io.setAsync({
-			key: username,
-			table: 'skins',
-			value: skins,
-			serialize: true
 		});
 	},
 

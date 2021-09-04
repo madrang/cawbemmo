@@ -90,6 +90,10 @@ define([
 		},
 
 		build: function () {
+			let headingText = this.el.find('.heading-text');
+			let playerCount = this.onlineList.length;
+			headingText.html(`online players (${playerCount})`);
+
 			let container = this.el.find('.list');
 			container
 				.children(':not(.heading)')

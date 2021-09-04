@@ -5,15 +5,8 @@ storage.db
 *.sublime-project
 *.sublime-workspace
 src/server/mods/iwd-*
-!helpers/item-tooltip/styles.css
-!helpers/passives/**/*.css
-creds.js
 .directory
 firebaseConfig.js
-helpers/sqlite-to-rethink/rethinkdb_data
-helpers/sqlite-to-rethink/tmp
-helpers/sqlite-to-rethink/log_file
-helpers/sqlite-to-rethink/rethinkdb.exe
 .directory
 .idea
 .vscode
