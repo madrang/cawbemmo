@@ -178,7 +178,7 @@ module.exports = {
 		await this.getCustomChannels(character);
 		await this.getStash();
 
-		this.verifySkin(character);
+		await this.verifySkin(character);
 
 		data.callback(character);
 	},
@@ -212,8 +212,8 @@ module.exports = {
 		});
 	},
 
-	verifySkin: function (character) {
-		const doesOwn = this.doesOwnSkin(character.skinId);
+	verifySkin: async function (character) {
+		const doesOwn = await this.doesOwnSkin(character.skinId);
 
 		if (doesOwn)
 			return;
@@ -225,7 +225,7 @@ module.exports = {
 		character.sheetName = skins.getSpritesheet(defaultTo);
 	},
 
-	doesOwnSkin: function (skinId) {
+	doesOwnSkin: async function (skinId) {
 		const allSkins = skins.getList();
 		const filteredSkins = allSkins.filter(({ default: isDefaultSkin }) => isDefaultSkin);
 
@@ -235,7 +235,7 @@ module.exports = {
 			filteredSkins
 		};
 
-		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+		await eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
 
 		const result = filteredSkins.some(f => f.id === skinId);
 
@@ -252,7 +252,7 @@ module.exports = {
 			filteredSkins
 		};
 
-		eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
+		await eventEmitter.emit('onBeforeGetAccountSkins', msgSkinList);
 
 		callback(filteredSkins);
 	},
@@ -445,7 +445,7 @@ module.exports = {
 
 		let simple = this.obj.getSimple(true);
 
-		this.verifySkin(simple);
+		await this.verifySkin(simple);
 		
 		let prophecies = (data.prophecies || []).filter(p => p);
 		

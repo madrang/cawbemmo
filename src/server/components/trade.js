@@ -152,7 +152,7 @@ module.exports = {
 			this.buyback(msg);
 	},
 
-	buy: function (msg) {
+	buy: async function (msg) {
 		let target = this.target;
 		if (!target)
 			return;
@@ -191,7 +191,7 @@ module.exports = {
 		}
 
 		if (item.type === 'skin') {
-			let haveSkin = this.obj.auth.doesOwnSkin(item.skinId);
+			let haveSkin = await this.obj.auth.doesOwnSkin(item.skinId);
 
 			if (haveSkin) {
 				sendMessage(this.obj, 'color-redA', 'You have already unlocked that skin.');
