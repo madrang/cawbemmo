@@ -20,13 +20,12 @@ define([
 		init: function () {
 			const obj = this.obj;
 
-			if (isMobile) 
+			obj.addComponent('keyboardMover');
+			obj.addComponent('mouseMover');
+
+			if (isMobile)
 				obj.addComponent('touchMover');
-			else {
-				obj.addComponent('keyboardMover');
-				obj.addComponent('mouseMover');
-			}
-			
+
 			obj.addComponent('serverActions');
 			obj.addComponent('pather');
 
@@ -72,7 +71,7 @@ define([
 			renderer.setPosition({
 				x: (x - (renderer.width / (scale * 2))) * scale,
 				y: (y - (renderer.height / (scale * 2))) * scale
-			}, instant);		
+			}, instant);
 		},
 
 		onRespawn: function ({ x, y }) {

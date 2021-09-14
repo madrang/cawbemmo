@@ -243,13 +243,18 @@ define([
 			if ((!obj.sprite) && (template.sheetName))
 				obj.sprite = renderer.buildObject(obj);
 
-			if ((!obj.nameSprite) && (template.name)) {
+			if (template.name) {
+				if (obj.nameSprite)
+					renderer.destroyObject({ sprite: obj.nameSprite });
+
 				obj.nameSprite = renderer.buildText({
 					layerName: 'effects',
 					text: template.name,
 					x: (obj.x * scale) + (scale / 2),
 					y: (obj.y * scale) + scale
 				});
+
+				obj.nameSprite.visible = config.showNames;
 			}
 
 			if ((template.x !== 0) || (template.y !== 0)) {

@@ -688,7 +688,7 @@ if (!Array.prototype.random) {
 		let i;
 		for (i = art.length; i >= 0; --i) {
 			if (typeof art[i] === 'string')
-				art[i] = PIXI.Texture.fromImage(art[i]);
+				art[i] = PIXI.Texture.from(art[i]);
 		}
 		//particles from different base textures will be slower in WebGL than if they
 		//were from one spritesheet

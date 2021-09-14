@@ -85,7 +85,20 @@ module.exports = {
 	},
 
 	update: function () {
-		this.list.forEach(l => {
+		const spawners = this.list;
+		let count = spawners.length;
+
+		for (let i = 0; i < count; i++) {
+			const l = spawners[i];
+
+			if (l.destroyed) {
+				spawners.splice(i, 1);
+				i--;
+				count--;
+
+				continue;
+			}
+
 			if (l.lifetime && l.mob) {
 				if (!l.age)
 					l.age = 1;
@@ -143,7 +156,7 @@ module.exports = {
 
 				const mob = this.spawn(l);
 				if (!mob)
-					return;
+					continue;
 
 				const name = (l.blueprint.objZoneName || l.blueprint.name).toLowerCase();
 
@@ -159,7 +172,7 @@ module.exports = {
 
 				l.mob = mob;
 			}
-		});
+		}
 	},
 
 	setupMob: function (mob, blueprint) {
@@ -201,5 +214,12 @@ module.exports = {
 			if (cpn.simplify)
 				builtCpn.simplify = cpn.simplify.bind(builtCpn);
 		}
+	},
+
+	destroySpawnerForObject: function (obj) {
+		const spawner = this.list.find(l => l.mob === obj);
+
+		if (spawner)
+			spawner.destroyed = true;
 	}
 };

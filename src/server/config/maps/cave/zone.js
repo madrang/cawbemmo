@@ -177,7 +177,16 @@ module.exports = {
 				drops: {
 					chance: 100,
 					rolls: 5,
-					magicFind: [2000, 200]
+					noRandom: true,
+					alsoRandom: true,
+					magicFind: [2000, 200],
+					blueprints: [{
+						chance: 100,
+						name: 'Digested Crystal',
+						quality: 0,
+						quest: true,
+						sprite: [1, 1]
+					}]
 				}
 			},
 			rare: {

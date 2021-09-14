@@ -42,7 +42,8 @@ const config = {
 	spriteSizes: {
 		'images/tiles.png': 8,
 		'images/walls.png': 8,
-		'images/objects.png': 8
+		'images/objects.png': 8,
+		'images/mobs.png': 8
 	},
 	blockingTileIndices: [
 		6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197

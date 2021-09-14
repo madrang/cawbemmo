@@ -724,7 +724,7 @@ module.exports = {
 		if (!lootStats) 
 			this.stats.lootStats[mob.name] = time;
 		else
-			return ((lootStats.day !== time.day), (lootStats.month !== time.month));
+			return ((lootStats.day !== time.day) || (lootStats.month !== time.month));
 	},
 
 	events: {

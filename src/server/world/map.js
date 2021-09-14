@@ -309,7 +309,7 @@ module.exports = {
 							msgBuild.cell = data[index];
 
 						events.emit('onBeforeBuildLayerTile', msgBuild);
-						const tile = builders.tile(msgBuild);
+						builders.tile(msgBuild);
 						events.emit('onAfterBuildLayerTile', msgBuild);
 					}
 				}
