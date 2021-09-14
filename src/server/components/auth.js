@@ -47,8 +47,6 @@ const getCreateLock = async () => {
 module.exports = {
 	type: 'auth',
 
-	accountLevel: 1,
-
 	username: null,
 	charname: null,
 	characters: {},
