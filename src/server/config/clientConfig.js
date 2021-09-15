@@ -1,6 +1,7 @@
 const imageSize = require('image-size');
 
 const events = require('../misc/events');
+const fileLister = require('../misc/fileLister');
 const tos = require('./tos');
 
 const config = {
@@ -197,6 +198,7 @@ const config = {
 		player: [],
 		npc: []
 	},
+	clientComponents: [],
 	sounds: {
 		ui: []
 	},
@@ -207,6 +209,16 @@ module.exports = {
 	config,
 
 	init: async function () {
+		fileLister.getFolder('./clientComponents').forEach(f => {
+			const type = f.split('.')[0];
+			const path = 'server/clientComponents/' + f;
+
+			config.clientComponents.push({
+				type,
+				path
+			});
+		});
+
 		events.emit('onBeforeGetClientConfig', config);
 
 		//Deprecated

@@ -11,13 +11,17 @@ const appFile = (req, res) => {
 	let file = req.params[0];
 	
 	file = file.replace('/' + root + '/', '');
-	
+
 	const validRequest = (
 		root !== 'server' ||
-			(
-				file.includes('mods/') &&
-				validModPatterns.some(v => file.includes(v))
-			)
+		(
+			root === 'server' &&
+			file.startsWith('clientComponents/')
+		) ||
+		(
+			file.includes('mods/') &&
+			validModPatterns.some(v => file.includes(v))
+		)
 	);
 	
 	if (!validRequest)

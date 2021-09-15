@@ -1,50 +1,51 @@
-let components = [
-	'keyboardMover',
-	'mouseMover',
-	'touchMover',
-	'player',
-	'pather',
-	'attackAnimation',
-	'lightningEffect',
-	'moveAnimation',
-	'bumpAnimation',
-	'animation',
-	'light',
-	'lightPatch',
-	'projectile',
-	'particles',
-	'explosion',
-	'spellbook',
-	'inventory',
-	'stats',
-	'chest',
-	'effects',
-	'quests',
-	'events',
-	'resourceNode',
-	'gatherer',
-	'stash',
-	'flash',
-	'chatter',
-	'dialogue',
-	'trade',
-	'reputation',
-	'serverActions',
-	'social',
-	'passives',
-	'sound',
-	'whirlwind',
-	'fadeInOut'
-].map(function (c) {
-	return 'js/components/' + c;
-});
+// let components = [
+// 	'keyboardMover',
+// 	'mouseMover',
+// 	'touchMover',
+// 	'player',
+// 	'pather',
+// 	'attackAnimation',
+// 	'lightningEffect',
+// 	'moveAnimation',
+// 	'bumpAnimation',
+// 	'animation',
+// 	'light',
+// 	'lightPatch',
+// 	'projectile',
+// 	'particles',
+// 	'explosion',
+// 	'spellbook',
+// 	'inventory',
+// 	'stats',
+// 	'chest',
+// 	'effects',
+// 	'quests',
+// 	'events',
+// 	'resourceNode',
+// 	'gatherer',
+// 	'stash',
+// 	'flash',
+// 	'chatter',
+// 	'dialogue',
+// 	'trade',
+// 	'reputation',
+// 	'serverActions',
+// 	'social',
+// 	'passives',
+// 	'sound',
+// 	'whirlwind',
+// 	'fadeInOut'
+// ].map(function (c) {
+// 	return 'js/components/' + c;
+// });
 
 define([
-	...components, 
-	'../system/events'
-], function () {
-	const events = arguments[arguments.length - 1];
-	
+	'js/system/events',
+	'js/system/globals'
+], function (
+	events,
+	globals
+) {
 	const hookEvent = function (e, cb) {
 		if (!this.eventList[e])
 			this.eventList[e] = [];
@@ -59,26 +60,35 @@ define([
 		});
 	};
 
-	let templates = {};
-
-	[].forEach.call(arguments, function (t, i) {
-		//Don't do this for the events module
-		if (i === arguments[2].length - 1)
-			return;
-
-		t.eventList = {};
-		t.hookEvent = hookEvent;
-		t.unhookEvents = unhookEvents;
-
-		templates[t.type] = t;
-	});
-
 	return {
+		templates: {},
+
+		init: function () {
+			let cpns = globals.clientConfig.clientComponents;
+			return Promise.all(cpns.map(c => this.getComponent(c)));
+		},
+
+		getComponent: function (cpn) {
+			return new Promise(resolve => {
+				require([cpn.path], this.onGetComponent.bind(this, resolve, cpn));
+			});
+		},
+
+		onGetComponent: function (resolve, cpn, template) {
+			template.eventList = {};
+			template.hookEvent = hookEvent;
+			template.unhookEvents = unhookEvents;
+
+			this.templates[cpn.type] = template;
+
+			resolve();
+		},
+		
 		getTemplate: function (type) {
 			if (type === 'lightpatch')
 				type = 'lightPatch';
 
-			let template = templates[type] || {
+			let template = this.templates[type] || {
 				type: type
 			};
 
