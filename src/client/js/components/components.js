@@ -61,6 +61,9 @@ define([
 							this.templates[target] = $.extend(true, this.templates[target], template);
 							resolve();
 						});
+					} else {
+						// There's no file for that component type for us to extend
+						resolve();
 					}
 				} else {
 					this.templates[target] = $.extend(true, this.templates[target], template);
