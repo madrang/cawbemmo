@@ -210,6 +210,8 @@ module.exports = {
 
 	init: async function () {
 		fileLister.getFolder('./clientComponents').forEach(f => {
+			if (!f.endsWith('.js')) return;
+
 			const type = f.split('.')[0];
 			const path = 'server/clientComponents/' + f;
 

@@ -19,12 +19,20 @@ define([
 		});
 	};
 
+	let cpns = [];
+
 	return {
 		templates: {},
 
 		init: function () {
-			let cpns = globals.clientConfig.clientComponents;
-			return Promise.all(cpns.map(c => this.getComponent(c)));
+			cpns = globals.clientConfig.clientComponents;
+
+			cpns = cpns.map(c => ({
+				...c,
+				promise: this.getComponent(c)
+			}));
+
+			return Promise.all(cpns.map(c => c.promise));
 		},
 
 		getComponent: function (cpn) {
@@ -34,15 +42,36 @@ define([
 		},
 
 		onGetComponent: function (resolve, cpn, template) {
-			template.eventList = {};
-			template.hookEvent = hookEvent;
-			template.unhookEvents = unhookEvents;
+			if (cpn.type) {
+				template.eventList = {};
+				template.hookEvent = hookEvent;
+				template.unhookEvents = unhookEvents;
 
-			this.templates[cpn.type] = template;
+				this.templates[cpn.type] = template;
 
-			resolve();
+				resolve();
+			} else if (cpn.extends) {
+				let target = cpn.extends;
+
+				if (!this.templates[target]) {
+					let waitFor = cpns.find(c => c.type === target);
+					
+					if (waitFor) {
+						waitFor.promise.then(() => {
+							this.templates[target] = $.extend(true, this.templates[target], template);
+							resolve();
+						});
+					}
+				} else {
+					this.templates[target] = $.extend(true, this.templates[target], template);
+					resolve();
+				}
+			} else {
+				// This shouldn't get reached
+				resolve();
+			}
 		},
-		
+
 		getTemplate: function (type) {
 			if (type === 'lightpatch')
 				type = 'lightPatch';
