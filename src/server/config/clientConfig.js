@@ -221,6 +221,11 @@ module.exports = {
 			});
 		});
 
+		config.clientComponents.push({
+			extends: 'effects',
+			path: 'server/clientComponents/effects/auras.js'
+		});
+
 		events.emit('onBeforeGetClientConfig', config);
 
 		//Deprecated
