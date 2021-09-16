@@ -204,7 +204,7 @@ module.exports = {
 
 		fixes.fixStash(this.stash);
 
-		eventEmitter.emit('onAfterGetStash', {
+		await eventEmitter.emit('onAfterGetStash', {
 			obj: this.obj,
 			stash: this.stash
 		});
