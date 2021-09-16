@@ -1,6 +1,6 @@
 {
   "name": "isleward_server",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "isleward",
   "dependencies": {
     "axios": "^0.21.1",
