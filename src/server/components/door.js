@@ -20,6 +20,11 @@ module.exports = {
 		this.destroyKey = blueprint.destroyKey;
 		this.autoClose = blueprint.autoClose;
 
+		if (blueprint.openSprite)
+			this.openSprite = blueprint.openSprite;
+		if (blueprint.closedSprite)
+			this.closedSprite = blueprint.closedSprite;
+
 		if (this.closed) {
 			this.obj.instance.physics.setCollision(this.obj.x, this.obj.y, true);
 			this.obj.instance.objects.notifyCollisionChange(this.obj.x, this.obj.y, true);
