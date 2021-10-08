@@ -20,10 +20,14 @@ const onRequest = (socket, msg, callback) => {
 		if (!router.allowedCpn(msg))
 			return;
 
+		delete msg.threadModule;
+
 		cons.route(socket, msg);
 	} else if (msg.threadModule) {
 		if (!router.allowedGlobalCall(msg.threadModule, msg.method))
 			return;
+
+		delete msg.cpn;
 
 		cons.route(socket, msg);
 	} else {
