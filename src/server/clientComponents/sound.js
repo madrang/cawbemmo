@@ -9,9 +9,11 @@ define([
 		sound: null,
 		volume: 0,
 
+		soundEntry: null,
+
 		init: function () {
 			const { 
-				sound, volume, music, defaultMusic,
+				sound, volume, music, defaultMusic, loop = true,
 				obj: { zoneId, x, y, width, height, area }
 			} = this;
 
@@ -26,10 +28,21 @@ define([
 				area,
 				music,
 				defaultMusic,
-				loop: true
+				loop
 			};
 
-			soundManager.addSound(config);
+			this.soundEntry = soundManager.addSound(config);
+		},
+
+		extend: function (bpt) {
+			Object.assign(this, bpt);
+
+			Object.assign(this.soundEntry, bpt);
+		},
+
+		destroy: function () {
+			if (this.soundEntry?.sound)
+				this.soundEntry?.sound.stop();
 		}
 	};
 });

@@ -13,6 +13,12 @@ define([
 				transports: ['websocket']
 			});
 
+			window.socket = this.socket;
+
+			/*this.socket = io('http://127.0.0.1:3000', {
+				transports: ['websocket']
+			});*/
+
 			this.socket.on('connect', this.onConnected.bind(this, onReady));
 			this.socket.on('handshake', this.onHandshake.bind(this));
 			this.socket.on('event', this.onEvent.bind(this));

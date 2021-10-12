@@ -32,6 +32,7 @@ define([
 		init: function () {
 			events.on('onToggleAudio', this.onToggleAudio.bind(this));
 			events.on('onPlaySound', this.playSound.bind(this));
+			events.on('onPlaySoundAtPosition', this.onPlaySoundAtPosition.bind(this));
 			events.on('onManipulateVolume', this.onManipulateVolume.bind(this));
 
 			const { clientConfig: { sounds: loadSounds } } = globals;
@@ -65,6 +66,24 @@ define([
 					i--;
 				}
 			}
+		},
+
+		onPlaySoundAtPosition: function ({ position: { x, y }, file, volume }) {
+			const { player: { x: playerX, y: playerY } } = window;
+			const dx = Math.abs(x - playerX);
+			const dy = Math.abs(y - playerY);
+			const distance = Math.max(dx, dy);
+
+			const useVolume = volume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
+
+			//eslint-disable-next-line no-undef, no-unused-vars
+			const sound = new Howl({
+				src: [file],
+				volume: useVolume,
+				loop: false,
+				autoplay: true,
+				html5: false
+			});
 		},
 
 		playSound: function (soundName) {
@@ -211,6 +230,13 @@ define([
 		addSound: function (
 			{ name: soundName, scope, file, volume = 1, x, y, w, h, area, music, defaultMusic, autoLoad, loop }
 		) {
+			if (this.sounds.some(s => s.file === file)) {
+				if (window.player?.x !== undefined)
+					this.update(window.player.x, window.player.y);
+
+				return;
+			}
+
 			if (!area && w) {
 				area = [
 					[x, y],
@@ -243,6 +269,11 @@ define([
 			};
 
 			this.sounds.push(soundEntry);
+
+			if (window.player?.x !== undefined)
+				this.update(window.player.x, window.player.y);
+
+			return soundEntry;
 		},
 
 		loadSound: function (file, loop = false, autoplay = false, volume = 1) {
