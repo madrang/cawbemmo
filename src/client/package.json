@@ -3,9 +3,9 @@
   "version": "0.10.4",
   "description": "isleward",
   "dependencies": {
-    "eslint": "^7.32.0"
   },
   "devDependencies": {
+    "eslint": "^7.32.0",
     "babel-eslint": "^10.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-requirejs": "^4.0.1"
