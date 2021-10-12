@@ -321,6 +321,10 @@ define([
 
 			const { player: { x, y } } = window;
 			this.update(x, y);
+		},
+
+		destroySoundEntry: function (soundEntry) {
+			this.sounds.spliceWhere(s => s === soundEntry);
 		}
 	};
 });

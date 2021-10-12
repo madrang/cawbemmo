@@ -43,6 +43,8 @@ define([
 		destroy: function () {
 			if (this.soundEntry?.sound)
 				this.soundEntry?.sound.stop();
+
+			soundManager.destroySoundEntry(this.soundEntry);
 		}
 	};
 });
