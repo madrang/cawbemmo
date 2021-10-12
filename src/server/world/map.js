@@ -259,12 +259,18 @@ module.exports = {
 		const layers = [...mapFile.layers.filter(l => l.objects), ...mapFile.layers.filter(l => !l.objects)];
 
 		//Rooms need to be ahead of exits
-		layers.rooms = (layers.rooms || [])
-			.sort(function (a, b) {
-				if ((a.exit) && (!b.exit))
-					return 1;
-				return 0;
-			});
+		const layerRooms = layers.find(l => l.name === 'rooms') || {};
+		layerRooms.objects.sort((a, b) => {
+			const isExitA = a?.properties?.some(p => p.name === 'exit');
+			const isExitB = b?.properties?.some(p => p.name === 'exit');
+
+			if (isExitA && !isExitB)
+				return 1;
+			else if (!isExitA && isExitB)
+				return -1;
+
+			return 0;
+		});
 
 		for (let i = 0; i < layers.length; i++) {
 			let layer = layers[i];
