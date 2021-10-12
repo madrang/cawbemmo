@@ -10,6 +10,8 @@ Built with NodeJS, JS, HTML and CSS.
 
 ### Installation and Usage
 
+**IMPORTANT**: The sqlite3 package has been removed for the time being due to multiple `npm audit` issues arrising. While installing this module will not cause you any security issues (due to the nature of the vulnerabilities and how Isleward actually uses the module), we have removed it to make the build process simpler for us. As a result of this, after performing an `npm install` in the `server` folder, please also run `npm i sqlite3`.
+
 * [Windows](https://gitlab.com/Isleward/isleward/wikis/installation-and-usage-(windows))
 * [Linux](https://gitlab.com/Isleward/isleward/wikis/installation-and-usage-(linux))
 * [MacOS](https://gitlab.com/Isleward/isleward/wikis/installation-and-usage-(macos))
