@@ -21,6 +21,7 @@ const onRequest = (socket, msg, callback) => {
 			return;
 
 		delete msg.threadModule;
+		delete msg.module;
 
 		cons.route(socket, msg);
 	} else if (msg.threadModule) {
@@ -28,6 +29,7 @@ const onRequest = (socket, msg, callback) => {
 			return;
 
 		delete msg.cpn;
+		delete msg.module;
 
 		cons.route(socket, msg);
 	} else {

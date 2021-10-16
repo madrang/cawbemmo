@@ -1,50 +1,15 @@
-let components = [
-	'keyboardMover',
-	'mouseMover',
-	'touchMover',
-	'player',
-	'pather',
-	'attackAnimation',
-	'lightningEffect',
-	'moveAnimation',
-	'bumpAnimation',
-	'animation',
-	'light',
-	'lightPatch',
-	'projectile',
-	'particles',
-	'explosion',
-	'spellbook',
-	'inventory',
-	'stats',
-	'chest',
-	'effects',
-	'quests',
-	'events',
-	'resourceNode',
-	'gatherer',
-	'stash',
-	'flash',
-	'chatter',
-	'dialogue',
-	'trade',
-	'reputation',
-	'serverActions',
-	'social',
-	'passives',
-	'sound',
-	'whirlwind',
-	'fadeInOut'
-].map(function (c) {
-	return 'js/components/' + c;
-});
-
 define([
-	...components, 
-	'../system/events'
-], function () {
-	const events = arguments[arguments.length - 1];
-	
+	'js/system/events',
+	'js/system/globals'
+], function (
+	events,
+	globals
+) {
+	//Store templates here after loading them
+	const templates = [];
+	const extenders = [];
+
+	//Bound Methods
 	const hookEvent = function (e, cb) {
 		if (!this.eventList[e])
 			this.eventList[e] = [];
@@ -59,30 +24,54 @@ define([
 		});
 	};
 
-	let templates = {};
+	//Helpers
+	const loadComponent = cpn => {
+		return new Promise(res => {
+			require([cpn.path], tpl => {
+				if (cpn.type)
+					templates.push(tpl);
+				if (cpn.extends)
+					extenders.push(tpl);
+				
+				res();
+			});
+		});
+	};
 
-	[].forEach.call(arguments, function (t, i) {
-		//Don't do this for the events module
-		if (i === arguments[2].length - 1)
-			return;
+	//Init Methods
+	const loadComponents = paths => {
+		return Promise.all(
+			paths.map(p => loadComponent(p))
+		);
+	};
+	
+	const buildComponents = () => {
+		templates.forEach(t => {
+			const extensions = extenders.filter(e => e.extends === t.type);
 
-		t.eventList = {};
-		t.hookEvent = hookEvent;
-		t.unhookEvents = unhookEvents;
+			extensions.forEach(e => $.extend(true, t, e));
 
-		templates[t.type] = t;
-	});
+			t.eventList = {};
+			t.hookEvent = hookEvent;
+			t.unhookEvents = unhookEvents;
+		});
+	};
 
+	//Export
 	return {
+		init: async function () {
+			const paths = globals.clientConfig.clientComponents;
+
+			await loadComponents(paths);
+
+			buildComponents();
+		},
+
 		getTemplate: function (type) {
 			if (type === 'lightpatch')
 				type = 'lightPatch';
 
-			let template = templates[type] || {
-				type: type
-			};
-
-			return template;
+			return templates.find(t => t.type === type) || { type: type };
 		}
 	};
 });
