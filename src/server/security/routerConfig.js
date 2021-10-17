@@ -25,6 +25,15 @@ const routerConfig = {
 		clientConfig: ['getClientConfig'],
 		leaderboard: ['requestList'],
 		cons: ['unzone']
+	},
+	allowTargetId: {
+		door: ['lock', 'unlock'],
+		gatherer: ['gather'],
+		equipment: ['inspect'],
+		stash: ['open'],
+		social: ['declineInvite'],
+		wardrobe: ['open', 'apply'],
+		workbench: ['open', 'craft', 'getRecipe']
 	}
 };
 
