@@ -260,6 +260,7 @@ module.exports = {
 
 		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
+
 			return;
 		}
 
@@ -277,6 +278,18 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
+			return;
+		}
+
+		const emBeforeLogin = {
+			obj: this.obj,
+			success: true,
+			msg: null
+		};
+		await eventEmitter.emit('onBeforeLogin', emBeforeLogin);
+		if (!emBeforeLogin.success) {
+			msg.callback(emBeforeLogin.msg);
+
 			return;
 		}
 		
