@@ -340,6 +340,20 @@ module.exports = {
 			}
 		}
 
+		const emBeforeRegisterAccount = {
+			obj: this.obj,
+			success: true,
+			msg: null
+		};
+
+		eventEmitter.emit('onBeforeRegisterAccount', emBeforeRegisterAccount);
+
+		if (!emBeforeRegisterAccount.success) {
+			msg.callback(emBeforeRegisterAccount.msg);
+
+			return;
+		}
+
 		let exists = await io.getAsync({
 			key: credentials.username,
 			ignoreCase: true,
@@ -350,6 +364,7 @@ module.exports = {
 
 		if (exists) {
 			msg.callback(messages.login.exists);
+
 			return;
 		}
 
