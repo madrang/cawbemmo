@@ -359,7 +359,7 @@ module.exports = {
 			msg: null
 		};
 
-		eventEmitter.emit('onBeforeRegisterAccount', emBeforeRegisterAccount);
+		await eventEmitter.emit('onBeforeRegisterAccount', emBeforeRegisterAccount);
 
 		if (!emBeforeRegisterAccount.success) {
 			msg.callback(emBeforeRegisterAccount.msg);
