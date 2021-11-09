@@ -31,7 +31,7 @@ define([
 				if (cpn.type)
 					templates.push(tpl);
 				if (cpn.extends)
-					extenders.push(tpl);
+					extenders.push({ extends: cpn.extends, tpl });
 				
 				res();
 			});
@@ -49,7 +49,7 @@ define([
 		templates.forEach(t => {
 			const extensions = extenders.filter(e => e.extends === t.type);
 
-			extensions.forEach(e => $.extend(true, t, e));
+			extensions.forEach(e => $.extend(true, t, e.tpl));
 
 			t.eventList = {};
 			t.hookEvent = hookEvent;
