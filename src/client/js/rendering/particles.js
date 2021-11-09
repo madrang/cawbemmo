@@ -28,9 +28,10 @@ define([
 
 			let options = $.extend(true, {}, particleDefaults, config);
 
-			let emitter = new PIXI.particles.Emitter(this.r.layers.particles, ['images/particles.png'], options);
+			let emitter = new PIXI.particles.Emitter(this.stage, ['images/particles.png'], options);
 			emitter.obj = obj;
 			emitter.emit = true;
+			emitter.particleEngine = this;
 
 			this.emitters.push(emitter);
 

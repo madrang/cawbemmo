@@ -5,6 +5,11 @@ define([
 	events,
 	globals
 ) {
+	//Store templates here after loading them
+	const templates = [];
+	const extenders = [];
+
+	//Bound Methods
 	const hookEvent = function (e, cb) {
 		if (!this.eventList[e])
 			this.eventList[e] = [];
@@ -19,71 +24,54 @@ define([
 		});
 	};
 
-	let cpns = [];
-
-	return {
-		templates: {},
-
-		init: function () {
-			cpns = globals.clientConfig.clientComponents;
-
-			cpns = cpns.map(c => ({
-				...c,
-				promise: this.getComponent(c)
-			}));
-
-			return Promise.all(cpns.map(c => c.promise));
-		},
-
-		getComponent: function (cpn) {
-			return new Promise(resolve => {
-				require([cpn.path], this.onGetComponent.bind(this, resolve, cpn));
+	//Helpers
+	const loadComponent = cpn => {
+		return new Promise(res => {
+			require([cpn.path], tpl => {
+				if (cpn.type)
+					templates.push(tpl);
+				if (cpn.extends)
+					extenders.push(tpl);
+				
+				res();
 			});
-		},
+		});
+	};
 
-		onGetComponent: function (resolve, cpn, template) {
-			if (cpn.type) {
-				template.eventList = {};
-				template.hookEvent = hookEvent;
-				template.unhookEvents = unhookEvents;
+	//Init Methods
+	const loadComponents = paths => {
+		return Promise.all(
+			paths.map(p => loadComponent(p))
+		);
+	};
+	
+	const buildComponents = () => {
+		templates.forEach(t => {
+			const extensions = extenders.filter(e => e.extends === t.type);
 
-				this.templates[cpn.type] = template;
+			extensions.forEach(e => $.extend(true, t, e));
 
-				resolve();
-			} else if (cpn.extends) {
-				let target = cpn.extends;
+			t.eventList = {};
+			t.hookEvent = hookEvent;
+			t.unhookEvents = unhookEvents;
+		});
+	};
 
-				if (!this.templates[target]) {
-					let waitFor = cpns.find(c => c.type === target);
-					
-					if (waitFor) {
-						waitFor.promise.then(() => {
-							this.templates[target] = $.extend(true, this.templates[target], template);
-							resolve();
-						});
-					} else {
-						// There's no file for that component type for us to extend
-						resolve();
-					}
-				} else {
-					this.templates[target] = $.extend(true, this.templates[target], template);
-					resolve();
-				}
-			} else {
-				// This shouldn't get reached
-				resolve();
-			}
+	//Export
+	return {
+		init: async function () {
+			const paths = globals.clientConfig.clientComponents;
+
+			await loadComponents(paths);
+
+			buildComponents();
 		},
 
 		getTemplate: function (type) {
 			if (type === 'lightpatch')
 				type = 'lightPatch';
 
-			let template = this.templates[type] || {
-				type: type
-			};
-
-			return template;
+			return templates.find(t => t.type === type) || { type: type };
 		}
 	};
 });

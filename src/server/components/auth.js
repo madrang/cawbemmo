@@ -204,7 +204,7 @@ module.exports = {
 
 		fixes.fixStash(this.stash);
 
-		eventEmitter.emit('onAfterGetStash', {
+		await eventEmitter.emit('onAfterGetStash', {
 			obj: this.obj,
 			stash: this.stash
 		});
@@ -260,6 +260,7 @@ module.exports = {
 
 		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
+
 			return;
 		}
 
@@ -277,6 +278,18 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
+			return;
+		}
+
+		const emBeforeLogin = {
+			obj: this.obj,
+			success: true,
+			msg: null
+		};
+		await eventEmitter.emit('onBeforeLogin', emBeforeLogin);
+		if (!emBeforeLogin.success) {
+			msg.callback(emBeforeLogin.msg);
+
 			return;
 		}
 		
@@ -340,6 +353,20 @@ module.exports = {
 			}
 		}
 
+		const emBeforeRegisterAccount = {
+			obj: this.obj,
+			success: true,
+			msg: null
+		};
+
+		await eventEmitter.emit('onBeforeRegisterAccount', emBeforeRegisterAccount);
+
+		if (!emBeforeRegisterAccount.success) {
+			msg.callback(emBeforeRegisterAccount.msg);
+
+			return;
+		}
+
 		let exists = await io.getAsync({
 			key: credentials.username,
 			ignoreCase: true,
@@ -350,6 +377,7 @@ module.exports = {
 
 		if (exists) {
 			msg.callback(messages.login.exists);
+
 			return;
 		}
 

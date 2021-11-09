@@ -21,11 +21,15 @@ define([
 	globals,
 	renderLoginBackground
 ) {
-	let mRandom = Math.random.bind(Math);
+	const mRandom = Math.random.bind(Math);
+
+	const particleLayers = ['particlesUnder', 'particles'];
+	const particleEngines = {};
 
 	return {
 		stage: null,
 		layers: {
+			particlesUnder: null,
 			objects: null,
 			mobs: null,
 			characters: null,
@@ -115,10 +119,15 @@ define([
 				this.textures[t].scaleMode = PIXI.SCALE_MODES.NEAREST;
 			});
 
-			particles.init({
-				r: this,
-				renderer: this.renderer,
-				stage: this.layers.particles
+			particleLayers.forEach(p => {
+				const engine = $.extend({}, particles);
+				engine.init({
+					r: this,
+					renderer: this.renderer,
+					stage: this.layers[p]
+				});
+
+				particleEngines[p] = engine;
 			});
 
 			this.buildSpritesTexture();
@@ -769,11 +778,16 @@ define([
 		},
 
 		buildEmitter: function (config) {
-			return particles.buildEmitter(config);
+			const { layerName = 'particles' } = config;
+			const particleEngine = particleEngines[layerName];
+
+			return particleEngine.buildEmitter(config);
 		},
 
 		destroyEmitter: function (emitter) {
-			particles.destroyEmitter(emitter);
+			const particleEngine = emitter.particleEngine;
+
+			particleEngine.destroyEmitter(emitter);
 		},
 
 		setSprite: function (obj) {
@@ -887,7 +901,8 @@ define([
 				return;
 
 			effects.render();
-			particles.update();
+
+			particleLayers.forEach(p => particleEngines[p].update());
 
 			this.renderer.render(this.stage);
 		}
