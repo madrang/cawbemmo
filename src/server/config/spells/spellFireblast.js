@@ -147,7 +147,7 @@ module.exports = {
 	},
 
 	endEffect: function (target, targetPos, targetEffect) {
-		target.effects.removeEffect(targetEffect, true);
+		target.effects.removeEffect(targetEffect.id);
 
 		target.instance.physics.removeObject(target, target.x, target.y);
 

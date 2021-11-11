@@ -110,14 +110,14 @@ module.exports = {
 				let effect = effects[i];
 				if (!forceDestroy) {
 					if (effect.persist) {
-						this.syncRemove(effect.id, effect.type);
+						this.syncRemove(effect.id);
 						continue;
 					}
 				}
 
 				this.destroyEffect(effect);
 
-				this.syncRemove(effect.id, effect.type);
+				this.syncRemove(effect.id);
 				effects.splice(i, 1);
 				eLen--;
 				i--;
@@ -225,8 +225,13 @@ module.exports = {
 		});
 	},
 
-	syncRemove: function (id, type, noMsg) {
-		if ((noMsg) || (!type))
+	syncRemove: function (id) {
+		let effect = this.effects.find(e => e.id === id);
+
+		if (!effect)
+			return;
+
+		if (effect.silent)
 			return;
 
 		this.obj.instance.syncer.queue('onRemoveBuff', {
@@ -243,9 +248,9 @@ module.exports = {
 	},
 
 	removeEffect: function (id, noMsg) {
-		if (noMsg) {
+		if (noMsg)
 			console.error('removeEffect: noMsg is deprecated!');
-		}
+		
 		if (typeof id !== 'number') {
 			console.error('removeEffect: id should be a number');
 			id = id.id;
@@ -254,24 +259,9 @@ module.exports = {
 		let effect = this.effects.find(e => e.id === id);
 		this.destroyEffect(effect);
 
-		this.syncRemove(effect.id, effect.type);
+		this.syncRemove(effect.id);
 		
 		this.effects.spliceWhere(e => e.id === id);
-	},
-	removeEffectByName: function (effectName, noMsg) {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-			if (effect.type === effectName) {
-				this.destroyEffect(effect);
-
-				this.syncRemove(effect.id, effect.type, noMsg || effects.noMsg);
-				effects.splice(i, 1);
-				
-				return effect;
-			}
-		}
 	},
 
 	getEffectByType: function (effectType) {
@@ -329,7 +319,7 @@ module.exports = {
 
 				this.destroyEffect(e);
 
-				this.syncRemove(e.id, e.type, e.noMsg);
+				this.syncRemove(e.id);
 			}
 		}
 

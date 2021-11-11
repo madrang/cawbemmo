@@ -115,7 +115,7 @@ module.exports = {
 
 		obj.instance.physics.addObject(obj, obj.x, obj.y);
 
-		obj.effects.removeEffect(selfEffect, true);
+		obj.effects.removeEffect(selfEffect.id);
 
 		this.obj.aggro.move();
 
