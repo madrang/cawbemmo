@@ -313,13 +313,13 @@ module.exports = {
 				e.update();
 
 			if (e.destroyed) {
-				effects.splice(i, 1);
-				eLen--;
-				i--;
-
 				this.destroyEffect(e);
 
 				this.syncRemove(e.id);
+
+				effects.splice(i, 1);
+				eLen--;
+				i--;
 			}
 		}
 
