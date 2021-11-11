@@ -145,6 +145,8 @@ module.exports = {
 		if (!options.force && !this.canApplyEffect(options.type))
 			return;
 
+		// TODO: separate "stack ttl" flag/method
+		/*
 		if (!options.new) {
 			let exists = this.effects.find(e => e.type === options.type);
 			if (exists) {
@@ -160,6 +162,7 @@ module.exports = {
 				return exists;
 			}
 		}
+		*/
 
 		let typeTemplate = null;
 		if (options.type) {
@@ -179,14 +182,14 @@ module.exports = {
 		
 		builtEffect.obj = this.obj;
 		builtEffect.id = this.nextId++;
-		builtEffect.noMsg = options.noMsg;
+		builtEffect.silent = options.silent;
 
 		if (builtEffect.init)
 			builtEffect.init(options.source);
 
 		this.effects.push(builtEffect);
 
-		if (!options.noMsg) {
+		if (!options.silent) {
 			this.obj.instance.syncer.queue('onGetBuff', {
 				type: options.type,
 				id: builtEffect.id
@@ -198,12 +201,28 @@ module.exports = {
 				text: '+' + options.type
 			}, -1);
 
-			this.obj.syncer.setArray(false, 'effects', 'addEffects', options.type);
+			this.obj.syncer.setArray(false, 'effects', 'addEffects', builtEffect.simplify());
 		}
 
 		this.obj.instance.eventEmitter.emit('onAddEffect', this.obj, builtEffect);
 
 		return builtEffect;
+	},
+
+	syncExtend: function (id, data) {
+		let effect = this.effects.find(e => e.id === id);
+		if (!effect)
+			return;
+
+		//Never sync silent effects
+		if (effect.silent)
+			return;
+
+		//TODO: should this be for self?
+		this.obj.syncer.setArray(true, 'effects', 'extendEffects', {
+			id,
+			data
+		});
 	},
 
 	syncRemove: function (id, type, noMsg) {
@@ -220,23 +239,24 @@ module.exports = {
 			text: '-' + type
 		}, -1);
 
-		this.obj.syncer.setArray(false, 'effects', 'removeEffects', type);
+		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
 	},
 
-	removeEffect: function (checkEffect, noMsg) {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-			if (effect === checkEffect) {
-				this.destroyEffect(effect);
-
-				this.syncRemove(effect.id, effect.type, noMsg || effect.noMsg);
-				effects.splice(i, 1);
-
-				return;
-			}
+	removeEffect: function (id, noMsg) {
+		if (noMsg) {
+			console.error('removeEffect: noMsg is deprecated!');
 		}
+		if (typeof id !== 'number') {
+			console.error('removeEffect: id should be a number');
+			id = id.id;
+		}
+
+		let effect = this.effects.find(e => e.id === id);
+		this.destroyEffect(effect);
+
+		this.syncRemove(effect.id, effect.type);
+		
+		this.effects.spliceWhere(e => e.id === id);
 	},
 	removeEffectByName: function (effectName, noMsg) {
 		let effects = this.effects;

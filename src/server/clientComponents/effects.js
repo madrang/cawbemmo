@@ -1,12 +1,16 @@
 define([
-	'js/rendering/renderer'
+
 ], function (
-	renderer
+
 ) {
 	return {
 		type: 'effects',
 
 		effects: [],
+
+		effectBase: {
+
+		},
 
 		templates: {
 			
@@ -17,12 +21,15 @@ define([
 		},
 
 		buildEffect: function (data) {
-			if (typeof data === 'string')
+			if (typeof data === 'string') {
+				//TODO: temporary while we work on effects
+				console.error('String type effects should be deprecated, this effect will be missing an id');
 				data = { type: data };
+			}
 			
 			let template = this.templates[data.type] || {};
 
-			let effect = $.extend(true, {}, template, data);
+			let effect = $.extend(true, {}, this.effectBase, template, data);
 
 			effect.obj = this.obj;
 
@@ -39,8 +46,8 @@ define([
 				this.effects.push.apply(this.effects, blueprint.addEffects || []);
 			}
 			if (blueprint.removeEffects) {
-				blueprint.removeEffects.forEach(r => {
-					let effect = this.effects.find(e => e.type === r);
+				blueprint.removeEffects.forEach(removeId => {
+					let effect = this.effects.find(e => e.id === removeId);
 
 					if (!effect)
 						return;
@@ -48,7 +55,22 @@ define([
 					if (effect.destroy)
 						effect.destroy();
 
-					this.effects.spliceFirstWhere(e => e.type === r);
+					this.effects.spliceFirstWhere(e => e.id === removeId);
+				});
+			}
+			if (blueprint.extendEffects) {
+				blueprint.extendEffects.forEach(u => {
+					let effect = this.effects.find(e => e.id === u.id);
+
+					if (!effect)
+						return;
+
+					if (effect.extend)
+						effect.extend(u.data);
+					else {
+						for (let p in u.data) 
+							effect[p] = u.data[p];
+					}
 				});
 			}
 		},

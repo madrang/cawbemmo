@@ -1,4 +1,15 @@
 module.exports = {
+	syncExtend: function (data) {
+		let effects = this.obj.effects;
+		effects.syncExtend(this.id, data);
+	},
+
+	isFirstOfType: function () {
+		let effects = this.obj.effects;
+		let firstOfType = effects.find(f => f.type === this.type);
+		return (firstOfType.id === this);
+	},
+
 	save: function () {
 		if (!this.persist)
 			return null;
@@ -19,6 +30,8 @@ module.exports = {
 	},
 
 	simplify: function () {
-		return this.type;
+		return {
+			type: this.type
+		};
 	}	
 };
