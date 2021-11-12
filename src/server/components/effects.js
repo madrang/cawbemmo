@@ -195,12 +195,6 @@ module.exports = {
 				id: builtEffect.id
 			}, [this.obj.serverId]);
 
-			this.obj.instance.syncer.queue('onGetDamage', {
-				id: this.obj.id,
-				event: true,
-				text: '+' + options.type
-			}, -1);
-
 			this.obj.syncer.setArray(false, 'effects', 'addEffects', builtEffect.simplify());
 		}
 
@@ -237,12 +231,6 @@ module.exports = {
 		this.obj.instance.syncer.queue('onRemoveBuff', {
 			id: id
 		}, [this.obj.serverId]);
-
-		this.obj.instance.syncer.queue('onGetDamage', {
-			id: this.obj.id,
-			event: true,
-			text: '-' + type
-		}, -1);
 
 		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
 	},

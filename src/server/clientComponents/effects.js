@@ -1,16 +1,30 @@
 define([
-
+	'js/rendering/numbers'
 ], function (
-
+	numbers
 ) {
+	const effectBase = {
+		init: function () {
+			this.defaultDamageText(false);
+		},
+
+		destroy: function () {
+			this.defaultDamageText(true);
+		},
+
+		defaultDamageText: function (removing) {
+			numbers.onGetDamage({
+				id: this.obj.id,
+				event: true,
+				text: (removing ? '-' : '+') + this.type
+			});
+		}
+	};
+
 	return {
 		type: 'effects',
 
 		effects: [],
-
-		effectBase: {
-
-		},
 
 		templates: {
 			
@@ -29,8 +43,9 @@ define([
 			
 			let template = this.templates[data.type] || {};
 
-			let effect = $.extend(true, {}, this.effectBase, template, data);
+			let effect = $.extend(true, {}, effectBase, template, data);
 
+			effect.self = !!this.obj.self;
 			effect.obj = this.obj;
 
 			if (effect.init)

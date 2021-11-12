@@ -39,6 +39,8 @@ define([
 					h: scale * 3,
 					cell: cell
 				});
+
+				this.defaultDamageText();
 			},
 
 			getAlpha: function () {
@@ -93,6 +95,8 @@ define([
 					layerName: 'effects',
 					sprite: this.sprite
 				});
+
+				this.defaultDamageText(true);
 			},
 
 			setVisible: function (visible) {
