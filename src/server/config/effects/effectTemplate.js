@@ -31,6 +31,7 @@ module.exports = {
 
 	simplify: function () {
 		return {
+			id: this.id,
 			type: this.type
 		};
 	}	

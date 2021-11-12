@@ -1,9 +1,11 @@
 define([
-	'js/rendering/renderer'
+	'js/rendering/renderer',
+	'js/system/events'
 ], function (
-	renderer
+	renderer,
+	events
 ) {
-	let auras = {
+	const auras = {
 		reflectDamage: 0,
 		stealth: 1,
 		regenHp: 9,
@@ -11,6 +13,14 @@ define([
 		swiftness: 11,
 		holyVengeance: 8,
 		rare: 16
+	};
+	const buffIcons = {
+		regenHp: [3, 1],
+		regenMana: [4, 1],
+		swiftness: [5, 1],
+		stealth: [7, 0],
+		reflectDamage: [2, 1],
+		holyVengeance: [4, 0]
 	};
 
 	let templates = {};
@@ -41,6 +51,13 @@ define([
 				});
 
 				this.defaultDamageText();
+
+				if (this.self && buffIcons[type]) {
+					events.emit('onGetEffectIcon', {
+						id: this.id,
+						icon: buffIcons[type]
+					});
+				}
 			},
 
 			getAlpha: function () {
@@ -97,6 +114,12 @@ define([
 				});
 
 				this.defaultDamageText(true);
+
+				if (this.self && buffIcons[type]) {
+					events.emit('onRemoveEffectIcon', {
+						id: this.id
+					});
+				}
 			},
 
 			setVisible: function (visible) {

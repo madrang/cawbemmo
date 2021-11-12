@@ -1,15 +1,34 @@
 define([
+	'js/system/events',
 	'js/rendering/numbers'
 ], function (
+	events,
 	numbers
 ) {
+	const defaultBuffIcons = {
+		stunned: [4, 0]
+	};
+
 	const effectBase = {
 		init: function () {
 			this.defaultDamageText(false);
+
+			if (this.self && defaultBuffIcons[this.type]) {
+				events.emit('onGetEffectIcon', {
+					id: this.id,
+					icon: defaultBuffIcons[this.type]
+				});
+			}
 		},
 
 		destroy: function () {
 			this.defaultDamageText(true);
+
+			if (this.self && defaultBuffIcons[this.type]) {
+				events.emit('onRemoveEffectIcon', {
+					id: this.id
+				});
+			}
 		},
 
 		defaultDamageText: function (removing) {

@@ -189,14 +189,8 @@ module.exports = {
 
 		this.effects.push(builtEffect);
 
-		if (!options.silent) {
-			this.obj.instance.syncer.queue('onGetBuff', {
-				type: options.type,
-				id: builtEffect.id
-			}, [this.obj.serverId]);
-
+		if (!options.silent)
 			this.obj.syncer.setArray(false, 'effects', 'addEffects', builtEffect.simplify());
-		}
 
 		this.obj.instance.eventEmitter.emit('onAddEffect', this.obj, builtEffect);
 
@@ -227,10 +221,6 @@ module.exports = {
 
 		if (effect.silent)
 			return;
-
-		this.obj.instance.syncer.queue('onRemoveBuff', {
-			id: id
-		}, [this.obj.serverId]);
 
 		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
 	},

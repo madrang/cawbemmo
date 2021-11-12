@@ -173,7 +173,7 @@ const config = {
 		'party',
 		'help',
 		'dialogue',
-		'buffs',
+		'effects',
 		'tooltips',
 		'tooltipInfo',
 		'tooltipItem',
