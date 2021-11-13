@@ -210,8 +210,6 @@ module.exports = {
 
 		this.dirty = false;
 
-		console.log(Object.keys(this.buffer));
-
 		process.send({
 			method: 'events',
 			data: this.buffer

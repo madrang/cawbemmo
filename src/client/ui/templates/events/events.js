@@ -26,7 +26,7 @@ define([
 				this.find('.btnCollapse').on('click', this.toggleButtons.bind(this));
 			}
 			
-			this.onEvent('onRezone', this.onRezone.bind(this));
+			this.onEvent('clearUis', this.clear.bind(this));
 
 			this.onEvent('onObtainEvent', this.onObtainEvent.bind(this));
 			this.onEvent('onRemoveEvent', this.onRemoveEvent.bind(this));
@@ -37,7 +37,7 @@ define([
 			this.onToggleEventsVisibility(config.showEvents);
 		},
 
-		onRezone: function () {
+		clear: function () {
 			this.list = [];
 			this.el.find('.list').empty();
 		},

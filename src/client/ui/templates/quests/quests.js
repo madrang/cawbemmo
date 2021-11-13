@@ -25,7 +25,7 @@ define([
 				this.find('.btnCollapse').on('click', this.toggleButtons.bind(this));
 			}
 
-			this.onEvent('onRezone', this.onRezone.bind(this));
+			this.onEvent('clearUis', this.clear.bind(this));
 
 			this.onEvent('onObtainQuest', this.onObtainQuest.bind(this));
 			this.onEvent('onUpdateQuest', this.onUpdateQuest.bind(this));
@@ -35,7 +35,7 @@ define([
 			this.onToggleQuestsVisibility(config.showQuests);
 		},
 
-		onRezone: function () {
+		clear: function () {
 			this.quests = [];
 			this.el.find('.list').empty();
 		},

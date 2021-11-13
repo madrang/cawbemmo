@@ -58,8 +58,10 @@ define([
 		},
 
 		onCharSelect: function () {
-			renderer.clean();
-			objects.onRezone();
+			events.emit('destroyAllObjects');
+			events.emit('resetRenderer');
+			events.emit('resetPhysics');
+
 			renderer.buildTitleScreen();
 			sound.unload();
 

@@ -18,11 +18,7 @@ define([
 
 		postRender: function () {
 			this.onEvent('onGetTalk', this.onGetTalk.bind(this));
-			this.onEvent('onRezone', this.onRezone.bind(this));
-		},
-
-		onRezone: function () {
-			this.hide();
+			this.onEvent('clearUis', this.hide.bind(this));
 		},
 
 		onGetTalk: function (dialogue) {

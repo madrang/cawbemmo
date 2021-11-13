@@ -20,14 +20,14 @@ define([
 			this.onEvent('onPermadeath', this.onPermadeath.bind(this));
 
 			this.find('.btn-logout').on('click', this.onLogout.bind(this));
-			this.find('.btn-respawn').on('click', this.onRespawn.bind(this));
+			this.find('.btn-respawn').on('click', this.performRespawn.bind(this));
 		},
 
 		onLogout: function () {
 			$('.uiMainMenu').data('ui').charSelect();
 		},
 
-		onRespawn: function () {
+		performRespawn: function () {
 			events.emit('onHideOverlay', this.el);
 			this.hide(true);
 
