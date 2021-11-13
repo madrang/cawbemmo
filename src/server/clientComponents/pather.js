@@ -27,9 +27,9 @@ define([
 		lastY: 0,
 
 		init: function () {
-			events.on('onRespawn', this.onDeath.bind(this));
-			events.on('onDeath', this.onDeath.bind(this));
-			events.on('onClearQueue', this.onDeath.bind(this));
+			events.on('teleportToPosition', this.resetPath.bind(this));
+			events.on('onDeath', this.resetPath.bind(this));
+			events.on('onClearQueue', this.resetPath.bind(this));
 
 			this.pathPos.x = round(this.obj.x);
 			this.pathPos.y = round(this.obj.y);
@@ -46,7 +46,7 @@ define([
 			this.path = [];
 		},
 
-		onDeath: function () {
+		resetPath: function () {
 			this.clearPath();
 			
 			this.pathPos.x = round(this.obj.x);

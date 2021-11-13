@@ -203,7 +203,7 @@ module.exports = {
 
 		return newO;
 	},
-	sendEvent: function (msg) {
+	sendEvent: function (msg, sourceThread) {
 		let player = this.objects.find(p => p.id === msg.id);
 		if (!player)
 			return;
@@ -213,7 +213,7 @@ module.exports = {
 			data: msg.data.data
 		});
 	},
-	sendEvents: function (msg) {
+	sendEvents: function (msg, sourceThread) {
 		let players = {};
 		let objects = this.objects;
 
@@ -239,12 +239,21 @@ module.exports = {
 							if (!findPlayer)
 								continue;
 							else {
+								//If the message came from a map the player is no longer in, ignore
+								if (findPlayer.zoneName !== sourceThread.name) 
+									continue;
+
 								player = (players[toId] = {
 									socket: findPlayer.socket,
-									events: {}
+									events: {},
+									obj: findPlayer
 								});
 							}
 						}
+
+						//If the message came from a map the player is no longer in, ignore
+						if (player.obj.zoneName !== sourceThread.name)
+							continue;
 
 						let eventList = player.events[e] || (player.events[e] = []);
 						eventList.push(obj);

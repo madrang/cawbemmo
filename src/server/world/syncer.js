@@ -180,11 +180,37 @@ module.exports = {
 		}
 	},
 
+	processDestroyedObject: function (obj) {
+		const { objects, queue } = this;
+		const { id, serverId } = obj;
+
+		obj.destroyed = true;
+		this.flushForTarget(serverId);
+
+		const msg = {
+			id: id,
+			destroyed: true
+		};
+
+		objects.removeObject(obj);
+
+		const fnQueueMsg = queue.bind(this, 'onGetObject');
+
+		//Find any players that have seen this obj
+		objects
+			.filter(o => !o.destroyed && o?.player?.hasSeen(id))
+			.forEach(o => {
+				fnQueueMsg(msg);
+			});
+	},
+
 	send: function () {
 		if (!this.dirty)
 			return;
 
 		this.dirty = false;
+
+		console.log(Object.keys(this.buffer));
 
 		process.send({
 			method: 'events',

@@ -13,6 +13,9 @@ let eventEmitter = require('../misc/events');
 const mods = require('../misc/mods');
 const transactions = require('../security/transactions');
 
+//Own helpers
+const { stageZoneIn, unstageZoneIn, clientAck } = require('./instancer/handshakes');
+
 module.exports = {
 	instances: [],
 	zoneId: -1,
@@ -65,6 +68,9 @@ module.exports = {
 		[resourceSpawner, syncer, objects, questBuilder, events].forEach(i => i.init(fakeInstance));
 
 		this.tick();
+
+		this.clientAck = clientAck;
+		eventEmitter.on('removeObject', unstageZoneIn);
 	},
 
 	startRegen: function (respawnMap, respawnPos) {
@@ -211,15 +217,17 @@ module.exports = {
 
 		obj.spawn = map.spawn;
 
-		syncer.queue('onGetMap', map.clientMap, [obj.serverId]);
+		stageZoneIn(msg);
 
-		if (!msg.transfer)
-			objects.addObject(obj, this.onAddObject.bind(this));
-		else {
-			let o = objects.transferObject(obj);
-			questBuilder.obtain(o);
-			eventEmitter.emit('onAfterPlayerEnterZone', o);
-		}
+		process.send({
+			method: 'events',
+			data: {
+				getMap: [{
+					obj: map.clientMap,
+					to: [obj.serverId]
+				}]
+			}
+		});
 	},
 
 	onAddObject: function (obj) {
@@ -301,6 +309,10 @@ module.exports = {
 
 			return;
 		}
+
+		//We fire this event because even though an object might be destroyed already,
+		// mods and modules might have staged events/actions we need to clear
+		eventEmitter.emit('removeObject', { obj: msg.obj });
 
 		let obj = msg.obj;
 		obj = objects.find(o => o.serverId === obj.id);

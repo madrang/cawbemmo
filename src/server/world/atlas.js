@@ -174,11 +174,11 @@ module.exports = {
 		},
 
 		event: function (thread, message) {
-			objects.sendEvent(message);
+			objects.sendEvent(message, thread);
 		},
 
 		events: function (thread, message) {
-			objects.sendEvents(message);
+			objects.sendEvents(message, thread);
 		},
 
 		object: function (thread, message) {
