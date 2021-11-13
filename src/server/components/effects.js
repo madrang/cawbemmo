@@ -137,39 +137,42 @@ module.exports = {
 	},
 
 	addEffect: function (options, source) {
+		//Skip 0-duration effects
 		if ((options.has('ttl')) && (options.ttl === 0))
 			return;
 
 		options.caster = options.caster || source;
 
+		//"X of Y in Z" cc resist check
 		if (!options.force && !this.canApplyEffect(options.type))
 			return;
 
-		// TODO: separate "stack ttl" flag/method
-		/*
-		if (!options.new) {
-			let exists = this.effects.find(e => e.type === options.type);
-			if (exists) {
-				exists.ttl += options.ttl;
+		//TODO: new stats that mitigate CC duration
 
-				for (let p in options) {
-					if (p === 'ttl')
-						continue;
+		let oldEffect = this.effects.find(e => e.type === options.type);
 
-					exists[p] = options[p];
-				}
-
-				return exists;
-			}
+		//If there is no existing effect or the effect is not stackable, make a new effect
+		if (!oldEffect || !oldEffect.shouldStack)
+			return this.buildEffect(options);
+		
+		//If the effect is stackable and the new effect should stack, stack with the old effect
+		let shouldStack = oldEffect.shouldStack(options);
+		if (shouldStack && oldEffect.incrementStack) {
+			oldEffect.incrementStack(options);
+			return oldEffect;
 		}
-		*/
 
+		//Otherwise make a new effect
+		return this.buildEffect(options);
+	},
+
+	getTypeTemplate: function (type) {
 		let typeTemplate = null;
-		if (options.type) {
-			let type = options.type[0].toUpperCase() + options.type.substr(1);
+		if (type) {
+			let capitalizedType = type[0].toUpperCase() + type.substr(1);
 			let result = {
 				type: type,
-				url: 'config/effects/effect' + type + '.js'
+				url: 'config/effects/effect' + capitalizedType + '.js'
 			};
 			this.obj.instance.eventEmitter.emit('onBeforeGetEffect', result);
 
@@ -177,6 +180,12 @@ module.exports = {
 		}
 
 		let builtEffect = extend({}, effectTemplate, typeTemplate);
+		return builtEffect;
+	},
+
+	buildEffect: function (options) {
+		let builtEffect = this.getTypeTemplate(options.type);
+
 		for (let p in options) 
 			builtEffect[p] = options[p];
 		
