@@ -24,7 +24,9 @@ const routerConfig = {
 	globalAllowed: {
 		clientConfig: ['getClientConfig'],
 		leaderboard: ['requestList'],
-		cons: ['unzone']
+		cons: ['unzone'],
+		rezoneManager: ['clientAck'],
+		instancer: ['clientAck']
 	},
 	allowTargetId: {
 		door: ['lock', 'unlock'],

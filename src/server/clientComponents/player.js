@@ -29,7 +29,7 @@ define([
 			obj.addComponent('serverActions');
 			obj.addComponent('pather');
 
-			this.hookEvent('onRespawn', this.onRespawn.bind(this));
+			this.hookEvent('teleportToPosition', this.teleportToPosition.bind(this));
 
 			events.emit('onGetPortrait', obj.portrait);
 		},
@@ -74,7 +74,7 @@ define([
 			}, instant);
 		},
 
-		onRespawn: function ({ x, y }) {
+		teleportToPosition: function ({ x, y }) {
 			this.positionCamera(x, y, true);
 			sound.update(x, y);
 		},

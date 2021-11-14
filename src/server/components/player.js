@@ -235,7 +235,7 @@ module.exports = {
 
 			obj.instance.physics.addObject(obj, obj.x, obj.y);
 
-			obj.instance.syncer.queue('onRespawn', {
+			obj.instance.syncer.queue('teleportToPosition', {
 				x: obj.x,
 				y: obj.y
 			}, [obj.serverId]);

@@ -58,7 +58,9 @@
     "leaderboard": false,
     "clientConfig": false,
     "random": false,
-    "consts": false
+    "consts": false,
+    "rezoneManager": false,
+    "eventManager": false
   },
 
   "rules": {

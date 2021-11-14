@@ -1,6 +1,6 @@
 module.exports = {
 	init: function (event) {
-		const { config, rewards, eventManager } = event;
+		const { config, rewards, eventManager: eManager } = event;
 
 		const { name: eventName, rewardSenderName } = config;
 
@@ -26,7 +26,7 @@ module.exports = {
 		});
 
 		if ((config.events) && (config.events.afterGiveRewards))
-			config.events.afterGiveRewards(eventManager, config);
+			config.events.afterGiveRewards(eManager, config);
 
 		this.end = true;
 	}

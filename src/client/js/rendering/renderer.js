@@ -8,7 +8,8 @@ define([
 	'js/rendering/shaders/outline',
 	'js/rendering/spritePool',
 	'js/system/globals',
-	'js/rendering/renderLoginBackground'
+	'js/rendering/renderLoginBackground',
+	'js/rendering/helpers/resetRenderer'
 ], function (
 	resources,
 	events,
@@ -19,7 +20,8 @@ define([
 	shaderOutline,
 	spritePool,
 	globals,
-	renderLoginBackground
+	renderLoginBackground,
+	resetRenderer
 ) {
 	const mRandom = Math.random.bind(Math);
 
@@ -84,6 +86,7 @@ define([
 			events.on('onGetMap', this.onGetMap.bind(this));
 			events.on('onToggleFullscreen', this.toggleScreen.bind(this));
 			events.on('onMoveSpeedChange', this.adaptCameraMoveSpeed.bind(this));
+			events.on('resetRenderer', resetRenderer.bind(this));
 
 			this.width = $('body').width();
 			this.height = $('body').height();

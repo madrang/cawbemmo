@@ -15,11 +15,15 @@ define([
 		objects: [],
 
 		init: function () {
-			events.on('onGetObject', this.onGetObject.bind(this));
-			events.on('onRezone', this.onRezone.bind(this));
 			events.on('onChangeHoverTile', this.getLocation.bind(this));
-			events.on('onTilesVisible', this.onTilesVisible.bind(this));
-			events.on('onToggleNameplates', this.onToggleNameplates.bind(this));
+
+			[
+				'onGetObject',
+				'onTilesVisible',
+				'onToggleNameplates',
+				'destroyAllObjects'
+			]
+				.forEach(e => events.on(e, this[e].bind(this)));
 		},
 
 		getLocation: function (x, y) {
@@ -87,20 +91,14 @@ define([
 			return list[fromIndex];
 		},
 
-		onRezone: function (oldZone) {
-			let objects = this.objects;
-			let oLen = objects.length;
-			for (let i = 0; i < oLen; i++) {
-				let o = objects[i];
+		destroyAllObjects: function () {
+			this.objects.forEach(o => {
+				o.destroy();
+			});
 
-				if (oldZone === null)
-					o.destroy();
-				else if (o.zoneId === oldZone)
-					o.destroy();
-			}
+			this.objects.length = 0;
 
-			if (window.player)
-				window.player.offEvents();
+			window?.player?.offEvents();
 		},
 
 		onGetObject: function (obj) {
