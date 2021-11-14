@@ -36,17 +36,19 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 		obj.y = invokingObj.obj.y + toRelativePos.y;
 	}
 
-	await obj.auth.doSave();
-
 	//Destroy, flush events and notify other objects
 	globalSyncer.processDestroyedObject(obj);
+	await obj.auth.doSave();
 
 	//Test code, remove later
-	const queued = Object.values(globalSyncer.buffer).filter(b => b.to.includes(serverId));
-	if (queued.length) {
-		/* eslint-disable-next-line */
-		console.log('Found', queued.length, 'events for rezoning object');
-	}
+	Object.entries(globalSyncer.buffer).forEach(([k, v]) => {
+		v.forEach(e => {
+			if (e.to.includes(serverId)) {
+			/* eslint-disable-next-line */
+			console.log('Found event', k, 'for rezoning object');
+			}
+		});
+	});
 
 	const simpleObj = obj.getSimple(true, false, true);
 

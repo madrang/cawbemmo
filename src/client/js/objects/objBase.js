@@ -174,7 +174,7 @@ define([
 
 		offEvents: function () {
 			if (this.pather)
-				this.pather.clearPath();
+				this.pather.resetPath();
 
 			for (let e in this.eventCallbacks)
 				this.eventCallbacks[e].forEach(c => events.off(e, c));

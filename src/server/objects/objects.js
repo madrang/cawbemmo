@@ -340,6 +340,14 @@ module.exports = {
 			if ((o.update) && (!o.destroyed))
 				o.update();
 
+			//When objects are sent to other zones, we destroy them immediately (thhrough sendObjToZone)
+			// In these cases, we DO need to remove it
+			if (o.forceDestroy) {
+				i--;
+				len--;
+				continue;
+			}
+
 			if (o.ttl) {
 				o.ttl--;
 				if (!o.ttl)

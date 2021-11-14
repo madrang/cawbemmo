@@ -185,7 +185,10 @@ module.exports = {
 		const { id, serverId } = obj;
 
 		obj.destroyed = true;
-		this.flushForTarget(serverId);
+
+		//We mark forceDestroy to tell objects that we're destroying an object outside of the
+		// syncer's update method
+		obj.forceDestroy = true;
 
 		const msg = {
 			id: id,
@@ -193,6 +196,8 @@ module.exports = {
 		};
 
 		objects.removeObject(obj);
+
+		this.flushForTarget(serverId);
 
 		const fnQueueMsg = queue.bind(this, 'onGetObject');
 
