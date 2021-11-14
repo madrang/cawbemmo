@@ -4,7 +4,7 @@ const getDefaultRotationSpell = rotationSpells => {
 	if (!spells.length)
 		return;
 
-	if (spells.length === 0)
+	if (spells.length === 1)
 		return spells[0];
 
 	const randomSpell = spells[~~(Math.random() * spells.length)];
