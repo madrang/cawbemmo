@@ -403,5 +403,9 @@ module.exports = {
 
 	clearIgnoreList: function () {
 		this.ignoreList = [];
+	},
+
+	isInCombat: function () {
+		return this.list.length > 0;
 	}
 };

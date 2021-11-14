@@ -98,6 +98,8 @@ module.exports = {
 	patrol: null,
 	patrolTargetNode: 0,
 
+	needLos: null,
+
 	init: function (blueprint) {
 		this.physics = this.obj.instance.physics;
 
@@ -251,8 +253,8 @@ module.exports = {
 		let ty = ~~target.y;
 
 		let distance = max(abs(x - tx), abs(y - ty));
-		let furthestAttackRange = obj.spellbook.getFurthestRange(null, true);
-		let furthestStayRange = obj.spellbook.getFurthestRange(null, false);
+		let furthestAttackRange = obj.spellbook.getFurthestRange(target, true);
+		let furthestStayRange = obj.spellbook.getFurthestRange(target, false);
 
 		let doesCollide = null;
 		let hasLos = null;
@@ -263,18 +265,20 @@ module.exports = {
 				hasLos = this.physics.hasLos(x, y, tx, ty);
 				//Maybe we don't care if the mob has LoS
 				if (hasLos || this.needLos === false) {
-					if (((obj.follower) && (obj.follower.master.player)) || (rnd() < 0.65)) {
-						let spell = obj.spellbook.getRandomSpell(target);
-						let success = obj.spellbook.cast({
-							spell: spell,
-							target: target
-						});
-						//null means we don't have LoS
-						if (success !== null)
-							return;
-						hasLos = false;
-					} else
+					let spell = obj.spellbook.getSpellToCast(target);
+					if (!spell)
 						return;
+
+					let success = obj.spellbook.cast({
+						spell: spell.id,
+						target
+					});
+
+					//null means we don't have LoS
+					if (success !== null)
+						return;
+
+					hasLos = false;
 				}
 			}
 		} else if (furthestAttackRange === 0) {
