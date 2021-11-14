@@ -46,6 +46,7 @@ module.exports = {
 		//External helpers that should form part of the component
 		this.getSpellToCast = rotationManager.getSpellToCast.bind(null, this);
 		this.getFurthestRange = rotationManager.getFurthestRange.bind(null, this);
+		this.resetRotation = rotationManager.resetRotation.bind(null, this);
 	},
 
 	transfer: function () {

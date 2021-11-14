@@ -1,3 +1,17 @@
+const getDefaultRotationSpell = rotationSpells => {
+	const spells = rotationSpells.filter(s => !s.atRotationTicks);
+
+	if (!spells.length)
+		return;
+
+	if (spells.length === 0)
+		return spells[0];
+
+	const randomSpell = spells[~~(Math.random() * spells.length)];
+
+	return randomSpell;
+};
+
 //Mobs that define rotations (normally bosses) use this method to determine their spell choices
 const getRotationSpell = (source, target) => {
 	const { spells, rotation: { currentTick, spells: rotationSpells } } = source;
@@ -5,10 +19,8 @@ const getRotationSpell = (source, target) => {
 	//Find spell matching current tick
 	let rotationEntry = rotationSpells.find(s => s.atRotationTicks?.includes(currentTick));
 
-	//If no rotation spell found, use a default spell
-	//Todo: round-robin/random/weighted/whatever when there are more than one
 	if (!rotationEntry)
-		rotationEntry = rotationSpells.find(s => !s.atRotationTicks);
+		rotationEntry = getDefaultRotationSpell(rotationSpells);
 
 	if (!rotationEntry)
 		return;
@@ -24,7 +36,7 @@ const getRotationSpell = (source, target) => {
 	useSpell.cd = 0;
 	useSpell.manaCost = 0;
 	if (!useSpell.selfCast && !useSpell.canCast(target))
-		return;
+		return getDefaultRotationSpell(rotationSpells);
 
 	return useSpell;
 };
@@ -104,8 +116,16 @@ const getFurthestRange = (source, target, checkCanCast) => {
 	return furthest;
 };
 
+const resetRotation = source => {
+	if (!source.rotation)
+		return;
+
+	source.rotation.currentTick = 0;
+};
+
 module.exports = {
 	tick,
+	resetRotation,
 	getSpellToCast,
 	getFurthestRange
 };

@@ -113,6 +113,7 @@ module.exports = {
 			this.maxChaseDistance = blueprint.maxChaseDistance;
 	},
 
+	/* eslint-disable-next-line max-lines-per-function */
 	update: function () {
 		let obj = this.obj;
 
@@ -123,20 +124,22 @@ module.exports = {
 		//Have we reached home?
 		if (this.goHome) {
 			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
-			if (!distanceFromHome)
+			if (!distanceFromHome) {
 				this.goHome = false;
-		}
-
-		//Are we too far from home?
-		if ((!this.goHome) && (!obj.follower) && (target)) {
-			if (!this.canChase(target)) {
-				obj.clearQueue();
-				obj.aggro.unAggro(target);
-				target = obj.aggro.getHighest();
+				obj.spellbook.resetRotation();
 			}
 		}
 
 		if (!this.goHome) {
+			//Are we too far from home?
+			if (!obj.follower && target) {
+				if (!this.canChase(target)) {
+					obj.clearQueue();
+					obj.aggro.unAggro(target);
+					target = obj.aggro.getHighest();
+				}
+			}
+
 			if ((target) && (target !== obj) && ((!obj.follower) || (obj.follower.master !== target))) {
 				//If we just started attacking, patrols need to know where home is
 				if (!this.target && this.patrol) {
@@ -147,10 +150,11 @@ module.exports = {
 				//Are we in fight mode?
 				this.fight(target);
 				return;
-			} else if ((!target) && (this.target)) {
+			} else if (!target && this.target) {
 				//Is fight mode over?
 				this.target = null;
 				obj.clearQueue();
+				obj.spellbook.resetRotation();
 
 				if (canPathHome(this))
 					this.goHome = true;
