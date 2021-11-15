@@ -98,6 +98,8 @@ module.exports = {
 	patrol: null,
 	patrolTargetNode: 0,
 
+	needLos: null,
+
 	init: function (blueprint) {
 		this.physics = this.obj.instance.physics;
 
@@ -111,6 +113,7 @@ module.exports = {
 			this.maxChaseDistance = blueprint.maxChaseDistance;
 	},
 
+	/* eslint-disable-next-line max-lines-per-function */
 	update: function () {
 		let obj = this.obj;
 
@@ -121,20 +124,22 @@ module.exports = {
 		//Have we reached home?
 		if (this.goHome) {
 			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
-			if (!distanceFromHome)
+			if (!distanceFromHome) {
 				this.goHome = false;
-		}
-
-		//Are we too far from home?
-		if ((!this.goHome) && (!obj.follower) && (target)) {
-			if (!this.canChase(target)) {
-				obj.clearQueue();
-				obj.aggro.unAggro(target);
-				target = obj.aggro.getHighest();
+				obj.spellbook.resetRotation();
 			}
 		}
 
 		if (!this.goHome) {
+			//Are we too far from home?
+			if (!obj.follower && target) {
+				if (!this.canChase(target)) {
+					obj.clearQueue();
+					obj.aggro.unAggro(target);
+					target = obj.aggro.getHighest();
+				}
+			}
+
 			if ((target) && (target !== obj) && ((!obj.follower) || (obj.follower.master !== target))) {
 				//If we just started attacking, patrols need to know where home is
 				if (!this.target && this.patrol) {
@@ -145,10 +150,11 @@ module.exports = {
 				//Are we in fight mode?
 				this.fight(target);
 				return;
-			} else if ((!target) && (this.target)) {
+			} else if (!target && this.target) {
 				//Is fight mode over?
 				this.target = null;
 				obj.clearQueue();
+				obj.spellbook.resetRotation();
 
 				if (canPathHome(this))
 					this.goHome = true;
@@ -251,8 +257,8 @@ module.exports = {
 		let ty = ~~target.y;
 
 		let distance = max(abs(x - tx), abs(y - ty));
-		let furthestAttackRange = obj.spellbook.getFurthestRange(null, true);
-		let furthestStayRange = obj.spellbook.getFurthestRange(null, false);
+		let furthestAttackRange = obj.spellbook.getFurthestRange(target, true);
+		let furthestStayRange = obj.spellbook.getFurthestRange(target, false);
 
 		let doesCollide = null;
 		let hasLos = null;
@@ -263,18 +269,20 @@ module.exports = {
 				hasLos = this.physics.hasLos(x, y, tx, ty);
 				//Maybe we don't care if the mob has LoS
 				if (hasLos || this.needLos === false) {
-					if (((obj.follower) && (obj.follower.master.player)) || (rnd() < 0.65)) {
-						let spell = obj.spellbook.getRandomSpell(target);
-						let success = obj.spellbook.cast({
-							spell: spell,
-							target: target
-						});
-						//null means we don't have LoS
-						if (success !== null)
-							return;
-						hasLos = false;
-					} else
+					let spell = obj.spellbook.getSpellToCast(target);
+					if (!spell)
 						return;
+
+					let success = obj.spellbook.cast({
+						spell: spell.id,
+						target
+					});
+
+					//null means we don't have LoS
+					if (success !== null)
+						return;
+
+					hasLos = false;
 				}
 			}
 		} else if (furthestAttackRange === 0) {

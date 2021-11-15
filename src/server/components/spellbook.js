@@ -3,6 +3,11 @@ let animations = require('../config/animations');
 let playerSpells = require('../config/spells');
 let playerSpellsConfig = require('../config/spellsConfig');
 
+//Helpers
+const rotationManager = require('./spellbook/rotationManager');
+
+//Component
+
 module.exports = {
 	type: 'spellbook',
 
@@ -16,6 +21,8 @@ module.exports = {
 
 	callbacks: [],
 
+	rotation: null,
+
 	init: function (blueprint) {
 		this.objects = this.obj.instance.objects;
 		this.physics = this.obj.instance.physics;
@@ -24,7 +31,22 @@ module.exports = {
 
 		(blueprint.spells || []).forEach(s => this.addSpell(s, -1));
 
+		if (blueprint.rotation) {
+			const { duration, spells } = blueprint.rotation;
+
+			this.rotation = {
+				currentTick: 0,
+				duration,
+				spells
+			};
+		}
+
 		delete blueprint.spells;
+
+		//External helpers that should form part of the component
+		this.getSpellToCast = rotationManager.getSpellToCast.bind(null, this);
+		this.getFurthestRange = rotationManager.getFurthestRange.bind(null, this);
+		this.resetRotation = rotationManager.resetRotation.bind(null, this);
 	},
 
 	transfer: function () {
@@ -243,17 +265,6 @@ module.exports = {
 		});
 	},
 
-	getRandomSpell: function (target) {
-		const valid = this.spells.filter(s => {
-			return (!s.selfCast && !s.procCast && !s.castOnDeath && s.canCast(target));
-		});
-
-		if (!valid.length)
-			return null;
-
-		return valid[~~(Math.random() * valid.length)].id;
-	},
-
 	getTarget: function (spell, action) {
 		let target = action.target;
 
@@ -445,25 +456,6 @@ module.exports = {
 		return this.closestRange;
 	},
 
-	getFurthestRange: function (spellNum, checkCanCast) {
-		if (spellNum)
-			return this.spells[spellNum].range;
-
-		let spells = this.spells;
-		let sLen = spells.length;
-		let furthest = 0;
-		for (let i = 0; i < sLen; i++) {
-			let spell = spells[i];
-			if (spell.procCast || spell.castOnDeath)
-				continue;
-
-			if (spell.range > furthest && (!checkCanCast || spell.canCast()))
-				furthest = spell.range;
-		}
-
-		return furthest;
-	},
-
 	getCooldowns: function () {
 		let cds = [];
 		this.spells.forEach(
@@ -479,6 +471,9 @@ module.exports = {
 	update: function () {
 		let didCast = false;
 		const isCasting = this.isCasting();
+
+		if (this.rotation)
+			rotationManager.tick(this);
 
 		this.spells.forEach(s => {
 			let auto = s.autoActive;

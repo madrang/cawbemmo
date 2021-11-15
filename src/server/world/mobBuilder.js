@@ -50,6 +50,8 @@ module.exports = {
 		if (cpnMob.patrol)
 			cpnMob.walkDistance = 1;
 
+		cpnMob.needLos = blueprint.needLos;
+
 		let spells = extend([], blueprint.spells);
 		spells.forEach(s => {
 			if (!s.animation && mob.sheetName === 'mobs' && animations.mobs[mob.cell]) 
@@ -179,21 +181,6 @@ module.exports = {
 			s.dmgMult = s.name ? dmgMult / 3 : dmgMult;
 			s.statType = preferStat;
 			s.manaCost = 0;
-
-			/*if (mob.name.toLowerCase().includes('stinktooth')) {
-				mob.stats.values.critChance = 0;
-				mob.stats.values.attackCritChance = 0;
-				mob.stats.values.spellCritChance = 0;
-
-				const n = mob.name + '-' + s.type;
-				if (!track[n])
-					track[n] = [];
-
-				track[n].push(~~s.getDamage(mob, true).amount);
-				track[n].sort((a, b) => a - b);
-				console.log(track);
-				console.log('');
-			}*/
 		});
 
 		//Hack to disallow low level mobs from having any lifeOnHit
