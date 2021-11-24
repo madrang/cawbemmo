@@ -164,7 +164,7 @@ module.exports = {
 
 		this.castingEffect = this.obj.effects.addEffect({
 			type: 'casting',
-			noMsg: true
+			silent: true
 		});
 
 		this.casting = true;

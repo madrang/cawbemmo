@@ -55,19 +55,10 @@ module.exports = {
 			type: 'stunned'
 		});
 
-		if (targetEffect) {
-			this.obj.instance.syncer.queue('onGetDamage', {
-				id: target.id,
-				event: true,
-				text: 'stunned'
-			}, -1);
-		}
-
 		let selfEffect = this.obj.effects.addEffect({
 			type: 'stunned',
-			noMsg: true,
-			force: true,
-			new: true
+			silent: true,
+			force: true
 		});
 
 		const moveAnimationEffect = {

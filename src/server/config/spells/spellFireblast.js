@@ -115,8 +115,7 @@ module.exports = {
 
 					const targetEffect = m.effects.addEffect({
 						type: 'stunned',
-						noMsg: true,
-						new: true
+						silent: true
 					});
 
 					//If targetEffect is undefined, it means that the target has become resistant

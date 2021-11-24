@@ -85,8 +85,7 @@ module.exports = {
 				type: this.effect,
 				amount: amount,
 				caster: this.obj,
-				ttl: -1,
-				new: true
+				ttl: -1
 			});
 		});
 
