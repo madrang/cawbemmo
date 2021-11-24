@@ -22,7 +22,8 @@ define([
 		},
 
 		destroy: function () {
-			this.defaultDamageText(true);
+			if (!this.obj.destroyed)
+				this.defaultDamageText(true);
 
 			if (this.self && defaultBuffIcons[this.type]) {
 				events.emit('onRemoveEffectIcon', {
