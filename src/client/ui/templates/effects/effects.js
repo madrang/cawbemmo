@@ -46,7 +46,7 @@ define([
 			let el = this.icons[config.id];
 			if (!el)
 				return;
-			
+
 			el.remove();
 			delete this.icons[config.id];
 		}

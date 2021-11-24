@@ -235,14 +235,6 @@ module.exports = {
 	},
 
 	removeEffect: function (id, noMsg) {
-		if (noMsg)
-			console.error('removeEffect: noMsg is deprecated!');
-		
-		if (typeof id !== 'number') {
-			console.error('removeEffect: id should be a number');
-			id = id.id;
-		}
-
 		let effect = this.effects.find(e => e.id === id);
 		this.destroyEffect(effect);
 

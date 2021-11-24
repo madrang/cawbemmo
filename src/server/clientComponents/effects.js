@@ -55,12 +55,6 @@ define([
 		},
 
 		buildEffect: function (data) {
-			if (typeof data === 'string') {
-				//TODO: temporary while we work on effects
-				console.error('String type effects should be deprecated, this effect will be missing an id');
-				data = { type: data };
-			}
-			
 			let template = this.templates[data.type] || {};
 
 			let effect = $.extend(true, {}, effectBase, template, data);
