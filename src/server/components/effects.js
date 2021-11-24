@@ -147,8 +147,6 @@ module.exports = {
 		if (!options.force && !this.canApplyEffect(options.type))
 			return;
 
-		//TODO: new stats that mitigate CC duration
-
 		let oldEffect = this.effects.find(e => e.type === options.type);
 
 		//If there is no existing effect or the effect is not stackable, make a new effect
@@ -215,7 +213,6 @@ module.exports = {
 		if (effect.silent)
 			return;
 
-		//TODO: should this be for self?
 		this.obj.syncer.setArray(true, 'effects', 'extendEffects', {
 			id,
 			data
@@ -234,7 +231,7 @@ module.exports = {
 		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
 	},
 
-	removeEffect: function (id, noMsg) {
+	removeEffect: function (id) {
 		let effect = this.effects.find(e => e.id === id);
 		this.destroyEffect(effect);
 
