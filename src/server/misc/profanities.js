@@ -9,7 +9,6 @@ let blacklist = [
 	'blowjob',
 	'boner',
 	'boob',
-	'breast',
 	'bukkake',
 	'cameltoe',
 	'carpetmuncher',
@@ -28,8 +27,6 @@ let blacklist = [
 	'dike',
 	'dildo',
 	'dong',
-	'douche',
-	'dumbass',
 	'dyke',
 	'ejaculate',
 	'erection',
@@ -42,16 +39,11 @@ let blacklist = [
 	'foreskin',
 	'fuck',
 	'fuk',
-	'gay',
 	'goatse',
-	'godamn',
-	'goddammit',
-	'goddamn',
 	'goldenshower',
 	'handjob',
 	'hardon',
 	'hitler',
-	'homo',
 	'horny',
 	'jerkoff',
 	'jism',
@@ -125,7 +117,6 @@ let blacklist = [
 	'testis',
 	'tits',
 	'tramp',
-	'transsex',
 	'turd',
 	'twat',
 	'undies',
@@ -146,7 +137,8 @@ let blacklist = [
 	'whoring',
 	'wigger',
 	'gaes',
-	'gaez'
+	'gaez',
+	'nogger'
 ];
 
 module.exports = {
@@ -161,7 +153,7 @@ module.exports = {
 	buildPath: function (chain, node) {
 		node = node || this.tree;
 		const letter = chain[0];
-		
+
 		if (!node[letter])
 			node[letter] = {};
 
@@ -171,9 +163,7 @@ module.exports = {
 
 	isClean: function (text, finalLevel) {
 		text = text
-			.toLowerCase()
-			.split(' ')
-			.join('');
+			.toLowerCase();
 
 		const tree = this.tree;
 
