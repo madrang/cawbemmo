@@ -138,7 +138,6 @@ let blacklist = [
 	'wigger',
 	'gaes',
 	'gaez',
-	'pron',
 	'nogger'
 ];
 
@@ -154,7 +153,7 @@ module.exports = {
 	buildPath: function (chain, node) {
 		node = node || this.tree;
 		const letter = chain[0];
-		
+
 		if (!node[letter])
 			node[letter] = {};
 
@@ -163,6 +162,9 @@ module.exports = {
 	},
 
 	isClean: function (text, finalLevel) {
+		text = text
+			.toLowerCase()
+
 		const tree = this.tree;
 
 		let tLen = text.length;
