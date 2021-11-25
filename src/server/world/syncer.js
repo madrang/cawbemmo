@@ -205,7 +205,7 @@ module.exports = {
 		objects
 			.filter(o => !o.destroyed && o?.player?.hasSeen(id))
 			.forEach(o => {
-				fnQueueMsg(msg);
+				fnQueueMsg(msg, [o.serverId]);
 			});
 	},
 
