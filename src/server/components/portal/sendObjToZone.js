@@ -51,6 +51,8 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	});
 
 	const simpleObj = obj.getSimple(true, false, true);
+	simpleObj.destroyed = false;
+	simpleObj.forceDestroy = false;
 
 	rezoneManager.stageRezone(simpleObj, zoneName);
 

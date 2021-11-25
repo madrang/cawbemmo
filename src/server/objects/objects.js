@@ -343,6 +343,7 @@ module.exports = {
 			//When objects are sent to other zones, we destroy them immediately (thhrough sendObjToZone)
 			// In these cases, we DO need to remove it
 			if (o.forceDestroy) {
+				objects.splice(i, 1);
 				i--;
 				len--;
 				continue;
