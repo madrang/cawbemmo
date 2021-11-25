@@ -69,7 +69,7 @@ module.exports = {
 			if (distance > range) {
 				if (effect) {
 					delete effects[m];
-					obj.effects.removeEffect(effect);
+					obj.effects.removeEffect(effect.id);
 				}
 
 				return;
@@ -85,8 +85,7 @@ module.exports = {
 				type: this.effect,
 				amount: amount,
 				caster: this.obj,
-				ttl: -1,
-				new: true
+				ttl: -1
 			});
 		});
 
@@ -96,7 +95,7 @@ module.exports = {
 				delete effects[serverId];
 				const obj = objects.find(f => ~~f.serverId === ~~serverId);
 				if (obj)
-					obj.effects.removeEffect(effect);
+					obj.effects.removeEffect(effect.id);
 			}
 		});
 	},
@@ -117,7 +116,7 @@ module.exports = {
 				return;
 			}
 
-			obj.effects.removeEffect(effect);
+			obj.effects.removeEffect(effect.id);
 			delete effects[m];
 		}, this);
 	}

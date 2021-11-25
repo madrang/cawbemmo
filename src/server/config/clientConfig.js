@@ -173,7 +173,7 @@ const config = {
 		'party',
 		'help',
 		'dialogue',
-		'buffs',
+		'effects',
 		'tooltips',
 		'tooltipInfo',
 		'tooltipItem',
@@ -219,6 +219,11 @@ module.exports = {
 				type,
 				path
 			});
+		});
+
+		config.clientComponents.push({
+			extends: 'effects',
+			path: 'server/clientComponents/effects/auras.js'
 		});
 
 		events.emit('onBeforeGetClientConfig', config);

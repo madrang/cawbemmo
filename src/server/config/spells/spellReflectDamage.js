@@ -36,6 +36,6 @@ module.exports = {
 
 		let obj = this.obj;
 
-		obj.effects.removeEffect(selfEffect);
+		obj.effects.removeEffect(selfEffect.id);
 	}
 };

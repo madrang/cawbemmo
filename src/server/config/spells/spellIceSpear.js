@@ -54,18 +54,10 @@ module.exports = {
 		if (this.obj.destroyed)
 			return;
 
-		let targetEffect = target.effects.addEffect({
+		target.effects.addEffect({
 			type: 'slowed',
 			ttl: this.freezeDuration
 		});
-
-		if (targetEffect) {
-			this.obj.instance.syncer.queue('onGetDamage', {
-				id: target.id,
-				event: true,
-				text: 'slowed'
-			}, -1);
-		}
 
 		let damage = this.getDamage(target);
 		target.stats.takeDamage(damage, this.threatMult, this.obj);

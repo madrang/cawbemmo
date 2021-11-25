@@ -8,6 +8,8 @@ module.exports = {
 
 	targetGround: true,
 
+	effect: null,
+
 	cast: function (action) {
 		//Clear Aggro
 		this.obj.aggro.die();
@@ -15,10 +17,10 @@ module.exports = {
 		let ttl = this.duration * consts.tickTime;
 		let endCallback = this.queueCallback(this.endEffect.bind(this), ttl - 50);
 
-		this.obj.effects.addEffect({
+		this.effect = this.obj.effects.addEffect({
 			type: 'stealth',
 			endCallback: endCallback
-		});		
+		});
 
 		return true;
 	},
@@ -28,7 +30,7 @@ module.exports = {
 
 		let obj = this.obj;
 
-		obj.effects.removeEffectByName('stealth');
+		obj.effects.removeEffect(this.effect.id);
 		this.obj.aggro.move();
 	}
 };
