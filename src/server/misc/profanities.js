@@ -139,7 +139,7 @@ let blacklist = [
 	'gaes',
 	'gaez',
 	'pron',
-	'nogger',
+	'nogger'
 ];
 
 module.exports = {
