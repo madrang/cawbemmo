@@ -16,18 +16,22 @@ module.exports = {
 		this.patronLevel = ~~blueprint.patron;
 	},
 
-	collisionEnter: async function (obj) {
+	collisionEnter: function (obj) {
 		if (!obj.player)
 			return;
 
-		const { toZone: zoneName, toPos, toRelativePos } = this;
+		(async () => {
+			const { toZone: zoneName, toPos, toRelativePos } = this;
 
-		await sendObjToZone({
-			obj,
-			invokingObj: this,
-			zoneName,
-			toPos,
-			toRelativePos
-		});
+			await sendObjToZone({
+				obj,
+				invokingObj: this,
+				zoneName,
+				toPos,
+				toRelativePos
+			});
+		})();
+
+		return true;
 	}
 };
