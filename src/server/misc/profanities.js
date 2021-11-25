@@ -163,7 +163,7 @@ module.exports = {
 
 	isClean: function (text, finalLevel) {
 		text = text
-			.toLowerCase()
+			.toLowerCase();
 
 		const tree = this.tree;
 
