@@ -241,15 +241,9 @@ module.exports = {
 	},
 
 	removeEffectByType: function (type) {
-		let effects = this.effects.filter(e => e.type === type);
+		const effects = this.effects.filter(e => e.type === type);
 
-		effects.forEach(e => {
-			this.destroyEffect(e);
-
-			this.syncRemove(e.id);
-			
-			this.effects.spliceWhere(f => f === e);
-		});
+		effects.forEach(e => this.removeEffect(e.id));
 	},
 
 	getEffectByType: function (effectType) {
