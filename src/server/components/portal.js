@@ -31,7 +31,5 @@ module.exports = {
 				toRelativePos
 			});
 		})();
-
-		return true;
 	}
 };
