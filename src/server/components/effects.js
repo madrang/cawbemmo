@@ -232,7 +232,12 @@ module.exports = {
 	},
 
 	removeEffect: function (id) {
-		let effect = this.effects.find(e => e.id === id);
+		const effect = this.effects.find(e => e.id === id);
+
+		//It's possible that something else has removed the effect
+		if (!effect)
+			return;
+
 		this.destroyEffect(effect);
 
 		this.syncRemove(effect.id);
