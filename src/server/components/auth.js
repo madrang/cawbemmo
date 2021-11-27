@@ -93,6 +93,9 @@ module.exports = {
 
 	doSave: async function (callback, saveStash = true) {	
 		const simple = this.obj.getSimple(true, true);
+		delete simple.destroyed;
+		delete simple.forceDestroy;
+
 		simple.components.spliceWhere(f => (f.type === 'stash'));
 
 		await io.setAsync({

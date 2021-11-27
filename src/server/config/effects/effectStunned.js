@@ -2,7 +2,8 @@ module.exports = {
 	type: 'stunned',
 
 	init: function () {
-		this.obj.spellbook.stopCasting();
+		if (this.obj.spellbook)
+			this.obj.spellbook.stopCasting();
 	},
 
 	events: {

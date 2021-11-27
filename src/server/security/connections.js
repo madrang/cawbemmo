@@ -77,8 +77,11 @@ module.exports = {
 				(['getCharacterList', 'getCharacter', 'deleteCharacter'].indexOf(msg.method) === -1)
 			) ||
 			(
-				(player.dead) &&
-				(msg.data.method !== 'respawn')
+				player.dead &&
+				!(
+					(msg.method === 'performAction' && ['respawn', 'notifyServerUiReady'].includes(msg.data.method)) ||
+					(msg.method === 'clientAck')
+				)
 			)
 		)
 			return;
