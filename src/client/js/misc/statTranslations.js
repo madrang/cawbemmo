@@ -52,7 +52,7 @@ define([
 		attackSpeed: 'attack speed',
 		castSpeed: 'cast speed',
 
-		lifeOnHit: 'life gained on hit',
+		lifeOnHit: 'life gained on dealing physical damage',
 
 		auraReserveMultiplier: 'aura mana reservation multiplier',
 

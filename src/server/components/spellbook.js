@@ -300,7 +300,7 @@ module.exports = {
 				}
 			}
 
-			if (spell.spellType === 'buff') {
+			if (spell.spellType === 'buff' || spell.spellType === 'heal') {
 				if (this.obj.aggro.faction !== target.aggro.faction)
 					return;
 			} else if (target.aggro && !this.obj.aggro.canAttack(target)) {
@@ -350,6 +350,7 @@ module.exports = {
 			return false;
 
 		action.target = this.getTarget(spell, action);
+
 		//If a target has become nonSelectable, we need to stop attacks that are queued/auto
 		if (!action.target || action.target.nonSelectable)
 			return false;

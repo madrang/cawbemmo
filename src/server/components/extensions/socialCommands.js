@@ -549,7 +549,7 @@ module.exports = {
 
 	die: function () {
 		this.obj.stats.takeDamage({
-			amount: 99999
+			amount: 20000000
 		}, 1, this.obj);
 	},
 

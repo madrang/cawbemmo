@@ -126,7 +126,7 @@ module.exports = {
 			range: 1,
 			random: {
 				damage: [4, 14],
-				healPercent: [10, 30]
+				healPercent: [2, 15]
 			}
 		};
 

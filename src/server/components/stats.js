@@ -629,7 +629,8 @@ module.exports = {
 				source: source.id,
 				heal: true,
 				amount: amount,
-				crit: heal.crit
+				crit: heal.crit,
+				element: heal.element
 			}, recipients);
 		}
 
@@ -776,6 +777,9 @@ module.exports = {
 		},
 
 		afterDealDamage: function (damageEvent, target) {
+			if (damageEvent.element)
+				return;
+
 			const { obj, values: { lifeOnHit } } = this;
 
 			if (target === obj || !lifeOnHit)
