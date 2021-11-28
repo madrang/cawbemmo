@@ -290,11 +290,10 @@ module.exports = {
 		for (let i = 0; i < eLen; i++) {
 			let e = effects[i];
 
-			if (e.ttl > 0) {
+			if (e.ttl > 0)
 				e.ttl--;
-				if (e.ttl === 0)
-					e.destroyed = true;
-			}
+			else if (e.ttl === 0)
+				e.destroyed = true;
 
 			if (e.update)
 				e.update();
