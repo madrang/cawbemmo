@@ -251,8 +251,15 @@ module.exports = {
 					if (!storeEntry) {
 						const playerObj = objects.find(o => o.id === toId);
 
-						if (!playerObj || playerObj.zoneName !== sourceZone)
+						if (!playerObj || playerObj.zoneName !== sourceZone) {
+							io.setAsync({
+								key: new Date(),
+								table: 'error',
+								value: `ignoring ${e}`
+							});
+
 							continue;
+						}
 
 						store[toId] = {
 							obj: playerObj,
