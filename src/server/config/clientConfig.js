@@ -147,7 +147,7 @@ const config = {
 			//Table Sides
 			103, 110, 118, 126,
 			//Wall-mounted plants
-			120, 122, 140,
+			120, 121,
 			//Ship oars
 			140, 143,
 			//Ship Cannons
