@@ -149,25 +149,6 @@ module.exports = {
 		}
 	},
 
-	canBuy: function (itemId, requestedBy, action) {
-		let item = null;
-		if (action === 'buy')
-			item = this.findItem(itemId, requestedBy.name);
-		else if (action === 'buyback')
-			item = this.findBuyback(itemId, requestedBy.name);
-
-		let result = true;
-		if (item.factions)
-			result = requestedBy.reputation.canEquipItem(item);
-
-		if (!result) {
-			const message = 'your reputation is too low to buy that item';
-			requestedBy.social.notifySelf({ message });
-		}
-
-		return result;
-	},
-
 	findItem: function (itemId, sourceName) {
 		let list = this.items[sourceName];
 		if (!list)
