@@ -306,7 +306,8 @@ module.exports = {
 			table: 'accountInfo',
 			noDefault: true
 		}) || {
-			loginStreak: 0
+			loginStreak: 0,
+			level: 0
 		};
 
 		const msgAccountInfo = {
@@ -395,7 +396,8 @@ module.exports = {
 		});
 
 		this.accountInfo = {
-			loginStreak: 0
+			loginStreak: 0,
+			level: 0
 		};
 
 		await io.setAsync({
