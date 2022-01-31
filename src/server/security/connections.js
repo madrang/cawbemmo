@@ -79,7 +79,7 @@ module.exports = {
 			(
 				player.dead &&
 				!(
-					(msg.method === 'performAction' && ['respawn', 'notifyServerUiReady'].includes(msg.data.method)) ||
+					(msg.method === 'performAction' && ['respawn'].includes(msg.data.method)) ||
 					(msg.method === 'clientAck')
 				)
 			)

@@ -94,13 +94,8 @@ define([
 			},
 
 			getMap: function (eventName, msgs) {
+				events.emit('onBuildIngameUis');
 				events.emit('onGetMap', msgs[0]);
-
-				client.request({
-					threadModule: 'instancer',
-					method: 'clientAck',
-					data: {}
-				});
 			},
 
 			onGetObject: function (eventName, msgs) {

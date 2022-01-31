@@ -230,10 +230,11 @@ module.exports = {
 		});
 	},
 
+	//This function fires when the player logs in the first time, not upon rezone
 	onAddObject: function (obj) {
 		if (obj.player) {
 			obj.stats.onLogin();
-			eventEmitter.emit('onAfterPlayerEnterZone', obj);
+			eventEmitter.emit('onAfterPlayerEnterZone', obj, { isTransfer: false });
 		}
 
 		questBuilder.obtain(obj);

@@ -20,14 +20,14 @@ const stageZoneIn = msg => {
 const doZoneIn = function (staged) {
 	const { onAddObject, instances: [ { objects, questBuilder, eventEmitter } ] } = instancer;
 
-	const { transfer, obj } = staged;
+	const { transfer: isTransfer, obj } = staged;
 
-	if (!transfer)
+	if (!isTransfer)
 		objects.addObject(obj, onAddObject.bind(instancer));
 	else {
 		let o = objects.transferObject(obj);
 		questBuilder.obtain(o);
-		eventEmitter.emit('onAfterPlayerEnterZone', o);
+		eventEmitter.emit('onAfterPlayerEnterZone', o, { isTransfer });
 	}
 };
 
