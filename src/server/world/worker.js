@@ -22,6 +22,8 @@ const itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
 const eventEmitter = require('../misc/events');
 
+instancer.mapName = process.argv[2];
+
 let onCpnsReady = async function () {
 	factions.init();
 	skins.init();
