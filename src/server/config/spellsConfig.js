@@ -143,7 +143,6 @@ let spells = {
 		cdMax: 12,
 		castTimeMax: 2,
 		manaCost: 7,
-		noDrop: true,
 		random: {
 			i_range: [1, 2.5],
 			damage: [4, 18]
@@ -169,7 +168,6 @@ let spells = {
 		castTimeMax: 3,
 		range: 10,
 		manaCost: 7,
-		noDrop: true,
 		random: {
 			damage: [8, 35],
 			i_stunDuration: [4, 7]
