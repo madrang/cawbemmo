@@ -181,6 +181,7 @@ let spells = {
 		cdMax: 15,
 		castTimeMax: 0,
 		range: 9,
+		isAttack: true,
 		random: {
 			damage: [3, 18],
 			i_delay: [1, 4]
@@ -230,7 +231,7 @@ let spells = {
 		auraRange: 9,
 		effect: 'swiftness',
 		random: {
-			chance: [5, 10]
+			chance: [8, 20]
 		}
 	}
 
