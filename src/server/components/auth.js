@@ -177,7 +177,6 @@ module.exports = {
 		this.characters[charName] = character;
 
 		await this.getCustomChannels(character);
-		await this.getStash();
 
 		await this.verifySkin(character);
 

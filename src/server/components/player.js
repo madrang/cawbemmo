@@ -70,9 +70,7 @@ module.exports = {
 			faction: 'players'
 		});
 		obj.addComponent('gatherer');
-		obj.addComponent('stash', {
-			items: character.stash
-		});
+		obj.addComponent('stash');
 
 		let blueprintEffects = character.components.find(c => c.type === 'effects') || {};
 		if (blueprintEffects.effects) {

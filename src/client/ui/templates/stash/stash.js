@@ -22,33 +22,38 @@ define([
 		hoverItem: null,
 
 		items: [],
+		maxItems: null,
 
 		modal: true,
 		hasClose: true,
 
 		postRender: function () {
-			this.onEvent('onGetStashItems', this.onGetStashItems.bind(this));
-			this.onEvent('onDestroyStashItems', this.onDestroyStashItems.bind(this));
-			this.onEvent('onKeyDown', this.onKeyDown.bind(this));
-			this.onEvent('onKeyUp', this.onKeyUp.bind(this));
-			this.onEvent('onOpenStash', this.toggle.bind(this));
+			[
+				'onKeyUp',
+				'onKeyDown',
+				'onOpenStash',
+				'onAddStashItems',
+				'onRemoveStashItems'
+			]
+				.forEach(e => {
+					this.onEvent(e, this[e].bind(this));
+				});
 		},
 
 		build: function () {
-			this.el.removeClass('scrolls');
-			if (window.player.stash.maxItems > 50)
-				this.el.addClass('scrolls');
+			const { el, maxItems, items } = this;
 
-			let container = this.el.find('.grid')
-				.empty();
+			el.removeClass('scrolls');
+			if (maxItems > 50)
+				el.addClass('scrolls');
 
-			let items = this.items;
-			let iLen = Math.max(items.length, window.player.stash.maxItems);
+			const container = this.el.find('.grid').empty();
 
-			for (let i = 0; i < iLen; i++) {
-				let item = items[i];
+			const renderItemCount = Math.max(items.length, maxItems);
 
-				let itemEl = renderItem(container, item);
+			for (let i = 0; i < renderItemCount; i++) {
+				const item = items[i];
+				const itemEl = renderItem(container, item);
 
 				if (!item)
 					continue;
@@ -126,14 +131,30 @@ define([
 				this.build();
 		},
 
-		onDestroyStashItems: function (itemIds) {
-			itemIds.forEach(function (id) {
-				let item = this.items.find(i => i.id === id);
+		onAddStashItems: function (addItems) {
+			const { items } = this;
+
+			addItems.forEach(newItem => {
+				const existIndex = items.findIndex(i => i.id === newItem.id);
+				if (existIndex !== -1)
+					items.splice(existIndex, 1, newItem);
+				else
+					items.push(newItem);
+			});
+		},
+
+		onRemoveStashItems: function (removeItemIds) {
+			const { items } = this;
+
+			console.log(removeItemIds);
+
+			removeItemIds.forEach(id => {
+				const item = items.find(i => i.id === id);
 				if (item === this.hoverItem) 
 					this.hideTooltip();
 
-				this.items.spliceWhere(i => i.id === id);
-			}, this);
+				items.spliceWhere(i => i.id === id);
+			});
 
 			if (this.shown)
 				this.build();
@@ -155,8 +176,12 @@ define([
 			events.emit('onHideContextMenu');
 		},
 
-		onOpenStash: function () {
-			this.build();
+		onOpenStash: function ({ items, maxItems }) {
+			this.maxItems = maxItems;
+
+			this.show();
+
+			this.onGetStashItems(items);
 		},
 
 		beforeDestroy: function () {
