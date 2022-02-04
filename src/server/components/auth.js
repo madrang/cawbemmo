@@ -114,10 +114,15 @@ module.exports = {
 	},
 
 	doSaveStash: async function () {
+		const { username, obj: { stash } } = this;
+
+		if (!stash.changed)
+			return;
+
 		await io.setAsync({
-			key: this.username,
+			key: username,
 			table: 'stash',
-			value: this.obj.stash.serialize(),
+			value: stash.serialize(),
 			clean: true,
 			serialize: true
 		});

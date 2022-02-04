@@ -87,13 +87,13 @@ module.exports = {
 			}
 		}
 
+		this.changed = true;
+
 		this.getItem(item);
 
 		const sendItem = cpnInventory.simplifyItem.call({ obj: {} }, item);
 
 		obj.instance.syncer.queue('onAddStashItems', [sendItem], [obj.serverId]);
-
-		this.changed = true;
 
 		return true;
 	},
@@ -114,12 +114,12 @@ module.exports = {
 			return;
 		}
 
+		this.changed = true;
+
 		obj.inventory.getItem(item);
 		items.spliceWhere(i => i === item);
 
 		obj.instance.syncer.queue('onRemoveStashItems', [id], [obj.serverId]);
-
-		this.changed = true;
 	},
 
 	setActive: function (active) {
