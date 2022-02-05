@@ -146,8 +146,6 @@ define([
 		onRemoveStashItems: function (removeItemIds) {
 			const { items } = this;
 
-			console.log(removeItemIds);
-
 			removeItemIds.forEach(id => {
 				const item = items.find(i => i.id === id);
 				if (item === this.hoverItem) 
