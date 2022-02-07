@@ -71,7 +71,10 @@ module.exports = {
 		items.push(item);
 	},
 
-	deposit: function (item) {
+	deposit: async function (item) {
+		if (!this.items)
+			await this.getItemsFromDb();
+
 		const { active, items, maxItems, obj } = this;
 
 		if (!active)
@@ -126,10 +129,10 @@ module.exports = {
 		const { obj } = this;
 
 		this.active = active;
-		obj.syncer.set(true, 'stash', 'active', this.active);
 
 		const actionType = active ? 'addActions' : 'removeActions';
 		obj.syncer.setArray(true, 'serverActions', actionType, {
+			id: 'openStash',
 			key: 'u',
 			action: {
 				targetId: obj.id,
@@ -137,6 +140,9 @@ module.exports = {
 				method: 'open'
 			}
 		});
+
+		if (!this.active)
+			return;
 
 		let msg = 'Press U to access your Shared Stash';
 		obj.instance.syncer.queue('onGetAnnouncement', {
