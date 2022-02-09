@@ -19,7 +19,7 @@ define([
 			if (root)
 				this.root = root + '/';
 
-			events.on('onBuildIngameUis', this.onEnterGame.bind(this));
+			events.on('onBuildIngameUis', this.onBuildIngameUis.bind(this));
 			events.on('onUiKeyDown', this.onUiKeyDown.bind(this));
 			events.on('onResize', this.onResize.bind(this));
 
@@ -31,7 +31,7 @@ define([
 			});
 		},
 
-		onEnterGame: async function () {
+		onBuildIngameUis: async function () {
 			events.clearQueue();
 
 			await Promise.all(

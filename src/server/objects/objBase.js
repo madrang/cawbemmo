@@ -312,7 +312,7 @@ module.exports = {
 		this.x = xNew;
 		this.y = yNew;
 
-		if (physics.addObject(this, xNew, yNew))
+		if (physics.addObject(this, xNew, yNew, xOld, yOld))
 			physics.removeObject(this, xOld, yOld, xNew, yNew);
 		else {
 			this.x = xOld;

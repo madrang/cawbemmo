@@ -97,7 +97,6 @@ define([
 		onPlay: function () {
 			this.el.removeClass('disabled');
 			this.destroy();
-			events.emit('onEnterGame');
 		},
 
 		onNewClick: function () {

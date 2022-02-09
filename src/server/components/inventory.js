@@ -272,19 +272,16 @@ module.exports = {
 		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
 	},
 
-	stashItem: function (id) {
-		let item = this.findItem(id);
+	stashItem: async function (id) {
+		const item = this.findItem(id);
 		if (!item || item.quest || item.noStash)
 			return;
 
 		delete item.pos;
 
-		let stash = this.obj.stash;
-		if (!stash.active)
-			return;
-
-		let clonedItem = extend({}, item);
-		const success = stash.deposit(clonedItem);
+		const stash = this.obj.stash;
+		const clonedItem = extend({}, item);
+		const success = await stash.deposit(clonedItem);
 		if (!success)
 			return;
 
