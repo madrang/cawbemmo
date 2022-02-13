@@ -14,6 +14,7 @@ define([
 	return {
 		uis: [],
 		root: '',
+		ingameUisBuilt: false,
 
 		init: function (root) {
 			if (root)
@@ -32,30 +33,34 @@ define([
 		},
 
 		onBuildIngameUis: async function () {
-			events.clearQueue();
+			if (!this.ingameUisBuilt) {
+				events.clearQueue();
 
-			await Promise.all(
-				globals.clientConfig.uiList.map(u => {
-					const uiType = u.path ? u.path.split('/').pop() : u;
+				await Promise.all(
+					globals.clientConfig.uiList.map(u => {
+						const uiType = u.path ? u.path.split('/').pop() : u;
 
-					return new Promise(res => {
-						const doneCheck = () => {
-							const isDone = this.uis.some(ui => ui.type === uiType);
-							if (isDone) {
-								res();
+						return new Promise(res => {
+							const doneCheck = () => {
+								const isDone = this.uis.some(ui => ui.type === uiType);
+								if (isDone) {
+									res();
 
-								return;
-							}
+									return;
+								}
 
-							setTimeout(doneCheck, 100);
-						};
+								setTimeout(doneCheck, 100);
+							};
 
-						this.build(uiType, { path: u.path });
+							this.build(uiType, { path: u.path });
 
-						doneCheck();
-					});
-				})
-			);
+							doneCheck();
+						});
+					})
+				);
+
+				this.ingameUisBuilt = true;
+			}
 
 			client.request({
 				threadModule: 'instancer',
@@ -164,6 +169,16 @@ define([
 				if (u.update)
 					u.update();
 			}
+		},
+
+		exitGame: function () {
+			$('[class^="ui"]:not(.ui-container)').toArray().forEach(el => {
+				let ui = $(el).data('ui');
+				if (ui && ui.destroy)
+					ui.destroy();
+			});
+
+			this.ingameUisBuilt = false;
 		},
 
 		getUi: function (type) {
