@@ -348,8 +348,13 @@ module.exports = {
 	register: async function (msg) {
 		let credentials = msg.data;
 
-		if ((credentials.username === '') || (credentials.password === '')) {
+		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
+
+			return;
+		} else if (credentials.username.length > 32) {
+			msg.callback(messages.login.maxUsernameLength);
+
 			return;
 		}
 
