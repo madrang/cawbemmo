@@ -86,7 +86,7 @@ module.exports = {
 			return;
 
 		let source = cons.players.find(c => c.id === sourceId);
-		if (!source)
+		if (!source || !source.social)
 			return;
 
 		source.social.sendMessage('invite sent', 'color-yellowB');

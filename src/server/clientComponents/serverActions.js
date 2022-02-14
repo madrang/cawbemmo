@@ -14,6 +14,10 @@ define([
 			this.hookEvent('onKeyUp', this.onKeyUp.bind(this));
 		},
 
+		hasAction: function (actionId) {
+			return this.actions.some(a => a.id === actionId);
+		},
+
 		onKeyUp: function (key) {
 			this.actions.forEach(function (a) {
 				if (a.key !== key)

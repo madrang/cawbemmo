@@ -213,6 +213,57 @@ let spells = [{
 		chance: 0.02
 	}
 }, {
+	name: 'Healing Touch',
+	description: 'Restore health to a friendly target.',
+	type: 'singleTargetHeal',
+	spellType: 'heal',
+	icon: [0, 3],
+	animation: 'raiseStaff',
+	particles: {
+		scale: {
+			start: {
+				min: 6,
+				max: 16
+			},
+			end: {
+				min: 0,
+				max: 4
+			}
+		},
+		speed: {
+			start: {
+				min: 2,
+				max: 12
+			},
+			end: {
+				min: 0,
+				max: 4
+			}
+		},
+		lifetime: {
+			min: 1,
+			max: 3
+		},
+		alpha: {
+			start: 0.45,
+			end: 0
+		},
+		color: {
+			start: ['ffeb38', 'fcfcfc'],
+			end: ['fcfcfc', 'faac45']
+		},
+		spawnType: 'circle',
+		spawnCircle: {
+			x: 0,
+			y: 0,
+			r: 12
+		},
+		randomScale: true,
+		randomColor: true,
+		randomSpeed: true,
+		chance: 0.02
+	}
+}, {
 	name: 'Holy Vengeance',
 	description: 'Grants holy vengeance to a friendly target. For the duration of the effect, dealing damage will also heal the attacker.',
 	type: 'holyVengeance',

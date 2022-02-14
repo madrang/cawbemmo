@@ -1,9 +1,19 @@
-const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos }) => {
-	const { serverId, instance: { physics, syncer: globalSyncer } } = obj;
+const fixPosition = (obj, toPos, toRelativePos, invokingObj) => {
+	if (toPos) {
+		obj.x = toPos.x;
+		obj.y = toPos.y;
+	} else if (toRelativePos) {
+		obj.x = invokingObj.obj.x + toRelativePos.x;
+		obj.y = invokingObj.obj.y + toRelativePos.y;
+	}
+};
 
-	globalSyncer.flushForTarget(serverId);
+const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos }) => {
+	const { serverId, instance: { syncer: globalSyncer, physics } } = obj;
 
 	if (obj.zoneName === zoneName) {
+		globalSyncer.flushForTarget(serverId);
+
 		physics.removeObject(obj, obj.x, obj.y);
 
 		if (toRelativePos) {
@@ -18,7 +28,7 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 
 		physics.addObject(obj, obj.x, obj.y);
 
-		globalSyncer.queue('onRespawn', {
+		globalSyncer.queue('teleportToPosition', {
 			x: obj.x,
 			y: obj.y
 		}, [obj.serverId]);
@@ -26,28 +36,41 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 		return;
 	}
 
-	obj.fireEvent('beforeRezone');
+	//We set this before saving so that objects aren't saved ON portals
+	obj.zoneName = zoneName;
+	fixPosition(obj, toPos, toRelativePos, invokingObj);
 
-	obj.destroyed = true;
-
+	//Destroy, flush events and notify other objects
+	globalSyncer.processDestroyedObject(obj);
 	await obj.auth.doSave();
 
-	const simpleObj = obj.getSimple(true, false, true);
+	//We have to do this again. This is because onCollisionEnter in portal is not blocking (even though it is async)
+	// So physics will carry on and allow the obj to move onto the next tile (changing the position while we save above)
+	fixPosition(obj, toPos, toRelativePos, invokingObj);
 
-	if (toPos) {
-		simpleObj.x = toPos.x;
-		simpleObj.y = toPos.y;
-	} else if (toRelativePos) {
-		simpleObj.x = invokingObj.obj.x + toRelativePos.x;
-		simpleObj.y = invokingObj.obj.y + toRelativePos.y;
-	}
+	//Test code, remove later
+	Object.entries(globalSyncer.buffer).forEach(([k, v]) => {
+		v.forEach(e => {
+			if (e.to.includes(serverId)) {
+			/* eslint-disable-next-line */
+			console.log('Found event', k, 'for rezoning object');
+			}
+		});
+	});
+
+	const simpleObj = obj.getSimple(true, false, true);
+	simpleObj.destroyed = false;
+	simpleObj.forceDestroy = false;
+
+	rezoneManager.stageRezone(simpleObj, zoneName);
 
 	process.send({
-		method: 'rezone',
-		id: obj.serverId,
-		args: {
-			obj: simpleObj,
-			newZone: zoneName
+		method: 'events',
+		data: {
+			rezoneStart: [{
+				obj: { msg: {} },
+				to: [serverId]
+			}]
 		}
 	});
 };

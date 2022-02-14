@@ -277,7 +277,7 @@ module.exports = {
 	},
 
 	performMove: function (action) {
-		const { x: xOld, y: yOld, syncer, aggro, mob, instance: { physics } } = this;
+		const { x: xOld, y: yOld, syncer, aggro, instance: { physics } } = this;
 
 		const { maxDistance = 1, force, data } = action;
 		const { x: xNew, y: yNew } = data;
@@ -309,26 +309,16 @@ module.exports = {
 				return false;
 		}
 
-		//Don't allow mob overlap during combat
-		if (mob && mob.target) {
-			this.x = xNew;
-			this.y = yNew;
+		this.x = xNew;
+		this.y = yNew;
 
-			if (physics.addObject(this, xNew, yNew)) 
-				physics.removeObject(this, xOld, yOld);
-			else {
-				this.x = xOld;
-				this.y = yOld;
-
-				return false;
-			}
-		} else {
+		if (physics.addObject(this, xNew, yNew, xOld, yOld))
 			physics.removeObject(this, xOld, yOld, xNew, yNew);
+		else {
+			this.x = xOld;
+			this.y = yOld;
 
-			this.x = xNew;
-			this.y = yNew;
-
-			physics.addObject(this, xNew, yNew, xOld, yOld);
+			return false;
 		}
 
 		//We can't use xNew and yNew because addObject could have changed the position (like entering a building interior with stairs)

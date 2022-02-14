@@ -18,13 +18,14 @@ const routerConfig = {
 		wardrobe: ['open', 'apply'],
 		stats: ['respawn'],
 		passives: ['tickNode', 'untickNode'],
-		workbench: ['open', 'craft', 'getRecipe'],
-		player: ['notifyServerUiReady']
+		workbench: ['open', 'craft', 'getRecipe']
 	},
 	globalAllowed: {
 		clientConfig: ['getClientConfig'],
 		leaderboard: ['requestList'],
-		cons: ['unzone']
+		cons: ['unzone'],
+		rezoneManager: ['clientAck'],
+		instancer: ['clientAck']
 	},
 	allowTargetId: {
 		door: ['lock', 'unlock'],

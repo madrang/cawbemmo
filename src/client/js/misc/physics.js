@@ -1,7 +1,9 @@
 define([
-	'js/misc/distanceToPolygon'
+	'js/misc/distanceToPolygon',
+	'js/system/events'
 ], function (
-	distanceToPolygon
+	distanceToPolygon,
+	events
 ) {
 	return {
 		grid: null,
@@ -10,6 +12,8 @@ define([
 		height: 0,
 
 		init: function (collisionMap) {
+			events.on('resetPhysics', this.reset.bind(this));
+
 			this.width = collisionMap.length;
 			this.height = collisionMap[0].length;
 
@@ -20,6 +24,13 @@ define([
 				for (let j = 0; j < this.height; j++)
 					row[j] = collisionRow[j];
 			}
+		},
+
+		reset: function () {
+			this.width = 0;
+			this.height = 0;
+
+			this.grid = [];
 		},
 
 		isTileBlocking: function (x, y, mob, obj) {

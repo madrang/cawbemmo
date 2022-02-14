@@ -13,7 +13,6 @@ define([
 
 		init: function () {
 			this.obj.on('onKeyDown', this.onKeyDown.bind(this));
-			this.hookEvent('onRezone', this.onRezone.bind(this));
 		},
 
 		extend: function (msg) {
@@ -51,13 +50,6 @@ define([
 
 				events.emit('onShowProgress', (msg.action || 'Gathering') + '...', msg.progress);
 			}
-		},
-
-		onRezone: function () {
-			this.extend({
-				progress: 100,
-				action: 'Fishing'
-			});
 		},
 
 		onKeyDown: function (key) {

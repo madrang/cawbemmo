@@ -93,6 +93,9 @@ module.exports = {
 
 	doSave: async function (callback, saveStash = true) {	
 		const simple = this.obj.getSimple(true, true);
+		delete simple.destroyed;
+		delete simple.forceDestroy;
+
 		simple.components.spliceWhere(f => (f.type === 'stash'));
 
 		await io.setAsync({
@@ -111,10 +114,15 @@ module.exports = {
 	},
 
 	doSaveStash: async function () {
+		const { username, obj: { stash } } = this;
+
+		if (!stash.changed)
+			return;
+
 		await io.setAsync({
-			key: this.username,
+			key: username,
 			table: 'stash',
-			value: this.obj.stash.serialize(),
+			value: stash.serialize(),
 			clean: true,
 			serialize: true
 		});
@@ -174,7 +182,6 @@ module.exports = {
 		this.characters[charName] = character;
 
 		await this.getCustomChannels(character);
-		await this.getStash();
 
 		await this.verifySkin(character);
 
@@ -341,8 +348,13 @@ module.exports = {
 	register: async function (msg) {
 		let credentials = msg.data;
 
-		if ((credentials.username === '') || (credentials.password === '')) {
+		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
+
+			return;
+		} else if (credentials.username.length > 32) {
+			msg.callback(messages.login.maxUsernameLength);
+
 			return;
 		}
 

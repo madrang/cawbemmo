@@ -151,7 +151,6 @@ define([
 			if (!result) {
 				this.clear();
 				this.destroy();
-				events.emit('onEnterGame');
 			} else
 				this.el.find('.message').html(result);
 		},

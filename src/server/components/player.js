@@ -70,9 +70,7 @@ module.exports = {
 			faction: 'players'
 		});
 		obj.addComponent('gatherer');
-		obj.addComponent('stash', {
-			items: character.stash
-		});
+		obj.addComponent('stash');
 
 		let blueprintEffects = character.components.find(c => c.type === 'effects') || {};
 		if (blueprintEffects.effects) {
@@ -235,7 +233,7 @@ module.exports = {
 
 			obj.instance.physics.addObject(obj, obj.x, obj.y);
 
-			obj.instance.syncer.queue('onRespawn', {
+			obj.instance.syncer.queue('teleportToPosition', {
 				x: obj.x,
 				y: obj.y
 			}, [obj.serverId]);
@@ -276,11 +274,5 @@ module.exports = {
 			msg.data.data.callbackId = atlas.registerCallback(msg.callback);
 
 		atlas.performAction(this.obj, msg.data);
-	},
-
-	notifyServerUiReady: function () {
-		this.obj.instance.eventEmitter.emit('onPlayerUiReady', {
-			obj: this.obj
-		});
 	}
 };

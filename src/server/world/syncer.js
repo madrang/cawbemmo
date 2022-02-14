@@ -180,6 +180,35 @@ module.exports = {
 		}
 	},
 
+	processDestroyedObject: function (obj) {
+		const { objects, queue } = this;
+		const { id, serverId } = obj;
+
+		obj.destroyed = true;
+
+		//We mark forceDestroy to tell objects that we're destroying an object outside of the
+		// syncer's update method
+		obj.forceDestroy = true;
+
+		const msg = {
+			id: id,
+			destroyed: true
+		};
+
+		objects.removeObject(obj);
+
+		this.flushForTarget(serverId);
+
+		const fnQueueMsg = queue.bind(this, 'onGetObject');
+
+		//Find any players that have seen this obj
+		objects
+			.filter(o => !o.destroyed && o?.player?.hasSeen(id))
+			.forEach(o => {
+				fnQueueMsg(msg, [o.serverId]);
+			});
+	},
+
 	send: function () {
 		if (!this.dirty)
 			return;

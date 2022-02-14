@@ -18,11 +18,6 @@ const config = {
 		sprite: [2, 0],
 		defaultSpirit: 'bear',
 		default: true
-	},
-	//Faction Skins
-	'gaekatlan-druid': {
-		name: 'Gaekatlan Druid',
-		sprite: [0, 1]
 	}
 };
 

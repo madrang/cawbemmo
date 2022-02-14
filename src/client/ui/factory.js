@@ -14,12 +14,13 @@ define([
 	return {
 		uis: [],
 		root: '',
+		ingameUisBuilt: false,
 
 		init: function (root) {
 			if (root)
 				this.root = root + '/';
 
-			events.on('onEnterGame', this.onEnterGame.bind(this));
+			events.on('onBuildIngameUis', this.onBuildIngameUis.bind(this));
 			events.on('onUiKeyDown', this.onUiKeyDown.bind(this));
 			events.on('onResize', this.onResize.bind(this));
 
@@ -31,39 +32,40 @@ define([
 			});
 		},
 
-		onEnterGame: async function () {
-			events.clearQueue();
+		onBuildIngameUis: async function () {
+			if (!this.ingameUisBuilt) {
+				events.clearQueue();
 
-			await Promise.all(
-				globals.clientConfig.uiList.map(u => {
-					const uiType = u.path ? u.path.split('/').pop() : u;
+				await Promise.all(
+					globals.clientConfig.uiList.map(u => {
+						const uiType = u.path ? u.path.split('/').pop() : u;
 
-					return new Promise(res => {
-						const doneCheck = () => {
-							const isDone = this.uis.some(ui => ui.type === uiType);
-							if (isDone) {
-								res();
+						return new Promise(res => {
+							const doneCheck = () => {
+								const isDone = this.uis.some(ui => ui.type === uiType);
+								if (isDone) {
+									res();
 
-								return;
-							}
+									return;
+								}
 
-							setTimeout(doneCheck, 100);
-						};
+								setTimeout(doneCheck, 100);
+							};
 
-						this.build(uiType, { path: u.path });
+							this.build(uiType, { path: u.path });
 
-						doneCheck();
-					});
-				})
-			);
+							doneCheck();
+						});
+					})
+				);
+
+				this.ingameUisBuilt = true;
+			}
 
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'player',
-					method: 'notifyServerUiReady'
-				}
+				threadModule: 'instancer',
+				method: 'clientAck',
+				data: {}
 			});
 		},
 
@@ -167,6 +169,16 @@ define([
 				if (u.update)
 					u.update();
 			}
+		},
+
+		exitGame: function () {
+			$('[class^="ui"]:not(.ui-container)').toArray().forEach(el => {
+				let ui = $(el).data('ui');
+				if (ui && ui.destroy)
+					ui.destroy();
+			});
+
+			this.ingameUisBuilt = false;
 		},
 
 		getUi: function (type) {

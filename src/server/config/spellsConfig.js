@@ -76,14 +76,27 @@ let spells = {
 		statType: 'int',
 		statMult: 1,
 		element: 'holy',
-		cdMax: 5,
+		cdMax: 15,
 		castTimeMax: 4,
-		manaCost: 8,
+		manaCost: 12,
 		range: 9,
 		radius: 3,
 		random: {
 			healing: [0.3, 0.5],
 			i_duration: [7, 13]
+		}
+	},
+
+	'healing touch': {
+		statType: 'int',
+		statMult: 1,
+		element: 'holy',
+		cdMax: 5,
+		castTimeMax: 3,
+		manaCost: 8,
+		range: 9,
+		random: {
+			healing: [1, 3]
 		}
 	},
 
@@ -130,7 +143,6 @@ let spells = {
 		cdMax: 12,
 		castTimeMax: 2,
 		manaCost: 7,
-		noDrop: true,
 		random: {
 			i_range: [1, 2.5],
 			damage: [4, 18]
@@ -156,7 +168,6 @@ let spells = {
 		castTimeMax: 3,
 		range: 10,
 		manaCost: 7,
-		noDrop: true,
 		random: {
 			damage: [8, 35],
 			i_stunDuration: [4, 7]
@@ -167,11 +178,12 @@ let spells = {
 		statMult: 1,
 		manaCost: 14,
 		needLos: true,
-		cdMax: 20,
+		cdMax: 15,
 		castTimeMax: 0,
 		range: 9,
+		isAttack: true,
 		random: {
-			damage: [3, 16],
+			damage: [3, 18],
 			i_delay: [1, 4]
 		},
 		negativeStats: [
@@ -219,7 +231,7 @@ let spells = {
 		auraRange: 9,
 		effect: 'swiftness',
 		random: {
-			chance: [5, 10]
+			chance: [8, 20]
 		}
 	}
 

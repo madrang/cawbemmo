@@ -203,64 +203,87 @@ module.exports = {
 
 		return newO;
 	},
-	sendEvent: function (msg) {
-		let player = this.objects.find(p => p.id === msg.id);
-		if (!player)
+
+	sendEvent: function (msg, { name: sourceZone }) {
+		const { id, data } = msg;
+
+		const player = this.objects.find(p => p.id === id);
+		if (!player || player.zoneName !== sourceZone)
 			return;
 
 		player.socket.emit('event', {
-			event: msg.data.event,
-			data: msg.data.data
+			event: data.event,
+			data: data.data
 		});
 	},
-	sendEvents: function (msg) {
-		let players = {};
-		let objects = this.objects;
 
-		let data = msg.data;
+	sendEvents: function ({ data }, { name: sourceZone }) {
+		const { objects } = this;
+
+		//Store will contain all events to be sent to players
+		const store = {};
+
 		for (let e in data) {
-			let event = data[e];
-			let eLen = event.length;
+			const event = data[e];
+			const eLen = event.length;
 
 			for (let j = 0; j < eLen; j++) {
-				let eventEntry = event[j];
+				const eventEntry = event[j];
 
-				let obj = eventEntry.obj;
+				const { obj: eventObj, to } = eventEntry;
 
-				if (e !== 'serverModule') {
-					let to = eventEntry.to;
-					let toLen = to.length;
-					for (let i = 0; i < toLen; i++) {
-						let toId = to[i];
+				if (e === 'serverModule') {
+					const { method, msg } = eventObj;
 
-						let player = players[toId];
-						if (!player) {
-							let findPlayer = objects.find(o => o.id === toId);
-							if (!findPlayer)
-								continue;
-							else {
-								player = (players[toId] = {
-									socket: findPlayer.socket,
-									events: {}
-								});
-							}
+					if (Array.isArray(msg))
+						global[eventObj.module][method](...msg);	
+					else
+						global[eventObj.module][method](msg);
+
+					continue;
+				}
+
+				const toLen = to.length;
+				for (let i = 0; i < toLen; i++) {
+					const toId = to[i];
+
+					let storeEntry = store[toId];
+					if (!storeEntry) {
+						const playerObj = objects.find(o => o.id === toId);
+
+						if (!playerObj || playerObj.zoneName !== sourceZone) {
+							io.setAsync({
+								key: new Date(),
+								table: 'error',
+								value: `ignoring ${e}`
+							});
+
+							continue;
 						}
 
-						let eventList = player.events[e] || (player.events[e] = []);
-						eventList.push(obj);
+						store[toId] = {
+							obj: playerObj,
+							events: { [e]: [eventObj] }
+						};
+
+						continue;
 					}
-				} else if (obj.msg instanceof Array) 
-					global[obj.module][obj.method](...obj.msg);	
-				else
-					global[obj.module][obj.method](obj.msg);
+
+					if (!storeEntry.events[e])
+						storeEntry.events[e] = [];
+
+					storeEntry.events[e].push(eventObj);
+				}
 			}
 		}
 
-		for (let p in players) {
-			let player = players[p];
-			player.socket.emit('events', player.events);
+		for (let p in store) {
+			const { obj: { socket }, events } = store[p];
+
+			socket.emit('events', events);
 		}
 	},
+
 	updateObject: async function (msg) {
 		let player = this.objects.find(p => p.id === msg.serverId);
 		if (!player)
@@ -323,6 +346,13 @@ module.exports = {
 			//That's syncer's job
 			if ((o.update) && (!o.destroyed))
 				o.update();
+
+			//When objects are sent to other zones, we destroy them immediately (thhrough sendObjToZone)
+			if (o.forceDestroy) {
+				i--;
+				len--;
+				continue;
+			}
 
 			if (o.ttl) {
 				o.ttl--;

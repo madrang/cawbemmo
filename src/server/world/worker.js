@@ -5,6 +5,7 @@ global.consts = require('../config/consts');
 global.instancer = require('./instancer');
 global.eventManager = require('../events/events');
 global.clientConfig = require('../config/clientConfig');
+global.rezoneManager = require('./rezoneManager');
 
 const components = require('../components/components');
 const mods = require('../misc/mods');
@@ -21,6 +22,8 @@ const itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
 const eventEmitter = require('../misc/events');
 
+instancer.mapName = process.argv[2];
+
 let onCpnsReady = async function () {
 	factions.init();
 	skins.init();
@@ -33,6 +36,8 @@ let onCpnsReady = async function () {
 	recipes.init();
 	itemEffects.init();
 	profanities.init();
+	rezoneManager.init();
+
 	await clientConfig.init();
 
 	process.send({

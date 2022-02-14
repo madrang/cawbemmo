@@ -328,17 +328,17 @@ define([
 					ctxConfig.push(menuItems.divider);
 			}
 
-			if ((!item.eq) && (!item.active)) {
-				if (!item.quest) {
-					if ((window.player.stash.active) && (!item.noStash))
-						ctxConfig.push(menuItems.stash);
+			if (!item.eq && !item.active && !item.quest) {
+				const isAtStash = window.player.serverActions.hasAction('openStash');
 
-					if (!item.noDrop)
-						ctxConfig.push(menuItems.drop);
+				if (isAtStash && !item.noStash)
+					ctxConfig.push(menuItems.stash);
 
-					if ((!item.material) && (!item.noSalvage))
-						ctxConfig.push(menuItems.salvage);
-				}
+				if (!item.noDrop)
+					ctxConfig.push(menuItems.drop);
+
+				if (!item.material && !item.noSalvage)
+					ctxConfig.push(menuItems.salvage);
 			}
 
 			if (item.quantity > 1 && !item.quest)

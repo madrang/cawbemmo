@@ -60,7 +60,6 @@ module.exports = {
 
 				this.syncer.queue('onGetObject', {
 					id: obj.id,
-					performLast: true,
 					components: [spawnAnimation]
 				}, -1);
 			}

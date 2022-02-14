@@ -115,8 +115,7 @@ module.exports = {
 
 					const targetEffect = m.effects.addEffect({
 						type: 'stunned',
-						noMsg: true,
-						new: true
+						silent: true
 					});
 
 					//If targetEffect is undefined, it means that the target has become resistant
@@ -147,7 +146,7 @@ module.exports = {
 	},
 
 	endEffect: function (target, targetPos, targetEffect) {
-		target.effects.removeEffect(targetEffect, true);
+		target.effects.removeEffect(targetEffect.id);
 
 		target.instance.physics.removeObject(target, target.x, target.y);
 

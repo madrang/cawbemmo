@@ -18,7 +18,38 @@ define([
 			this.socket.on('event', this.onEvent.bind(this));
 			this.socket.on('events', this.onEvents.bind(this));
 			this.socket.on('dc', this.onDisconnect.bind(this));
+
+			Object.entries(this.processAction).forEach(([k, v]) => {
+				this.processAction[k] = v.bind(this);
+			});
 		},
+
+		onRezoneStart: function () {
+			//Fired for mods to listen to
+			events.emit('rezoneStart');
+
+			events.emit('destroyAllObjects');
+			events.emit('resetRenderer');
+			events.emit('resetPhysics');
+			events.emit('clearUis');
+
+			client.request({
+				threadModule: 'rezoneManager',
+				method: 'clientAck',
+				data: {}
+			});
+		},
+
+		onGetMap: function ([msg]) {
+			events.emit('onGetMap', msg);
+
+			client.request({
+				threadModule: 'instancer',
+				method: 'clientAck',
+				data: {}
+			});
+		},
+
 		onConnected: function (onReady) {
 			if (this.doneConnect)
 				this.onDisconnect();
@@ -28,45 +59,67 @@ define([
 			if (onReady)
 				onReady();
 		},
+
 		onDisconnect: function () {
 			window.location = window.location;
 		},
+
 		onHandshake: function () {
 			events.emit('onHandshake');
 			this.socket.emit('handshake');
 		},
+
 		request: function (msg) {
 			this.socket.emit('request', msg, msg.callback);
 		},
-		onEvent: function (response) {
-			events.emit(response.event, response.data);
-		},
-		onEvents: function (response) {
-			//If we get objects, self needs to be first
-			// otherwise we might create the object (setting his position or attack animation)
-			// before instantiating it
-			let oList = response.onGetObject;
-			if (oList) {
-				let prepend = oList.filter(o => o.self);
-				oList.spliceWhere(o => prepend.some(p => p === o));
-				oList.unshift.apply(oList, prepend);
+
+		processAction: {
+			default: function (eventName, msgs) {
+				msgs.forEach(m => events.emit(eventName, m));
+			},
+
+			rezoneStart: function (eventName, msgs) {
+				events.emit('rezoneStart');
+
+				events.emit('destroyAllObjects');
+				events.emit('resetRenderer');
+				events.emit('resetPhysics');
+				events.emit('clearUis');
+
+				client.request({
+					threadModule: 'rezoneManager',
+					method: 'clientAck',
+					data: {}
+				});
+			},
+
+			getMap: function (eventName, msgs) {
+				events.emit('onBuildIngameUis');
+				events.emit('onGetMap', msgs[0]);
+			},
+
+			onGetObject: function (eventName, msgs) {
+				const prepend = msgs.filter(o => o.self);
+				msgs.spliceWhere(o => prepend.some(p => p === o));
+				msgs.unshift.apply(msgs, prepend);
+
+				this.processAction.default(eventName, msgs);
 			}
+		},
 
-			for (let e in response) {
-				let r = response[e];
+		onEvent: function ({ event: eventName, data: eventData }) {
+			const handler = this.processAction[eventName] || this.processAction.default;
 
-				//Certain messages expect to be performed last (because the object they act on hasn't been created when they get queued)
-				r.sort(function (a, b) {
-					if (a.performLast)
-						return 1;
-					else if (b.performLast)
-						return -1;
-					return 0;
-				});
+			handler(eventName, [eventData]);
+		},
 
-				r.forEach(function (o) {
-					events.emit(e, o);
-				});
+		onEvents: function (response) {
+			for (let eventName in response) {
+				const eventMsgs = response[eventName];
+
+				const handler = this.processAction[eventName] || this.processAction.default;
+
+				handler(eventName, eventMsgs);
 			}
 		}
 	};

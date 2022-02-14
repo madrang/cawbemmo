@@ -128,15 +128,16 @@ module.exports = {
 		mapList.mapList.filter(m => !m.disabled).forEach(m => this.spawnMap(m));
 	},
 	spawnMap: function (map) {
-		let worker = childProcess.fork('./world/worker');
-		let thread = {
+		const worker = childProcess.fork('./world/worker', [map.name]);
+
+		const thread = {
 			id: this.nextId++,
 			name: map.name,
 			path: map.path,
-			worker: worker
+			worker
 		};
 
-		let onMessage = this.onMessage.bind(this, thread);
+		const onMessage = this.onMessage.bind(this, thread);
 		worker.on('message', function (m) {
 			onMessage(m);
 		});
@@ -174,11 +175,11 @@ module.exports = {
 		},
 
 		event: function (thread, message) {
-			objects.sendEvent(message);
+			objects.sendEvent(message, thread);
 		},
 
 		events: function (thread, message) {
-			objects.sendEvents(message);
+			objects.sendEvents(message, thread);
 		},
 
 		object: function (thread, message) {

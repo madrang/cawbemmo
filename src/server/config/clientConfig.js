@@ -44,7 +44,8 @@ const config = {
 		'images/tiles.png': 8,
 		'images/walls.png': 8,
 		'images/objects.png': 8,
-		'images/mobs.png': 8
+		'images/mobs.png': 8,
+		'images/characters.png': 8
 	},
 	blockingTileIndices: [
 		6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197
@@ -147,7 +148,7 @@ const config = {
 			//Table Sides
 			103, 110, 118, 126,
 			//Wall-mounted plants
-			120, 122, 140,
+			120, 121,
 			//Ship oars
 			140, 143,
 			//Ship Cannons
@@ -173,7 +174,7 @@ const config = {
 		'party',
 		'help',
 		'dialogue',
-		'buffs',
+		'effects',
 		'tooltips',
 		'tooltipInfo',
 		'tooltipItem',
@@ -219,6 +220,11 @@ module.exports = {
 				type,
 				path
 			});
+		});
+
+		config.clientComponents.push({
+			extends: 'effects',
+			path: 'server/clientComponents/effects/auras.js'
 		});
 
 		events.emit('onBeforeGetClientConfig', config);

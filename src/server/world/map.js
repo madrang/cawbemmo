@@ -85,8 +85,13 @@ module.exports = {
 		try {
 			chats = require('../' + this.path + '/' + this.name + '/chats');
 		} catch (e) {}
-		if (chats)
-			this.zone.chats = chats;
+
+		if (chats) {
+			if (this.zone.chats)
+				extend(this.zone.chats, chats);
+			else
+				this.zone.chats = chats;
+		}
 
 		let dialogues = null;
 		try {

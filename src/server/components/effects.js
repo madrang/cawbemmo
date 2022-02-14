@@ -110,14 +110,14 @@ module.exports = {
 				let effect = effects[i];
 				if (!forceDestroy) {
 					if (effect.persist) {
-						this.syncRemove(effect.id, effect.type);
+						this.syncRemove(effect.id);
 						continue;
 					}
 				}
 
 				this.destroyEffect(effect);
 
-				this.syncRemove(effect.id, effect.type);
+				this.syncRemove(effect.id);
 				effects.splice(i, 1);
 				eLen--;
 				i--;
@@ -137,36 +137,40 @@ module.exports = {
 	},
 
 	addEffect: function (options, source) {
+		//Skip 0-duration effects
 		if ((options.has('ttl')) && (options.ttl === 0))
 			return;
 
 		options.caster = options.caster || source;
 
+		//"X of Y in Z" cc resist check
 		if (!options.force && !this.canApplyEffect(options.type))
 			return;
 
-		if (!options.new) {
-			let exists = this.effects.find(e => e.type === options.type);
-			if (exists) {
-				exists.ttl += options.ttl;
+		let oldEffect = this.effects.find(e => e.type === options.type);
 
-				for (let p in options) {
-					if (p === 'ttl')
-						continue;
-
-					exists[p] = options[p];
-				}
-
-				return exists;
-			}
+		//If there is no existing effect or the effect is not stackable, make a new effect
+		if (!oldEffect || !oldEffect.shouldStack)
+			return this.buildEffect(options);
+		
+		//If the effect is stackable and the new effect should stack, stack with the old effect
+		let shouldStack = oldEffect.shouldStack(options);
+		if (shouldStack && oldEffect.incrementStack) {
+			oldEffect.incrementStack(options);
+			return oldEffect;
 		}
 
+		//Otherwise make a new effect
+		return this.buildEffect(options);
+	},
+
+	getTypeTemplate: function (type) {
 		let typeTemplate = null;
-		if (options.type) {
-			let type = options.type[0].toUpperCase() + options.type.substr(1);
+		if (type) {
+			let capitalizedType = type[0].toUpperCase() + type.substr(1);
 			let result = {
 				type: type,
-				url: 'config/effects/effect' + type + '.js'
+				url: 'config/effects/effect' + capitalizedType + '.js'
 			};
 			this.obj.instance.eventEmitter.emit('onBeforeGetEffect', result);
 
@@ -174,84 +178,77 @@ module.exports = {
 		}
 
 		let builtEffect = extend({}, effectTemplate, typeTemplate);
+		return builtEffect;
+	},
+
+	buildEffect: function (options) {
+		let builtEffect = this.getTypeTemplate(options.type);
+
 		for (let p in options) 
 			builtEffect[p] = options[p];
 		
 		builtEffect.obj = this.obj;
 		builtEffect.id = this.nextId++;
-		builtEffect.noMsg = options.noMsg;
+		builtEffect.silent = options.silent;
 
 		if (builtEffect.init)
 			builtEffect.init(options.source);
 
 		this.effects.push(builtEffect);
 
-		if (!options.noMsg) {
-			this.obj.instance.syncer.queue('onGetBuff', {
-				type: options.type,
-				id: builtEffect.id
-			}, [this.obj.serverId]);
-
-			this.obj.instance.syncer.queue('onGetDamage', {
-				id: this.obj.id,
-				event: true,
-				text: '+' + options.type
-			}, -1);
-
-			this.obj.syncer.setArray(false, 'effects', 'addEffects', options.type);
-		}
+		if (!options.silent)
+			this.obj.syncer.setArray(false, 'effects', 'addEffects', builtEffect.simplify());
 
 		this.obj.instance.eventEmitter.emit('onAddEffect', this.obj, builtEffect);
 
 		return builtEffect;
 	},
 
-	syncRemove: function (id, type, noMsg) {
-		if ((noMsg) || (!type))
+	syncExtend: function (id, data) {
+		let effect = this.effects.find(e => e.id === id);
+		if (!effect)
 			return;
 
-		this.obj.instance.syncer.queue('onRemoveBuff', {
-			id: id
-		}, [this.obj.serverId]);
+		//Never sync silent effects
+		if (effect.silent)
+			return;
 
-		this.obj.instance.syncer.queue('onGetDamage', {
-			id: this.obj.id,
-			event: true,
-			text: '-' + type
-		}, -1);
-
-		this.obj.syncer.setArray(false, 'effects', 'removeEffects', type);
+		this.obj.syncer.setArray(true, 'effects', 'extendEffects', {
+			id,
+			data
+		});
 	},
 
-	removeEffect: function (checkEffect, noMsg) {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-			if (effect === checkEffect) {
-				this.destroyEffect(effect);
+	syncRemove: function (id) {
+		let effect = this.effects.find(e => e.id === id);
 
-				this.syncRemove(effect.id, effect.type, noMsg || effect.noMsg);
-				effects.splice(i, 1);
+		if (!effect)
+			return;
 
-				return;
-			}
-		}
+		if (effect.silent)
+			return;
+
+		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
 	},
-	removeEffectByName: function (effectName, noMsg) {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-			if (effect.type === effectName) {
-				this.destroyEffect(effect);
 
-				this.syncRemove(effect.id, effect.type, noMsg || effects.noMsg);
-				effects.splice(i, 1);
-				
-				return effect;
-			}
-		}
+	removeEffect: function (id) {
+		const effect = this.effects.find(e => e.id === id);
+
+		//It's possible that something else has removed the effect
+		if (!effect)
+			return;
+
+		this.destroyEffect(effect);
+
+		this.syncRemove(effect.id);
+		
+		this.effects.spliceWhere(e => e.id === id);
+	},
+
+	removeEffectByType: function (type) {
+		const effects = this.effects.filter(e => e.type === type);
+
+		effects.forEach(e => this.removeEffect(e.id));
 	},
 
 	getEffectByType: function (effectType) {
@@ -293,23 +290,22 @@ module.exports = {
 		for (let i = 0; i < eLen; i++) {
 			let e = effects[i];
 
-			if (e.ttl > 0) {
+			if (e.ttl > 0)
 				e.ttl--;
-				if (e.ttl === 0)
-					e.destroyed = true;
-			}
+			else if (e.ttl === 0)
+				e.destroyed = true;
 
 			if (e.update)
 				e.update();
 
 			if (e.destroyed) {
+				this.destroyEffect(e);
+
+				this.syncRemove(e.id);
+
 				effects.splice(i, 1);
 				eLen--;
 				i--;
-
-				this.destroyEffect(e);
-
-				this.syncRemove(e.id, e.type, e.noMsg);
 			}
 		}
 
