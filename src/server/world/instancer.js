@@ -355,8 +355,15 @@ module.exports = {
 	forceSavePlayer: async function ({ playerName, callbackId }) {
 		const player = objects.objects.find(o => o.player && o.name === playerName);
 
-		if (!player?.auth)
+		if (!player?.auth) {
+			await io.setAsync({
+				key: new Date(),
+				table: 'error',
+				value: 'no auth found for forcesave ' + playerName
+			});
+
 			return;
+		}
 
 		await player.auth.doSave();
 

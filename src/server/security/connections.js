@@ -164,11 +164,12 @@ module.exports = {
 			if ((!p) || (p === exclude) || (!p.auth))
 				continue;
 
-			if (p.name && p.zoneName)
-				await atlas.forceSavePlayer(p.name, p.zoneName);
+			if (p.auth.username === exclude.auth.username) {
+				if (p.name && p.zoneName)
+					await atlas.forceSavePlayer(p.name, p.zoneName);
 
-			if (p.auth.username === exclude.auth.username)
 				p.socket.emit('dc', {});
+			}
 		}
 	},
 
