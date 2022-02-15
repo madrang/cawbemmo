@@ -109,6 +109,10 @@ module.exports = {
 			cpn[method](msg);
 	},
 
+	routeGlobal: function (msg) {
+		global[msg.module][msg.method](msg);
+	},
+
 	unzone: function (msg) {
 		let socket = msg.socket;
 		let player = this.players.find(p => p.socket.id === socket.id);
