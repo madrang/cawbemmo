@@ -21,18 +21,22 @@ const sendRegularMessage = ({ obj }, msg) => {
 
 	const finalMessage = `${usePrefix}${charname}: ${msg.data.message}`;
 
-	cons.emit('event', {
+	const item = msg.data.item ? JSON.parse(JSON.stringify(msg.data.item).replace(/(<([^>]+)>)/ig, '')) : undefined;
+
+	const eventMsg = {
 		event: 'onGetMessages',
 		data: {
 			messages: [{
 				class: msgEvent.msgStyle,
 				message: finalMessage,
-				item: msg.data.item,
+				item,
 				type: 'chat',
 				source: obj.name
 			}]
 		}
-	});
+	};
+
+	cons.emit('event', eventMsg);
 };
 
 const sendPartyMessage = ({ party, obj }, msg) => {
