@@ -196,7 +196,9 @@ define([
 			client.request({
 				cpn: 'social',
 				method: 'acceptInvite',
-				id: this.invite.fromId
+				data: {
+					targetId: this.invite.fromId
+				}
 			});
 		},
 
@@ -204,9 +206,8 @@ define([
 			client.request({
 				cpn: 'social',
 				method: 'declineInvite',
-				id: this.invite.fromId,
 				data: {
-					targetId: window.player.serverId
+					targetId: this.invite.fromId
 				}
 			});
 		},

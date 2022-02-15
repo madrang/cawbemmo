@@ -208,8 +208,11 @@ module.exports = {
 	},
 
 	splitStack: function (msg) {
+		let { stackSize = 1 } = msg;
+		stackSize = ~~stackSize;
+
 		let item = this.findItem(msg.itemId);
-		if (!item || !item.quantity || item.quantity <= msg.stackSize || msg.stackSize < 1 || item.quest)
+		if (!item || !item.quantity || item.quantity <= stackSize || stackSize < 1 || item.quest)
 			return;
 
 		const hasSpace = this.hasSpace(item, true);
@@ -219,8 +222,8 @@ module.exports = {
 		}
 
 		let newItem = extend({}, item);
-		item.quantity -= msg.stackSize;
-		newItem.quantity = msg.stackSize;
+		item.quantity -= stackSize;
+		newItem.quantity = stackSize;
 
 		this.getItem(newItem, true, true);
 
