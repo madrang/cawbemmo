@@ -168,7 +168,9 @@ define([
 			client.request({
 				cpn: 'social',
 				method: 'getInvite',
-				id: charId
+				data: {
+					targetId: charId
+				}
 			});
 		}
 	};

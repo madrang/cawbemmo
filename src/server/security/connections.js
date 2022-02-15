@@ -1,5 +1,10 @@
-let objects = require('../objects/objects');
+//External Modules
+const objects = require('../objects/objects');
 
+//Helpers
+const { route, routeGlobal } = require('./connections/route');
+
+//Module
 module.exports = {
 	players: [],
 
@@ -57,56 +62,11 @@ module.exports = {
 	},
 
 	route: function (socket, msg) {
-		let player = null;
+		route.call(this, socket, msg);
+	},
 
-		if (msg.id) {
-			player = this.players.find(p => p.id === msg.id);
-			let source = this.players.find(p => p.socket.id === socket.id);
-			if (!source)
-				return;
-			if (!msg.data)
-				msg.data = {};
-			msg.data.sourceId = source.id;
-		} else
-			player = this.players.find(p => p.socket.id === socket.id);
-
-		if (
-			(!player) ||
-			(
-				(player.permadead) &&
-				(['getCharacterList', 'getCharacter', 'deleteCharacter'].indexOf(msg.method) === -1)
-			) ||
-			(
-				player.dead &&
-				!(
-					(msg.method === 'performAction' && ['respawn'].includes(msg.data.method)) ||
-					(msg.method === 'clientAck')
-				)
-			)
-		)
-			return;
-
-		if (msg.threadModule) {
-			const source = this.players.find(p => p.socket.id === socket.id);
-			if (!source)
-				return;
-
-			if (msg.callback)
-				msg.data.callbackId = atlas.registerCallback(msg.callback);
-
-			msg.data.sourceId = source.id;
-			atlas.send(player.zone, msg);
-
-			return;
-		}
-
-		let cpn = player[msg.cpn];
-		if (!cpn)
-			return;
-
-		let method = msg.method;
-		if (cpn[method])
-			cpn[method](msg);
+	routeGlobal: function (msg) {
+		routeGlobal.call(this, msg);
 	},
 
 	routeGlobal: function (msg) {
