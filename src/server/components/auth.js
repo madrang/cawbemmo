@@ -288,27 +288,12 @@ module.exports = {
 			return;
 		}
 
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '1'
-			});
-		}
-
 		const emBeforeLogin = {
 			obj: this.obj,
 			success: true,
 			msg: null
 		};
 		await eventEmitter.emit('onBeforeLogin', emBeforeLogin);
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '2'
-			});
-		}
 		if (!emBeforeLogin.success) {
 			msg.callback(emBeforeLogin.msg);
 
@@ -317,13 +302,6 @@ module.exports = {
 		
 		this.username = username;
 		await cons.logOut(this.obj);
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '3'
-			});
-		}
 
 		this.initTracker();
 
@@ -336,14 +314,6 @@ module.exports = {
 			level: 0
 		};
 
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '4'
-			});
-		}
-
 		const msgAccountInfo = {
 			username,
 			accountInfo
@@ -351,23 +321,7 @@ module.exports = {
 
 		await eventEmitter.emit('onBeforeGetAccountInfo', msgAccountInfo);
 
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '5'
-			});
-		}
-
 		await eventEmitter.emit('onAfterLogin', { username });
-
-		if (username === 'bbb' || username === 'aaa') {
-			await io.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: username + '6'
-			});
-		}
 
 		this.accountInfo = msgAccountInfo.accountInfo;
 
