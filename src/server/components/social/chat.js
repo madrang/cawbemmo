@@ -34,7 +34,7 @@ const sendRegularMessage = ({ obj }, msg) => {
 				source: obj.name
 			}]
 		}
-	}
+	};
 
 	cons.emit('event', eventMsg);
 };
