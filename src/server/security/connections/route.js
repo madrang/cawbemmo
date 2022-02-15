@@ -33,7 +33,7 @@ const route = function (socket, msg) {
 	}
 
 	let target = source;
-	if (msg.data.targetId !== undefined && msg.data.cpn === 'undefined') {
+	if (msg.data.targetId !== undefined && msg.data.cpn === undefined) {
 		target = this.players.find(p => p.id === msg.data.targetId);
 		if (!target)
 			return;
