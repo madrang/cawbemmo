@@ -36,6 +36,8 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 		return;
 	}
 
+	obj.fireEvent('beforeRezone');
+
 	//We set this before saving so that objects aren't saved ON portals
 	obj.zoneName = zoneName;
 	fixPosition(obj, toPos, toRelativePos, invokingObj);

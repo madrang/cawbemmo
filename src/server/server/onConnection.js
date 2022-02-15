@@ -43,7 +43,7 @@ const onRequest = (socket, msg, callback) => {
 		if (source)
 			msg.data.sourceId = source.id;
 
-		global[msg.module][msg.method](msg);
+		cons.routeGlobal(msg);
 	}
 };
 

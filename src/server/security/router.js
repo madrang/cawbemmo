@@ -1,4 +1,4 @@
-const { routerConfig: { allowed, secondaryAllowed, globalAllowed, allowTargetId } } = require('./routerConfig');
+const { routerConfig: { allowed, allowTargetId, secondaryAllowed, globalAllowed, secondaryAllowTargetId } } = require('./routerConfig');
 
 module.exports = {
 	allowedCpn: function (msg) {
@@ -8,15 +8,22 @@ module.exports = {
 		if (!valid)
 			return false;
 
-		if (!secondaryCpn)
+		if (!secondaryCpn) {
+			if (targetId !== undefined) {
+				const canHaveTargetId = allowTargetId?.[cpn]?.includes(method);
+				if (!canHaveTargetId)
+					return false;
+			}
+
 			return true;
+		}
 
 		const secondaryValid = secondaryAllowed?.[secondaryCpn]?.includes(secondaryMethod);
 		if (!secondaryValid)
 			return false;
 
 		if (targetId !== undefined) {
-			const canHaveTargetId = allowTargetId?.[secondaryCpn]?.includes(secondaryMethod);
+			const canHaveTargetId = secondaryAllowTargetId?.[secondaryCpn]?.includes(secondaryMethod);
 			if (!canHaveTargetId)
 				return false;
 		}
