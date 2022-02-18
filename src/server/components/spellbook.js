@@ -300,7 +300,7 @@ module.exports = {
 				}
 			}
 
-			if (spell.spellType === 'buff' || spell.spellType === 'heal') {
+			if (target.aggro && (spell.spellType === 'buff' || spell.spellType === 'heal')) {
 				if (this.obj.aggro.faction !== target.aggro.faction)
 					return;
 			} else if (target.aggro && !this.obj.aggro.canAttack(target)) {
@@ -311,7 +311,11 @@ module.exports = {
 		}
 
 		if (!spell.targetGround && target && !target.aggro && !spell.aura) {
-			this.sendAnnouncement("You don't feel like attacking that target");
+			if (spell.spellType === 'heal')
+				this.sendAnnouncement("You don't feel like healing that target");
+			else
+				this.sendAnnouncement("You don't feel like attacking that target");
+
 			return;
 		}
 
