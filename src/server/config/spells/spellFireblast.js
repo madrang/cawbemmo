@@ -1,4 +1,6 @@
 const getTargetPos = (physics, obj, m, pushback) => {
+	pushback = 0; // TEMPORARY FIX, PLEASE REVERT
+
 	let targetPos = {
 		x: m.x,
 		y: m.y
