@@ -146,20 +146,37 @@ module.exports = {
 	},
 
 	endEffect: function (target, targetPos, targetEffect) {
-		target.effects.removeEffect(targetEffect.id);
+		const { instance: { physics }, syncer, effects } = target;
+		const { x: xNew, y: yNew } = targetPos;
 
-		target.instance.physics.removeObject(target, target.x, target.y);
+		const xOld = target.x;
+		const yOld = target.y;
 
-		target.x = targetPos.x;
-		target.y = targetPos.y;
+		effects.removeEffect(targetEffect.id);
 
-		let syncer = target.syncer;
-		syncer.o.x = targetPos.x;
-		syncer.o.y = targetPos.y;
+		target.x = xNew;
+		target.y = yNew;
 
-		target.instance.physics.addObject(target, target.x, target.y);
+		if (physics.addObject(target, xNew, yNew, xOld, yOld))
+			physics.removeObject(target, xOld, yOld, xNew, yNew);
+		else {
+			target.x = xOld;
+			target.y = yOld;
+
+			return false;
+		}
+
+		//We can't use xNew and yNew because addObject could have changed the position (like entering a building interior with stairs)
+		const { x: xFinal, y: yFinal } = target;
+
+		syncer.o.x = xFinal;
+		syncer.o.y = yFinal;
+
 		const moveEvent = {
-			newPos: targetPos,
+			newPos: {
+				x: xFinal,
+				y: yFinal
+			},
 			source: this
 		};
 		target.fireEvent('afterPositionChange', moveEvent);
