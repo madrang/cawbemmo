@@ -342,6 +342,13 @@ module.exports = {
 		for (let i = 0; i < len; i++) {
 			let o = objects[i];
 
+			//If object A causes object B (layer in the list) to rezone, we won't find it here
+			if (!o) {
+				len--;
+
+				continue;
+			}
+
 			//Don't remove it from the list if it's destroyed, but don't update it either
 			//That's syncer's job
 			if ((o.update) && (!o.destroyed))

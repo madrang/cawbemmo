@@ -50,16 +50,6 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	// So physics will carry on and allow the obj to move onto the next tile (changing the position while we save above)
 	fixPosition(obj, toPos, toRelativePos, invokingObj);
 
-	//Test code, remove later
-	Object.entries(globalSyncer.buffer).forEach(([k, v]) => {
-		v.forEach(e => {
-			if (e.to.includes(serverId)) {
-			/* eslint-disable-next-line */
-			console.log('Found event', k, 'for rezoning object');
-			}
-		});
-	});
-
 	const simpleObj = obj.getSimple(true, false, true);
 	simpleObj.destroyed = false;
 	simpleObj.forceDestroy = false;
