@@ -172,7 +172,7 @@ module.exports = {
 		for (let p in buffer) {
 			const list = buffer[p];
 
-			list.forEach(l => l.to.splice(f => f === targetServerId));
+			list.forEach(l => l.to.spliceWhere(f => f === targetServerId));
 			list.spliceWhere(l => !l.to.length);
 
 			if (!list.length)
