@@ -145,9 +145,14 @@ module.exports = {
 		this.threads.push(thread);
 	},
 	onMessage: function (thread, message) {
-		if (message.module)
-			global[message.module][message.method](message);
-		else if (message.event === 'onCrashed') {
+		if (message.module) {
+			try {
+				global[message.module][message.method](message);
+			} catch (e) {
+				console.log('No global method found', message.module, message.method);
+				process.exit();
+			}
+		} else if (message.event === 'onCrashed') {
 			thread.worker.kill();
 			process.exit();
 		} else
