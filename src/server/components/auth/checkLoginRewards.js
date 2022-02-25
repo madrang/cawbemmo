@@ -1,6 +1,8 @@
 const scheduler = require('../../misc/scheduler');
 const rewardGenerator = require('../../misc/rewardGenerator');
 
+const maxRewardedDays = 21;
+
 const calculateDaysSkipped = (oldTime, newTime) => {
 	let daysSkipped = 1;
 
@@ -59,10 +61,10 @@ module.exports = async (cpnAuth, data, character, cbDone) => {
 	else
 		loginStreak = 1;
 
-	loginStreak = Math.max(1, Math.min(21, loginStreak));
 	accountInfo.loginStreak = loginStreak;
 
-	const itemCount = 1 + ~~(loginStreak / 2);
+	const cappedLoginStreak = Math.max(1, Math.min(maxRewardedDays, loginStreak));
+	const itemCount = 1 + ~~(cappedLoginStreak / 2);
 	const rewards = rewardGenerator(itemCount);
 	if (!rewards) {
 		cbDone();
