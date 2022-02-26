@@ -16,11 +16,8 @@ const onRequest = (socket, msg, callback) => {
 	if (!msg.data)
 		msg.data = {};
 
-	if (!router.isMsgValid(msg)) {
-		console.log(msg);
-		
+	if (!router.isMsgValid(msg)) 
 		return;
-	}
 
 	if (msg.cpn)
 		cons.route(socket, msg);

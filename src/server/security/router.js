@@ -69,11 +69,8 @@ module.exports = {
 					return true;
 
 				const foundIncorrectObject = value.some(v => !this.keysCorrect(v, spec));
-				if (foundIncorrectObject) {
-					console.log('array of objects spec match failed');
-
+				if (foundIncorrectObject) 
 					return true;
-				}
 
 				return foundIncorrectObject;
 			} else if (dataType === 'object') {
@@ -84,11 +81,8 @@ module.exports = {
 					return false;
 
 				const foundIncorrectObject = !this.keysCorrect(value, spec);
-				if (foundIncorrectObject) {
-					console.log('object spec match failed');
-
+				if (foundIncorrectObject) 
 					return true;
-				}
 
 				return foundIncorrectObject;
 			} else if (dataType === 'stringOrNull')
@@ -126,52 +120,36 @@ module.exports = {
 		let signature;
 
 		if (msg.module) {
-			if (msg.threadModule !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) {
-				console.log('msg contains invalid root key');
+			if (msg.threadModule !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) 
 				return false;
-			}
 
 			signature = signatures.global[msg.module]?.[msg.method];
 		} else if (msg.threadModule) {
-			if (msg.module !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) {
-				console.log('msg contains invalid root key');
+			if (msg.module !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) 
 				return false;
-			}
 
 			signature = signatures.threadGlobal[msg.threadModule]?.[msg.method];
 		} else if (msg.cpn) {
-			if (msg.module !== undefined || msg.threadModule !== undefined) {
-				console.log('msg contains invalid root key');
+			if (msg.module !== undefined || msg.threadModule !== undefined) 
 				return false;
-			}
 
 			signature = signatures.cpnMethods[msg.cpn]?.[msg.method];
 		}
 
-		if (!signature) {
-			console.log('signature not found');
+		if (!signature) 
 			return false;
-		}
 
 		const result = this.signatureCorrect(msg, signature);
-
-		if (!result)
-			console.log('signature check failed');
 
 		if (!result || msg.cpn !== 'player' || (msg.method !== 'performAction' && msg.method !== 'queueAction'))
 			return result;
 
 		const signatureThreadMsg = signatures.threadCpnMethods[msg.data.cpn]?.[msg.data.method];
 
-		if (!signatureThreadMsg) {
-			console.log('sub signature not found');
+		if (!signatureThreadMsg) 
 			return false;
-		}
 
 		const resultSub = this.signatureCorrect(msg.data, signatureThreadMsg);
-
-		if (!resultSub)
-			console.log('sub signature check failed');
 
 		return resultSub;
 	}
