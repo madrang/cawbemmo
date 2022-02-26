@@ -86,10 +86,10 @@ define([
 				cpn: 'player',
 				method: 'performAction',
 				data: {
-					targetId: this.workbenchId,
 					cpn: 'workbench',
 					method: 'getRecipe',
 					data: {
+						targetId: this.workbenchId,
 						name: recipeName
 					}
 				},
@@ -215,10 +215,10 @@ define([
 					cpn: 'player',
 					method: 'performAction',
 					data: {
-						targetId: this.workbenchId,
 						cpn: 'workbench',
 						method: 'getRecipe',
 						data: {
+							targetId: this.workbenchId,
 							name: this.currentRecipe.name,
 							pickedItemIds
 						}
@@ -271,10 +271,10 @@ define([
 				cpn: 'player',
 				method: 'performAction',
 				data: {
-					targetId: this.workbenchId,
 					cpn: 'workbench',
 					method: 'craft',
 					data: {
+						targetId: this.workbenchId,
 						name: selectedRecipe,
 						pickedItemIds
 					}

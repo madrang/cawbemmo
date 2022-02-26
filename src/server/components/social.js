@@ -222,7 +222,7 @@ module.exports = {
 			return;
 		}
 
-		let target = cons.players.find(c => c.id === msg.data);
+		let target = cons.players.find(c => c.id === msg.data.id);
 		if (!target)
 			return;
 

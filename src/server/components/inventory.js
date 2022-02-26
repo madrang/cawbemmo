@@ -247,10 +247,10 @@ module.exports = {
 
 		toItem.quantity += fromItem.quantity;
 		this.obj.syncer.setArray(true, 'inventory', 'getItems', toItem);
-		this.destroyItem(fromItem.id, null, true);
+		this.destroyItem({ itemId: fromItem.id }, null, true);
 	},
 
-	useItem: function (itemId) {
+	useItem: function ({ itemId }) {
 		useItem(this, itemId);
 	},
 
@@ -275,8 +275,8 @@ module.exports = {
 		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
 	},
 
-	stashItem: async function (id) {
-		const item = this.findItem(id);
+	stashItem: async function ({ itemId }) {
+		const item = this.findItem(itemId);
 		if (!item || item.quest || item.noStash)
 			return;
 
@@ -288,11 +288,11 @@ module.exports = {
 		if (!success)
 			return;
 
-		this.destroyItem(id, null, true);
+		this.destroyItem({ itemId: itemId }, null, true);
 	},
 
-	salvageItem: function (id) {
-		let item = this.findItem(id);
+	salvageItem: function ({ itemId }) {
+		let item = this.findItem(itemId);
 		if ((!item) || (item.material) || (item.quest) || (item.noSalvage) || (item.eq))
 			return;
 			
@@ -300,7 +300,7 @@ module.exports = {
 			
 		let items = salvager.salvage(item);
 			
-		this.destroyItem(id);
+		this.destroyItem({ itemId: itemId });
 		
 		for (const material of items) {
 			this.getItem(material, true, false, false, true);
@@ -314,27 +314,27 @@ module.exports = {
 		this.obj.social.notifySelfArray(messages);
 	},
 
-	destroyItem: function (id, amount, force) {
-		let item = this.findItem(id);
+	destroyItem: function ({ itemId }, amount, force) {
+		let item = this.findItem(itemId);
 		if (!item || (item.noDestroy && !force))
 			return;
 
 		amount = amount || item.quantity;
 
 		if (item.eq)
-			this.obj.equipment.unequip(id);
+			this.obj.equipment.unequip({ itemId });
 
 		if ((item.quantity) && (amount)) {
 			item.quantity -= amount;
 			if (item.quantity <= 0) {
-				this.items.spliceWhere(i => i.id === id);
-				this.obj.syncer.setArray(true, 'inventory', 'destroyItems', id);
+				this.items.spliceWhere(i => i.id === itemId);
+				this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
 			} else
 				this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
 		} else {
-			this.items.spliceWhere(i => i.id === id);
-			this.obj.syncer.setArray(true, 'inventory', 'destroyItems', id);
-			this.obj.syncer.deleteFromArray(true, 'inventory', 'getItems', i => i.id === id);
+			this.items.spliceWhere(i => i.id === itemId);
+			this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
+			this.obj.syncer.deleteFromArray(true, 'inventory', 'getItems', i => i.id === itemId);
 		}
 
 		this.obj.fireEvent('afterDestroyItem', item, amount);
@@ -343,8 +343,8 @@ module.exports = {
 		return item;
 	},
 
-	dropItem: function (id) {
-		let item = this.findItem(id);
+	dropItem: function ({ itemId }) {
+		let item = this.findItem(itemId);
 		if ((!item) || (item.noDrop) || (item.quest))
 			return;
 
@@ -367,25 +367,25 @@ module.exports = {
 			return;
 
 		if (item.eq)
-			this.obj.equipment.unequip(id);
+			this.obj.equipment.unequip(itemId);
 
-		this.items.spliceWhere(i => i.id === id);
+		this.items.spliceWhere(i => i.id === itemId);
 
-		this.obj.syncer.setArray(true, 'inventory', 'destroyItems', id);
+		this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
 
 		this.createBag(dropCell.x, dropCell.y, [item]);
 
 		events.emit('afterPlayerDropItem', this.obj, item);
 	},
 
-	moveItem: function (msgs) {
-		msgs.forEach(function (m) {
-			let item = this.findItem(m.id);
+	moveItem: function ({ moveMsgs }) {
+		moveMsgs.forEach(({ itemId, targetPos }) => {
+			let item = this.findItem(itemId);
 			if (!item)
 				return;
 
-			item.pos = m.pos;
-		}, this);
+			item.pos = targetPos;
+		});
 	},
 
 	hookItemEvents: function (items) {

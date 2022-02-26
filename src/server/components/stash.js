@@ -101,13 +101,13 @@ module.exports = {
 		return true;
 	},
 
-	withdraw: function (id) {
+	withdraw: function ({ itemId }) {
 		const { active, items, obj } = this;
 
 		if (!active)
 			return;
 
-		let item = items.find(i => i.id === id);
+		let item = items.find(i => i.id === itemId);
 		if (!item)
 			return;
 		else if (!obj.inventory.hasSpace(item)) {
@@ -122,7 +122,7 @@ module.exports = {
 		obj.inventory.getItem(item);
 		items.spliceWhere(i => i === item);
 
-		obj.instance.syncer.queue('onRemoveStashItems', [id], [obj.serverId]);
+		obj.instance.syncer.queue('onRemoveStashItems', [itemId], [obj.serverId]);
 	},
 
 	setActive: function (active) {
@@ -135,9 +135,11 @@ module.exports = {
 			id: 'openStash',
 			key: 'u',
 			action: {
-				targetId: obj.id,
 				cpn: 'stash',
-				method: 'open'
+				method: 'open',
+				data: {
+					targetId: obj.id
+				}
 			}
 		});
 

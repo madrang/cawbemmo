@@ -67,7 +67,7 @@ module.exports = async (cpnInv, itemId) => {
 	if (item.recipe) {
 		const didLearn = await learnRecipe(obj, item);
 		if (didLearn)
-			cpnInv.destroyItem(itemId, 1);
+			cpnInv.destroyItem({ itemId }, 1);
 
 		return;
 	}
@@ -107,7 +107,7 @@ module.exports = async (cpnInv, itemId) => {
 			}
 		}
 
-		cpnInv.destroyItem(itemId, 1);
+		cpnInv.destroyItem({ itemId }, 1);
 		if (item.has('quickSlot'))
 			cpnInv.obj.equipment.replaceQuickSlot(item);
 	}
