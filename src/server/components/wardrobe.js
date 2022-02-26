@@ -42,9 +42,11 @@ module.exports = {
 		obj.syncer.setArray(true, 'serverActions', 'removeActions', {
 			key: 'u',
 			action: {
-				targetId: this.obj.id,
 				cpn: 'wardrobe',
-				method: 'access'
+				method: 'access',
+				data: {
+					targetId: this.obj.id
+				}
 			}
 		});
 
@@ -64,9 +66,11 @@ module.exports = {
 			key: 'u',
 			name: 'open wardrobe',
 			action: {
-				targetId: this.obj.id,
 				cpn: 'wardrobe',
-				method: 'open'
+				method: 'open',
+				data: {
+					targetId: this.obj.id
+				}
 			}
 		});
 

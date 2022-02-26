@@ -77,10 +77,10 @@ define([
 			client.request({
 				cpn: 'player',
 				method: 'move',
-				priority: !this.path.length,
 				data: {
 					x: x,
-					y: y
+					y: y,
+					priority: !this.path.length
 				}
 			});
 		},

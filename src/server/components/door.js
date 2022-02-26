@@ -80,9 +80,11 @@ module.exports = {
 		obj.syncer.setArray(true, 'serverActions', 'removeActions', {
 			key: 'u',
 			action: {
-				targetId: this.obj.id,
 				cpn: 'door',
-				method: 'unlock'
+				method: 'unlock',
+				data: {
+					targetId: this.obj.id
+				}
 			}
 		});
 	},
@@ -107,9 +109,11 @@ module.exports = {
 				key: 'u',
 				name: this.closed ? 'open door' : 'close door',
 				action: {
-					targetId: this.obj.id,
 					cpn: 'door',
-					method: 'unlock'
+					method: 'unlock',
+					data: {
+						targetId: this.obj.id
+					}
 				}
 			});
 		}
@@ -148,7 +152,7 @@ module.exports = {
 			const key = obj.inventory.items.find(i => i.keyId === this.key);
 
 			if (key && (key.singleUse || this.destroyKey)) {
-				obj.inventory.destroyItem(key.id, 1);
+				obj.inventory.destroyItem({ itemId: key.id }, 1);
 
 				const message = `The ${key.name} disintegrates on use`;
 				obj.social.notifySelf({ message });

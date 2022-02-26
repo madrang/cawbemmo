@@ -45,7 +45,7 @@ module.exports = {
 		}
 
 		if (!this.eq.has(item.slot)) {
-			this.equip(itemId);
+			this.equip({ itemId });
 			return true;
 		}
 	},
@@ -72,14 +72,14 @@ module.exports = {
 			slot = item.equipSlot || item.slot;
 		if (slot === 'twoHanded') {
 			if (this.eq.has('offHand'))
-				this.unequip(this.eq.offHand, true);
+				this.unequip({ itemId: this.eq.offHand }, true);
 
 			slot = 'oneHanded';
 		} else if (slot === 'offHand') {
 			if (this.eq.has('oneHanded')) {
 				let oneHandedEq = inventory.findItem(this.eq.oneHanded);
 				if (oneHandedEq.slot === 'twoHanded')
-					this.unequip(this.eq.oneHanded, true);
+					this.unequip({ itemId: this.eq.oneHanded }, true);
 			}
 		}
 
@@ -113,7 +113,7 @@ module.exports = {
 			if (this.eq[slot] === item.id)
 				return;
 
-			this.unequip(this.eq[slot], true);
+			this.unequip({ itemId: this.eq[slot] }, true);
 		}
 
 		applyItemStats(obj, item, true);
@@ -126,7 +126,7 @@ module.exports = {
 
 		if ((!obj.mob) || (item.ability)) {
 			if (item.spell)
-				inventory.learnAbility(itemId, item.runeSlot);
+				inventory.learnAbility({ itemId }, item.runeSlot);
 			else
 				obj.syncer.setArray(true, 'inventory', 'getItems', inventory.simplifyItem(item));
 		}
@@ -164,7 +164,7 @@ module.exports = {
 
 		if (item.spell) {
 			item.eq = true;
-			inventory.unlearnAbility(itemId, item.runeSlot);
+			inventory.unlearnAbility({ itemId }, item.runeSlot);
 		} else
 			obj.syncer.setArray(true, 'inventory', 'getItems', inventory.simplifyItem(item));
 
@@ -178,7 +178,7 @@ module.exports = {
 	unequipAll: function () {
 		let eq = this.eq;
 		Object.keys(this.eq).forEach(function (slot) {
-			this.unequip(eq[slot]);
+			this.unequip({ itemId: eq[slot] });
 		}, this);
 	},
 
@@ -228,7 +228,7 @@ module.exports = {
 		if (!item)
 			return;
 
-		inventory.useItem(this.quickSlots[0]);
+		inventory.useItem({ itemId: this.quickSlots[0] });
 
 		if (item.uses <= 0 && !item.quantity)
 			this.replaceQuickSlot(item);
@@ -256,7 +256,7 @@ module.exports = {
 
 			let errors = inventory.equipItemErrors(item);
 			if (errors.length > 0) {
-				this.unequip(itemId);
+				this.unequip({ itemId: itemId });
 
 				let message = ({
 					int: `You suddenly feel too stupid to wear your ${item.name}`,
@@ -290,7 +290,7 @@ module.exports = {
 				return;
 
 			if (findFaction.tier > tier) {
-				this.unequip(itemId);
+				this.unequip({ itemId });
 
 				const message = `You unequip your ${item.name} as it zaps you.`;
 				this.obj.social.notifySelf({

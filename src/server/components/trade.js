@@ -240,7 +240,7 @@ module.exports = {
 
 		if (item.worth.currency) {
 			let currencyItem = this.obj.inventory.items.find(i => (i.name === item.worth.currency));
-			this.obj.inventory.destroyItem(currencyItem.id, item.worth.amount, true);
+			this.obj.inventory.destroyItem({ itemId: currencyItem.id }, item.worth.amount, true);
 		} else {
 			targetTrade.gold += ~~(item.worth * markup);
 			this.gold -= ~~(item.worth * markup);
@@ -270,7 +270,7 @@ module.exports = {
 			return;
 
 		const oldQuantity = item.quantity;
-		this.obj.inventory.destroyItem(msg.itemId);
+		this.obj.inventory.destroyItem({ itemId: msg.itemId });
 
 		if (oldQuantity)
 			item.quantity = oldQuantity;

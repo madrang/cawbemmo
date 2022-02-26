@@ -174,6 +174,8 @@ define([
 				let method = 'moveItem';
 
 				if ((this.hoverCell) && (this.hoverCell[0] !== this.dragItem[0])) {
+					const data = {};
+
 					let placeholder = $('<div></div>')
 						.insertAfter(this.dragItem);
 
@@ -182,9 +184,11 @@ define([
 					placeholder.remove();
 
 					let msgs = [{
-						id: this.dragItem.data('item').id,
-						pos: this.dragItem.index()
+						itemId: this.dragItem.data('item').id,
+						targetPos: this.dragItem.index()
 					}];
+
+					data.moveMsgs = msgs;
 
 					this.items.find(function (i) {
 						return (i.id === this.dragItem.data('item').id);
@@ -194,19 +198,19 @@ define([
 					if (hoverCellItem) {
 						if ((hoverCellItem.name !== this.dragItem.data('item').name) || (!hoverCellItem.quantity)) {
 							msgs.push({
-								id: hoverCellItem.id,
-								pos: this.hoverCell.index()
+								itemId: hoverCellItem.id,
+								targetPos: this.hoverCell.index()
 							});
 
 							this.items.find(function (i) {
 								return (i.id === hoverCellItem.id);
 							}, this).pos = this.hoverCell.index();
 						} else {
+							delete data.moveMsgs;
+							data.fromId = this.dragItem.data('item').id;
+							data.toId = hoverCellItem.id;
+
 							method = 'combineStacks';
-							msgs = {
-								fromId: this.dragItem.data('item').id,
-								toId: hoverCellItem.id
-							};
 						}
 					}
 
@@ -216,7 +220,7 @@ define([
 						data: {
 							cpn: 'inventory',
 							method: method,
-							data: msgs
+							data
 						}
 					});
 
@@ -516,7 +520,9 @@ define([
 			else if ((action === 'learnAbility') && (!window.player.inventory.canEquipItem(item)))
 				return;
 
-			let data = item.id;
+			let data = {
+				itemId: item.id
+			};
 
 			let cpn = 'inventory';
 			if (['equip', 'setQuickSlot'].includes(action)) {
@@ -537,9 +543,9 @@ define([
 				cpn: 'player',
 				method: 'performAction',
 				data: {
-					cpn: cpn,
+					cpn,
 					method: action,
-					data: data
+					data
 				}
 			});
 		},

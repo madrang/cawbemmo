@@ -216,7 +216,9 @@ define([
 			client.request({
 				cpn: 'social',
 				method: 'removeFromParty',
-				data: id
+				data: {
+					id
+				}
 			});
 		},
 

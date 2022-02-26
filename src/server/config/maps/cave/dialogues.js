@@ -231,7 +231,7 @@ module.exports = {
 					return;
 				obj.reputation.getReputation('akarei', (crystals.quantity || 1) * 15);
 
-				inventory.destroyItem(crystals.id);
+				inventory.destroyItem({ itemId: crystals.id });
 			}
 		}
 	}

@@ -74,11 +74,11 @@ define([
 				cpn: 'player',
 				method: 'performAction',
 				data: {
-					targetId: this.wardrobeId,
 					cpn: 'wardrobe',
 					method: 'apply',
 					data: {
-						skinId: this.skin.id
+						skinId: this.skin.id,
+						targetId: this.wardrobeId
 					}
 				}
 			});

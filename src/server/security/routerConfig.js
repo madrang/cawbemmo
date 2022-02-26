@@ -1,50 +1,620 @@
 let events = require('../misc/events');
 
 const routerConfig = {
-	//Component methods that can be called on the main thread
-	allowed: {
-		player: ['performAction', 'queueAction', 'move'],
-		auth: ['login', 'register', 'play', 'getCharacterList', 'getCharacter', 'deleteCharacter', 'getSkinList', 'createCharacter', 'getCustomChannels'],
-		social: ['chat', 'getInvite', 'acceptInvite', 'declineInvite', 'removeFromParty', 'leaveParty']
-	},
-	//Component methods that can be called with a targetId
-	// which means that we're not calling our own component method but instead, another object's component method
-	allowTargetId: {
-		social: ['getInvite', 'acceptInvite', 'declineInvite']
-	},
-	//Component methods that can be called on map threads through `performAction` or `queueAction` methods
-	secondaryAllowed: {
-		dialogue: ['talk'],
-		gatherer: ['gather'],
-		quests: ['complete'],
-		inventory: ['combineStacks', 'splitStack', 'useItem', 'moveItem', 'learnAbility', 'unlearnAbility', 'dropItem', 'destroyItem', 'salvageItem', 'stashItem', 'sortInventory'],
-		equipment: ['equip', 'unequip', 'setQuickSlot', 'useQuickSlot', 'inspect'],
-		stash: ['withdraw', 'open'],
-		trade: ['buySell'],
-		door: ['lock', 'unlock'],
-		wardrobe: ['open', 'apply'],
-		stats: ['respawn'],
-		passives: ['tickNode', 'untickNode'],
-		workbench: ['open', 'craft', 'getRecipe']
-	},
-	//Component methods that can be called on map threads with a targetId
-	// which means that we're not calling our own component method but instead, another object's component method
-	// These are called through `performAction` or `queueAction` methods
-	secondaryAllowTargetId: {
-		door: ['lock', 'unlock'],
-		gatherer: ['gather'],
-		equipment: ['inspect'],
-		stash: ['open'],
-		wardrobe: ['open', 'apply'],
-		workbench: ['open', 'craft', 'getRecipe']
-	},
-	//Global module methods that can be called on the main thread or map threads
-	globalAllowed: {
-		clientConfig: ['getClientConfig'],
-		leaderboard: ['requestList'],
-		cons: ['unzone'],
-		rezoneManager: ['clientAck'],
-		instancer: ['clientAck']
+	signatures: {
+		global: {
+			clientConfig: {
+				getClientConfig: {
+					callback: true,
+					data: []
+				}
+			},
+			leaderboard: {
+				requestList: {
+					callback: true,
+					data: [
+						{
+							key: 'offset',
+							dataType: 'integer'
+						},
+						{
+							key: 'prophecies',
+							dataType: 'arrayOfStrings'
+						}
+					]
+				}
+			},
+			cons: {
+				unzone: {
+					callback: true,
+					data: []
+				}
+			}
+		},
+		threadGlobal: {
+			instancer: {
+				clientAck: {
+					callback: false,
+					data: []
+				}
+			},
+			rezoneManager: {
+				clientAck: {
+					callback: false,
+					data: []
+				}
+			}
+		},
+		cpnMethods: {
+			auth: {
+				login: {
+					callback: true,
+					data: [
+						{
+							key: 'username',
+							dataType: 'string'
+						},
+						{
+							key: 'password',
+							dataType: 'string'
+						}
+					]
+				},
+				register: {
+					callback: true,
+					data: [
+						{
+							key: 'username',
+							dataType: 'string'
+						},
+						{
+							key: 'password',
+							dataType: 'string'
+						}
+					]
+				},
+				deleteCharacter: {
+					callback: true,
+					data: [
+						{
+							key: 'name',
+							dataType: 'string'
+						}
+					]
+				},
+				getSkinList: {
+					callback: true,
+					data: []
+				},
+				createCharacter: {
+					callback: true,
+					data: [
+						{
+							key: 'name',
+							dataType: 'string'
+						},
+						{
+							key: 'class',
+							dataType: 'string'
+						},
+						{
+							key: 'skinId',
+							dataType: 'string'
+						},
+						{
+							key: 'prophecies',
+							dataType: 'arrayOfStrings'
+						}
+					]
+				},
+				getCharacterList: {
+					callback: true,
+					data: []
+				},
+				getCharacter: {
+					callback: true,
+					data: [
+						{
+							key: 'name',
+							dataType: 'string'
+						}
+					]
+				},
+				play: {
+					callback: true,
+					data: [
+						{
+							key: 'name',
+							dataType: 'string'
+						}
+					]
+				}
+			},
+			player: {
+				move: {
+					callback: false,
+					data: [
+						{
+							key: 'x',
+							dataType: 'integer'
+						},
+						{
+							key: 'y',
+							dataType: 'integer'
+						},
+						{
+							key: 'priority',
+							dataType: 'boolean',
+							optional: true
+						}
+					]
+				},
+				performAction: {
+					callback: 'deferred',
+					data: [
+						{
+							key: 'cpn',
+							dataType: 'string'
+						},
+						{
+							key: 'method',
+							dataType: 'string'
+						},
+						{
+							key: 'data',
+							dataType: 'object'
+						}
+					]
+				},
+
+				queueAction: {
+					callback: false,
+					data: [
+						{
+							key: 'cpn',
+							dataType: 'string'
+						},
+						{
+							key: 'method',
+							dataType: 'string'
+						},
+						{
+							key: 'data',
+							dataType: 'object'
+						}
+					]
+				}
+			},
+			social: {
+				chat: {
+					callback: false,
+					data: [
+						{
+							key: 'message',
+							dataType: 'string'
+						},
+						{
+							key: 'type',
+							dataType: 'string'
+						},
+						{
+							key: 'subType',
+							dataType: 'stringOrNull',
+							optional: true
+						},
+						{
+							key: 'item',
+							dataType: 'object',
+							optional: true
+						}
+					]
+				},
+				getInvite: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				acceptInvite: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				declineInvite: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				removeFromParty: {
+					callback: false,
+					data: [
+						{
+							key: 'id',
+							dataType: 'integer'
+						}
+					]
+				},
+				leaveParty: {
+					callback: false,
+					data: []
+				}
+
+			}
+		},
+		threadCpnMethods: {
+			dialogue: {
+				talk: {
+					callback: false,
+					data: [
+						{
+							key: 'target',
+							dataType: 'integer'
+						},
+						{
+							key: 'state',
+							dataType: 'numberOrString'
+						}
+					]
+				}
+			},
+			gatherer: {
+				gather: {
+					callback: false,
+					data: []
+				}
+			},
+			quests: {
+				complete: {
+					callback: false,
+					data: []
+				}
+			},
+			player: {
+				clearQueue: {
+					callback: false,
+					data: []
+				}
+			},
+			inventory: {
+				combineStacks: {
+					callback: false,
+					data: [
+						{
+							key: 'fromId',
+							dataType: 'integer'
+						},
+						{
+							key: 'toId',
+							dataType: 'integer'
+						}
+					]
+				},
+				splitStack: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'stackSize',
+							dataType: 'integer'
+						}
+					]
+				},
+				useItem: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				moveItem: {
+					callback: false,
+					data: [
+						{
+							key: 'moveMsgs',
+							dataType: 'arrayOfObjects',
+							spec: [
+								{
+									key: 'itemId',
+									dataType: 'integer'
+								},
+								{
+									key: 'targetPos',
+									dataType: 'integer'
+								}
+							]
+						}
+					]
+				},
+				learnAbility: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'slot',
+							dataType: 'integer',
+							optional: true
+						}
+					]
+				},
+				unlearnAbility: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				dropItem: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				destroyItem: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				salvageItem: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				stashItem: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				sortInventory: {
+					callback: false,
+					data: []
+				}
+			},
+			equipment: {
+				equip: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'slot',
+							dataType: 'string',
+							optional: true
+						}
+					]
+				},
+				unequip: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'slot',
+							dataType: 'string',
+							optional: true
+						}
+					]
+				},
+				setQuickSlot: {
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'slot',
+							dataType: 'integer'
+						}
+					]
+				},
+				useQuickSlot: {
+					data: [
+						{
+							key: 'slot',
+							dataType: 'integer'
+						}
+					]
+				},
+				inspect: {
+					callback: false,
+					data: [
+						{
+							key: 'playerId',
+							dataType: 'integer'
+						}
+					]
+				}
+			},
+			stash: {
+				withdraw: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						}
+					]
+				},
+				open: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				}
+			},
+			trade: {
+				buySell: {
+					callback: false,
+					data: [
+						{
+							key: 'itemId',
+							dataType: 'integer'
+						},
+						{
+							key: 'action',
+							dataType: 'string'
+						}
+					]
+				}
+			},
+			door: {
+				lock: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				unlock: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				}
+			},
+			wardrobe: {
+				open: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				apply: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						},
+						{
+							key: 'skinId',
+							dataType: 'string'
+						}
+					]
+				}
+			},
+			stats: {
+				respawn: {
+					callback: false,
+					data: []
+				}
+			},
+			passives: {
+				tickNode: {
+					callback: false,
+					data: [
+						{
+							key: 'nodeId',
+							dataType: 'integer'
+						}
+					]
+				},
+				untickNode: {
+					callback: false,
+					data: [
+						{
+							key: 'nodeId',
+							dataType: 'integer'
+						}
+					]
+				}
+			},
+			workbench: {
+				open: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
+				},
+				craft: {
+					callback: false,
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						},
+						{
+							key: 'name',
+							dataType: 'string'
+						},
+						{
+							key: 'pickedItemIds',
+							dataType: 'arrayOfIntegers'
+						}
+					]
+				},
+				getRecipe: {
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						},
+						{
+							key: 'name',
+							dataType: 'string'
+						},
+						{
+							key: 'pickedItemIds',
+							dataType: 'arrayOfIntegers',
+							optional: true
+						}
+					]
+				}
+			}
+		}
 	}
 };
 
@@ -52,6 +622,12 @@ module.exports = {
 	routerConfig,
 
 	init: function () {
-		events.emit('onBeforeGetRouterConfig', routerConfig);
+		routerConfig.allowed = {};
+		routerConfig.allowTargetId = {};
+		routerConfig.secondaryAllowed = {};
+		routerConfig.secondaryAllowTargetId = {};
+		routerConfig.globalAllowed = {};
+
+		events.emit('onBeforeGetRouterSignatureConfig', routerConfig);
 	}
 };
