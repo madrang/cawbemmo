@@ -1,4 +1,4 @@
-const { routerConfig: { allowed, allowTargetId, secondaryAllowed, globalAllowed, secondaryAllowTargetId } } = require('./routerConfig');
+const { routerConfig: { signatures, allowed, allowTargetId, secondaryAllowed, globalAllowed, secondaryAllowTargetId } } = require('./routerConfig');
 
 module.exports = {
 	allowedCpn: function (msg) {
@@ -41,5 +41,120 @@ module.exports = {
 		const result = globalAllowed[threadModule] && globalAllowed[threadModule].includes(method);
 
 		return result;
+	},
+
+	keysCorrect: function (obj, keys) {
+		const foundIncorrect = keys.some(({ key, dataType, optional, spec }) => {
+			if (!obj.hasOwnProperty(key)) {
+				if (optional)
+					return false;
+
+				return true;
+			}
+
+			const value = obj[key];
+
+			if (dataType === 'string' || dataType === 'boolean')
+				return dataType !== typeof(value);
+			else if (dataType === 'numberOrString')
+				return (typeof(value) !== 'string' && !Number.isFinite(value));
+			else if (dataType === 'integerOrString')
+				return (typeof(value) !== 'string' && !Number.isInteger(value));
+			else if (dataType === 'integer')
+				return !Number.isInteger(value);
+			else if (dataType === 'integerNullOrPosition')
+				return !Number.isInteger(value) && value !== null && (typeof(value) !== 'object' && value.hasOwnProperty('x') && value.hasOwnProperty('y'));
+			else if (dataType === 'arrayOfStrings')
+				return (!Array.isArray(value) || value.some(v => typeof(v) !== 'string'));
+			else if (dataType === 'arrayOfIntegers')
+				return (!Array.isArray(value) || value.some(v => !Number.isInteger(v)));
+			else if (dataType === 'arrayOfObjects') {
+				if (!Array.isArray(value) || value.some(v => v === null || typeof(v) !== 'object'))
+					return true;
+
+				const foundIncorrectObject = value.some(v => !this.keysCorrect(v, spec));
+				if (foundIncorrectObject) 
+					return true;
+
+				return foundIncorrectObject;
+			} else if (dataType === 'object') {
+				if (typeof(value) !== 'object' || value === null)
+					return true;
+
+				if (!spec)
+					return false;
+
+				const foundIncorrectObject = !this.keysCorrect(value, spec);
+				if (foundIncorrectObject) 
+					return true;
+
+				return foundIncorrectObject;
+			} else if (dataType === 'stringOrNull')
+				return (typeof(value) !== 'string' && value !== null);
+			else if (dataType === 'mixed')
+				return false;
+
+			return true;
+		});
+
+		if (foundIncorrect)
+			return false;
+
+		const foundInvalid = Object.keys(obj).some(o => !keys.some(k => k.key === o));
+
+		return !foundInvalid;
+	},
+
+	signatureCorrect: function (msg, config) {
+		if (config.callback !== 'deferred') {
+			if (config.callback === true && !msg.callback)
+				return false;
+			else if (config.callback === false && !!msg.callback)
+				return false;
+		}
+
+		const expectKeys = config.data;
+
+		const keysCorrect = this.keysCorrect(msg.data, expectKeys);
+
+		return keysCorrect;
+	},
+
+	isMsgValid: function (msg) {
+		let signature;
+
+		if (msg.module) {
+			if (msg.threadModule !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) 
+				return false;
+
+			signature = signatures.global[msg.module]?.[msg.method];
+		} else if (msg.threadModule) {
+			if (msg.module !== undefined || msg.cpn !== undefined || msg.data.cpn !== undefined) 
+				return false;
+
+			signature = signatures.threadGlobal[msg.threadModule]?.[msg.method];
+		} else if (msg.cpn) {
+			if (msg.module !== undefined || msg.threadModule !== undefined) 
+				return false;
+
+			signature = signatures.cpnMethods[msg.cpn]?.[msg.method];
+		}
+
+		if (!signature) 
+			return false;
+
+		const result = this.signatureCorrect(msg, signature);
+
+		if (!result || msg.cpn !== 'player' || msg.method !== 'performAction')
+			return result;
+
+		const signatureThreadMsg = signatures.threadCpnMethods[msg.data.cpn]?.[msg.data.method];
+
+		if (!signatureThreadMsg) 
+			return false;
+
+		const resultSub = this.signatureCorrect(msg.data, signatureThreadMsg);
+
+		return resultSub;
 	}
 };

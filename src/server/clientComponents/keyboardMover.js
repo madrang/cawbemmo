@@ -44,10 +44,11 @@ define([
 			if (keyEvent.key === 'esc') {
 				client.request({
 					cpn: 'player',
-					method: 'queueAction',
+					method: 'performAction',
 					data: {
-						action: 'clearQueue',
-						priority: true
+						cpn: 'player',
+						method: 'clearQueue',
+						data: {}
 					}
 				});
 			}

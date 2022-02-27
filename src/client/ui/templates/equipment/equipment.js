@@ -172,7 +172,7 @@ define([
 		unequipItem: function (item) {
 			const isQuickslot = item.has('quickSlot');
 			const method = isQuickslot ? 'setQuickSlot' : 'unequip';
-			const data = isQuickslot ? { slot: item.quickSlot } : item.id;
+			const data = isQuickslot ? { slot: item.quickSlot } : { itemId: item.id };
 
 			client.request({
 				cpn: 'player',
@@ -290,7 +290,7 @@ define([
 
 			let cpn = 'equipment';
 			let method = 'equip';
-			let data = item.id;
+			let data = { itemId: item.id };
 
 			if (item.empty)
 				method = 'unequip';

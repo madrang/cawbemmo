@@ -47,9 +47,11 @@ module.exports = {
 		obj.syncer.setArray(true, 'serverActions', 'removeActions', {
 			key: 'u',
 			action: {
-				targetId: this.obj.id,
 				cpn: 'workbench',
-				method: 'access'
+				method: 'open',
+				data: {
+					targetId: this.obj.id
+				}
 			}
 		});
 
@@ -66,9 +68,11 @@ module.exports = {
 			key: 'u',
 			name: 'access workbench',
 			action: {
-				targetId: this.obj.id,
 				cpn: 'workbench',
-				method: 'open'
+				method: 'open',
+				data: {
+					targetId: this.obj.id
+				}
 			}
 		});
 

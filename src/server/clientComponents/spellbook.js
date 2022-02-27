@@ -102,9 +102,8 @@ define([
 			if (!target && this.target && (!this.hoverTarget || this.hoverTarget.id !== this.target.id)) {
 				client.request({
 					cpn: 'player',
-					method: 'queueAction',
+					method: 'castSpell',
 					data: {
-						action: 'spell',
 						priority: true,
 						target: null
 					}
@@ -193,9 +192,8 @@ define([
 
 			client.request({
 				cpn: 'player',
-				method: 'queueAction',
+				method: 'castSpell',
 				data: {
-					action: 'spell',
 					priority: input.isKeyDown('ctrl'),
 					spell: spell.id,
 					target: target,

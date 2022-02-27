@@ -260,7 +260,13 @@ module.exports = {
 	move: function (msg) {
 		atlas.queueAction(this.obj, {
 			action: 'move',
-			priority: msg.priority,
+			data: msg.data
+		});
+	},
+
+	castSpell: function (msg) {
+		atlas.queueAction(this.obj, {
+			action: 'spell',
 			data: msg.data
 		});
 	},
@@ -274,5 +280,13 @@ module.exports = {
 			msg.data.data.callbackId = atlas.registerCallback(msg.callback);
 
 		atlas.performAction(this.obj, msg.data);
+	},
+
+	clearQueue: function (msg) {
+		const spellbook = this.obj.spellbook;
+		if (spellbook.isCasting())
+			spellbook.stopCasting();
+		else
+			this.obj.clearQueue();
 	}
 };

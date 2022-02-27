@@ -16,26 +16,14 @@ const onRequest = (socket, msg, callback) => {
 	if (!msg.data)
 		msg.data = {};
 
-	if (msg.cpn) {
-		if (!router.allowedCpn(msg))
-			return;
+	if (!router.isMsgValid(msg)) 
+		return;
 
-		delete msg.threadModule;
-		delete msg.module;
-
+	if (msg.cpn)
 		cons.route(socket, msg);
-	} else if (msg.threadModule) {
-		if (!router.allowedGlobalCall(msg.threadModule, msg.method))
-			return;
-
-		delete msg.cpn;
-		delete msg.module;
-
+	else if (msg.threadModule)
 		cons.route(socket, msg);
-	} else {
-		if (!router.allowedGlobal(msg))
-			return;
-
+	else {
 		const source = cons.players.find(p => p.socket.id === socket.id);
 
 		msg.socket = socket;

@@ -271,9 +271,11 @@ module.exports = {
 		obj.syncer.setArray(true, 'serverActions', action, {
 			key: 'u',
 			action: {
-				targetId: obj.id,
 				cpn: 'gatherer',
-				method: 'gather'
+				method: 'gather',
+				data: {
+					targetId: obj.id
+				}
 			}
 		});
 	},

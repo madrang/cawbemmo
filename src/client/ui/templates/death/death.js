@@ -36,7 +36,8 @@ define([
 				method: 'performAction',
 				data: {
 					cpn: 'stats',
-					method: 'respawn'
+					method: 'respawn',
+					data: {}
 				}
 			});
 		},

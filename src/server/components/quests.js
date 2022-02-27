@@ -35,8 +35,8 @@ module.exports = {
 		return true;
 	},
 
-	complete: function (id) {
-		let quest = this.quests.find(q => q.id === id);
+	complete: function ({ questId }) {
+		let quest = this.quests.find(q => q.id === questId);
 		if ((!quest) || (!quest.isReady))
 			return;
 

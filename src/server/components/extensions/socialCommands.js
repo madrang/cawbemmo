@@ -352,7 +352,7 @@ module.exports = {
 	unEq: function () {
 		let eq = this.obj.equipment;
 		Object.keys(eq.eq).forEach(function (slot) {
-			eq.unequip(eq.eq[slot]);
+			eq.unequip({ itemId: eq.eq[slot] });
 		});
 	},
 
@@ -362,7 +362,7 @@ module.exports = {
 		inventory.items
 			.filter(i => !i.eq)
 			.map(i => i.id)
-			.forEach(i => inventory.destroyItem(i, null, true));
+			.forEach(i => inventory.destroyItem({ itemId: i }, null, true));
 	},
 
 	getItem: function (config) {
@@ -442,7 +442,7 @@ module.exports = {
 		let newItem = this.obj.inventory.getItem(item);
 
 		if (eq)
-			this.obj.equipment.equip(newItem.id);
+			this.obj.equipment.equip({ itemId: newItem.id });
 	},
 
 	getGold: function (amount) {

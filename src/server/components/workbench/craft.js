@@ -33,7 +33,7 @@ module.exports = (cpnWorkbench, msg) => {
 	if (!canCraft)
 		return null;
 
-	materials.forEach(m => inventory.destroyItem(m.id, m.needQuantity));
+	materials.forEach(m => inventory.destroyItem({ itemId: m.id }, m.needQuantity));
 
 	let resultMsg = null;
 
@@ -56,7 +56,7 @@ module.exports = (cpnWorkbench, msg) => {
 			applyItemStats(crafter, p, true);
 
 			if (p.slot !== oldSlots[i])
-				equipment.unequip(p.id);
+				equipment.unequip({ itemId: p.id });
 
 			spellbook.calcDps();
 

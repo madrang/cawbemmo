@@ -86,7 +86,9 @@ define([
 				data: {
 					cpn: 'quests',
 					method: 'complete',
-					data: quest.id
+					data: {
+						questId: quest.id
+					}
 				}
 			});
 		},

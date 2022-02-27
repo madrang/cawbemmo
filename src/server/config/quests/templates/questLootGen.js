@@ -76,7 +76,7 @@ module.exports = {
 		let inventory = this.obj.inventory;
 		let item = inventory.items.find((i => i.name === this.item.name).bind(this));
 		if (item)
-			this.obj.inventory.destroyItem(item.id, this.need);
+			this.obj.inventory.destroyItem({ itemId: item.id }, this.need);
 	},
 
 	events: {

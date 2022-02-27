@@ -196,7 +196,9 @@ define([
 				data: {
 					cpn: 'stash',
 					method: 'withdraw',
-					data: item.id
+					data: {
+						itemId: item.id
+					}
 				}
 			});
 		},

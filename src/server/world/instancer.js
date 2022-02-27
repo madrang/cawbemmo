@@ -285,7 +285,7 @@ module.exports = {
 
 	performAction: function (msg) {
 		let obj = null;
-		let targetId = msg.action.targetId;
+		let targetId = msg.action.data.targetId;
 		if (!targetId)
 			obj = objects.find(o => o.serverId === msg.id);
 		else {
