@@ -199,7 +199,8 @@ const routerConfig = {
 						},
 						{
 							key: 'type',
-							dataType: 'string'
+							dataType: 'string',
+							optional: true
 						},
 						{
 							key: 'subType',
@@ -263,7 +264,7 @@ const routerConfig = {
 					data: [
 						{
 							key: 'target',
-							dataType: 'integer'
+							dataType: 'integerOrString'
 						},
 						{
 							key: 'state',
@@ -275,13 +276,23 @@ const routerConfig = {
 			gatherer: {
 				gather: {
 					callback: false,
-					data: []
+					data: [
+						{
+							key: 'targetId',
+							dataType: 'integer'
+						}
+					]
 				}
 			},
 			quests: {
 				complete: {
 					callback: false,
-					data: []
+					data: [
+						{
+							key: 'questId',
+							dataType: 'integer'
+						}
+					]
 				}
 			},
 			player: {
@@ -568,7 +579,8 @@ const routerConfig = {
 					data: [
 						{
 							key: 'nodeId',
-							dataType: 'integer'
+							dataType: 'integer',
+							optional: true
 						}
 					]
 				}

@@ -61,7 +61,8 @@ define([
 				method: 'performAction',
 				data: {
 					cpn: 'gatherer',
-					method: 'gather'
+					method: 'gather',
+					data: {}
 				}
 			});
 		},

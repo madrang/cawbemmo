@@ -58,6 +58,8 @@ module.exports = {
 				return dataType !== typeof(value);
 			else if (dataType === 'numberOrString')
 				return (typeof(value) !== 'string' && !Number.isFinite(value));
+			else if (dataType === 'integerOrString')
+				return (typeof(value) !== 'string' && !Number.isInteger(value));
 			else if (dataType === 'integer')
 				return !Number.isInteger(value);
 			else if (dataType === 'integerNullOrPosition')
