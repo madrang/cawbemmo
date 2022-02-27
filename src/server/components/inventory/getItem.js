@@ -124,7 +124,7 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 
 	if (item.eq) {
 		if (item.ability)
-			cpnInv.learnAbility({ itemId: item.id, runeSlot: item.runeSlot });
+			cpnInv.learnAbility({ itemId: item.id, slot: item.runeSlot });
 		else {
 			delete item.eq;
 			obj.equipment.equip({ itemId: item.id });
