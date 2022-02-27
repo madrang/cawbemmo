@@ -145,13 +145,7 @@ module.exports = {
 		}
 	},
 
-	learnAbility: function (itemId, runeSlot) {
-		if (itemId.has('itemId')) {
-			let msg = itemId;
-			itemId = msg.itemId;
-			runeSlot = msg.slot;
-		}
-
+	learnAbility: function ({ itemId, runeSlot }) {
 		let item = this.findItem(itemId);
 		let statValues = this.obj.stats.values;
 		if (!item)
