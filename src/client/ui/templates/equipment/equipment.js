@@ -317,6 +317,7 @@ define([
 					} 
 					method = 'unlearnAbility';
 					data.itemId = this.hoverCompare.id;
+					delete data.slot;
 				}
 			} else if (item.slot === 'finger') {
 				data = {

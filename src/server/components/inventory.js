@@ -145,13 +145,7 @@ module.exports = {
 		}
 	},
 
-	learnAbility: function (itemId, runeSlot) {
-		if (itemId.has('itemId')) {
-			let msg = itemId;
-			itemId = msg.itemId;
-			runeSlot = msg.slot;
-		}
-
+	learnAbility: function ({ itemId, slot }) {
 		let item = this.findItem(itemId);
 		let statValues = this.obj.stats.values;
 		if (!item)
@@ -179,20 +173,20 @@ module.exports = {
 		let spellbook = this.obj.spellbook;
 
 		if ((item.slot === 'twoHanded') || (item.slot === 'oneHanded'))
-			runeSlot = 0;
-		else if (!runeSlot) {
-			runeSlot = 4;
+			slot = 0;
+		else if (!slot) {
+			slot = 4;
 			for (let i = 1; i <= 4; i++) {
 				if (!this.items.some(j => (j.runeSlot === i))) {
-					runeSlot = i;
+					slot = i;
 					break;
 				}
 			}
 		}
 
-		let currentEq = this.items.find(i => (i.runeSlot === runeSlot));
+		let currentEq = this.items.find(i => (i.runeSlot === slot));
 		if (currentEq) {
-			spellbook.removeSpellById(runeSlot);
+			spellbook.removeSpellById(slot);
 			delete currentEq.eq;
 			delete currentEq.runeSlot;
 			this.setItemPosition(currentEq.id);
@@ -200,10 +194,10 @@ module.exports = {
 		}
 
 		item.eq = true;
-		item.runeSlot = runeSlot;
+		item.runeSlot = slot;
 		delete item.pos;
 
-		spellbook.addSpellFromRune(item.spell, runeSlot);
+		spellbook.addSpellFromRune(item.spell, slot);
 		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
 	},
 

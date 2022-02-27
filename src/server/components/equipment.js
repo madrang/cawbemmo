@@ -126,7 +126,7 @@ module.exports = {
 
 		if ((!obj.mob) || (item.ability)) {
 			if (item.spell)
-				inventory.learnAbility({ itemId }, item.runeSlot);
+				inventory.learnAbility({ itemId, slot: item.runeSlot });
 			else
 				obj.syncer.setArray(true, 'inventory', 'getItems', inventory.simplifyItem(item));
 		}
@@ -164,7 +164,7 @@ module.exports = {
 
 		if (item.spell) {
 			item.eq = true;
-			inventory.unlearnAbility({ itemId }, item.runeSlot);
+			inventory.unlearnAbility({ itemId });
 		} else
 			obj.syncer.setArray(true, 'inventory', 'getItems', inventory.simplifyItem(item));
 
