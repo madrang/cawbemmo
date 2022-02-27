@@ -149,26 +149,30 @@ const routerConfig = {
 						}
 					]
 				},
-				performAction: {
-					callback: 'deferred',
+				castSpell: {
+					callback: false,
 					data: [
 						{
-							key: 'cpn',
-							dataType: 'string'
+							key: 'priority',
+							dataType: 'boolean'
 						},
 						{
-							key: 'method',
-							dataType: 'string'
+							key: 'target',
+							dataType: 'integerNullOrPosition'
 						},
 						{
-							key: 'data',
-							dataType: 'object'
+							key: 'spell',
+							dataType: 'integer'
+						},
+						{
+							key: 'self',
+							dataType: 'boolean',
+							optional: true
 						}
 					]
 				},
-
-				queueAction: {
-					callback: false,
+				performAction: {
+					callback: 'deferred',
 					data: [
 						{
 							key: 'cpn',

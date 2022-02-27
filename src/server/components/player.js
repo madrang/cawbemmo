@@ -264,6 +264,13 @@ module.exports = {
 		});
 	},
 
+	castSpell: function (msg) {
+		atlas.queueAction(this.obj, {
+			action: 'spell',
+			data: msg.data
+		});
+	},
+
 	queueAction: function (msg) {
 		atlas.queueAction(this.obj, msg.data);
 	},

@@ -60,6 +60,8 @@ module.exports = {
 				return (typeof(value) !== 'string' && !Number.isFinite(value));
 			else if (dataType === 'integer')
 				return !Number.isInteger(value);
+			else if (dataType === 'integerNullOrPosition')
+				return !Number.isInteger(value) && value !== null && (typeof(value) !== 'object' && value.hasOwnProperty('x') && value.hasOwnProperty('y'));
 			else if (dataType === 'arrayOfStrings')
 				return (!Array.isArray(value) || value.some(v => typeof(v) !== 'string'));
 			else if (dataType === 'arrayOfIntegers')
@@ -141,7 +143,7 @@ module.exports = {
 
 		const result = this.signatureCorrect(msg, signature);
 
-		if (!result || msg.cpn !== 'player' || (msg.method !== 'performAction' && msg.method !== 'queueAction'))
+		if (!result || msg.cpn !== 'player' || msg.method !== 'performAction')
 			return result;
 
 		const signatureThreadMsg = signatures.threadCpnMethods[msg.data.cpn]?.[msg.data.method];

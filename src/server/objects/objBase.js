@@ -179,15 +179,7 @@ module.exports = {
 	queue: function (msg) {
 		const { action, auto, data: { priority } } = msg;
 
-		if (action === 'clearQueue') {
-			let spellbook = this.spellbook;
-			if (spellbook.isCasting())
-				spellbook.stopCasting();
-			else
-				this.clearQueue();
-			
-			return;
-		} else if (action === 'spell') {
+		if (action === 'spell') {
 			let spellbook = this.spellbook;
 			const isCasting = spellbook.isCasting();
 
@@ -272,7 +264,7 @@ module.exports = {
 			if (!success) 
 				this.clearQueue();
 		} else if (q.action === 'spell') {
-			let success = this.spellbook.cast(q);
+			let success = this.spellbook.cast(q.data);
 			if (!success)
 				this.performQueue();
 		}
