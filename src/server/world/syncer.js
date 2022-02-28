@@ -39,6 +39,8 @@ module.exports = {
 			oLen--;
 			i--;
 		}
+
+		this.sendServerModuleMessages();
 	},
 
 	updateZoneNotEmpty: function (objects, oList, oLen, pList, pLen) {
@@ -219,6 +221,26 @@ module.exports = {
 			method: 'events',
 			data: this.buffer
 		});
+
+		this.buffer = {};
+	},
+
+	sendServerModuleMessages: function () {
+		if (!this.dirty)
+			return;
+
+		this.dirty = false;
+
+		const serverModuleMsgs = this.buffer.serverModule;
+
+		if (serverModuleMsgs) {
+			process.send({
+				method: 'events',
+				data: {
+					serverModule: serverModuleMsgs
+				}
+			});
+		}
 
 		this.buffer = {};
 	}

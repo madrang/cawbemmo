@@ -310,7 +310,7 @@ module.exports = {
 						}
 					}
 				]
-			}, 'server');
+			}, ['server']);
 		}
 
 		event.phases.forEach(function (p) {
@@ -344,7 +344,7 @@ module.exports = {
 						}
 					}
 				]
-			}, 'server');
+			}, ['server']);
 		}
 
 		if (desc) {
