@@ -64,10 +64,15 @@ define([
 			let nextTier = (tier === tiers.length - 1) ? tiers[tiers.length - 1] : tiers[tier + 1];
 
 			let percentage = (rep - prevTier.rep) / (nextTier.rep - prevTier.rep) * 100;
+
+			if (tier === tiers.length - 1)
+				percentage = 100;
+
 			this.find('.bar-outer').show();
 
 			this.find('.front').css({
-				width: percentage + '%'
+				width: percentage + '%',
+				minWidth: percentage + '%'
 			});
 
 			let w = ~~(this.find('.front').width() / 5) * 5;

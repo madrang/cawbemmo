@@ -158,7 +158,17 @@ const routerConfig = {
 						},
 						{
 							key: 'target',
-							dataType: 'integerNullOrPosition'
+							dataType: 'integerNullOrObject',
+							spec: [
+								{
+									key: 'x',
+									dataType: 'integer'
+								},
+								{
+									key: 'y',
+									dataType: 'integer'
+								}
+							]
 						},
 						{
 							key: 'spell',
