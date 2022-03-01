@@ -62,9 +62,18 @@ module.exports = {
 				return (typeof(value) !== 'string' && !Number.isInteger(value));
 			else if (dataType === 'integer')
 				return !Number.isInteger(value);
-			else if (dataType === 'integerNullOrPosition')
-				return !Number.isInteger(value) && value !== null && (typeof(value) !== 'object' && value.hasOwnProperty('x') && value.hasOwnProperty('y'));
-			else if (dataType === 'arrayOfStrings')
+			else if (dataType === 'integerNullOrObject') {
+				const isCorrect = (
+					Number.isInteger(value) ||
+					value === null ||
+					(
+						typeof(value) === 'object' &&
+						this.keysCorrect(value, spec)
+					)
+				);
+
+				return !isCorrect;
+			} else if (dataType === 'arrayOfStrings')
 				return (!Array.isArray(value) || value.some(v => typeof(v) !== 'string'));
 			else if (dataType === 'arrayOfIntegers')
 				return (!Array.isArray(value) || value.some(v => !Number.isInteger(v)));
@@ -91,8 +100,6 @@ module.exports = {
 				return foundIncorrectObject;
 			} else if (dataType === 'stringOrNull')
 				return (typeof(value) !== 'string' && value !== null);
-			else if (dataType === 'mixed')
-				return false;
 
 			return true;
 		});
