@@ -6,7 +6,7 @@ module.exports = {
 			return false;
 
 		if (!this.xp) {
-			let level = this.obj.instance.spawners.zone.level;
+			let level = this.obj.instance.spawners.zoneConfig.level;
 			level = level[0];
 			let xp = ~~(level * 22 * this.getXpMultiplier());
 			this.xp = xp;

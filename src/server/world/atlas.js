@@ -2,7 +2,6 @@ let childProcess = require('child_process');
 let objects = require('../objects/objects');
 let mapList = require('../config/maps/mapList');
 let connections = require('../security/connections');
-let serverConfig = require('../config/serverConfig');
 let events = require('../misc/events');
 
 const listenersOnZoneIdle = [];
@@ -17,27 +16,40 @@ module.exports = {
 		this.getMapFiles();
 	},
 
-	addObject: function (obj, keepPos, transfer) {
+	addObject: async function (obj, keepPos, transfer) {
 		events.emit('onBeforePlayerEnterWorld', obj);
 
-		let thread = this.getThreadFromName(obj.zoneName);
+		let thread;
 
-		let instanceId = obj.instanceId;
-		if ((!thread) || (obj.zoneName !== thread.name))
-			instanceId = -1;
+		let map = mapList.mapList.find(m => m.name === obj.zoneName);
+
+		if (!map) 
+			map = mapList.mapList.find(m => m.name === clientConfig.config.defaultZone);
+
+		thread = this.threads.find(t => t.id === obj.zoneId);
 
 		if (!thread) {
-			thread = this.getThreadFromName(serverConfig.defaultZone);
-			obj.zoneName = thread.name;
+			if (map.instanced) {
+				thread = this.spawnMap(map);
+
+				await new Promise(res => setTimeout(res, 1000));
+			} else
+				thread = this.getThreadFromName(map.name);
 		}
 
-		obj.zone = thread.id;
-		this.send(obj.zone, {
+		const serverObj = objects.objects.find(o => o.id === obj.id);
+
+		obj.zoneName = thread.name;
+		obj.zoneId = thread.id;
+
+		serverObj.zoneId = thread.id;
+		serverObj.zoneName = thread.name;
+
+		this.send(obj.zoneId, {
 			method: 'addObject',
 			args: {
 				keepPos: keepPos,
 				obj: obj.getSimple ? obj.getSimple(true, true) : obj,
-				instanceId: instanceId,
 				transfer: transfer
 			}
 		});
@@ -46,50 +58,55 @@ module.exports = {
 		if (!skipLocal)
 			objects.removeObject(obj);
 
-		let thread = this.getThreadFromName(obj.zoneName);
-		if (!thread)
+		let thread = this.findObjectThread(obj);
+		if (!thread) 
 			return;
+
+		if (thread.instanced) {
+			thread.worker.kill();
+			this.threads.splice(t => t === thread);
+
+			if (callback)
+				callback();
+
+			return;
+		}
 
 		let callbackId = null;
 		if (callback)
 			callbackId = this.registerCallback(callback);
 
-		obj.zone = thread.id;
-		this.send(obj.zone, {
+		this.send(obj.zoneId, {
 			method: 'removeObject',
 			args: {
 				obj: obj.getSimple(true),
-				instanceId: obj.instanceId,
 				callbackId: callbackId
 			}
 		});
 	},
 	updateObject: function (obj, msgObj) {
-		this.send(obj.zone, {
+		this.send(obj.zoneId, {
 			method: 'updateObject',
 			args: {
 				id: obj.id,
-				instanceId: obj.instanceId,
 				obj: msgObj
 			}
 		});
 	},
 	queueAction: function (obj, action) {
-		this.send(obj.zone, {
+		this.send(obj.zoneId, {
 			method: 'queueAction',
 			args: {
 				id: obj.id,
-				instanceId: obj.instanceId,
 				action: action
 			}
 		});
 	},
 	performAction: function (obj, action) {
-		this.send(obj.zone, {
+		this.send(obj.zoneId, {
 			method: 'performAction',
 			args: {
 				id: obj.id,
-				instanceId: obj.instanceId,
 				action: action
 			}
 		});
@@ -111,29 +128,34 @@ module.exports = {
 		callback.callback(msg.msg.result);
 	},
 
-	send: function (zone, msg) {
-		let thread = this.getThreadFromId(zone);
+	send: function (threadId, msg) {
+		const thread = this.threads.find(t => t.id === threadId);
 		if (thread)
 			thread.worker.send(msg);
 	},
 
-	getThreadFromId: function (id) {
-		return this.threads.find(t => t.id === id);
+	findObjectThread: function ({ zoneId }) {
+		return this.threads.find(t => t.id === zoneId);
 	},
 	getThreadFromName: function (name) {
 		return this.threads.find(t => t.name === name);
 	},
 
 	getMapFiles: function () {
-		mapList.mapList.filter(m => !m.disabled).forEach(m => this.spawnMap(m));
+		mapList.mapList
+			.filter(m => !m.disabled && !m.instanced)
+			.forEach(m => this.spawnMap(m));
 	},
-	spawnMap: function (map) {
-		const worker = childProcess.fork('./world/worker', [map.name]);
+	spawnMap: function ({ name, path, instanced }) {
+		const worker = childProcess.fork('./world/worker', [name]);
+
+		const id = instanced ? _.getGuid() : name;
 
 		const thread = {
-			id: this.nextId++,
-			name: map.name,
-			path: map.path,
+			id,
+			name,
+			instanced,
+			path,
 			worker
 		};
 
@@ -143,6 +165,8 @@ module.exports = {
 		});
 
 		this.threads.push(thread);
+
+		return thread;
 	},
 	onMessage: function (thread, message) {
 		if (message.module)
@@ -167,9 +191,9 @@ module.exports = {
 			thread.worker.send({
 				method: 'init',
 				args: {
-					name: thread.name,
-					path: thread.path,
-					zoneId: thread.id
+					zoneName: thread.name,
+					zoneId: thread.id,
+					path: thread.path
 				}
 			});
 		},
@@ -209,31 +233,33 @@ module.exports = {
 			});
 		},
 
-		rezone: function (thread, message) {
+		rezone: async function (thread, message) {
 			const { args: { obj, newZone, keepPos = true } } = message;
 
+			//When messages are sent from map threads, they have an id (id of the object in the map thread)
+			// as well as a serverId (id of the object in the main thread)
+			const serverId = obj.serverId;
+			obj.id = serverId;
 			obj.destroyed = false;
-			obj.zoneName = newZone;
-			obj.id = obj.serverId;
 
-			let serverObj = objects.objects.find(o => o.id === obj.id);
-			serverObj.zoneName = obj.zoneName;
+			const serverObj = objects.objects.find(o => o.id === obj.id);
+			const mapExists = mapList.mapList.some(m => m.name === newZone);
 
-			let newThread = this.getThreadFromName(obj.zoneName);
-
-			if (!newThread) {
-				newThread = this.getThreadFromName(serverConfig.defaultZone);
-				obj.zoneName = newThread.name;
-				serverObj.zoneName = newThread.name;
+			if (mapExists) {
+				serverObj.zoneName = newZone;
+				obj.zoneName = newZone;
+			} else {
+				obj.zoneName = clientConfig.config.defaultZone;
+				serverObj.zoneName = clientConfig.config.defaultZone;
 			}
 
-			serverObj.zone = newThread.id;
-			obj.zone = newThread.id;
+			delete obj.zoneId;
+			delete obj.zoneId;
 
 			serverObj.player.broadcastSelf();
 
 			const isRezone = true;
-			this.addObject(obj, keepPos, isRezone);
+			await this.addObject(obj, keepPos, isRezone);
 		},
 
 		onZoneIdle: function (thread) {

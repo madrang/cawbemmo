@@ -5,7 +5,7 @@ module.exports = {
 
 	objects: null,
 	syncer: null,
-	zone: null,
+	zoneConfig: null,
 	physics: null,
 	map: null,
 
@@ -17,7 +17,7 @@ module.exports = {
 			syncer: instance.syncer,
 			physics: instance.physics,
 			map: instance.map,
-			zone: instance.zone
+			zoneConfig: instance.zoneConfig
 		});
 	},
 
@@ -124,7 +124,7 @@ module.exports = {
 		if (blueprint.quantity)
 			quantity = blueprint.quantity[0] + ~~(Math.random() * (blueprint.quantity[1] - blueprint.quantity[0]));
 
-		let zoneLevel = this.zone.level;
+		let zoneLevel = this.zoneConfig.level;
 		zoneLevel = ~~(zoneLevel[0] + ((zoneLevel[1] - zoneLevel[0]) / 2));
 
 		let objBlueprint = extend({}, blueprint, position);

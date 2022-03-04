@@ -497,140 +497,21 @@
                  "y":672
                 }, 
                 {
-                 "height":112,
+                 "height":160,
                  "id":627,
                  "name":"",
                  "properties":[
                         {
                          "name":"cpnNotice",
                          "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"You open your eyes and cough. Saltwater burns your throat. You remember the storm, and the crash that left your ship in pieces.<br \/><br \/>You realize you need to find shelter. Use <font class='color-green'>wasd<\/font> or the <ont class='color-green'>arrow keys<\/font> to move.\"}"
+                         "value":"{ \"msg\": \"The Cape of Confusion\"}"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":120,
-                 "x":704,
-                 "y":1096
-                }, 
-                {
-                 "height":32,
-                 "id":628,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"You take a few steps, still weak from the ordeal. Through the glare of the sun, you see a creature to the north-east.<br \/><br \/>Press <font class='color-green'>v<\/font> to toggle nameplates.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":48,
-                 "x":840,
-                 "y":1096
-                }, 
-                {
-                 "height":80,
-                 "id":629,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"You take a few steps, still weak from the ordeal. Through the glare of the sun, you see a creature to the north-east.<br \/><br \/>Press <font class='color-green'>v<\/font> to toggle nameplates.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":136,
-                 "x":824,
-                 "y":1128
-                }, 
-                {
-                 "height":40,
-                 "id":630,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"The seagull's eyes are bloodshot and in its beak you see a glinting locket. It stole your family heirloom!<br \/><br \/>Click on it to target it then press <font class='color-green'>space<\/font> to toggle auto-attack. Remember to stand close if you are using melee attacks.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":888,
-                 "y":1072
-                }, 
-                {
-                 "height":8,
-                 "id":631,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"You take a few steps, still weak from the ordeal. Through the glare of the sun, you see a creature to the north-east.<br \/><br \/>Press <font class='color-green'>v<\/font> to toggle nameplates.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":888,
-                 "y":1120
-                }, 
-                {
-                 "height":40,
-                 "id":632,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 2, \"msg\": \"You can loot items by standing on them then open your inventory with <font class='color-green'>i<\/font>.<br \/><br \/>To equip an item, simply right click the item in your inventory.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":144,
-                 "x":888,
-                 "y":1032
-                }, 
-                {
-                 "height":32,
-                 "id":633,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 2, \"msg\": \"Far to the north, you see a small shack. Civilization!<br \/><br \/>You can read more help by pressing <font class='color-green'>h<\/font>.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":144,
-                 "x":912,
-                 "y":1000
-                }, 
-                {
-                 "height":56,
-                 "id":634,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"maxLevel\": 1, \"msg\": \"The seagull's eyes are bloodshot and in its beak you see a glinting locket. It stole your family heirloom!<br \/><br \/>Click on it to target it then press <font class='color-green'>space<\/font> to toggle auto-attack. Remember to stand close if you are using melee attacks.\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":112,
-                 "x":896,
-                 "y":1072
+                 "width":304,
+                 "x":712,
+                 "y":1048
                 }, 
                 {
                  "height":0,
@@ -2839,7 +2720,7 @@
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"maxLevel\":1,\"x\":100,\"y\":150},{\"maxLevel\":999,\"x\":132,\"y\":82}]"
+         "value":"[{\"x\":132,\"y\":82}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.6.0",

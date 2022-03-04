@@ -56,6 +56,7 @@ module.exports = {
 		},
 		'crazed seagull': {
 			level: 1,
+			attackable: false,
 
 			rare: {
 				count: 0

@@ -35,7 +35,7 @@ const doRezone = stagedRezone => {
 
 const clientAck = msg => {
 	const staged = stagedRezones.find(s => s.simplifiedObj.serverId === msg.sourceId);
-	if (!staged)
+	if (!staged) 
 		return;
 
 	stagedRezones.spliceWhere(s => s === staged);

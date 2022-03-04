@@ -7,7 +7,7 @@ module.exports = {
 	load: function (instance, objToAdd, callback) {
 		this.instance = instance;
 
-		this.ent = instance.zone.name + '-' + objToAdd.components.find(c => c.type === 'auth').username;
+		this.ent = instance.mapName + '-' + objToAdd.components.find(c => c.type === 'auth').username;
 
 		io.get({
 			ent: this.ent,

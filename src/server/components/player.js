@@ -1,5 +1,4 @@
 let classes = require('../config/spirits');
-let serverConfig = require('../config/serverConfig');
 const eventEmitter = require('../misc/events');
 
 module.exports = {
@@ -31,12 +30,12 @@ module.exports = {
 			skinId: character.skinId,
 			name: character.name,
 			class: character.class,
-			zoneName: character.zoneName || serverConfig.defaultZone,
 			x: character.x,
 			y: character.y,
 			hidden: character.dead || null,
 			account: character.account,
-			instanceId: character.instanceId || null
+			zoneName: character.zoneName || clientConfig.config.defaultZone,
+			zoneId: character.zoneId || null
 		});
 
 		character.components = character.components || [];
@@ -125,7 +124,7 @@ module.exports = {
 
 		let self = {
 			id: obj.id,
-			zone: obj.zone,
+			zoneId: obj.zoneId,
 			name: obj.name,
 			level: obj.level,
 			class: obj.class
@@ -215,7 +214,7 @@ module.exports = {
 		};
 		obj.instance.eventEmitter.emit('onBeforePlayerRespawn', obj, spawnPos);
 
-		if (!spawnPos.zone) {
+		if (!spawnPos.zoneName) {
 			obj.x = spawnPos.x;
 			obj.y = spawnPos.y;
 
@@ -251,7 +250,7 @@ module.exports = {
 				id: obj.serverId,
 				args: {
 					obj: simpleObj,
-					newZone: spawnPos.zone
+					newZone: spawnPos.zoneName
 				}
 			});
 		}

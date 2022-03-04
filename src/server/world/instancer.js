@@ -27,7 +27,10 @@ module.exports = {
 	lastTime: 0,
 
 	init: function (args) {
-		this.zoneId = args.zoneId;
+		const { zoneId, zoneName } = args;
+
+		this.zoneName = zoneName;
+		this.zoneId = zoneId;
 
 		spellCallbacks.init();
 		herbs.init();
@@ -37,15 +40,16 @@ module.exports = {
 			objects,
 			syncer,
 			physics,
-			zoneId: this.zoneId,
+			zoneId,
+			zoneName,
 			spawners,
 			questBuilder,
 			events,
-			zone: map.zone,
 			map,
 			scheduler,
 			eventEmitter,
-			resourceSpawner
+			resourceSpawner,
+			zoneConfig: map.zoneConfig
 		};
 
 		this.instances.push(fakeInstance);

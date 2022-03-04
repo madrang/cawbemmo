@@ -17,8 +17,8 @@ module.exports = {
 		this.events.on('onAfterGetZone', this.onAfterGetZone.bind(this));
 	},
 
-	onAfterGetZone: function (zone, config) {
-		if (zone !== 'fjolgard')
+	onAfterGetZone: function (zoneName, config) {
+		if (zoneName !== 'fjolgard')
 			return;
 
 		let newRunes = [{

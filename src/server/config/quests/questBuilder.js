@@ -39,7 +39,7 @@ module.exports = {
 
 		//Only check min level of quests when physically in the zone they belong to
 		if (obj.zoneName === zoneName) {
-			const minPlayerLevel = ~~(obj.instance.map.zone.level[0] * 0.75);
+			const minPlayerLevel = ~~(obj.instance.zoneConfig.level[0] * 0.75);
 
 			if (obj.stats.values.level < minPlayerLevel) 
 				return;
