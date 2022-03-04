@@ -18,7 +18,7 @@ module.exports = {
 		//If we're not in the correct zone, don't do this check, it'll just crash the server
 		// since the mob won't be available (most likely) in the zoneFile
 		if (this.obj.zoneName === this.zoneName) {
-			let mobTypes = this.obj.instance.spawners.zoneConfig.mobs;
+			let mobTypes = this.obj.instance.zoneConfig.mobs;
 
 			if (this.mobType && this.item) {
 				//Check if the zoneFile changed

@@ -313,8 +313,13 @@ define([
 				return 0;
 			});
 
-			if (this.zoneId !== null)
-				events.emit('onRezone', this.zoneId);
+			if (this.zoneId !== null) {
+				events.emit('onRezone', {
+					oldZoneId: this.zoneId,
+					newZoneId: msg.zoneId
+				});
+			}
+
 			this.zoneId = msg.zoneId;
 
 			msg.clientObjects.forEach(c => {

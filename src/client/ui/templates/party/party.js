@@ -39,7 +39,9 @@ define([
 		},
 
 		onGetConnectedPlayer: function (msg) {
-			let party = this.party;
+			const { party } = this;
+			const { player: { serverId: playerId, zoneId: playerZone } } = window;
+
 			if (!party)
 				return;
 
@@ -47,25 +49,26 @@ define([
 				msg = [msg];
 
 			msg.forEach(m => {
+				const { id: mId, zoneId: mZone } = m;
+
 				if (party.indexOf(m.id) === -1)
 					return;
 
-				let zone = m.zone;
-				if (m.id === window.player.serverId) {
+				if (mId === playerId) {
 					party.forEach(p => {
-						let player = globals.onlineList.find(o => o.id === p);
+						const mObj = globals.onlineList.find(o => o.id === p);
 
 						let el = this.find('.member[memberId="' + p + '"]');
 						el.removeClass('differentZone');
 
-						if (player.zone !== zone)
+						if (mObj.mZone !== mZone)
 							el.addClass('differentZone');
 					});
 				} else {
 					let el = this.find('.member[memberId="' + m.id + '"]');
 					el.removeClass('differentZone');
 
-					if (m.zone !== window.player.zone)
+					if (m.mZone !== playerZone)
 						el.addClass('differentZone');
 
 					el.find('.txtLevel').html('level: ' + m.level);
@@ -130,7 +133,7 @@ define([
 					.attr('memberId', p)
 					.on('contextmenu', this.showContext.bind(this, playerName, p));
 
-				if (player.zone !== window.player.zone)
+				if (player.zoneId !== window.player.zoneId)
 					el.addClass('differentZone');
 
 				//Find stats

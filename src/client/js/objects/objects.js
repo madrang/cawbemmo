@@ -167,7 +167,7 @@ define([
 				events.emit('onGetPlayer', obj);
 				window.player = obj;
 
-				sound.unload(obj.zoneId);
+				sound.unload(obj.zoneName);
 
 				renderer.setPosition({
 					x: (obj.x - (renderer.width / (scale * 2))) * scale,
