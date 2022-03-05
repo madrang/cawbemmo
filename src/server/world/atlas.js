@@ -26,13 +26,13 @@ module.exports = {
 		if (!map) 
 			map = mapList.mapList.find(m => m.name === clientConfig.config.defaultZone);
 
-		thread = this.threads.find(t => t.id === obj.zoneId);
+		thread = this.threads.find(t => t.id === obj.zoneId && t.name === obj.zoneName);
 
 		if (!thread) {
 			if (map.instanced) {
 				thread = this.spawnMap(map);
 
-				await new Promise(res => setTimeout(res, 1000));
+				await new Promise(res => setTimeout(res, 2000));
 			} else
 				thread = this.getThreadFromName(map.name);
 		}
@@ -45,11 +45,13 @@ module.exports = {
 		serverObj.zoneId = thread.id;
 		serverObj.zoneName = thread.name;
 
+		const simpleObj = obj.getSimple ? obj.getSimple(true, true) : obj;
+
 		this.send(obj.zoneId, {
 			method: 'addObject',
 			args: {
 				keepPos: keepPos,
-				obj: obj.getSimple ? obj.getSimple(true, true) : obj,
+				obj: simpleObj,
 				transfer: transfer
 			}
 		});
@@ -64,7 +66,7 @@ module.exports = {
 
 		if (thread.instanced) {
 			thread.worker.kill();
-			this.threads.splice(t => t === thread);
+			this.threads.spliceWhere(t => t === thread);
 
 			if (callback)
 				callback();
@@ -253,7 +255,7 @@ module.exports = {
 				serverObj.zoneName = clientConfig.config.defaultZone;
 			}
 
-			delete obj.zoneId;
+			delete serverObj.zoneId;
 			delete obj.zoneId;
 
 			serverObj.player.broadcastSelf();
