@@ -76,7 +76,7 @@ module.exports = {
 
 		let position = null;
 
-		if (blueprint.type === 'herb') {
+		if (blueprint.type === 'herb' && !blueprint.positions) {
 			x = ~~(Math.random() * w);
 			y = ~~(Math.random() * h);
 

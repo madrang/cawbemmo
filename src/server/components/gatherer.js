@@ -80,7 +80,7 @@ module.exports = {
 		}
 
 		if (this.gatheringTtl > 0) {
-			if ((this.gatheringTtl === this.gatheringTtlMax) && (gathering.width)) {
+			if (this.gatheringTtl === this.gatheringTtlMax && gathering.width > 1) {
 				['x', 'y', 'width', 'height'].forEach(function (p) {
 					this.obj.syncer.set(false, 'gatherer', p, gathering[p]);
 				}, this);

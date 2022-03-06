@@ -60,6 +60,9 @@ define([
 
 		enabled: true,
 
+		blacklistedKeys: [],
+		whitelistedKeys: [],
+
 		init: function () {
 			$(window).on('keydown', this.events.keyboard.keyDown.bind(this));
 			$(window).on('keyup', this.events.keyboard.keyUp.bind(this));
@@ -76,6 +79,22 @@ define([
 
 			if (isMobile)
 				require(['plugins/shake.js'], this.onLoadShake.bind(this));
+		},
+
+		blacklistKeys: function (list) {
+			this.blacklistedKeys.push(...list);
+		},
+
+		unBlacklistKeys: function (list) {
+			this.blacklistedKeys.spliceWhere(d => list.includes(d));
+		},
+
+		whitelistKeys: function (list) {
+			this.whitelistedKeys.push(...list);
+		},
+
+		unWhitelistKeys: function (list) {
+			this.whitelistedKeys.spliceWhere(d => list.includes(d));
 		},
 
 		onLoadShake: function (shake) {
@@ -142,6 +161,7 @@ define([
 
 		events: {
 			keyboard: {
+				/* eslint-disable-next-line max-lines-per-function */
 				keyDown: function (e) {
 					if (!this.enabled)
 						return;
@@ -155,6 +175,18 @@ define([
 						return true;
 					if ((e.keyCode === 9) || (e.keyCode === 8) || (e.keyCode === 122))
 						e.preventDefault();
+
+					const allowKey = (
+						key.length > 1 ||
+						this.whitelistedKeys.includes(key) ||
+						(
+							!this.blacklistedKeys.includes(key) &&
+							!this.blacklistedKeys.includes('*')
+						)
+					);
+
+					if (!allowKey)
+						return;
 
 					if (this.keys.has(key))
 						this.keys[key] = 2;

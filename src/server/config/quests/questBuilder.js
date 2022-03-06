@@ -33,7 +33,11 @@ module.exports = {
 			zoneTemplate = globalQuests;
 
 		let config = extend({}, zoneTemplate);
-		this.instance.eventEmitter.emit('onBeforeGetQuests', config);
+		this.instance.eventEmitter.emit('onBeforeGetQuests', {
+			obj,
+			config,
+			zoneName
+		});
 		if (config.infini.length === 0)
 			return;
 
