@@ -10,7 +10,7 @@ module.exports = {
 	},
 
 	obtain: function (obj, template) {
-		let zoneName = template ? template.zoneName : obj.zoneName;
+		let zoneName = template?.zoneName ?? obj.zoneName;
 		let zone = mapList.mapList.find(m => m.name === zoneName);
 
 		//Zone doesn't exist any more. Probably been renamed
@@ -36,7 +36,8 @@ module.exports = {
 		this.instance.eventEmitter.emit('onBeforeGetQuests', {
 			obj,
 			config,
-			zoneName
+			zoneName,
+			template
 		});
 		if (config.infini.length === 0)
 			return;
