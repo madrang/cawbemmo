@@ -164,7 +164,8 @@ module.exports = {
 			.forEach(p => {
 				atlas.performAction(p, {
 					cpn: 'auth',
-					method: 'doSave'
+					method: 'doSave',
+					data: {}
 				});
 			});
 	},
