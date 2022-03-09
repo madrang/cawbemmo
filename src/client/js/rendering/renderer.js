@@ -407,6 +407,10 @@ define([
 					}
 
 					return;
+				} 
+				if (interior) {
+					if (!physics.isInPolygon(x, y, area))
+						foundHiddenLayer = layer;
 				}
 
 				//Is the tile inside the hider
