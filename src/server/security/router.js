@@ -45,7 +45,7 @@ module.exports = {
 
 	keysCorrect: function (obj, keys) {
 		const foundIncorrect = keys.some(({ key, dataType, optional, spec }) => {
-			if (!obj.hasOwnProperty(key)) {
+			if (!Object.hasOwnProperty.call(obj, key)) {
 				if (optional)
 					return false;
 
