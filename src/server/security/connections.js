@@ -101,8 +101,8 @@ module.exports = {
 		});
 
 		//If we don't do this, the atlas will try to remove it from the thread
-		player.zoneName = null;
-		player.name = null;
+		delete player.zoneName;
+		delete player.name;
 
 		//A hack to allow us to actually call methods again (like retrieve the player list)
 		player.dead = false;
