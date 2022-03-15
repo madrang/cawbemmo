@@ -30,6 +30,8 @@ module.exports = {
 
 		if (!thread) {
 			if (map.instanced) {
+				delete obj.x;
+				delete obj.y;
 				thread = this.spawnMap(map);
 
 				await new Promise(res => setTimeout(res, 2000));

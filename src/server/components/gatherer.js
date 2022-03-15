@@ -81,9 +81,9 @@ module.exports = {
 
 		if (this.gatheringTtl > 0) {
 			if (this.gatheringTtl === this.gatheringTtlMax && gathering.width > 1) {
-				['x', 'y', 'width', 'height'].forEach(function (p) {
+				['x', 'y', 'width', 'height'].forEach(p => {
 					this.obj.syncer.set(false, 'gatherer', p, gathering[p]);
-				}, this);
+				});
 			}
 
 			this.gatheringTtl--;
@@ -124,7 +124,7 @@ module.exports = {
 				return;
 			}
 
-			gatherResult.items.forEach(function (g) {
+			gatherResult.items.forEach(g => {
 				if (g.slot)
 					return;
 				
@@ -150,7 +150,12 @@ module.exports = {
 				};
 
 				g.worth = ~~(weight * 10);
-			}, this);
+			});
+		} else {
+			gatherResult.items.forEach(g => {
+				if (g.worth === undefined)
+					g.worth = 1;
+			});
 		}
 
 		if (isFish) {
