@@ -1,10 +1,14 @@
+//eslint-disable-next-line no-process-env
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
+	isProduction,
 	version: '0.10.6',
 	port: 4000,
 	startupMessage: 'Server: ready',
 	defaultZone: 'fjolarok',
 
-	//Options: 
+	//Options:
 	// sqlite
 	// rethink
 	//eslint-disable-next-line no-process-env
