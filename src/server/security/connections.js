@@ -12,7 +12,7 @@ module.exports = {
 	playing: 0,
 
 	onHandshake: function (socket) {
-		if (this.players.some(p => p.socket.id === socket.id))
+		if (this.players.some(f => f.socket.id === socket.id))
 			return;
 
 		const p = objects.build();
