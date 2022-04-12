@@ -57,7 +57,7 @@ module.exports = {
 	customChannels: [],
 
 	play: async function (data) {
-		if (!this.username)
+		if (!this.username || this.charname)
 			return;
 
 		let character = this.characters[data.data.name];
