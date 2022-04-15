@@ -58,6 +58,27 @@ module.exports = {
 			}
 		});
 	},
+
+	removeObjectFromInstancedZone: async function (thread, obj, callback) {
+		await new Promise(res => {
+			const cb = this.registerCallback(res);
+
+			thread.worker.send({
+				method: 'forceSavePlayer',
+				args: {
+					playerName: obj.name,
+					callbackId: cb
+				}
+			});
+		});
+
+		thread.worker.kill();
+		this.threads.spliceWhere(t => t === thread);
+
+		if (callback)
+			callback();
+	},
+
 	removeObject: function (obj, skipLocal, callback) {
 		if (!skipLocal)
 			objects.removeObject(obj);
@@ -67,11 +88,7 @@ module.exports = {
 			return;
 
 		if (thread.instanced) {
-			thread.worker.kill();
-			this.threads.spliceWhere(t => t === thread);
-
-			if (callback)
-				callback();
+			this.removeObjectFromInstancedZone(thread, obj, callback);
 
 			return;
 		}
