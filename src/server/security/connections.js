@@ -12,6 +12,9 @@ module.exports = {
 	playing: 0,
 
 	onHandshake: function (socket) {
+		if (this.players.some(f => f.socket.id === socket.id))
+			return;
+
 		const p = objects.build();
 		p.socket = socket;
 		p.addComponent('auth');
@@ -107,6 +110,7 @@ module.exports = {
 		//A hack to allow us to actually call methods again (like retrieve the player list)
 		player.dead = false;
 		player.permadead = false;
+		delete player.auth.charname;
 
 		this.modifyPlayerCount(-1);
 	},

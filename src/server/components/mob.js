@@ -130,8 +130,9 @@ module.exports = {
 					/* eslint-disable-next-line no-console */
 					console.log('MOB HAS NO SPELLBOOK BUT WANTS TO RESET ROTATION');
 					/* eslint-disable-next-line no-console */
-					console.log(obj.name, obj.zoneName, obj.x, obj.y);
+					console.log(obj.name, obj.zone, obj.zoneName, obj.x, obj.y, obj.components.map(c => c.type).join(','));
 				}
+
 				obj.spellbook.resetRotation();
 			}
 		}

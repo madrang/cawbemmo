@@ -148,7 +148,7 @@ module.exports = {
 	learnAbility: function ({ itemId, slot }) {
 		let item = this.findItem(itemId);
 		let statValues = this.obj.stats.values;
-		if (!item)
+		if (!item || item.eq)
 			return;
 		else if (!item.spell) {
 			item.eq = false;
