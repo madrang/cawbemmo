@@ -56,7 +56,7 @@ define([
 
 				this.items.push.apply(this.items, blueprint.getItems || []);
 
-				events.emit('onGetItems', this.items, rerender);
+				events.emit('onGetItems', this.items, rerender, blueprint.getItems);
 			}
 		},
 

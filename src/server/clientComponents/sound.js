@@ -14,11 +14,11 @@ define([
 		init: function () {
 			const { 
 				sound, volume, music, defaultMusic, loop = true,
-				obj: { zoneId, x, y, width, height, area }
+				obj: { zoneName, x, y, width, height, area }
 			} = this;
 
 			const config = {
-				scope: zoneId,
+				scope: zoneName,
 				file: sound,
 				volume, 
 				x, 

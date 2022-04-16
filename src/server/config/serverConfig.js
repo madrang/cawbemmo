@@ -2,7 +2,6 @@ module.exports = {
 	version: '0.10.6',
 	port: 4000,
 	startupMessage: 'Server: ready',
-	defaultZone: 'fjolarok',
 
 	//Options: 
 	// sqlite

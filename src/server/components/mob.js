@@ -126,7 +126,6 @@ module.exports = {
 			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
 			if (!distanceFromHome) {
 				this.goHome = false;
-
 				if (!obj.spellbook) {
 					/* eslint-disable-next-line no-console */
 					console.log('MOB HAS NO SPELLBOOK BUT WANTS TO RESET ROTATION');

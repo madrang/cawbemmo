@@ -45,7 +45,7 @@ module.exports = {
 
 	keysCorrect: function (obj, keys) {
 		const foundIncorrect = keys.some(({ key, dataType, optional, spec }) => {
-			if (!obj.hasOwnProperty(key)) {
+			if (!Object.hasOwnProperty.call(obj, key)) {
 				if (optional)
 					return false;
 
@@ -127,7 +127,7 @@ module.exports = {
 		return keysCorrect;
 	},
 
-	isMsgValid: function (msg) {
+	isMsgValid: function (msg, source) {
 		let signature;
 
 		if (msg.module) {
@@ -152,8 +152,12 @@ module.exports = {
 
 		const result = this.signatureCorrect(msg, signature);
 
-		if (!result || msg.cpn !== 'player' || msg.method !== 'performAction')
+		if (!result || msg.cpn !== 'player' || msg.method !== 'performAction') {
+			if (result && signature.allowWhenIngame === false && source.name !== undefined)
+				return false;
+
 			return result;
+		}
 
 		const signatureThreadMsg = signatures.threadCpnMethods[msg.data.cpn]?.[msg.data.method];
 

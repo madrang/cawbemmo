@@ -275,7 +275,7 @@ module.exports = {
 		if (oldQuantity)
 			item.quantity = oldQuantity;
 
-		let worth = ~~(item.worth * targetTrade.markup.buy);
+		let worth = ~~((item.quantity ?? 1) * item.worth * targetTrade.markup.buy);
 
 		this.gold += worth;
 

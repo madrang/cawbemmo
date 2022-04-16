@@ -10,7 +10,7 @@ module.exports = {
 	},
 
 	obtain: function (obj, template) {
-		let zoneName = template ? template.zoneName : obj.zoneName;
+		let zoneName = template?.zoneName ?? obj.zoneName;
 		let zone = mapList.mapList.find(m => m.name === zoneName);
 
 		//Zone doesn't exist any more. Probably been renamed
@@ -33,13 +33,18 @@ module.exports = {
 			zoneTemplate = globalQuests;
 
 		let config = extend({}, zoneTemplate);
-		this.instance.eventEmitter.emit('onBeforeGetQuests', config);
+		this.instance.eventEmitter.emit('onBeforeGetQuests', {
+			obj,
+			config,
+			zoneName,
+			template
+		});
 		if (config.infini.length === 0)
 			return;
 
 		//Only check min level of quests when physically in the zone they belong to
 		if (obj.zoneName === zoneName) {
-			const minPlayerLevel = ~~(obj.instance.map.zone.level[0] * 0.75);
+			const minPlayerLevel = ~~(obj.instance.zoneConfig.level[0] * 0.75);
 
 			if (obj.stats.values.level < minPlayerLevel) 
 				return;

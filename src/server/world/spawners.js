@@ -9,9 +9,9 @@ module.exports = {
 	init: function (msg) {
 		this.objects = msg.objects;
 		this.syncer = msg.syncer;
-		this.zone = msg.zone;
+		this.zoneConfig = msg.zoneConfig;
 		this.mobBuilder = extend({
-			zone: this.zone
+			zoneConfig: this.zoneConfig
 		}, mobBuilder);
 	},
 
@@ -40,7 +40,7 @@ module.exports = {
 		else
 			this.mobTypes[name]++;
 
-		spawner.zonePrint = extend({}, this.zone.mobs.default, this.zone.mobs[name] || {});
+		spawner.zonePrint = extend({}, this.zoneConfig.mobs.default, this.zoneConfig.mobs[name] || {});
 	},
 
 	spawn: function (spawner) {
@@ -162,7 +162,7 @@ module.exports = {
 				if (l.blueprint.layerName === 'mobs') 
 					this.setupMob(mob, l.zonePrint);
 				else {
-					const blueprint = extend({}, this.zone.objects.default, this.zone.objects[name] || {});
+					const blueprint = extend({}, this.zoneConfig.objects.default, this.zoneConfig.objects[name] || {});
 					this.setupObj(mob, blueprint);
 				}
 
@@ -194,7 +194,7 @@ module.exports = {
 
 		this.setupObj(mob, blueprint);
 
-		this.mobBuilder.build(mob, blueprint, type, this.zone.name);
+		this.mobBuilder.build(mob, blueprint, type, this.zoneConfig.name);
 	},
 
 	setupObj: function (obj, blueprint) {
