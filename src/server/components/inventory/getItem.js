@@ -123,12 +123,12 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 		cpnInv.items.push(item);
 
 	if (item.eq) {
+		delete item.eq;
+
 		if (item.ability)
 			cpnInv.learnAbility({ itemId: item.id, slot: item.runeSlot });
-		else {
-			delete item.eq;
+		else
 			obj.equipment.equip({ itemId: item.id });
-		}
 	} else if (item.has('quickSlot')) {
 		obj.equipment.setQuickSlot({
 			itemId: item.id,

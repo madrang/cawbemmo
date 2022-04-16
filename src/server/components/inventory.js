@@ -145,10 +145,12 @@ module.exports = {
 		}
 	},
 
-	learnAbility: function ({ itemId, slot }) {
+	//forceEq is set by the equipment component to force the ability to be learnt since the item is already EQd
+	// otherwise the first if check would fail
+	learnAbility: function ({ itemId, slot, bypassEqCheck = false }) {
 		let item = this.findItem(itemId);
 		let statValues = this.obj.stats.values;
-		if (!item || item.eq)
+		if (!item || (item.eq && !bypassEqCheck))
 			return;
 		else if (!item.spell) {
 			item.eq = false;
