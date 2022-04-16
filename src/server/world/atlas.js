@@ -17,6 +17,10 @@ module.exports = {
 	},
 
 	addObject: async function (obj, keepPos, transfer) {
+		const serverObj = objects.objects.find(o => o.id === obj.id);
+		if (!serverObj)
+			return;
+
 		events.emit('onBeforePlayerEnterWorld', obj);
 
 		let thread;
@@ -38,8 +42,6 @@ module.exports = {
 			} else
 				thread = this.getThreadFromName(map.name);
 		}
-
-		const serverObj = objects.objects.find(o => o.id === obj.id);
 
 		obj.zoneName = thread.name;
 		obj.zoneId = thread.id;
