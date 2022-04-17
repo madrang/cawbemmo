@@ -16,8 +16,6 @@ define([
 
 		postRender: function () {
 			this.onEvent('onMobHover', this.onMobHover.bind(this));
-
-			this.hide();
 		},
 
 		onMobHover: function (mob) {
