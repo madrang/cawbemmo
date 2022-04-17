@@ -13,8 +13,10 @@ const rest = require('../security/rest');
 const {
 	port = 4000,
 	startupMessage = 'Server: Ready',
-	isProduction
+	nodeEnv
 } = require('../config/serverConfig');
+
+const compileLessOnce = nodeEnv === 'production';
 
 const onConnection = require('./onConnection');
 const { appRoot, appFile } = require('./requestHandlers');
@@ -44,13 +46,10 @@ const init = async () => {
 			next();
 		});
 
-		app.use(lessMiddleware('../',
-			isProduction ? {
-				once: true
-			} : {
-				force: true
-			}
-		));
+		app.use(lessMiddleware('../', {
+			once: compileLessOnce,
+			force: !compileLessOnce
+		}));
 
 		rest.init(app);
 
