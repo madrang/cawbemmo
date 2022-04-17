@@ -222,12 +222,19 @@
 	}
 
 	&.typing {
-		box-shadow: 0 -2px 0 @black, 0 2px 0 @black, 2px 0 0 @black, -2px 0 0 @black;
 		pointer-events: all;
 
 		.filters {
 			pointer-events: all;
 			display: flex;
+
+			.filter {
+				box-shadow: 0 -2px 0 @black, 0 2px 0 @black, 2px 0 0 @black, -2px 0 0 @black;
+			}
+		}
+
+		.main {
+			box-shadow: 0 -2px 0 @black, 0 2px 0 @black, 2px 0 0 @black, -2px 0 0 @black;
 		}
 
 		.list {
