@@ -8,6 +8,7 @@ const config = {
 	logoPath: null,
 	loginBgGeneratorPath: null,
 	resourceList: [],
+	defaultZone: 'fjolarok',
 	textureList: [
 		'tiles',
 		'walls',
