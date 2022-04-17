@@ -4,7 +4,7 @@
 
 Built with NodeJS, JS, HTML and CSS.
 
-[Play Now](http://play.isleward.com/) | [Discord](https://discord.gg/gnsn7ZP) | [Subreddit](https://www.reddit.com/r/isleward) | [Blog](http://blog.isleward.com/) | [Wiki](http://wiki.isleward.com/Main_Page) | [Twitter](https://twitter.com/playisleward) | [Facebook](https://www.facebook.com/isleward/) | [Patreon](http://patreon.com/bigbadwaffle)
+[Play Now](http://play.isleward.com/) | [Discord](https://discord.gg/gnsn7ZP) | [Subreddit](https://www.reddit.com/r/isleward) | [Wiki](http://wiki.isleward.com/Main_Page) | [Twitter](https://twitter.com/playisleward) | [Facebook](https://www.facebook.com/isleward/) | [Patreon](http://patreon.com/bigbadwaffle)
 
 [How to contribute](CONTRIBUTING.md)
 
