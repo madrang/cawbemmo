@@ -59,7 +59,8 @@ module.exports = {
 				continue;
 
 			let destroyed = o.destroyed;
-			
+			let destroyedBy = o.destroyedBy;
+
 			let sync = null;
 			let syncSelf = null;
 			if (!destroyed) {
@@ -69,7 +70,8 @@ module.exports = {
 			} else {
 				sync = {
 					id: o.id,
-					destroyed: true
+					destroyed: true,
+					destroyedBy
 				};
 
 				objects.removeObject(o);
