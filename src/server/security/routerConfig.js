@@ -284,6 +284,7 @@ const routerConfig = {
 							dataType: 'integerOrString'
 						},
 						{
+							optional: true,
 							key: 'state',
 							dataType: 'numberOrString'
 						}
