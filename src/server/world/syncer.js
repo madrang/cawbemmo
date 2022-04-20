@@ -59,7 +59,6 @@ module.exports = {
 				continue;
 
 			let destroyed = o.destroyed;
-			let destroyedBy = o.destroyedBy;
 
 			let sync = null;
 			let syncSelf = null;
@@ -71,7 +70,7 @@ module.exports = {
 				sync = {
 					id: o.id,
 					destroyed: true,
-					destroyedBy
+					destroyedBy: o.destroyedBy
 				};
 
 				objects.removeObject(o);
