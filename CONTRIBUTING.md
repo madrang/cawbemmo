@@ -16,29 +16,35 @@ If anything in this contributing guide is not clear, don't hesitate to contact W
 
 ### Issue Labels
 
-Labels can only be assigned by people with Reporter and higher permissions in the project (see [Members](https://gitlab.com/Isleward/isleward/project_members)). People with rights to assign labels should do so regularly to keep the issues organized.  
+Labels can only be assigned by people with Reporter and higher permissions in the project (see [Members](https://gitlab.com/Isleward/isleward/project_members)).
+People with rights to assign labels should do so regularly to keep the issues organized.
 The project is using the following, rather self-explanatory, labels:
 
 * ~Balance
 * ~Bug
 * ~Content
+* ~DevOps
 * ~Draft
+* ~Enhancement
 * ~Feature
+* ~Good first issue
+* ~Mobile
+* ~Mod
 * ~Modding
 * ~Polish
 * ~Refactor
-* ~DevOps
+* ~Suggestion
 
 ### Issue Weights
 
 * In addition to labels, issues tagged with the ~Bug label are also assigned Weights.
 * Bugs are weighed by severity, with 1 being trivial and 5 being severe.
-* Weights can assigned by people with Reporter or higher privileges, but this should only be done by @rstan122 unless instructed otherwise.
+* Weights can assigned by people with Reporter or higher privileges.
 
 ### Confidential Issues
 
 * Confidential issues are issues that are visible only to people with Reporter or higher access rights.
-* Therefore they are very useful for reporting issues that are very sensitive and that not every user should know about.  
+* Therefore they are very useful for reporting issues that are very sensitive and that not every user should know about.
 * To create a confidential issue, simply check the `This issue is confidential and should only be visible to team members with at least Reporter access.` checkbox when creating a new issue.
 
 ### Becoming a Reporter
@@ -62,7 +68,7 @@ The project is using the following branching structure
 
 **release tags** are pointing at the latest commit in `release` at the point of releasing a new version.
 
-**feature branches** are branches in which the actual development happens. The name of a feature branch should always contain the number of the issue that's being addressed (e.g. the `990` in `990-contribuing-rewrite`), be all lowercase with hyphens between words.
+**feature branches** are branches in which the actual development happens. The name of a feature branch should always contain the number of the issue that's being addressed (e.g. the `990` in `990-contribuing-rewrite`), and be all lowercase with hyphens between words.
 
 ### Using SSH keys
 
@@ -86,10 +92,10 @@ Once you are done working on your contribution, you need to submit a merge reque
 
 The merge request should have `master` as its target branch unless arranged otherwise.
 
-You don't need to remove the source branch upon accepting the merge request if the merge request is being made from a fork.  
+You don't need to remove the source branch upon accepting the merge request if the merge request is being made from a fork.
 Squishing commits is usually not recommended as it breaks the ability to rebase nicely in certain cases.
 
-Once your merge request is submitted, GitLab CI will run a few tests on it. Should those tests fail, please address the failures.  
+Once your merge request is submitted, GitLab CI will run a few tests on it. Should those tests fail, please address the failures.
 A Merge Request with passing tests is ready to be merged.
 
 ### Running Isleward
