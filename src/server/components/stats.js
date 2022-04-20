@@ -438,7 +438,7 @@ module.exports = {
 				this.obj.spellbook.die();
 
 			obj.destroyed = true;
-			obj.destroyedBy = 'death';
+			obj.destructionEvent = 'death';
 
 			let deathAnimation = _.getDeepProperty(animations, ['mobs', obj.sheetName, obj.cell, 'death']);
 			if (deathAnimation) {

@@ -70,7 +70,7 @@ module.exports = {
 				sync = {
 					id: o.id,
 					destroyed: true,
-					destroyedBy: o.destroyedBy
+					destructionEvent: o.destructionEvent
 				};
 
 				objects.removeObject(o);
@@ -113,8 +113,14 @@ module.exports = {
 					}
 
 					if (destroyed || !canSee) {
-						if (!canSee)
-							queueFunction({ id: oId, destroyed: true }, [ p.serverId ]);
+						if (!canSee) {
+							queueFunction({
+								id: oId,
+								destroyed: true,
+								destructionEvent: 'visibility'
+							},
+							[ p.serverId ]);
+						}
 
 						p.player.unsee(oId);
 					}
