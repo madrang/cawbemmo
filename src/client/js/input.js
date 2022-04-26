@@ -159,6 +159,19 @@ define([
 			return result;
 		},
 
+		isKeyAllowed: function (key) {
+			const result = (
+				key.length > 1 ||
+				this.whitelistedKeys.includes(key) ||
+				(
+					!this.blacklistedKeys.includes(key) &&
+					!this.blacklistedKeys.includes('*')
+				)
+			);
+
+			return result;
+		},
+
 		events: {
 			keyboard: {
 				/* eslint-disable-next-line max-lines-per-function */
@@ -176,16 +189,7 @@ define([
 					if ((e.keyCode === 9) || (e.keyCode === 8) || (e.keyCode === 122))
 						e.preventDefault();
 
-					const allowKey = (
-						key.length > 1 ||
-						this.whitelistedKeys.includes(key) ||
-						(
-							!this.blacklistedKeys.includes(key) &&
-							!this.blacklistedKeys.includes('*')
-						)
-					);
-
-					if (!allowKey)
+					if (!this.isKeyAllowed(key))
 						return;
 
 					if (this.keys.has(key))

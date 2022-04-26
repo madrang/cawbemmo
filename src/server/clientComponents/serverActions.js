@@ -1,9 +1,11 @@
 define([
 	'js/system/events',
-	'js/system/client'
+	'js/system/client',
+	'js/input'
 ], function (
 	events,
-	client
+	client,
+	input
 ) {
 	return {
 		type: 'serverActions',
@@ -19,7 +21,10 @@ define([
 		},
 
 		onKeyUp: function (key) {
-			this.actions.forEach(function (a) {
+			if (!input.isKeyAllowed(key))
+				return;
+	
+			this.actions.forEach(a => {
 				if (a.key !== key)
 					return;
 
@@ -28,7 +33,7 @@ define([
 					method: 'performAction',
 					data: a.action
 				});
-			}, this);
+			});
 		},
 
 		extend: function (blueprint) {
