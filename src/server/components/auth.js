@@ -269,6 +269,10 @@ module.exports = {
 			msg.callback(messages.login.allFields);
 
 			return;
+		} else if (credentials.username.length > 32) {
+			msg.callback(messages.login.maxUsernameLength);
+
+			return;
 		}
 
 		let storedPassword = await io.getAsync({
