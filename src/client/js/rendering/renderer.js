@@ -408,7 +408,7 @@ define([
 					foundHiddenLayer = layer;
 
 					return;
-				} else if (discovered) {
+				} else if (tileInHider && discovered) {
 					foundVisibleLayer = layer;
 
 					return;
