@@ -67,7 +67,7 @@ module.exports = {
 				}
 			},
 			rare: {
-				count: 0
+				name: 'Crazed Seagull'
 			},
 			questItem: {
 				name: 'Gull Feather',
