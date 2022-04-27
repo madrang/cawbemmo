@@ -2,27 +2,23 @@ module.exports = {
 	hermit: {
 		1: {
 			msg: [{
-				msg: 'What? Oh...what are you doing here?',
-				options: [1.1, 1.2, 1.3, 1.4, 1.5]
+				msg: 'Nice to see you again. How can I help?',
+				options: [1.1, 1.2, 1.3, 1.4]
 			}],
 			options: {
 				1.1: {
-					msg: 'Me? What are YOU doing in the middle of the wilderness?',
+					msg: 'What are you doing in the middle of the wilderness?',
 					goto: 2
 				},
 				1.2: {
-					msg: 'My ship got wrecked, just south of here. I\'m stranded on this island.',
-					goto: 3
-				},
-				1.3: {
 					msg: 'Have you scavenged anything worth selling lately?',
 					goto: 'tradeBuy'
 				},
-				1.4: {
+				1.3: {
 					msg: 'I have some items you might be interested in.',
 					goto: 'tradeSell'
 				},
-				1.5: {
+				1.4: {
 					msg: 'I changed my mind, I want to buy something back.',
 					goto: 'tradeBuyback'
 				}
@@ -60,28 +56,6 @@ module.exports = {
 				'2-2.1': {
 					msg: 'I\'d like to ask something else',
 					goto: 2
-				}
-			}
-		},
-		3: {
-			msg: 'You mean you don\'t know where you are? Where are you from?',
-			options: {
-				3.1: {
-					msg: 'I don\'t know. The developer hasn\'t written me a backstory yet.',
-					goto: '3-1'
-				},
-				3.2: {
-					msg: 'I\'d like to ask something else',
-					goto: 2
-				}
-			}
-		},
-		'3-1': {
-			msg: 'Typical...',
-			options: {
-				'3-1.1': {
-					msg: 'I\'d like to ask something else',
-					goto: 1
 				}
 			}
 		},
