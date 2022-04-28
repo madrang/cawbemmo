@@ -28,9 +28,11 @@ define([
 
 					if (!findItem) {
 						rerenderNeeded = true;
-						g.isNew = true;
 
-						items.push(g);
+						const clonedItem = $.extend({}, g);
+						clonedItem.isNew = true;
+
+						items.push(clonedItem);
 
 						return;
 					}
@@ -49,7 +51,7 @@ define([
 						delete findItem[p];
 					});
 
-					Object.assign(findItem, g);
+					$.extend(findItem, g);
 				});
 
 				events.emit('onGetItems', this.items, rerenderNeeded, getItems);
