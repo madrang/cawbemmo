@@ -145,7 +145,7 @@ module.exports = {
 		if (typeof(item) !== 'object' || !item.has('id'))
 			item = inventory.findItem(itemId);
 
-		if (!item)
+		if (!item || !item.eq)
 			return;
 		else if (!ignoreSpaceCheck && !inventory.hasSpace()) {
 			const message = 'You do not have room in your inventory to unequip that item';

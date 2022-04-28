@@ -45,6 +45,10 @@ define([
 						);
 					}
 
+					Object.getOwnPropertyNames(findItem).forEach(p => {
+						delete findItem[p];
+					});
+
 					Object.assign(findItem, g);
 				});
 
