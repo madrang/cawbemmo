@@ -204,8 +204,7 @@ const config = {
 	sounds: {
 		ui: []
 	},
-	tos,
-	defaultMap: 'fjolarok'
+	tos
 };
 
 module.exports = {
