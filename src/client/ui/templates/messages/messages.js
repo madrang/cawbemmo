@@ -296,11 +296,13 @@ define([
 			input.resetKeys();
 
 			this.el.removeClass('typing');
+			this.el.find('.main').removeClass('hasBorderShadow');
 
 			let textbox = this.find('input');
 
 			if (show) {
 				this.el.addClass('typing');
+				this.el.find('.main').addClass('hasBorderShadow');
 
 				if (!config.rememberChatChannel) {
 					this.currentChannel = 'global';

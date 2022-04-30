@@ -76,15 +76,15 @@ module.exports = {
 		mob.inventory.inventorySize = -1;
 		mob.inventory.dailyDrops = blueprint.dailyDrops;
 
-		if (this.zone) {
-			let chats = this.zone.chats;
+		if (this.zoneConfig) {
+			let chats = this.zoneConfig.chats;
 			if (chats && chats[mob.name.toLowerCase()]) {
 				mob.addComponent('chatter', {
 					chats: chats[mob.name.toLowerCase()]
 				});
 			}
 
-			let dialogues = this.zone.dialogues;
+			let dialogues = this.zoneConfig.dialogues;
 			if (dialogues && dialogues[mob.name.toLowerCase()]) {
 				mob.addComponent('dialogue', {
 					config: dialogues[mob.name.toLowerCase()]

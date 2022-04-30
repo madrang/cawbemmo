@@ -88,8 +88,6 @@ module.exports = {
 
 	getSimple: function (self, isSave, isTransfer) {
 		let s = this.simplify(null, self, isSave, isTransfer);
-		if (this.instance)
-			s.zoneId = this.instance.zoneId;
 
 		if (self && !isSave && this.syncer) {
 			this.syncer.oSelf.components

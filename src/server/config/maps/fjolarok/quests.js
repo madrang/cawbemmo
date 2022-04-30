@@ -19,6 +19,6 @@ module.exports = {
 		name: 'Green Fingers',
 		type: 'gatherResource',
 		subType: 'herb',
-		quantity: [5, 10]
+		quantity: [2, 5]
 	}]
 };

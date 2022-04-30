@@ -68,18 +68,18 @@ module.exports = {
 	hiddenWalls: null,
 	hiddenTiles: null,
 
-	zone: null,
+	zoneConfig: null,
 
-	init: function (args) {
-		this.name = args.name;
-		this.path = args.path;
+	init: function ({ zoneName, path }) {
+		this.name = zoneName;
+		this.path = path;
 		
 		try {
-			this.zone = require('../' + this.path + '/' + this.name + '/zone');
+			this.zoneConfig = require('../' + this.path + '/' + this.name + '/zone');
 		} catch (e) {
-			this.zone = globalZone;
+			this.zoneConfig = globalZone;
 		}
-		events.emit('onAfterGetZone', this.name, this.zone);
+		events.emit('onAfterGetZone', this.name, this.zoneConfig);
 
 		let chats = null;
 		try {
@@ -87,10 +87,10 @@ module.exports = {
 		} catch (e) {}
 
 		if (chats) {
-			if (this.zone.chats)
-				extend(this.zone.chats, chats);
+			if (this.zoneConfig.chats)
+				extend(this.zoneConfig.chats, chats);
 			else
-				this.zone.chats = chats;
+				this.zoneConfig.chats = chats;
 		}
 
 		let dialogues = null;
@@ -99,11 +99,11 @@ module.exports = {
 		} catch (e) {}
 		events.emit('onBeforeGetDialogue', this.name, dialogues);
 		if (dialogues)
-			this.zone.dialogues = dialogues;
+			this.zoneConfig.dialogues = dialogues;
 
-		this.zone = extend({}, globalZone, this.zone);
+		this.zoneConfig = extend({}, globalZone, this.zoneConfig);
 
-		let resources = this.zone.resources || {};
+		let resources = this.zoneConfig.resources || {};
 		for (let r in resources)
 			resourceSpawner.register(r, resources[r]);
 
@@ -456,11 +456,11 @@ module.exports = {
 			if (objZoneName !== name)
 				blueprint.objZoneName = objZoneName;
 
-			if (this.zone) {
-				if ((this.zone.objects) && (this.zone.objects[objZoneName.toLowerCase()]))
-					extend(blueprint, this.zone.objects[objZoneName.toLowerCase()]);
-				else if ((this.zone.objects) && (this.zone.mobs[objZoneName.toLowerCase()]))
-					extend(blueprint, this.zone.mobs[objZoneName.toLowerCase()]);
+			if (this.zoneConfig) {
+				if ((this.zoneConfig.objects) && (this.zoneConfig.objects[objZoneName.toLowerCase()]))
+					extend(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
+				else if ((this.zoneConfig.objects) && (this.zoneConfig.mobs[objZoneName.toLowerCase()]))
+					extend(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
 			}
 
 			if (blueprint.blocking)

@@ -8,9 +8,11 @@ module.exports = {
 
 	build: function () {
 		if (!this.need) {
-			this.need = 2 + ~~(Math.random() * 3);
+			const { quantity, subType } = this;
 
-			this.gatherType = ['herb', 'fish'][~~(Math.random() * 2)];
+			this.need = quantity[0] + ~~(Math.random() * (quantity[1] - quantity[0]));
+
+			this.gatherType = subType ?? ['herb', 'fish'][~~(Math.random() * 2)];
 
 			if (this.gatherType === 'fish') {
 				this.name = 'Lure of the Sea';

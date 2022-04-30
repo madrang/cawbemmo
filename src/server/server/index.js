@@ -6,13 +6,17 @@ const socketIo = require('socket.io');
 const express = require('express');
 const compression = require('compression');
 const minify = require('express-minify');
+const lessMiddleware = require('less-middleware');
 
 const rest = require('../security/rest');
 
 const {
 	port = 4000,
-	startupMessage = 'Server: Ready'
+	startupMessage = 'Server: Ready',
+	nodeEnv
 } = require('../config/serverConfig');
+
+const compileLessOnce = nodeEnv === 'production';
 
 const onConnection = require('./onConnection');
 const { appRoot, appFile } = require('./requestHandlers');
@@ -33,14 +37,19 @@ const init = async () => {
 
 		app.use((req, res, next) => {
 			if (
-				!rest.willHandle(req.url) && 
-				req.url.indexOf('/server') !== 0 && 
+				!rest.willHandle(req.url) &&
+				req.url.indexOf('/server') !== 0 &&
 				req.url.indexOf('/mods') !== 0
 			)
 				req.url = '/client/' + req.url;
 
 			next();
 		});
+
+		app.use(lessMiddleware('../', {
+			once: compileLessOnce,
+			force: !compileLessOnce
+		}));
 
 		rest.init(app);
 

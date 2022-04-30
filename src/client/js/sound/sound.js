@@ -52,7 +52,7 @@ define([
 		},
 
 		//Fired when a character rezones
-		// 'scope' is the new zone name
+		// 'newScope' is the new zone name
 		unload: function (newScope) {
 			const { sounds } = this;
 

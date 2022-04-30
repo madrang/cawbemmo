@@ -56,27 +56,7 @@ module.exports = {
 		},
 		'crazed seagull': {
 			level: 1,
-
-			rare: {
-				count: 0
-			},
-
-			regular: {
-				drops: {
-					rolls: 1,
-					noRandom: true,
-					blueprints: [{
-						chance: 100,
-						maxLevel: 2,
-						name: 'Family Heirloom',
-						quality: 1,
-						slot: 'neck',
-						type: 'Choker',
-						noSalvage: true,
-						stats: ['vit', 'regenMana']
-					}]
-				}
-			}
+			attackable: false
 		},
 		seagull: {
 			level: 2,
@@ -87,7 +67,7 @@ module.exports = {
 				}
 			},
 			rare: {
-				count: 0
+				name: 'Crazed Seagull'
 			},
 			questItem: {
 				name: 'Gull Feather',

@@ -27,7 +27,7 @@ const route = function (socket, msg) {
 		if (msg.callback)
 			msg.data.callbackId = atlas.registerCallback(msg.callback);
 
-		atlas.send(source.zone, msg);
+		atlas.send(source.zoneId, msg);
 
 		return;
 	}

@@ -313,8 +313,13 @@ define([
 				return 0;
 			});
 
-			if (this.zoneId !== null)
-				events.emit('onRezone', this.zoneId);
+			if (this.zoneId !== null) {
+				events.emit('onRezone', {
+					oldZoneId: this.zoneId,
+					newZoneId: msg.zoneId
+				});
+			}
+
 			this.zoneId = msg.zoneId;
 
 			msg.clientObjects.forEach(c => {
@@ -384,60 +389,45 @@ define([
 			let foundVisibleLayer = null;
 			let foundHiddenLayer = null;
 
+			const fnTileInArea = physics.isInArea.bind(physics, x, y);
+			const fnPlayerInArea = physics.isInArea.bind(physics, px, py);
+
 			hiddenRooms.forEach(h => {
 				const { discovered, layer, interior } = h;
-				const { x: hx, y: hy, width, height, area } = h;
 
-				//Is the tile outside the hider
-				if (
-					x < hx ||
-					x >= hx + width ||
-					y < hy ||
-					y >= hy + height
-				) {
-					//If the hider is an interior, the tile should be hidden if the player is inside the hider
-					if (interior) {
-						if (physics.isInPolygon(px, py, area))
-							foundHiddenLayer = layer;
+				const playerInHider = fnPlayerInArea(h);
+				const tileInHider = fnTileInArea(h);
+
+				if (playerInHider) {
+					if (interior && !tileInHider) {
+						foundHiddenLayer = layer;
+
+						return;
 					}
+				} else if (tileInHider && !discovered) {
+					foundHiddenLayer = layer;
 
 					return;
-				}
-
-				//Is the tile inside the hider
-				if (!physics.isInPolygon(x, y, area))
-					return;
-
-				if (discovered) {
+				} else if (tileInHider && discovered) {
 					foundVisibleLayer = layer;
 
 					return;
 				}
 
-				//Is the player outside the hider
-				if (
-					px < hx ||
-					px >= hx + width ||
-					py < hy ||
-					py >= hy + height
-				) {
-					foundHiddenLayer = layer;
-
+				if (!tileInHider)
 					return;
-				}
-
-				//Is the player inside the hider
-				if (!physics.isInPolygon(px, py, area)) {
-					foundHiddenLayer = layer;
-
-					return;
-				}
 
 				foundVisibleLayer = layer;
 			});
 
 			//We compare hider layers to cater for hiders inside hiders
-			return (foundHiddenLayer > foundVisibleLayer) || (foundHiddenLayer === 0 && foundVisibleLayer === null);
+			return (
+				foundHiddenLayer > foundVisibleLayer || 
+				(
+					foundHiddenLayer === 0 &&
+					foundVisibleLayer === null
+				)
+			);
 		},
 
 		updateSprites: function () {

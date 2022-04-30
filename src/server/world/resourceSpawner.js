@@ -1,11 +1,16 @@
 let herbs = require('../config/herbs');
 
+const defaultGatherChance = {
+	herb: 100,
+	fish: 40
+};
+
 module.exports = {
 	nodes: [],
 
 	objects: null,
 	syncer: null,
-	zone: null,
+	zoneConfig: null,
 	physics: null,
 	map: null,
 
@@ -17,12 +22,12 @@ module.exports = {
 			syncer: instance.syncer,
 			physics: instance.physics,
 			map: instance.map,
-			zone: instance.zone
+			zoneConfig: instance.zoneConfig
 		});
 	},
 
 	register: function (name, blueprint) {
-		let exists = this.nodes.find(n => (n.blueprint.name === name));
+		const exists = this.nodes.find(n => (n.blueprint.name === name));
 		if (exists) {
 			if (!exists.blueprint.positions) {
 				exists.blueprint.positions = [{
@@ -47,21 +52,23 @@ module.exports = {
 			name: name
 		});
 
-		let max = blueprint.max;
+		const max = blueprint.max;
 		delete blueprint.max;
 
-		let chance = blueprint.chance;
+		const chance = blueprint.chance;
 		delete blueprint.chance;
 
-		let cdMax = blueprint.cdMax;
+		const cdMax = blueprint.cdMax;
 		delete blueprint.cdMax;
+
+		blueprint.gatherChance = blueprint.gatherChance ?? defaultGatherChance[blueprint.type];
 
 		this.nodes.push({
 			cd: 0,
-			max: max,
-			chance: chance,
-			cdMax: cdMax,
-			blueprint: blueprint,
+			max,
+			chance,
+			cdMax,
+			blueprint,
 			spawns: []
 		});
 	},
@@ -76,7 +83,7 @@ module.exports = {
 
 		let position = null;
 
-		if (blueprint.type === 'herb') {
+		if (blueprint.type === 'herb' && !blueprint.positions) {
 			x = ~~(Math.random() * w);
 			y = ~~(Math.random() * h);
 
@@ -124,7 +131,7 @@ module.exports = {
 		if (blueprint.quantity)
 			quantity = blueprint.quantity[0] + ~~(Math.random() * (blueprint.quantity[1] - blueprint.quantity[0]));
 
-		let zoneLevel = this.zone.level;
+		let zoneLevel = this.zoneConfig.level;
 		zoneLevel = ~~(zoneLevel[0] + ((zoneLevel[1] - zoneLevel[0]) / 2));
 
 		let objBlueprint = extend({}, blueprint, position);

@@ -16,7 +16,9 @@ const onRequest = (socket, msg, callback) => {
 	if (!msg.data)
 		msg.data = {};
 
-	if (!router.isMsgValid(msg)) 
+	const source = cons.players.find(p => p.socket.id === socket.id);
+
+	if (!router.isMsgValid(msg, source))
 		return;
 
 	if (msg.cpn)
@@ -24,8 +26,6 @@ const onRequest = (socket, msg, callback) => {
 	else if (msg.threadModule)
 		cons.route(socket, msg);
 	else {
-		const source = cons.players.find(p => p.socket.id === socket.id);
-
 		msg.socket = socket;
 
 		if (source)

@@ -4,13 +4,11 @@
 
 Built with NodeJS, JS, HTML and CSS.
 
-[Play Now](http://play.isleward.com/) | [Discord](https://discord.gg/gnsn7ZP) | [Subreddit](https://www.reddit.com/r/isleward) | [Blog](http://blog.isleward.com/) | [Wiki](http://wiki.isleward.com/Main_Page) | [Twitter](https://twitter.com/playisleward) | [Facebook](https://www.facebook.com/isleward/) | [Patreon](http://patreon.com/bigbadwaffle)
+[Play Now](http://play.isleward.com/) | [Discord](https://discord.gg/gnsn7ZP) | [Subreddit](https://www.reddit.com/r/isleward) | [Wiki](http://wiki.isleward.com/Main_Page) | [Twitter](https://twitter.com/playisleward) | [Facebook](https://www.facebook.com/isleward/) | [Patreon](http://patreon.com/bigbadwaffle)
 
 [How to contribute](CONTRIBUTING.md)
 
 ### Installation and Usage
-
-**IMPORTANT**: The sqlite3 package has been removed for the time being due to multiple `npm audit` issues arrising. While installing this module will not cause you any security issues (due to the nature of the vulnerabilities and how Isleward actually uses the module), we have removed it to make the build process simpler for us. As a result of this, after performing an `npm install` in the `server` folder, please also run `npm i sqlite3`.
 
 * [Windows](https://gitlab.com/Isleward/isleward/wikis/installation-and-usage-(windows))
 * [Linux](https://gitlab.com/Isleward/isleward/wikis/installation-and-usage-(linux))

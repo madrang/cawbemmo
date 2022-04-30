@@ -1,6 +1,7 @@
+const spawners = require('../spawners');
+
 const spawnObjects = (scope, instance, room) => {
 	let template = room.template;
-	let spawners = instance.spawners;
 	let spawnCd = instance.map.mapFile.properties.spawnCd;
 
 	template.objects.forEach(o => {

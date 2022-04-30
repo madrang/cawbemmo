@@ -80,10 +80,10 @@ module.exports = {
 		}
 
 		if (this.gatheringTtl > 0) {
-			if ((this.gatheringTtl === this.gatheringTtlMax) && (gathering.width)) {
-				['x', 'y', 'width', 'height'].forEach(function (p) {
+			if (this.gatheringTtl === this.gatheringTtlMax && gathering.width > 1) {
+				['x', 'y', 'width', 'height'].forEach(p => {
 					this.obj.syncer.set(false, 'gatherer', p, gathering[p]);
-				}, this);
+				});
 			}
 
 			this.gatheringTtl--;
@@ -116,7 +116,7 @@ module.exports = {
 		this.obj.syncer.set(false, 'gatherer', 'progress', 100);
 
 		if (isFish) {
-			let catchChance = 40 + this.obj.stats.values.catchChance;
+			const catchChance = gatherResult.blueprint.gatherChance + this.obj.stats.values.catchChance;
 			if (~~(Math.random() * 100) >= catchChance) {
 				this.sendAnnouncement('The fish got away');
 				this.gathering = null;
@@ -124,7 +124,7 @@ module.exports = {
 				return;
 			}
 
-			gatherResult.items.forEach(function (g) {
+			gatherResult.items.forEach(g => {
 				if (g.slot)
 					return;
 				
@@ -150,7 +150,12 @@ module.exports = {
 				};
 
 				g.worth = ~~(weight * 10);
-			}, this);
+			});
+		} else {
+			gatherResult.items.forEach(g => {
+				if (g.worth === undefined)
+					g.worth = 1;
+			});
 		}
 
 		if (isFish) {

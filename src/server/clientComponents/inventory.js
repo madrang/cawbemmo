@@ -11,52 +11,50 @@ define([
 		init: function (blueprint) {
 			events.emit('onGetItems', this.items);
 		},
-		extend: function (blueprint) {
-			let rerender = false;
 
-			if (blueprint.destroyItems) {
-				rerender = true;
-				events.emit('onDestroyItems', blueprint.destroyItems, this.items);
+		extend: function ({ destroyItems, getItems }) {
+			const { items } = this;
+
+			let rerenderNeeded = false;
+
+			if (destroyItems) {
+				rerenderNeeded = true;
+				events.emit('onDestroyItems', destroyItems, this.items);
 			}
 
-			if (blueprint.getItems) {
-				let items = this.items;
-				let newItems = blueprint.getItems || [];
-				let nLen = newItems.length;
+			if (getItems) {
+				getItems.forEach(g => {
+					const findItem = items.find(i => i.id === g.id);
 
-				for (let i = 0; i < nLen; i++) {
-					let nItem = newItems[i];
-					let nId = nItem.id;
+					if (!findItem) {
+						rerenderNeeded = true;
 
-					let findItem = items.find(f => f.id === nId);
-					if (findItem) {
-						if (!rerender) {
-							rerender = (
-								(findItem.pos !== nItem.pos) ||
-								(findItem.eq !== nItem.eq) ||
-								(findItem.active !== nItem.active) ||
-								(findItem.quickSlot !== nItem.quickSlot) || 
-								(findItem.quantity !== nItem.quantity)
-							);
-						}
+						const clonedItem = $.extend({}, g);
+						clonedItem.isNew = true;
 
-						for (let p in findItem) 
-							delete findItem[p];
+						items.push(clonedItem);
 
-						$.extend(true, findItem, nItem);
-
-						newItems.splice(i, 1);
-						i--;
-						nLen--;
-					} else {
-						rerender = true;
-						nItem.isNew = true;
+						return;
 					}
-				}
 
-				this.items.push.apply(this.items, blueprint.getItems || []);
+					if (!rerenderNeeded) {
+						rerenderNeeded = (
+							findItem.pos !== g.pos ||
+							findItem.eq !== g.eq ||
+							findItem.active !== g.active ||
+							findItem.quickSlot !== g.quickSlot || 
+							findItem.quantity !== g.quantity
+						);
+					}
 
-				events.emit('onGetItems', this.items, rerender);
+					Object.getOwnPropertyNames(findItem).forEach(p => {
+						delete findItem[p];
+					});
+
+					$.extend(findItem, g);
+				});
+
+				events.emit('onGetItems', this.items, rerenderNeeded, getItems);
 			}
 		},
 

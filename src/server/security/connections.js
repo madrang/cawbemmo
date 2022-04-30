@@ -12,6 +12,9 @@ module.exports = {
 	playing: 0,
 
 	onHandshake: function (socket) {
+		if (this.players.some(f => f.socket.id === socket.id))
+			return;
+
 		const p = objects.build();
 		p.socket = socket;
 		p.addComponent('auth');
@@ -101,12 +104,13 @@ module.exports = {
 		});
 
 		//If we don't do this, the atlas will try to remove it from the thread
-		player.zoneName = null;
-		player.name = null;
+		delete player.zoneName;
+		delete player.name;
 
 		//A hack to allow us to actually call methods again (like retrieve the player list)
 		player.dead = false;
 		player.permadead = false;
+		delete player.auth.charname;
 
 		this.modifyPlayerCount(-1);
 	},
@@ -125,8 +129,8 @@ module.exports = {
 				continue;
 
 			if (p.auth.username === exclude.auth.username) {
-				if (p.name && p.zoneName)
-					await atlas.forceSavePlayer(p.name, p.zoneName);
+				if (p.name && p.zoneId)
+					await atlas.forceSavePlayer(p.name, p.zoneId);
 
 				p.socket.emit('dc', {});
 			}
@@ -147,7 +151,7 @@ module.exports = {
 				continue;
 
 			result.push({
-				zone: p.zone,
+				zoneName: p.zoneName,
 				name: p.name,
 				level: p.level,
 				class: p.class,
@@ -160,7 +164,7 @@ module.exports = {
 
 	forceSaveAll: function () {
 		this.players
-			.filter(p => p.zone)
+			.filter(p => p.zoneName !== undefined)
 			.forEach(p => {
 				atlas.performAction(p, {
 					cpn: 'auth',

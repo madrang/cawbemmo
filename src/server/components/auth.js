@@ -57,7 +57,7 @@ module.exports = {
 	customChannels: [],
 
 	play: async function (data) {
-		if (!this.username)
+		if (!this.username || this.charname)
 			return;
 
 		let character = this.characters[data.data.name];
@@ -267,6 +267,10 @@ module.exports = {
 
 		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
+
+			return;
+		} else if (credentials.username.length > 32) {
+			msg.callback(messages.login.maxUsernameLength);
 
 			return;
 		}

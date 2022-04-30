@@ -27,7 +27,10 @@ module.exports = {
 	lastTime: 0,
 
 	init: function (args) {
-		this.zoneId = args.zoneId;
+		const { zoneId, zoneName } = args;
+
+		this.zoneName = zoneName;
+		this.zoneId = zoneId;
 
 		spellCallbacks.init();
 		herbs.init();
@@ -37,15 +40,16 @@ module.exports = {
 			objects,
 			syncer,
 			physics,
-			zoneId: this.zoneId,
+			zoneId,
+			zoneName,
 			spawners,
 			questBuilder,
 			events,
-			zone: map.zone,
 			map,
 			scheduler,
 			eventEmitter,
-			resourceSpawner
+			resourceSpawner,
+			zoneConfig: map.zoneConfig
 		};
 
 		this.instances.push(fakeInstance);
@@ -208,12 +212,15 @@ module.exports = {
 		if (msg.keepPos && (!physics.isValid(obj.x, obj.y) || !map.canPathFromPos(obj)))
 			msg.keepPos = false;
 
-		if (!msg.keepPos || !obj.has('x') || (map.mapFile.properties.isRandom && obj.instanceId !== map.seed)) {
+		if (!msg.keepPos || !obj.has('x') || (map.mapFile.properties.isRandom && obj.zoneMapSeed !== map.seed)) {
 			obj.x = spawnPos.x;
 			obj.y = spawnPos.y;
 		}
 
-		obj.instanceId = map.seed || null;
+		if (map.seed)
+			obj.zoneMapSeed = map.seed;
+		else
+			delete obj.zoneMapSeed;
 
 		obj.spawn = map.spawn;
 

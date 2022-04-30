@@ -76,6 +76,22 @@ define([
 			return inside;
 		},
 
+		//Helper function to check if a point is inside an area
+		// This function is optimized to check if the point is outside the rect first
+		// and if it is not, we do the more expensive isInPolygon check
+		isInArea: function (x, y, { x: ax, y: ay, width, height, area }) {
+			//Outside rect
+			if (
+				x < ax ||
+				x >= ax + width ||
+				y < ay ||
+				y >= ay + height
+			)
+				return false;
+
+			return this.isInPolygon(x, y, area);
+		},
+
 		distanceToPolygon: function (p, verts) {
 			return distanceToPolygon.calculate(p, verts);
 		}

@@ -49,6 +49,7 @@ const routerConfig = {
 			auth: {
 				login: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'username',
@@ -62,6 +63,7 @@ const routerConfig = {
 				},
 				register: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'username',
@@ -75,6 +77,7 @@ const routerConfig = {
 				},
 				deleteCharacter: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'name',
@@ -88,6 +91,7 @@ const routerConfig = {
 				},
 				createCharacter: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'name',
@@ -109,10 +113,12 @@ const routerConfig = {
 				},
 				getCharacterList: {
 					callback: true,
+					allowWhenIngame: false,
 					data: []
 				},
 				getCharacter: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'name',
@@ -122,6 +128,7 @@ const routerConfig = {
 				},
 				play: {
 					callback: true,
+					allowWhenIngame: false,
 					data: [
 						{
 							key: 'name',
@@ -277,6 +284,7 @@ const routerConfig = {
 							dataType: 'integerOrString'
 						},
 						{
+							optional: true,
 							key: 'state',
 							dataType: 'numberOrString'
 						}
