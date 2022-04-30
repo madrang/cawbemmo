@@ -116,7 +116,7 @@ module.exports = {
 		this.obj.syncer.set(false, 'gatherer', 'progress', 100);
 
 		if (isFish) {
-			let catchChance = 40 + this.obj.stats.values.catchChance;
+			const catchChance = gatherResult.blueprint.gatherChance + this.obj.stats.values.catchChance;
 			if (~~(Math.random() * 100) >= catchChance) {
 				this.sendAnnouncement('The fish got away');
 				this.gathering = null;

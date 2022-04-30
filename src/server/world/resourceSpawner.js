@@ -1,5 +1,10 @@
 let herbs = require('../config/herbs');
 
+const defaultGatherChance = {
+	herb: 100,
+	fish: 40
+};
+
 module.exports = {
 	nodes: [],
 
@@ -22,7 +27,7 @@ module.exports = {
 	},
 
 	register: function (name, blueprint) {
-		let exists = this.nodes.find(n => (n.blueprint.name === name));
+		const exists = this.nodes.find(n => (n.blueprint.name === name));
 		if (exists) {
 			if (!exists.blueprint.positions) {
 				exists.blueprint.positions = [{
@@ -47,21 +52,23 @@ module.exports = {
 			name: name
 		});
 
-		let max = blueprint.max;
+		const max = blueprint.max;
 		delete blueprint.max;
 
-		let chance = blueprint.chance;
+		const chance = blueprint.chance;
 		delete blueprint.chance;
 
-		let cdMax = blueprint.cdMax;
+		const cdMax = blueprint.cdMax;
 		delete blueprint.cdMax;
+
+		blueprint.gatherChance = blueprint.gatherChance ?? defaultGatherChance[blueprint.type];
 
 		this.nodes.push({
 			cd: 0,
-			max: max,
-			chance: chance,
-			cdMax: cdMax,
-			blueprint: blueprint,
+			max,
+			chance,
+			cdMax,
+			blueprint,
 			spawns: []
 		});
 	},
