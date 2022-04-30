@@ -314,8 +314,8 @@ module.exports = {
 		});
 	},
 
-	forceSavePlayer: async function (playerName, zoneName) {
-		const thread = this.getThreadFromName(zoneName);
+	forceSavePlayer: async function (playerName, zoneId) {
+		const thread = this.threads.find(t => t.id === zoneId);
 
 		if (!thread)
 			return;
