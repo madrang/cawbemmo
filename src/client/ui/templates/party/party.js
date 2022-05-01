@@ -39,6 +39,9 @@ define([
 		},
 
 		onGetConnectedPlayer: function (msg) {
+			if (!window.player)
+				return;
+
 			const { party } = this;
 			const { player: { serverId: playerId, zoneId: playerZone } } = window;
 

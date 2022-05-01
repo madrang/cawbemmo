@@ -191,6 +191,9 @@ define([
 		},
 
 		onGetMessages: function (e) {
+			if (!window.player)
+				return;
+			
 			let messages = e.messages;
 			if (!messages.length)
 				messages = [messages];
