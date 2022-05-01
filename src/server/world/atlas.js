@@ -264,6 +264,11 @@ module.exports = {
 		rezone: async function (thread, message) {
 			const { args: { obj, newZone, keepPos = true } } = message;
 
+			if (thread.instanced) {
+				thread.worker.kill();
+				this.threads.spliceWhere(t => t === thread);
+			}
+
 			//When messages are sent from map threads, they have an id (id of the object in the map thread)
 			// as well as a serverId (id of the object in the main thread)
 			const serverId = obj.serverId;
