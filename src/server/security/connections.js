@@ -162,16 +162,26 @@ module.exports = {
 		return result;
 	},
 
-	forceSaveAll: function () {
-		this.players
+	forceSaveAll: async function () {
+		const promises = this.players
 			.filter(p => p.zoneName !== undefined)
-			.forEach(p => {
-				atlas.performAction(p, {
-					cpn: 'auth',
-					method: 'doSave',
-					data: {}
+			.map(p => {
+				const promise = new Promise(res => {
+					const msg = {
+						cpn: 'auth',
+						method: 'doSaveManual',
+						data: {
+							callbackId: atlas.registerCallback(res)
+						}
+					};
+
+					atlas.performAction(p, msg);
 				});
+
+				return promise;
 			});
+
+		await Promise.all(promises);
 	},
 
 	modifyPlayerCount: function (delta) {

@@ -600,8 +600,14 @@ module.exports = {
 		});
 	},
 
-	saveAll: function () {
-		connections.forceSaveAll();
+	saveAll: async function () {
+		const { obj: { social } } = this;
+
+		social.sendMessage('Initiating Save', 'color-blueA');
+
+		await connections.forceSaveAll();
+
+		social.sendMessage('Save Complete', 'color-blueA');
 	},
 
 	rezone: function (msg) {
