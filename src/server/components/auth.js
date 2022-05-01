@@ -113,6 +113,20 @@ module.exports = {
 			callback();
 	},
 
+	//This function is called from the 'forceSave' command. Because of this, the first argument is the action data
+	// instead of (callback, saveStash)
+	doSaveManual: async function (msg) {
+		await this.doSave(null, true);
+
+		process.send({
+			module: 'atlas',
+			method: 'resolveCallback',
+			msg: {
+				id: msg.callbackId
+			}
+		});
+	},
+
 	doSaveStash: async function () {
 		const { username, obj: { stash } } = this;
 
