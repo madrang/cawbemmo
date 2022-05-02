@@ -153,7 +153,7 @@ module.exports = {
 		const result = this.signatureCorrect(msg, signature);
 
 		if (!result || msg.cpn !== 'player' || msg.method !== 'performAction') {
-			if (result && signature.allowWhenIngame === false && source.name !== undefined)
+			if (result && signature.allowWhenIngame === false && source?.name !== undefined)
 				return false;
 
 			return result;
