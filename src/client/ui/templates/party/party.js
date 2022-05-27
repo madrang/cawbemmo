@@ -64,14 +64,14 @@ define([
 						let el = this.find('.member[memberId="' + p + '"]');
 						el.removeClass('differentZone');
 
-						if (mObj.mZone !== mZone)
+						if (mObj.zoneId !== mZone)
 							el.addClass('differentZone');
 					});
 				} else {
 					let el = this.find('.member[memberId="' + m.id + '"]');
 					el.removeClass('differentZone');
 
-					if (m.mZone !== playerZone)
+					if (m.zoneId !== playerZone)
 						el.addClass('differentZone');
 
 					el.find('.txtLevel').html('level: ' + m.level);

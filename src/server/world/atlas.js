@@ -49,6 +49,8 @@ module.exports = {
 		serverObj.zoneId = thread.id;
 		serverObj.zoneName = thread.name;
 
+		serverObj.player.broadcastSelf();
+
 		const simpleObj = obj.getSimple ? obj.getSimple(true, true) : obj;
 
 		this.send(obj.zoneId, {
@@ -289,8 +291,6 @@ module.exports = {
 
 			delete serverObj.zoneId;
 			delete obj.zoneId;
-
-			serverObj.player.broadcastSelf();
 
 			const isRezone = true;
 			await this.addObject(obj, keepPos, isRezone);
