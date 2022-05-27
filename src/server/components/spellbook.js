@@ -27,8 +27,6 @@ module.exports = {
 		this.objects = this.obj.instance.objects;
 		this.physics = this.obj.instance.physics;
 
-		this.dmgMult = blueprint.dmgMult;
-
 		(blueprint.spells || []).forEach(s => this.addSpell(s, -1));
 
 		if (blueprint.rotation) {

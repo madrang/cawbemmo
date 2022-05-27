@@ -10,9 +10,6 @@ module.exports = {
 		this.objects = msg.objects;
 		this.syncer = msg.syncer;
 		this.zoneConfig = msg.zoneConfig;
-		this.mobBuilder = extend({
-			zoneConfig: this.zoneConfig
-		}, mobBuilder);
 	},
 
 	reset: function () {
@@ -176,9 +173,7 @@ module.exports = {
 
 	setupMob: function (mob, blueprint) {
 		let type = 'regular';
-		if (blueprint.isChampion)
-			type = 'champion';
-		else if (blueprint.rare.count > 0) {
+		if (blueprint.rare.count > 0) {
 			const rareCount = this.list.filter(l => (
 				(l.mob) &&
 				(!l.mob.destroyed) &&
@@ -194,7 +189,7 @@ module.exports = {
 
 		this.setupObj(mob, blueprint);
 
-		this.mobBuilder.build(mob, blueprint, type, this.zoneConfig.name);
+		mobBuilder.build(mob, blueprint, type, this.zoneConfig.name);
 	},
 
 	setupObj: function (obj, blueprint) {

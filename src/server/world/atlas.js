@@ -196,6 +196,7 @@ module.exports = {
 			try {
 				global[message.module][message.method](message);
 			} catch (e) {
+				/* eslint-disable-next-line no-console */
 				console.log('No global method found', message.module, message.method);
 				process.exit();
 			}
