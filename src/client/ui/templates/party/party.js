@@ -54,28 +54,30 @@ define([
 			msg.forEach(m => {
 				const { id: mId, zoneId: mZone } = m;
 
-				if (party.indexOf(m.id) === -1)
+				if (!party.includes(m.id))
 					return;
 
-				if (mId === playerId) {
-					party.forEach(p => {
-						const mObj = globals.onlineList.find(o => o.id === p);
-
-						let el = this.find('.member[memberId="' + p + '"]');
-						el.removeClass('differentZone');
-
-						if (mObj.mZone !== mZone)
-							el.addClass('differentZone');
-					});
-				} else {
-					let el = this.find('.member[memberId="' + m.id + '"]');
+				if (mId !== playerId) {
+					const el = this.find('.member[memberId="' + m.id + '"]');
 					el.removeClass('differentZone');
 
-					if (m.mZone !== playerZone)
+					if (m.zoneId !== playerZone)
 						el.addClass('differentZone');
 
 					el.find('.txtLevel').html('level: ' + m.level);
+
+					return;
 				}
+
+				party.forEach(p => {
+					const mObj = globals.onlineList.find(o => o.id === p);
+
+					const el = this.find('.member[memberId="' + p + '"]');
+					el.removeClass('differentZone');
+
+					if (mObj.zoneId !== mZone)
+						el.addClass('differentZone');
+				});
 			});
 		},
 
