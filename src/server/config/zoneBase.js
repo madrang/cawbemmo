@@ -36,17 +36,6 @@ module.exports = {
 					rolls: 2,
 					magicFind: 2000
 				}
-			},
-
-			champion: {
-				hpMult: 5,
-				dmgMult: 2,
-
-				drops: {
-					chance: 100,
-					rolls: 2,
-					magicFind: [2000, 175]
-				}
 			}
 		}
 	}
