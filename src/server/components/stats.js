@@ -348,8 +348,6 @@ module.exports = {
 		let mobDiffMult = 1;
 		if (target.isRare)
 			mobDiffMult = 2;
-		else if (target.isChampion)
-			mobDiffMult = 5;
 
 		//Who should get xp?
 		let aggroList = target.aggro.list;

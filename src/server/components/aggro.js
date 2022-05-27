@@ -1,7 +1,6 @@
 const configThreatCeiling = {
 	regular: 1,
-	rare: 0.5,
-	champion: 0.2
+	rare: 0.5
 };
 
 module.exports = {

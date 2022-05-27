@@ -1,193 +1,201 @@
-let animations = require('../config/animations');
-let itemGenerator = require('../items/generator');
+//Balance
+const { hpMults, dmgMults } = require('../config/consts');
 
-//const track = {};
+//Imports
+const animations = require('../config/animations');
+const itemGenerator = require('../items/generator');
 
-module.exports = {
-	build: function (mob, blueprint, type, zoneName) {
-		mob.instance.eventEmitter.emit('onBeforeBuildMob', zoneName, mob.name.toLowerCase(), blueprint);
+//Mobs will be given random items to equip for these slots
+const generateSlots = [
+	'head',
+	'chest',
+	'neck',
+	'hands',
+	'waist',
+	'legs',
+	'feet',
+	'finger',
+	'trinket',
+	'twoHanded'
+];
 
-		let typeDefinition = blueprint[type] || blueprint;
+//Mobs will pick one of these stats to be force rolles onto their items
+const statSelector = ['str', 'dex', 'int'];
 
-		if (blueprint.nonSelectable)
-			mob.nonSelectable = true;
+//These stat values are synced to players
+const syncStats = ['hp', 'hpMax', 'mana', 'manaMax', 'level'];
 
-		mob.addComponent('effects');
-		if (type && type !== 'regular') {
-			mob.effects.addEffect({
-				type: type
-			});
+//Component generators
+const buildCpnMob = (mob, blueprint, typeDefinition) => {
+	const { walkDistance, grantRep, deathRep, patrol, needLos } = blueprint;
 
-			mob['is' + type[0].toUpperCase() + type.substr(1)] = true;
+	const cpnMob = mob.addComponent('mob');
+	extend(cpnMob, {
+		walkDistance,
+		grantRep,
+		deathRep,
+		needLos
+	});
 
-			mob.baseName = mob.name;
-			mob.name = typeDefinition.name || mob.baseName;
+	if (patrol !== undefined)
+		cpnMob.patrol = blueprint.patrol;
+
+	if (cpnMob.patrol)
+		cpnMob.walkDistance = 1;
+};
+
+const buildCpnStats = (mob, blueprint, typeDefinition) => {
+	const {
+		level,
+		hpMult: baseHpMult = typeDefinition.hpMult
+	} = blueprint;
+
+	const hpMax = ~~(level * 40 * hpMults[level - 1] * baseHpMult);
+
+	const cpnStats = mob.addComponent('stats', {
+		values: {
+			level,
+			hpMax,
+			hp: hpMax
 		}
+	});
 
-		if (typeDefinition.sheetName)
-			mob.sheetName = typeDefinition.sheetName;
+	//Hack to disallow low level mobs from having any lifeOnHit
+	// since that makes it very difficult (and confusing) for low level players
+	if (level <= 3)
+		cpnStats.values.lifeOnHit = 0;
+};
 
-		if (typeDefinition.has('cell'))
-			mob.cell = typeDefinition.cell;
+const buildCpnInventory = (mob, blueprint, { drops }, preferStat) => {
+	const { level } = blueprint;
 
-		mob.addComponent('stats', {
-			values: {
-				level: blueprint.level
-			}
-		});
+	const cpnInventory = mob.addComponent('inventory', drops);
 
-		let cpnMob = mob.addComponent('mob');
-		extend(cpnMob, {
-			walkDistance: blueprint.walkDistance,
-			hpMult: blueprint.hpMult || typeDefinition.hpMult,
-			dmgMult: blueprint.dmgMult || typeDefinition.dmgMult,
-			grantRep: blueprint.grantRep,
-			deathRep: blueprint.deathRep
-		});
-		if (blueprint.patrol)
-			cpnMob.patrol = blueprint.patrol;
+	cpnInventory.inventorySize = -1;
+	cpnInventory.dailyDrops = blueprint.dailyDrops;
 
-		if (cpnMob.patrol)
-			cpnMob.walkDistance = 1;
-
-		cpnMob.needLos = blueprint.needLos;
-
-		let spells = extend([], blueprint.spells);
-		spells.forEach(s => {
-			if (!s.animation && mob.sheetName === 'mobs' && animations.mobs[mob.cell]) 
-				s.animation = 'basic';
-		});
-
-		mob.addComponent('spellbook', {
-			spells: spells,
-			dmgMult: typeDefinition.dmgMult
-		});
-
-		if (!blueprint.has('attackable') || blueprint.attackable === true) {
-			mob.addComponent('aggro', {
-				faction: blueprint.faction
+	if (!drops?.blueprints || drops?.alsoRandom) {
+		generateSlots.forEach(slot => {
+			const item = itemGenerator.generate({
+				noSpell: true,
+				level,
+				slot,
+				quality: 4,
+				forceStats: [preferStat]
 			});
+			delete item.spell;
+			item.eq = true;
 
-			mob.aggro.calcThreatCeiling(type);
-		}
-
-		mob.addComponent('equipment');
-		mob.addComponent('inventory', typeDefinition.drops);
-		mob.inventory.inventorySize = -1;
-		mob.inventory.dailyDrops = blueprint.dailyDrops;
-
-		if (this.zoneConfig) {
-			let chats = this.zoneConfig.chats;
-			if (chats && chats[mob.name.toLowerCase()]) {
-				mob.addComponent('chatter', {
-					chats: chats[mob.name.toLowerCase()]
-				});
-			}
-
-			let dialogues = this.zoneConfig.dialogues;
-			if (dialogues && dialogues[mob.name.toLowerCase()]) {
-				mob.addComponent('dialogue', {
-					config: dialogues[mob.name.toLowerCase()]
-				});
-			}
-		}
-
-		if (blueprint.properties && blueprint.properties.cpnTrade)
-			mob.addComponent('trade', blueprint.properties.cpnTrade);
-
-		this.scale(mob, blueprint.level);
-
-		mob.instance.eventEmitter.emit('onAfterBuildMob', {
-			zoneName,
-			mob
+			cpnInventory.getItem(item);
 		});
-	},
+	} else {
+		//TODO: Don't give mobs these items: they'll drop them anyway
+		drops.blueprints.forEach(d => {
+			if (d.type === 'key')
+				return;
 
-	scale: function (mob, level) {
-		let drops = mob.inventory.blueprint || {};
+			const drop = extend({}, d);
+			drop.level = level;
 
-		let statValues = mob.stats.values;
-
-		let preferStat = ['str', 'dex', 'int'][~~(Math.random() * 3)];
-
-		mob.equipment.unequipAll();
-		mob.inventory.clear();
-
-		let hp = level * 40;
-		statValues.hpMax = hp;
-
-		statValues.level = level;
-
-		if ((!drops.blueprints) || (drops.alsoRandom)) {
-			[
-				'head',
-				'chest',
-				'neck',
-				'hands',
-				'waist',
-				'legs',
-				'feet',
-				'finger',
-				'trinket',
-				'twoHanded'
-			].forEach(slot => {
-				let item = itemGenerator.generate({
-					noSpell: true,
-					level: level,
-					slot: slot,
-					quality: 4,
-					forceStats: [preferStat]
-				});
-
-				delete item.spell;
-				mob.inventory.getItem(item);
-				mob.equipment.autoEquip(item.id);
-			});
-		} else {
-			//TODO: Don't give the mob these items: he'll drop them anyway
-			drops.blueprints.forEach(d => {
-				if (d.type === 'key')
-					return;
-
-				let drop = extend({}, d);
-				drop.level = level;
-
-				mob.inventory.getItem(itemGenerator.generate(drop));
-			});
-		}
-
-		let spellCount = (mob.isRare ? 1 : 0) + (mob.isChampion ? 2 : 0);
-
-		for (let i = 0; i < spellCount; i++) {
-			let rune = itemGenerator.generate({
-				spell: true
-			});
-			rune.eq = true;
-			mob.inventory.getItem(rune);
-		}
-
-		let dmgMult = 4.5 * mob.mob.dmgMult;
-		let hpMult = 1 * mob.mob.hpMult;
-
-		dmgMult *= [0.25, 0.4, 0.575, 0.8, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 2.3, 2.4, 2.5][level - 1];
-
-		statValues.hpMax = ~~(statValues.hpMax * [0.1, 0.2, 0.4, 0.7, 0.78, 0.91, 1.16, 1.19, 1.65, 2.36, 3.07, 3.55, 4.1, 4.85, 5.6, 5.9, 6.5, 7.1, 7.9, 12][level - 1]);
-
-		statValues.hpMax *= hpMult;
-		statValues.hp = statValues.hpMax;
-		statValues.mana = statValues.manaMax;
-
-		mob.spellbook.spells.forEach(s => {
-			s.dmgMult = s.name ? dmgMult / 3 : dmgMult;
-			s.statType = preferStat;
-			s.manaCost = 0;
+			cpnInventory.getItem(itemGenerator.generate(drop));
 		});
-
-		//Hack to disallow low level mobs from having any lifeOnHit
-		// since that makes it very difficult (and confusing) for low level players
-		if (level <= 3)
-			mob.stats.values.lifeOnHit = 0;
-
-		['hp', 'hpMax', 'mana', 'manaMax', 'level'].forEach(s => mob.syncer.setObject(false, 'stats', 'values', s, statValues[s]));
 	}
 };
+
+const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
+	const dmgMult = 4.5 * typeDefinition.dmgMult * dmgMults[blueprint.level - 1];
+
+	const spells = extend([], blueprint.spells);
+
+	mob.addComponent('spellbook', { spells });
+
+	let spellCount = 0;
+	if (mob.isRare)
+		spellCount = 1;
+
+	for (let i = 0; i < spellCount; i++) {
+		const rune = itemGenerator.generate({ spell: true });
+		rune.eq = true;
+
+		mob.inventory.getItem(rune);
+	}
+
+	mob.spellbook.spells.forEach(s => {
+		s.dmgMult = s.name ? dmgMult / 3 : dmgMult;
+		s.statType = preferStat;
+		s.manaCost = 0;
+
+		if (!s.animation && mob.sheetName === 'mobs' && animations.mobs[mob.cell]) 
+			s.animation = 'basic';
+	});
+};
+
+const fnComponentGenerators = [
+	buildCpnMob, buildCpnStats, buildCpnInventory, buildCpnSpells
+];
+
+//Main Generator
+/*
+	mob = the mob object
+	blueprint = mob blueprint (normally from the zoneFile)
+	type = regular,rare
+	zoneName = the name of the zone
+*/
+const build = (mob, blueprint, type, zoneName) => {
+	mob.instance.eventEmitter.emit('onBeforeBuildMob', zoneName, mob.name.toLowerCase(), blueprint);
+
+	const typeDefinition = blueprint[type] || blueprint;
+
+	if (blueprint.nonSelectable)
+		mob.nonSelectable = true;
+
+	mob.addComponent('effects');
+	if (type === 'rare') {
+		mob.effects.addEffect({	type: 'rare' });
+		mob.isRare = true;
+
+		mob.baseName = mob.name;
+		mob.name = typeDefinition.name ?? mob.name;
+	}
+
+	if (typeDefinition.sheetName)
+		mob.sheetName = typeDefinition.sheetName;
+
+	if (typeDefinition.has('cell'))
+		mob.cell = typeDefinition.cell;
+
+	mob.addComponent('equipment');
+
+	const preferStat = statSelector[~~(Math.random() * 3)];
+
+	fnComponentGenerators.forEach(fn => fn(mob, blueprint, typeDefinition, preferStat));
+
+	if (blueprint.attackable !== false) {
+		mob.addComponent('aggro', { faction: blueprint.faction });
+
+		mob.aggro.calcThreatCeiling(type);
+	}
+
+	const zoneConfig = instancer.instances[0].map.zoneConfig;
+
+	const chats = zoneConfig?.chats?.[mob.name.toLowerCase()];
+	if (chats)
+		mob.addComponent('chatter', { chats });
+
+	const dialogues = zoneConfig?.dialogues?.[mob.name.toLowerCase()];
+	if (dialogues)
+		mob.addComponent('dialogue', { config: dialogues });
+
+	if (blueprint?.properties?.cpnTrade)
+		mob.addComponent('trade', blueprint.properties.cpnTrade);
+
+	mob.instance.eventEmitter.emit('onAfterBuildMob', {
+		zoneName,
+		mob
+	});
+
+	const statValues = mob.stats.values;
+	syncStats.forEach(s => mob.syncer.setObject(false, 'stats', 'values', s, statValues[s]));
+};
+
+module.exports = { build };
