@@ -55,8 +55,7 @@ const buildCpnStats = (mob, blueprint, typeDefinition) => {
 	const cpnStats = mob.addComponent('stats', {
 		values: {
 			level,
-			hpMax,
-			hp: hpMax
+			hpMax
 		}
 	});
 
@@ -195,6 +194,8 @@ const build = (mob, blueprint, type, zoneName) => {
 	});
 
 	const statValues = mob.stats.values;
+	statValues.hp = statValues.hpMax;
+
 	syncStats.forEach(s => mob.syncer.setObject(false, 'stats', 'values', s, statValues[s]));
 };
 
