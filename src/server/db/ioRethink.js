@@ -77,11 +77,18 @@ module.exports = {
 		return res;
 	},
 
-	getFilterAsync: async function ({ table, noDefault, filter }) {
-		const res = await r
+	getFilterAsync: async function ({ table, noDefault, filter, limit, offset }) {
+		let res = r
 			.table(table)
-			.filter(filter)
-			.run();
+			.filter(filter);
+
+		if (offset)
+			res = res.skip(offset);
+
+		if (limit)
+			res = res.limit(limit);
+
+		await res.run();
 
 		if (res)
 			return res;
@@ -126,6 +133,20 @@ module.exports = {
 				.run();
 		} catch (e) {
 			this.logError(e, table, id);
+		}
+	},
+
+	setFlat: async function ({
+		table,
+		value,
+		conflict = 'update'
+	}) {
+		try {
+			await r.table(table)
+				.insert(value, { conflict })
+				.run();
+		} catch (e) {
+			this.logError(e, table, JSON.stringify(value));
 		}
 	},
 
