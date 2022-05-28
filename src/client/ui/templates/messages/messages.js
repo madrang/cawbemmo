@@ -242,10 +242,12 @@ define([
 				}
 
 				if (m.type) {
-					let isChannel = (['info', 'chat', 'loot', 'rep'].indexOf(m.type) === -1);
+					const isChannel = m?.subType === 'custom';
 					if (isChannel) {
-						if (this.find('.filter[filter="' + m.type + '"]').hasClass('active'))
+						if (this.find('.filter[filter="' + m.channel + '"]').hasClass('active'))
 							el.show();
+						else
+							el.hide();
 					}
 
 					if (isMobile && ['loot', 'info'].indexOf(m.type) !== -1) {
