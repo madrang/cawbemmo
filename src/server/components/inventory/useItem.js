@@ -56,10 +56,19 @@ module.exports = async (cpnInv, itemId) => {
 		success: true,
 		cdMax: item.cdMax
 	};
+	//Deprecated
 	obj.instance.eventEmitter.emit('onBeforeUseItem', obj, item, result);
 	obj.fireEvent('onBeforeUseItem', item, result);
+	//New
+	const eventMsg = {
+		obj,
+		item,
+		cdMax: item.cdMax,
+		success: true
+	};
+	obj.instance.eventEmitter.emit('beforeUseItem', eventMsg);
 
-	if (!result.success)
+	if (!result.success || !eventMsg.success)
 		return;
 
 	placeItemOnCooldown(obj, cpnInv, item, result);
