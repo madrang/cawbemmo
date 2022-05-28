@@ -326,6 +326,8 @@ define([
 				c.zoneId = this.zoneId;
 				events.emit('onGetObject', c);
 			});
+
+			events.emit('onMoveSpeedChange', 0);
 		},
 
 		setPosition: function (pos, instant) {
