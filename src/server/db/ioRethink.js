@@ -77,14 +77,19 @@ module.exports = {
 		return res;
 	},
 
-	getFilterAsync: async function ({ table, noDefault, filter, limit, offset }) {
+	getFilterAsync: async function (
+		{ table, noDefault, filter, limit, offset, orderAsc, orderDesc }
+	) {
 		let res = r
 			.table(table)
 			.filter(filter);
 
+		if (orderAsc)
+			res = res.orderBy(orderAsc);
+		if (orderDesc)
+			res = res.orderBy(r.desc(orderDesc));
 		if (offset)
 			res = res.skip(offset);
-
 		if (limit)
 			res = res.limit(limit);
 
