@@ -327,6 +327,10 @@ define([
 				events.emit('onGetObject', c);
 			});
 
+			//Normally, the mounts mod queues this event when unmounting.
+			// If we rezone, our effects are destroyed, so the event is queued,
+			// but flushForTarget clears the event right after and the event is never received.
+			// We emit it again here to make sure the speed is reset after entering the new zone.
 			events.emit('onMoveSpeedChange', 0);
 		},
 
