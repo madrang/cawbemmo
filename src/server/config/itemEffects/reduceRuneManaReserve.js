@@ -1,13 +1,13 @@
 module.exports = {
 	events: {
-		onGetText: function (item) {
-			let rolls = item.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
+		onGetText: function (selfItem) {
+			let rolls = selfItem.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
 
 			return `Reduces the mana reserved by ${rolls.rune} by ${rolls.amount}%`;
 		},
 
-		onBeforeReserveMana: function (item, reserveEvent) {
-			let rolls = item.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
+		onBeforeReserveMana: function (selfItem, reserveEvent) {
+			let rolls = selfItem.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
 
 			if (rolls.rune.toLowerCase() !== reserveEvent.spell.toLowerCase())
 				return;
@@ -15,8 +15,8 @@ module.exports = {
 			reserveEvent.reservePercent = Math.max(0, (reserveEvent.reservePercent * 100) - rolls.amount) / 100;
 		},
 
-		afterEquipItem: function (item) {
-			let rolls = item.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
+		afterEquipItem: function (selfItem, eqItem) {
+			let rolls = eqItem.effects?.find(e => (e.type === 'reduceRuneManaReserve'))?.rolls;
 			if (!rolls)
 				return;
 
@@ -31,8 +31,8 @@ module.exports = {
 			});
 		},
 
-		afterUnequipItem: function (item) {
-			let rolls = item.effects.find(e => (e.type === 'reduceRuneManaReserve')).rolls;
+		afterUnequipItem: function (selfItem, eqItem) {
+			let rolls = eqItem.effects?.find(e => (e.type === 'reduceRuneManaReserve'))?.rolls;
 			if (!rolls)
 				return;
 
