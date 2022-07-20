@@ -73,6 +73,18 @@ module.exports = {
 				);
 
 				return !isCorrect;
+			} else if (dataType === 'integerNullObjectOrString') {
+				const isCorrect = (
+					Number.isInteger(value) ||
+					typeof(dataType) === 'string' ||
+					value === null ||
+					(
+						typeof(value) === 'object' &&
+						this.keysCorrect(value, spec)
+					)
+				);
+
+				return !isCorrect;
 			} else if (dataType === 'arrayOfStrings')
 				return (!Array.isArray(value) || value.some(v => typeof(v) !== 'string'));
 			else if (dataType === 'arrayOfIntegers')
