@@ -165,7 +165,7 @@ const routerConfig = {
 						},
 						{
 							key: 'target',
-							dataType: 'integerNullOrObject',
+							dataType: 'integerNullObjectOrString',
 							spec: [
 								{
 									key: 'x',
