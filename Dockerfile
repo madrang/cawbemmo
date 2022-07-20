@@ -11,7 +11,7 @@ COPY . .
 WORKDIR /usr/src/isleward/src/server/
 
 # Install only production npm modules specified in package.json
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Expose container's port 4000
 EXPOSE 4000
