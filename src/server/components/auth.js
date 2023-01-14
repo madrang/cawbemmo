@@ -309,7 +309,8 @@ module.exports = {
 		const emBeforeLogin = {
 			obj: this.obj,
 			success: true,
-			msg: null
+			msg: null,
+			username
 		};
 		await eventEmitter.emit('onBeforeLogin', emBeforeLogin);
 		if (!emBeforeLogin.success) {
@@ -387,7 +388,8 @@ module.exports = {
 		const emBeforeRegisterAccount = {
 			obj: this.obj,
 			success: true,
-			msg: null
+			msg: null,
+			username: msg.data.username
 		};
 
 		await eventEmitter.emit('onBeforeRegisterAccount', emBeforeRegisterAccount);
