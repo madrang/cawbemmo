@@ -191,6 +191,7 @@ module.exports = {
 			});
 
 			this.threads.push(thread);
+		});
 	},
 	onMessage: function (thread, message) {
 		if (message.module) {
