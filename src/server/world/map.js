@@ -546,6 +546,9 @@ module.exports = {
 		let stats = obj.components.find(c => (c.type === 'stats'));
 		let level = stats.values.level;
 
+		if (!this.spawn.filter)
+			console.log(this.spawn);
+
 		let spawns = this.spawn.filter(s => (((s.maxLevel) && (s.maxLevel >= level)) || (!s.maxLevel)));
 		return spawns[0];
 	},
