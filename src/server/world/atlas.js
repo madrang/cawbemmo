@@ -36,9 +36,8 @@ module.exports = {
 			if (map.instanced) {
 				delete obj.x;
 				delete obj.y;
-				thread = this.spawnMap(map);
 
-				await new Promise(res => setTimeout(res, 2000));
+				thread = await this.spawnMap(map);
 			} else
 				thread = this.getThreadFromName(map.name);
 		}
@@ -169,27 +168,27 @@ module.exports = {
 			.filter(m => !m.disabled && !m.instanced)
 			.forEach(m => this.spawnMap(m));
 	},
-	spawnMap: function ({ name, path, instanced }) {
-		const worker = childProcess.fork('./world/worker', [name]);
+	spawnMap: async function ({ name, path, instanced }) {
+		return new Promise(resolveOnReady => {
+			const worker = childProcess.fork('./world/worker', [name]);
 
-		const id = instanced ? _.getGuid() : name;
+			const id = instanced ? _.getGuid() : name;
 
-		const thread = {
-			id,
-			name,
-			instanced,
-			path,
-			worker
-		};
+			const thread = {
+				id,
+				name,
+				instanced,
+				path,
+				worker,
+				cbOnInitialized: resolveOnReady
+			};
 
-		const onMessage = this.onMessage.bind(this, thread);
-		worker.on('message', function (m) {
-			onMessage(m);
-		});
+			const onMessage = this.onMessage.bind(this, thread);
+			worker.on('message', function (m) {
+				onMessage(m);
+			});
 
-		this.threads.push(thread);
-
-		return thread;
+			this.threads.push(thread);
 	},
 	onMessage: function (thread, message) {
 		if (message.module) {
@@ -224,6 +223,10 @@ module.exports = {
 					path: thread.path
 				}
 			});
+		},
+
+		onInitialized: function (thread) {
+			thread.cbOnInitialized(thread);
 		},
 
 		event: function (thread, message) {

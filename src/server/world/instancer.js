@@ -75,6 +75,10 @@ module.exports = {
 
 		this.clientAck = clientAck;
 		eventEmitter.on('removeObject', unstageZoneIn);
+
+		process.send({
+			method: 'onInitialized'
+		});
 	},
 
 	startRegen: function (respawnMap, respawnPos) {
