@@ -1,7 +1,4 @@
-const generator = require('../../items/generator');
-const configSlots = require('../../items/config/slots');
 const configMaterials = require('../../items/config/materials');
-const factions = require('../../config/factions');
 const connections = require('../../security/connections');
 const events = require('../../misc/events');
 
@@ -25,7 +22,6 @@ let commandRoles = {
 	saveAll: 8,
 
 	//Admin
-	getItem: 10,
 	getGold: 10,
 	setLevel: 10,
 	godMode: 10,
@@ -363,86 +359,6 @@ module.exports = {
 			.filter(i => !i.eq)
 			.map(i => i.id)
 			.forEach(i => inventory.destroyItem({ itemId: i }, null, true));
-	},
-
-	getItem: function (config) {
-		if (typeof config !== 'object')
-			return;
-
-		if (config.slot === 'set') {
-			configSlots.slots.forEach(function (s) {
-				if (s === 'tool')
-					return;
-
-				let newConfig = extend({}, config, {
-					slot: s
-				});
-
-				this.getItem(newConfig);
-			}, this);
-
-			return;
-		}
-
-		if (config.stats)
-			config.stats = config.stats.split(',');
-
-		if (config.name)
-			config.name = config.name.split('_').join(' ');
-
-		if (config.description)
-			config.description = config.description.split('_').join(' ');
-
-		if (config.spellName)
-			config.spellName = config.spellName.split('_').join(' ');
-
-		if (config.type)
-			config.type = config.type.split('_').join(' ');
-
-		if (config.sprite)
-			config.sprite = config.sprite.split('_');
-
-		let spritesheet = config.spritesheet;
-		delete config.spritesheet;
-
-		let factionList = (config.factions || '').split(',');
-		delete config.factions;
-
-		let safe = config.safe;
-		delete config.safe;
-
-		let eq = config.eq;
-		delete config.eq;
-
-		let item = generator.generate(config);
-
-		if (safe) {
-			item.noDrop = true;
-			item.noDestroy = true;
-			item.noSalvage = true;
-		}
-
-		factionList.forEach(function (f) {
-			if (f === '')
-				return;
-
-			let faction = factions.getFaction(f);
-			faction.uniqueStat.generate(item);
-
-			item.factions = [];
-			item.factions.push({
-				id: f,
-				tier: 3
-			});
-		});
-
-		if (spritesheet)
-			item.spritesheet = spritesheet;
-
-		let newItem = this.obj.inventory.getItem(item);
-
-		if (eq)
-			this.obj.equipment.equip({ itemId: newItem.id });
 	},
 
 	getGold: function (amount) {
