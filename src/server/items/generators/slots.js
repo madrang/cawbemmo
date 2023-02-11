@@ -14,7 +14,9 @@ module.exports = {
 			item.slot = blueprint.slot;
 		else if (blueprint.type)
 			item.slot = Object.keys(configTypes.types).find(c => configTypes.types[c][blueprint.type]);
-		else
+		
+		//If the slot doesn't exist or the type doesn't exist in the slot, pick a random type
+		if (!item.slot || !configSlots.slots.includes(item.slot))
 			item.slot = chances[~~(Math.random() * chances.length)];
 	}
 };

@@ -5,7 +5,7 @@ module.exports = {
 	generate: function (item, blueprint) {
 		let type = blueprint.type;
 
-		if (!type) {
+		if (!type || !configTypes.types[item.slot][type]) {
 			//Pick a material type first
 			const types = configTypes.types[item.slot];
 			const typeArray = Object.entries(types);
