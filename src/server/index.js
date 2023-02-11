@@ -1,20 +1,21 @@
 require('./globals');
 
-let server = require('./server/index');
-let components = require('./components/components');
-let mods = require('./misc/mods');
-let animations = require('./config/animations');
-let skins = require('./config/skins');
-let factions = require('./config/factions');
-let classes = require('./config/spirits');
-let spellsConfig = require('./config/spellsConfig');
-let spells = require('./config/spells');
-let itemTypes = require('./items/config/types');
-let recipes = require('./config/recipes/recipes');
-let mapList = require('./config/maps/mapList');
-let fixes = require('./fixes/fixes');
-let profanities = require('./misc/profanities');
+const server = require('./server/index');
+const components = require('./components/components');
+const mods = require('./misc/mods');
+const animations = require('./config/animations');
+const skins = require('./config/skins');
+const factions = require('./config/factions');
+const classes = require('./config/spirits');
+const spellsConfig = require('./config/spellsConfig');
+const spells = require('./config/spells');
+const itemTypes = require('./items/config/types');
+const recipes = require('./config/recipes/recipes');
+const mapManager = require('./world/mapManager');
+const fixes = require('./fixes/fixes');
+const profanities = require('./misc/profanities');
 const routerConfig = require('./security/routerConfig');
+const { spawnMapThreads } = require('./world/threadManager');
 
 let startup = {
 	init: function () {
@@ -41,7 +42,7 @@ let startup = {
 		recipes.init();
 		itemTypes.init();
 		profanities.init();
-		mapList.init();
+		mapManager.init();
 		components.init(this.onComponentsReady.bind(this));
 	},
 
@@ -55,7 +56,7 @@ let startup = {
 
 		await leaderboard.init();
 
-		atlas.init();
+		await spawnMapThreads();
 	},
 
 	onError: async function (e) {

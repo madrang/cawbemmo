@@ -1,3 +1,4 @@
+//Globals
 global.extend = require('../misc/clone');
 global.io = require('../db/io');
 global._ = require('../misc/helpers');
@@ -7,6 +8,7 @@ global.eventManager = require('../events/events');
 global.clientConfig = require('../config/clientConfig');
 global.rezoneManager = require('./rezoneManager');
 
+//Imports
 const components = require('../components/components');
 const mods = require('../misc/mods');
 const animations = require('../config/animations');
@@ -17,14 +19,15 @@ const spellsConfig = require('../config/spellsConfig');
 const spells = require('../config/spells');
 const recipes = require('../config/recipes/recipes');
 const itemTypes = require('../items/config/types');
-const mapList = require('../config/maps/mapList');
+const mapManager = require('../world/mapManager');
 const itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
 const eventEmitter = require('../misc/events');
 
+//Worker
 instancer.mapName = process.argv[2];
 
-let onCpnsReady = async function () {
+const onCpnsReady = async function () {
 	factions.init();
 	skins.init();
 	animations.init();
@@ -32,7 +35,7 @@ let onCpnsReady = async function () {
 	spellsConfig.init();
 	spells.init();
 	itemTypes.init();
-	mapList.init();
+	mapManager.init();
 	recipes.init();
 	itemEffects.init();
 	profanities.init();
@@ -45,7 +48,7 @@ let onCpnsReady = async function () {
 	});
 };
 
-let onModsReady = function () {
+const onModsReady = function () {
 	components.init(onCpnsReady);
 };
 
@@ -67,7 +70,7 @@ const onCrash = async e => {
 	});
 };
 
-let onDbReady = async function () {
+const onDbReady = async function () {
 	require('../misc/random');
 
 	process.on('uncaughtException', onCrash);
@@ -82,17 +85,17 @@ io.init(onDbReady);
 
 process.on('message', m => {
 	if (m.module) {
-		let instances = instancer.instances;
-		let iLen = instances.length;
+		const instances = instancer.instances;
+		const iLen = instances.length;
 		for (let i = 0; i < iLen; i++) {
-			let objects = instances[i].objects.objects;
-			let oLen = objects.length;
+			const objects = instances[i].objects.objects;
+			const oLen = objects.length;
 			let found = false;
 			for (let j = 0; j < oLen; j++) {
-				let object = objects[j];
+				const object = objects[j];
 
 				if (object.name === m.args[0]) {
-					let mod = object.instance[m.module];
+					const mod = object.instance[m.module];
 					mod[m.method].apply(mod, m.args);
 
 					found = true;

@@ -1,3 +1,7 @@
+//Imports
+const { sendMessageToThread } = require('../../world/threadManager');
+
+//Helpers
 const route = function (socket, msg) {
 	const source = this.players.find(p => p.socket.id === socket.id);
 	if (!source)
@@ -27,7 +31,10 @@ const route = function (socket, msg) {
 		if (msg.callback)
 			msg.data.callbackId = atlas.registerCallback(msg.callback);
 
-		atlas.send(source.zoneId, msg);
+		sendMessageToThread({
+			threadId: source.zoneId,
+			msg
+		});
 
 		return;
 	}
@@ -52,6 +59,7 @@ const routeGlobal = function (msg) {
 	global[msg.module][msg.method](msg);
 };
 
+//Exports
 module.exports = {
 	route,
 	routeGlobal

@@ -1,7 +1,9 @@
-let questTemplate = require('./templates/questTemplate');
-let globalQuests = require('../questsBase');
-let mapList = require('../maps/mapList');
+//Imports
+const questTemplate = require('./templates/questTemplate');
+const globalQuests = require('../questsBase');
+const { mapList } = require('../../world/mapManager');
 
+//Exports
 module.exports = {
 	instance: null,
 
@@ -11,7 +13,7 @@ module.exports = {
 
 	obtain: function (obj, template) {
 		let zoneName = template?.zoneName ?? obj.zoneName;
-		let zone = mapList.mapList.find(m => m.name === zoneName);
+		let zone = mapList.find(m => m.name === zoneName);
 
 		//Zone doesn't exist any more. Probably been renamed
 		if (!zone)
