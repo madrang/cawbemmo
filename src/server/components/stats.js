@@ -596,7 +596,17 @@ module.exports = {
 			source.fireEvent('afterDealDamage', damage, obj);
 	},
 
-	getHp: function (heal, source) {
+	/*
+	Gives hp to heal.target
+		heal: Damage object returned by combat.getDamage
+		source: Source object
+		event: Optional config object. We want to eventually phase out the first 2 args.
+			heal: Same as 1st parameter
+			source: Same as 2nd parameter
+			target: Target object (heal.target)
+			spell: Optional spell object that caused this event
+	*/
+	getHp: function (heal, source, event) {
 		let amount = heal.amount;
 		if (amount === 0)
 			return;
@@ -646,6 +656,11 @@ module.exports = {
 		}
 
 		this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
+
+		//We want to eventually replace the first two args with the event object
+		// For now, only fire the event when the event object is specified.
+		if (!heal.noEvents && event)
+			source.fireEvent('afterGiveHp', event);
 	},
 
 	save: function () {
