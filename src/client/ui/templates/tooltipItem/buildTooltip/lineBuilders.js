@@ -214,7 +214,16 @@ define([
 					html += '<br />';
 			});
 
-			return html;
+			const result = (
+				lineBuilders.div('space', ' ') +
+				lineBuilders.div('line', ' ') +
+				lineBuilders.div('smallSpace', ' ') +
+				html +
+				lineBuilders.div('smallSpace', ' ') +
+				lineBuilders.div('line', ' ')
+			);
+
+			return result;
 		},
 
 		material: () => {
