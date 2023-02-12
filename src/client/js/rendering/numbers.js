@@ -55,9 +55,10 @@ define([
 				element: msg.element
 			};
 
-			if (numberObj.event) 
+			if (numberObj.event) {
+				numberObj.x += (scale / 2);
 				numberObj.y += (scale / 2);
-			else if (numberObj.heal)
+			} else if (numberObj.heal)
 				numberObj.x -= scale;
 			else
 				numberObj.x += scale;
@@ -108,10 +109,13 @@ define([
 					l.y -= 1;
 
 				let alpha = l.ttl / l.ttlMax;
+				l.sprite.alpha = alpha;
 
 				l.sprite.x = ~~(l.x / scaleMult) * scaleMult;
 				l.sprite.y = ~~(l.y / scaleMult) * scaleMult;
-				l.sprite.alpha = alpha;
+
+				if (l.event)
+					l.sprite.x -= (l.sprite.width) / 2;
 			}
 		}
 	};
