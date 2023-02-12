@@ -1,4 +1,4 @@
-  {
+{
   "root": true,
 
   "parser": "babel-eslint",
@@ -179,5 +179,12 @@
     "arrow-spacing": [2,{"before":true,"after":true}],
     "no-const-assign": 2,
     "no-var": 2
-  }
+  },
+
+  "overrides": [
+	{
+	  "files": ["**/clientComponents/**/*.js"],
+	  "extends": "../client/.eslintrc"
+	}
+  ]
 }
