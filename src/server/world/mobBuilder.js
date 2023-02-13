@@ -105,6 +105,10 @@ const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
 	const dmgMult = 4.5 * typeDefinition.dmgMult * dmgMults[blueprint.level - 1];
 
 	const spells = extend([], blueprint.spells);
+	spells.forEach(s => {
+		if (!s.animation && mob.sheetName === 'mobs' && animations.mobs[mob.cell])
+			s.animation = 'basic';
+	});
 
 	mob.addComponent('spellbook', { spells });
 
@@ -123,9 +127,6 @@ const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
 		s.dmgMult = s.name ? dmgMult / 3 : dmgMult;
 		s.statType = preferStat;
 		s.manaCost = 0;
-
-		if (!s.animation && mob.sheetName === 'mobs' && animations.mobs[mob.cell]) 
-			s.animation = 'basic';
 	});
 };
 
