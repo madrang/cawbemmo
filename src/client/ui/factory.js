@@ -90,8 +90,13 @@ define([
 			let path = null;
 			if (options && options.path)
 				path = options.path + `\\${type}.js`;
-			else
-				path = this.root + 'ui/templates/' + type + '/' + type;
+			else {
+				const entryInClientConfig = globals.clientConfig.uiList.find(u => u.type === type);
+				if (entryInClientConfig)
+					path = entryInClientConfig.path;
+				else
+					path = this.root + 'ui/templates/' + type + '/' + type;
+			}
 		
 			require([path], this.onGetTemplate.bind(this, options, type));
 		},
