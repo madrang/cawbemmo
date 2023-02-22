@@ -741,13 +741,12 @@ define([
 		},
 
 		addFilter: function (sprite) {
-			let thickness = (sprite.width > scale) ? 8 : 16;
+			const filter = new shaderOutline();
 
-			let filter = new shaderOutline(this.renderer.width, this.renderer.height, thickness, '0xffffff');
 			if (!sprite.filters)
 				sprite.filters = [filter];
 			else
-				sprite.filters.push();
+				sprite.filters.push(filter);
 
 			return filter;
 		},
@@ -758,19 +757,24 @@ define([
 		},
 
 		buildText: function (obj) {
-			let textSprite = new PIXI.Text(obj.text, {
+			const { text, visible, x, y, parent: spriteParent, layerName } = obj;
+			const { fontSize = 14, color = 0xF2F5F5 } = obj;
+
+			const textSprite = new PIXI.Text(text, {
 				fontFamily: 'bitty',
-				fontSize: (obj.fontSize || 14),
-				fill: obj.color || 0xF2F5F5,
+				fontSize: fontSize,
+				fill: color,
 				stroke: 0x2d2136,
-				strokeThickness: 4,
-				align: 'center'
+				strokeThickness: 4
 			});
 
-			textSprite.x = obj.x - (textSprite.width / 2);
-			textSprite.y = obj.y;
+			if (visible === false)
+				textSprite.visible = false;
 
-			let parentSprite = obj.parent || this.layers[obj.layerName];
+			textSprite.x = x - (textSprite.width / 2);
+			textSprite.y = y;
+
+			const parentSprite = spriteParent ?? this.layers[layerName];
 			parentSprite.addChild(textSprite);
 
 			return textSprite;
