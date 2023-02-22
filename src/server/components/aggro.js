@@ -178,7 +178,7 @@ module.exports = {
 		this.ignoreList.spliceWhere(o => o === obj);
 	},
 
-	tryEngage: function (source, amount, threatMult) {
+	tryEngage: function (source, amount, threatMult = 1) {
 		let obj = this.obj;
 
 		//Don't aggro yourself, stupid
@@ -204,7 +204,7 @@ module.exports = {
 		let list = this.list;
 
 		amount = (amount || 0);	
-		let threat = (amount / obj.stats.values.hpMax) * (threatMult || 1);
+		let threat = (amount / obj.stats.values.hpMax) * threatMult;
 
 		let exists = list.find(l => l.obj.id === oId);
 		if (!exists) {
@@ -237,7 +237,7 @@ module.exports = {
 		return null;
 	},
 
-	die: function () {
+	reset: function () {
 		let list = this.list;
 		let lLen = list.length;
 
@@ -257,6 +257,10 @@ module.exports = {
 		}
 
 		this.list = [];
+	},
+
+	die: function () {
+		this.reset();
 	},
 
 	unAggro: function (obj, amount) {
