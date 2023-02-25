@@ -195,11 +195,7 @@ const killThread = thread => {
 const spawnMapThreads = async () => {
 	const promises = mapList
 		.filter(m => !m.disabled && !m.instanced)
-		.map(m => {
-			return new Promise(async res => {
-				await spawnThread(m);
-			});
-		});
+		.map(m => spawnThread(m));
 
 	await Promise.all(promises);
 };
