@@ -117,7 +117,7 @@ module.exports = {
 			});
 
 		items
-			.filter(f => ((f.effects) && (f.effects[0].factionId === 'akarei') && (!f.effects[0].properties)))
+			.filter(f => f.effects?.[0]?.factionId === 'akarei' && !f.effects[0].properties)
 			.forEach(function (i) {
 				let effect = i.effects[0];
 				let chance = parseFloat(effect.text.split(' ')[0].replace('%', ''));
