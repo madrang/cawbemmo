@@ -407,9 +407,12 @@ module.exports = {
 								e.text = effectModule.events.onGetText(item, e);
 						} catch (error) {
 							_.log(`Effect not found: ${e.type}`);
+							_.log(error);
 						}
 					}
 				});
+
+				item.effects.spliceWhere(e => !e.events);
 			}
 
 			if (!item.has('pos') && !item.eq) {
