@@ -3,8 +3,14 @@ let cpnSpikePatch = {
 
 	contents: [],
 
-	applyDamage: function (o, amount) {
-		o.stats.takeDamage(amount, 1, this.caster);
+	applyDamage: function (target, damage) {
+		target.stats.takeDamage({
+			damage,
+			threatMult: 1,
+			source: this.caster,
+			target: target,
+			spellName: 'smokeBomb'
+		});
 	},
 
 	collisionEnter: function (o) {

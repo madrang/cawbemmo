@@ -99,7 +99,13 @@ module.exports = {
 					m.clearQueue();
 
 					let damage = this.getDamage(m);
-					m.stats.takeDamage(damage, 1, obj);
+					m.stats.takeDamage({
+						damage,
+						threatMult: 1,
+						source: this.obj,
+						target: m,
+						spellName: 'fireblast'
+					});
 
 					if (m.destroyed)
 						continue;

@@ -1,10 +1,13 @@
+//Imports
+const animations = require('../config/animations');
+const spirits = require('../config/spirits');
+const scheduler = require('../misc/scheduler');
+
 //Methods
 const die = require('./stats/die');
+const takeDamage = require('./stats/takeDamage');
 
-let animations = require('../config/animations');
-let spirits = require('../config/spirits');
-let scheduler = require('../misc/scheduler');
-
+//Internals
 let baseStats = {
 	mana: 20,
 	manaMax: 20,
@@ -82,6 +85,7 @@ let baseStats = {
 	fishItems: 0
 };
 
+//Exports
 module.exports = {
 	type: 'stats',
 
@@ -518,82 +522,8 @@ module.exports = {
 			this.addStat(s, gainStats[s] * count);
 	},
 
-	takeDamage: function (damage, threatMult, source) {
-		if (this.values.hp <= 0)
-			return;
-
-		let obj = this.obj;
-
-		if (!damage.noEvents) {
-			source.fireEvent('beforeDealDamage', damage, obj);
-			obj.fireEvent('beforeTakeDamage', damage, source);
-		}
-
-		if (damage.failed || obj.destroyed)
-			return;
-
-		let amount = Math.min(this.values.hp, damage.amount);
-
-		damage.dealt = amount;
-
-		let msg = {
-			id: obj.id,
-			source: source.id,
-			crit: damage.crit,
-			amount: amount,
-			element: damage.element
-		};
-
-		this.values.hp -= amount;
-		let recipients = [];
-		if (obj.serverId)
-			recipients.push(obj.serverId);
-		if (source.serverId)
-			recipients.push(source.serverId);
-
-		if (source.follower && source.follower.master.serverId) {
-			recipients.push(source.follower.master.serverId);
-			msg.masterSource = source.follower.master.id;
-		}
-		
-		if (obj.follower && obj.follower.master.serverId) {
-			recipients.push(obj.follower.master.serverId);
-			msg.masterId = obj.follower.master.id;
-		}
-
-		if (recipients.length) {
-			if (!damage.blocked && !damage.dodged)
-				this.syncer.queue('onGetDamage', msg, recipients);
-			else {
-				this.syncer.queue('onGetDamage', {
-					id: obj.id,
-					source: source.id,
-					event: true,
-					text: damage.blocked ? 'blocked' : 'dodged'
-				}, recipients);
-			}
-		}
-
-		obj.aggro.tryEngage(source, amount, threatMult);
-
-		let died = (this.values.hp <= 0);
-
-		if (died) {
-			let death = {
-				success: true
-			};
-			obj.instance.eventEmitter.emit('onBeforeActorDies', death, obj, source);
-			obj.fireEvent('beforeDeath', death);
-
-			if (death.success) 
-				this.preDeath(source);
-		} else {
-			source.aggro.tryEngage(obj, 0);
-			obj.syncer.setObject(false, 'stats', 'values', 'hp', this.values.hp);
-		}
-
-		if (!damage.noEvents)
-			source.fireEvent('afterDealDamage', damage, obj);
+	takeDamage: function (eventDamage) {
+		takeDamage(this, eventDamage);
 	},
 
 	/*
@@ -791,8 +721,8 @@ module.exports = {
 			}
 		},
 
-		afterDealDamage: function (damageEvent, target) {
-			if (damageEvent.element)
+		afterDealDamage: function ({ damage, target }) {
+			if (damage.element)
 				return;
 
 			const { obj, values: { lifeOnHit } } = this;

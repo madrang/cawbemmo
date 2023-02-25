@@ -71,7 +71,7 @@ module.exports = {
 			targetPos.y = obj.y;
 		},
 
-		beforeDealDamage: function (damage) {
+		beforeDealDamage: function ({ damage }) {
 			if (damage)
 				damage.failed = true;
 		},

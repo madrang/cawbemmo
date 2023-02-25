@@ -10,8 +10,8 @@ module.exports = {
 	},
 
 	events: {
-		beforeTakeDamage: function (dmg, source) {
-			dmg.amount *= 4;
+		beforeTakeDamage: function ({ damage }) {
+			damage.amount *= 4;
 		}
 	}
 };

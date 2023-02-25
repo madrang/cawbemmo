@@ -465,8 +465,10 @@ module.exports = {
 
 	die: function () {
 		this.obj.stats.takeDamage({
-			amount: 20000000
-		}, 1, this.obj);
+			damage: { amount: 20000000 },
+			source: this.obj,
+			target: this.obj
+		});
 	},
 
 	setPassword: async function (config) {

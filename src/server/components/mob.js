@@ -365,9 +365,9 @@ module.exports = {
 	},
 
 	events: {
-		beforeTakeDamage: function (msg) {
+		beforeTakeDamage: function ({ damage }) {
 			if (this.goHome)
-				msg.failed = true;
+				damage.failed = true;
 		}
 	}
 };

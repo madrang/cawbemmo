@@ -35,8 +35,13 @@ module.exports = {
 			return;
 
 		let amount = (obj.stats.values.hpMax / 100) * this.drainPercentage;
-		const damage = { amount };
-		obj.stats.takeDamage(damage, 0, obj);
+		obj.stats.takeDamage({
+			damage: { amount },
+			threatMult: 0,
+			source: obj,
+			target: obj,
+			spellName: 'bloodBarrier'
+		});
 
 		amount = amount * this.shieldMultiplier;
 		const heal = { amount };

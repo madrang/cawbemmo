@@ -8,7 +8,7 @@ module.exports = {
 			return `${chance}% chance to cast a ${damage} damage ${spell} on hit`;
 		},
 
-		afterDealDamage: function (item, damage, target) {
+		afterDealDamage: function (item, { damage, target }) {
 			//Should only proc for attacks...this is kind of a hack
 			const { element } = damage;
 			if (element)

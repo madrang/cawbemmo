@@ -21,7 +21,7 @@ module.exports = {
 			return text;
 		},
 
-		afterDealDamage: function (item, damage, target) {
+		afterDealDamage: function (item, { damage, target }) {
 			if (!damage.crit)
 				return;
 

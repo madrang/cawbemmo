@@ -44,7 +44,13 @@ module.exports = {
 			return;
 		
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: obj,
+			target,
+			spellName: 'harvestLife'
+		});
 
 		let healAmount = damage.amount * (this.healPercent / 100);
 		obj.stats.getHp({

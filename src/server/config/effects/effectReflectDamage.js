@@ -2,9 +2,16 @@ module.exports = {
 	type: 'reflectDamage',
 
 	events: {
-		beforeTakeDamage: function (damage, source) {
+		beforeTakeDamage: function ({ damage, source }) {
 			damage.amount *= 0.5;
-			source.stats.takeDamage(damage, this.threatMult, this.obj);
+
+			source.stats.takeDamage({
+				damage,
+				threatMult: 1,
+				source: this.obj,
+				target: source,
+				effectName: 'reflectDamage'
+			});
 
 			damage.failed = true;
 

@@ -114,7 +114,13 @@ module.exports = {
 			targetEffect.ttl = this.stunDuration;
 
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'charge'
+		});
 
 		const moveEvent = {
 			newPos: targetPos,
