@@ -54,7 +54,11 @@ module.exports = {
 
 		let healAmount = damage.amount * (this.healPercent / 100);
 		obj.stats.getHp({
-			amount: healAmount
-		}, obj);
+			event: {
+				amount: healAmount
+			},
+			source: obj,
+			target: obj
+		});
 	}
 };

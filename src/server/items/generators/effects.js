@@ -16,7 +16,7 @@ const rollValues = (rollsDefinition, result) => {
 		const isInt = (p.indexOf('i_') === 0);
 		const fieldName = p.replace('i_', '');
 
-		if (!entry.push) {
+		if (!Array.isArray(entry) || p.indexOf('s_') === 0) {
 			result[fieldName] = range;
 
 			continue;

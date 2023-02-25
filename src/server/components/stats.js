@@ -536,7 +536,9 @@ module.exports = {
 			target: Target object (heal.target)
 			spell: Optional spell object that caused this event
 	*/
-	getHp: function (heal, source, event) {
+	getHp: function (event) {
+		const { heal, source } = event;
+
 		let amount = heal.amount;
 		if (amount === 0)
 			return;
@@ -548,48 +550,45 @@ module.exports = {
 		let values = this.values;
 		let hpMax = values.hpMax;
 
-		if (values.hp >= hpMax)
-			return;
+		if (values.hp < hpMax) {
+			if (hpMax - values.hp < amount)
+				amount = hpMax - values.hp;
 
-		if (hpMax - values.hp < amount)
-			amount = hpMax - values.hp;
+			values.hp += amount;
+			if (values.hp > hpMax)
+				values.hp = hpMax;
 
-		values.hp += amount;
-		if (values.hp > hpMax)
-			values.hp = hpMax;
-
-		let recipients = [];
-		if (this.obj.serverId)
-			recipients.push(this.obj.serverId);
-		if (source.serverId)
-			recipients.push(source.serverId);
-		if (recipients.length > 0) {
-			this.syncer.queue('onGetDamage', {
-				id: this.obj.id,
-				source: source.id,
-				heal: true,
-				amount: amount,
-				crit: heal.crit,
-				element: heal.element
-			}, recipients);
-		}
-
-		//Add aggro to all our attackers
-		let threat = amount * 0.4 * threatMult;
-		if (threat !== 0) {
-			let aggroList = this.obj.aggro.list;
-			let aLen = aggroList.length;
-			for (let i = 0; i < aLen; i++) {
-				let a = aggroList[i].obj;
-				a.aggro.tryEngage(source, threat);
+			let recipients = [];
+			if (this.obj.serverId)
+				recipients.push(this.obj.serverId);
+			if (source.serverId)
+				recipients.push(source.serverId);
+			if (recipients.length > 0) {
+				this.syncer.queue('onGetDamage', {
+					id: this.obj.id,
+					source: source.id,
+					heal: true,
+					amount: amount,
+					crit: heal.crit,
+					element: heal.element
+				}, recipients);
 			}
+
+			//Add aggro to all our attackers
+			let threat = amount * 0.4 * threatMult;
+			if (threat !== 0) {
+				let aggroList = this.obj.aggro.list;
+				let aLen = aggroList.length;
+				for (let i = 0; i < aLen; i++) {
+					let a = aggroList[i].obj;
+					a.aggro.tryEngage(source, threat);
+				}
+			}
+
+			this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
 		}
 
-		this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
-
-		//We want to eventually replace the first two args with the event object
-		// For now, only fire the event when the event object is specified.
-		if (!heal.noEvents && event)
+		if (!heal.noEvents)
 			source.fireEvent('afterGiveHp', event);
 	},
 
@@ -730,7 +729,11 @@ module.exports = {
 			if (target === obj || !lifeOnHit)
 				return;
 
-			this.getHp({ amount: lifeOnHit }, obj);
+			this.getHp({
+				event: { amount: lifeOnHit },
+				source: obj,
+				target: obj
+			});
 		}
 	}
 };

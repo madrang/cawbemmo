@@ -18,9 +18,13 @@ module.exports = {
 					amount = (cpnStats.values.hpMax / 100) * ~~amount.replace('%', '');
 
 				cpnStats.getHp({
-					amount: amount,
-					threatMult: 0
-				}, item);
+					event: {
+						amount: amount,
+						threatMult: 0
+					}, 
+					source: cpnStats.obj,
+					target: cpnStats.obj
+				});
 			} else
 				cpnStats.addStat(stat, amount);
 		},

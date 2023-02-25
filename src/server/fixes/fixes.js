@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 module.exports = {
 	fixDb: async function () {
 		await io.deleteAsync({
@@ -114,6 +116,34 @@ module.exports = {
 					};
 				} else if (!effect.properties.element)
 					effect.properties.element = 'poison';
+			});
+
+		items
+			.filter(i => i.name === 'Gourdhowl')
+			.forEach(i => {
+				const effect = i.effects[0];
+
+				if (!effect.rolls.castSpell) {
+					effect.rolls = {
+						castSpell: {
+							type: 'whirlwind',
+							damage: effect.rolls.damage,
+							range: 1,
+							statType: 'str',
+							statMult: 1,
+							isAttack: true
+						},
+						castTarget: 'none',
+						chance: effect.rolls.chance,
+						textTemplate: 'Grants you a ((chance))% chance to cast a ((castSpell.damage)) damage whirlwind on hit',
+						combatEvent: {
+							name: 'afterDealDamage',
+							afterDealDamage: {
+								spellName: 'melee'
+							}
+						}
+					};
+				}
 			});
 
 		items

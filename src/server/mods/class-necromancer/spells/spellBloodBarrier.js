@@ -45,7 +45,11 @@ module.exports = {
 
 		amount = amount * this.shieldMultiplier;
 		const heal = { amount };
-		target.stats.getHp(heal, obj);
+		target.stats.getHp({
+			event: heal, 
+			source: obj,
+			target
+		});
 
 		//Only reset the first spell's cooldown if it's an auto attack and not a spell
 		const firstSpell = target.spellbook.spells[0];

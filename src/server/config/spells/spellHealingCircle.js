@@ -9,7 +9,11 @@ let cpnHealPatch = {
 	},
 
 	applyHeal: function (o, amount) {
-		o.stats.getHp(amount, this.caster);
+		o.stats.getHp({
+			event: amount,
+			source: this.caster,
+			target: o
+		});
 	},
 
 	collisionEnter: function (o) {

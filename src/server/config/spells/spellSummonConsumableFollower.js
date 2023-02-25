@@ -96,9 +96,13 @@ module.exports = {
 				mLen--;
 			} else if ((Math.abs(x - m.x) <= 1) && (Math.abs(y - m.y) <= 1)) {
 				m.destroyed = true;
-				this.obj.stats.getHp({
-					amount: obj.stats.values.hpMax / 10
-				}, obj);
+				obj.stats.getHp({
+					event: {
+						amount: obj.stats.values.hpMax / 10
+					},
+					source: obj,
+					target: obj
+				});
 
 				obj.instance.syncer.queue('onGetObject', {
 					x: m.x,

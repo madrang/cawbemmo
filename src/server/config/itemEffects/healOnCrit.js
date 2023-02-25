@@ -34,8 +34,12 @@ module.exports = {
 			let amount = rolls.amount || ((damage.dealt / 100) * rolls.percentage);
 
 			this.stats.getHp({
-				amount: amount
-			}, this);
+				event: {
+					amount: amount
+				},
+				source: this,
+				target: this
+			});
 		}
 	}
 };

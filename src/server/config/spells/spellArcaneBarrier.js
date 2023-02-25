@@ -39,7 +39,11 @@ let cpnArcanePatch = {
 			let c = contents[i];
 
 			let amount = this.spell.getDamage(c, true);
-			c.stats.getHp(amount, this.caster);
+			c.stats.getHp({
+				event: amount,
+				source: this.caster,
+				target: c
+			});
 		}
 	}
 };

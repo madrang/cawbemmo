@@ -403,7 +403,44 @@ module.exports = {
 						try {
 							let effectModule = require('../' + effectUrl);
 							e.events = effectModule.events;
-							if (effectModule.events.onGetText)
+
+							const { rolls } = e;
+
+							if (rolls.textTemplate) {
+								let text = rolls.textTemplate;
+
+								while (text.includes('((')) {
+									Object.entries(rolls).forEach(([k, v]) => {
+										text = text.replaceAll(`((${k}))`, v);
+									});
+
+									if (rolls.applyEffect) {
+										Object.entries(rolls.applyEffect).forEach(([k, v]) => {
+											text = text.replaceAll(`((applyEffect.${k}))`, v);
+										});
+									}
+
+									if (rolls.castSpell) {
+										Object.entries(rolls.castSpell).forEach(([k, v]) => {
+											text = text.replaceAll(`((castSpell.${k}))`, v);
+										});
+									}
+
+									if (rolls.applyEffect?.scaleDamage) {
+										Object.entries(rolls.applyEffect.scaleDamage).forEach(([k, v]) => {
+											text = text.replaceAll(`((applyEffect.scaleDamage.${k}))`, v);
+										});
+									}
+
+									if (rolls.castSpell?.scaleDamage) {
+										Object.entries(rolls.castSpell.scaleDamage).forEach(([k, v]) => {
+											text = text.replaceAll(`((castSpell.scaleDamage.${k}))`, v);
+										});
+									}
+								}
+
+								e.text = text;
+							} else if (effectModule.events.onGetText)
 								e.text = effectModule.events.onGetText(item, e);
 						} catch (error) {
 							_.log(`Effect not found: ${e.type}`);

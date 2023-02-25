@@ -6,7 +6,11 @@ module.exports = {
 	events: {
 		afterDealDamage: function ({ damage, target }) {
 			damage.dealt *= 0.5;
-			this.obj.stats.getHp(damage, this.obj);
+			this.obj.stats.getHp({
+				event: damage,
+				source: this.obj,
+				target: this.obj
+			});
 		}
 	}
 };
