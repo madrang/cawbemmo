@@ -216,12 +216,13 @@ define([
 
 			const result = (
 				lineBuilders.div('space', ' ') +
-				lineBuilders.div('line', ' ') +
-				lineBuilders.div('smallSpace', ' ') +
+				(!!item.spell?.values ? lineBuilders.div('line', ' ') + lineBuilders.div('space', ' ') : '') +
 				html +
-				lineBuilders.div('smallSpace', ' ') +
+				lineBuilders.div('space', ' ') +
 				lineBuilders.div('line', ' ')
 			);
+
+			console.log(result);
 
 			return result;
 		},
