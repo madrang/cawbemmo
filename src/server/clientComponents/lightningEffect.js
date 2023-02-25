@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 define([
 	'js/rendering/lightningBuilder',
 	'js/rendering/effects'
