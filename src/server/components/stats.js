@@ -730,7 +730,7 @@ module.exports = {
 				return;
 
 			this.getHp({
-				event: { amount: lifeOnHit },
+				heal: { amount: lifeOnHit },
 				source: obj,
 				target: obj
 			});

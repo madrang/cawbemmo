@@ -8,11 +8,11 @@ let cpnHealPatch = {
 			this[p] = blueprint[p];
 	},
 
-	applyHeal: function (o, amount) {
-		o.stats.getHp({
-			event: amount,
+	applyHeal: function (target, heal) {
+		target.stats.getHp({
+			heal,
 			source: this.caster,
-			target: o
+			target
 		});
 	},
 

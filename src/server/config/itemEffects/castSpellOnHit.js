@@ -10,7 +10,7 @@ const doesEventMatch = (firedEvent, eventCondition) => {
 	if (
 		!firedEvent ||
 		(
-			!eventCondition.targetNotSelf &&
+			eventCondition.targetNotSelf === false &&
 			firedEvent.target === firedEvent.source
 		)
 	)
@@ -90,6 +90,10 @@ module.exports = {
 
 		afterDealDamage: function (item, event) {
 			handler(this, item, event, 'afterDealDamage');
+		},
+
+		afterPositionChange: function (item, event) {
+			handler(this, item, event, 'afterPositionChange');
 		}
 	}
 };

@@ -18,8 +18,8 @@ module.exports = {
 					amount = (cpnStats.values.hpMax / 100) * ~~amount.replace('%', '');
 
 				cpnStats.getHp({
-					event: {
-						amount: amount,
+					heal: {
+						amount,
 						threatMult: 0
 					}, 
 					source: cpnStats.obj,

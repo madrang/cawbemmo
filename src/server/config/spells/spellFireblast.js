@@ -183,7 +183,10 @@ module.exports = {
 				x: xFinal,
 				y: yFinal
 			},
-			source: this
+			source: this.obj,
+			target,
+			spellName: 'fireblast',
+			spell: this
 		};
 		target.fireEvent('afterPositionChange', moveEvent);
 	}

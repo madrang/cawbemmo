@@ -46,7 +46,7 @@ module.exports = {
 		amount = amount * this.shieldMultiplier;
 		const heal = { amount };
 		target.stats.getHp({
-			event: heal, 
+			heal, 
 			source: obj,
 			target
 		});

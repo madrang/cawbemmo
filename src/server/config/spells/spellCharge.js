@@ -124,7 +124,10 @@ module.exports = {
 
 		const moveEvent = {
 			newPos: targetPos,
-			source: this
+			source: this,
+			target: this,
+			spellName: 'charge',
+			spell: this
 		};
 		this.obj.fireEvent('afterPositionChange', moveEvent);
 

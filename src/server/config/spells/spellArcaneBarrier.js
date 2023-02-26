@@ -38,9 +38,9 @@ let cpnArcanePatch = {
 		for (let i = 0; i < cLen; i++) {
 			let c = contents[i];
 
-			let amount = this.spell.getDamage(c, true);
+			let heal = this.spell.getDamage(c, true);
 			c.stats.getHp({
-				event: amount,
+				heal,
 				source: this.caster,
 				target: c
 			});

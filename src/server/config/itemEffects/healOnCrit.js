@@ -34,8 +34,8 @@ module.exports = {
 			let amount = rolls.amount || ((damage.dealt / 100) * rolls.percentage);
 
 			this.stats.getHp({
-				event: {
-					amount: amount
+				heal: {
+					amount
 				},
 				source: this,
 				target: this
