@@ -147,6 +147,36 @@ module.exports = {
 			});
 
 		items
+			.filter(i => i.name === 'Putrid Shank')
+			.forEach(i => {
+				const effect = i.effects[0];
+
+				if (!effect.rolls.castSpell) {
+					effect.rolls = {
+						chance: effect.rolls.chance,
+						textTemplate: 'Grants you a ((chance))% chance to cast a ((castSpell.damage)) damage smokebomb on hit',
+						combatEvent: {
+							name: 'afterDealDamage',
+							afterDealDamage: {
+								spellName: 'melee'
+							}
+						},
+						castTarget: 'none',					
+						castSpell: {
+							type: 'smokebomb',
+							damage: 1,
+							range: 1,
+							element: 'poison',
+							statType: 'dex',
+							statMult: 1,
+							duration: 5,
+							isAttack: true
+						}
+					};
+				}
+			});
+
+		items
 			.filter(f => f.effects?.[0]?.factionId === 'akarei' && !f.effects[0].properties)
 			.forEach(function (i) {
 				let effect = i.effects[0];
