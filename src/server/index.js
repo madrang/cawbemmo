@@ -10,6 +10,7 @@ const classes = require('./config/spirits');
 const spellsConfig = require('./config/spellsConfig');
 const spells = require('./config/spells');
 const itemTypes = require('./items/config/types');
+const salvager = require('./items/salvager');
 const recipes = require('./config/recipes/recipes');
 const mapManager = require('./world/mapManager');
 const fixes = require('./fixes/fixes');
@@ -41,6 +42,7 @@ let startup = {
 		spells.init();
 		recipes.init();
 		itemTypes.init();
+		salvager.init();
 		profanities.init();
 		mapManager.init();
 		components.init(this.onComponentsReady.bind(this));

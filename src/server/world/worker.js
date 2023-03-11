@@ -19,6 +19,7 @@ const spellsConfig = require('../config/spellsConfig');
 const spells = require('../config/spells');
 const recipes = require('../config/recipes/recipes');
 const itemTypes = require('../items/config/types');
+const salvager = require('../items/salvager');
 const mapManager = require('../world/mapManager');
 const itemEffects = require('../items/itemEffects');
 const profanities = require('../misc/profanities');
@@ -35,6 +36,7 @@ const onCpnsReady = async function () {
 	spellsConfig.init();
 	spells.init();
 	itemTypes.init();
+	salvager.init();
 	mapManager.init();
 	recipes.init();
 	itemEffects.init();
