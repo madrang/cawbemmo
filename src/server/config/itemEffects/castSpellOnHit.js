@@ -57,8 +57,8 @@ const handler = (obj, item, event, firedEventName) => {
 	delete spellConfig.scaleDamage;
 
 	if (scaleDamage) {
-		if (scaleDamage.s_useOriginal) {
-			scaleDamage.s_useOriginal.forEach(s => {
+		if (scaleDamage.useOriginal) {
+			scaleDamage.useOriginal.forEach(s => {
 				spellConfig[s] = event.spell[s];
 			});
 		}
@@ -83,8 +83,15 @@ const handler = (obj, item, event, firedEventName) => {
 		target = obj;
 	else if (castTarget === 'none')
 		target = undefined;
+	//Need to write a generic way to apply these
 	else if (castTarget === '{{event.oldPos}}')
 		target = extend({}, event.oldPos);
+	else if (JSON.stringify(castTarget) === '{"x":"{{event.follower.x}}","y":"{{event.follower.y}}"}') {
+		target = {
+			x: event.follower.x,
+			y: event.follower.y
+		};
+	}
 
 	builtSpell.cast({ target });
 };

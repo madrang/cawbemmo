@@ -48,8 +48,14 @@ module.exports = {
 	damage: 1,
 
 	cast: function (action) {
-		let obj = this.obj;
+		const { obj, targetPlayerPos } = this;
+
 		let { x, y, instance: { physics, syncer } } = obj;
+
+		if (!targetPlayerPos) {
+			x = action.target.x;
+			y = action.target.y;
+		}
 
 		let radius = this.radius;
 

@@ -2,7 +2,7 @@ const rollValues = (rollsDefinition, result) => {
 	for (let p in rollsDefinition) {
 		const entry = rollsDefinition[p];
 
-		if (typeof(entry) === 'object' && !Array.isArray(entry) && entry !== null) {
+		if (typeof(entry) === 'object' && entry !== null && !Array.isArray(entry) ) {
 			const newResult = {};
 
 			result[p] = newResult;
@@ -16,8 +16,13 @@ const rollValues = (rollsDefinition, result) => {
 		const isInt = (p.indexOf('i_') === 0);
 		const fieldName = p.replace('i_', '');
 
+		//Keys that start with s_ indicate that they shouldn't be rolled
+		// We use this to allow arrays inside rolls to be hardcoded
 		if (!Array.isArray(entry) || p.indexOf('s_') === 0) {
-			result[fieldName] = range;
+			if (p.indexOf('s_') === 0)
+				result[p.substr(2)] = range;
+			else
+				result[fieldName] = range;
 
 			continue;
 		}
