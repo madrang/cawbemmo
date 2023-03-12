@@ -222,8 +222,6 @@ define([
 				lineBuilders.div('line', ' ')
 			);
 
-			console.log(result);
-
 			return result;
 		},
 
