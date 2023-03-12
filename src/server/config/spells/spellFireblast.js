@@ -179,6 +179,10 @@ module.exports = {
 		syncer.o.y = yFinal;
 
 		const moveEvent = {
+			oldPos: {
+				x: xOld,
+				y: yOld
+			},
 			newPos: {
 				x: xFinal,
 				y: yFinal

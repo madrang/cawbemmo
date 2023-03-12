@@ -95,6 +95,18 @@ module.exports = {
 
 		let obj = this.obj;
 
+		const moveEvent = {
+			oldPos: {
+				x: obj.x,
+				y: obj.y
+			},
+			newPos: targetPos,
+			source: this,
+			target: this,
+			spellName: 'charge',
+			spell: this
+		};
+
 		obj.instance.physics.removeObject(obj, obj.x, obj.y);
 
 		obj.x = targetPos.x;
@@ -122,13 +134,6 @@ module.exports = {
 			spellName: 'charge'
 		});
 
-		const moveEvent = {
-			newPos: targetPos,
-			source: this,
-			target: this,
-			spellName: 'charge',
-			spell: this
-		};
 		this.obj.fireEvent('afterPositionChange', moveEvent);
 
 		if (this.castOnEnd)
