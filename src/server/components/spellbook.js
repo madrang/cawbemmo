@@ -1,13 +1,14 @@
-let spellTemplate = require('../config/spells/spellTemplate');
-let animations = require('../config/animations');
-let playerSpells = require('../config/spells');
-let playerSpellsConfig = require('../config/spellsConfig');
+//Imports
+const spellTemplate = require('../config/spells/spellTemplate');
+const animations = require('../config/animations');
+const playerSpells = require('../config/spells');
+const playerSpellsConfig = require('../config/spellsConfig');
 
 //Helpers
 const rotationManager = require('./spellbook/rotationManager');
+const cast = require('./spellbook/cast');
 
 //Component
-
 module.exports = {
 	type: 'spellbook',
 
@@ -338,119 +339,7 @@ module.exports = {
 	},
 
 	cast: function (action, isAuto) {
-		if (!action.has('spell')) {
-			const isCasting = this.isCasting();
-			this.stopCasting();
-
-			const consumeTick = isCasting;
-
-			return consumeTick;
-		}
-
-		let spell = this.spells.find(s => (s.id === action.spell));
-		if (!spell)
-			return false;
-
-		action.target = this.getTarget(spell, action);
-
-		//If a target has become nonSelectable, we need to stop attacks that are queued/auto
-		if (!action.target || action.target.nonSelectable)
-			return false;
-
-		action.auto = spell.auto;
-
-		let success = true;
-		if (spell.cd > 0) {
-			if (!isAuto) {
-				let type = (spell.auto) ? 'Weapon' : 'Spell';
-				this.sendAnnouncement(`${type} is on cooldown`);
-			}
-			success = false;
-		} else if (spell.manaCost > this.obj.stats.values.mana) {
-			if (!isAuto)
-				this.sendAnnouncement('Insufficient mana to cast spell');
-			success = false;
-		} else if (spell.has('range')) {
-			let distance = Math.max(Math.abs(action.target.x - this.obj.x), Math.abs(action.target.y - this.obj.y));
-			let range = spell.range;
-			if ((spell.useWeaponRange) && (this.obj.player)) {
-				let weapon = this.obj.inventory.findItem(this.obj.equipment.eq.oneHanded) || this.obj.inventory.findItem(this.obj.equipment.eq.twoHanded);
-				if (weapon)
-					range = weapon.range || 1;
-			}
-
-			if (distance > range) {
-				if (!isAuto)
-					this.sendAnnouncement('Target out of range');
-				success = false;
-			}
-		}
-
-		//LoS check
-		//Null means we don't have LoS and as such, we should move
-		if (spell.needLos && success) {
-			if (!this.physics.hasLos(~~this.obj.x, ~~this.obj.y, ~~action.target.x, ~~action.target.y)) {
-				if (!isAuto)
-					this.sendAnnouncement('Target not in line of sight');
-				action.auto = false;
-				success = null;
-			}
-		}
-
-		if (!success) {
-			this.queueAuto(action, spell);
-			return success;
-		} else if (!this.queueAuto(action, spell))
-			return false;
-
-		let castSuccess = {
-			success: true
-		};
-		this.obj.fireEvent('beforeCastSpell', castSuccess);
-		if (!castSuccess.success)
-			return false;
-
-		if (spell.manaReserve) {
-			let reserve = spell.manaReserve;
-
-			if (reserve.percentage) {
-				let reserveEvent = {
-					spell: spell.name,
-					reservePercent: reserve.percentage
-				};
-				this.obj.fireEvent('onBeforeReserveMana', reserveEvent);
-
-				if (!spell.active) {
-					if (1 - this.obj.stats.values.manaReservePercent < reserve.percentage) {
-						this.sendAnnouncement('Insufficient mana to cast spell');
-						return;
-					} this.obj.stats.addStat('manaReservePercent', reserveEvent.reservePercent);
-				} else
-					this.obj.stats.addStat('manaReservePercent', -reserveEvent.reservePercent);
-			}
-		}
-
-		if (spell.targetFurthest)
-			spell.target = this.obj.aggro.getFurthest();
-		else if (spell.targetRandom)
-			spell.target = this.obj.aggro.getRandom();
-
-		success = spell.castBase(action);
-		this.stopCasting(spell, true);
-
-		if (success) {
-			spell.consumeMana();
-			spell.setCd();
-		}
-
-		this.obj.fireEvent('afterCastSpell', {
-			castSuccess: success,
-			spell,
-			action
-		});
-
-		//Null means we didn't fail but are initiating casting
-		return (success === null || success === true);
+		return cast(this, action, isAuto);
 	},
 
 	getClosestRange: function (spellNum) {
