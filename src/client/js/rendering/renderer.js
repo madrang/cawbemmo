@@ -740,8 +740,8 @@ define([
 			return sprite;
 		},
 
-		addFilter: function (sprite) {
-			const filter = new shaderOutline();
+		addFilter: function (sprite, config) {
+			const filter = new shaderOutline(config);
 
 			if (!sprite.filters)
 				sprite.filters = [filter];
