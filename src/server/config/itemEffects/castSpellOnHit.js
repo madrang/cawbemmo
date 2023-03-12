@@ -67,16 +67,24 @@ const handler = (obj, item, event, firedEventName) => {
 			spellConfig.damage *= (scaleDamage.percentage / 100);
 	}
 
-	const spellName = 'spell' + spellConfig.type.replace(/./, spellConfig.type.toUpperCase()[0]);
-	const spellTemplate = require(`../spells/${spellName}`);
+	const typeTemplate = {
+		type: spellConfig.type[0].toUpperCase() + spellConfig.type.substr(1),
+		template: null
+	};
+	obj.instance.eventEmitter.emit('onBeforeGetSpellTemplate', typeTemplate);
 
-	const builtSpell = extend({ obj }, spellBaseTemplate, spellTemplate, spellConfig);
+	if (!typeTemplate.template)
+		typeTemplate.template = require('../spells/spell' + typeTemplate.type);
+
+	const builtSpell = extend({ obj }, spellBaseTemplate, typeTemplate.template, spellConfig);
 
 	let target = event.target;
 	if (castTarget === 'self')
 		target = obj;
 	else if (castTarget === 'none')
 		target = undefined;
+	else if (castTarget === '{{event.oldPos}}')
+		target = extend({}, event.oldPos);
 
 	builtSpell.cast({ target });
 };
@@ -94,6 +102,10 @@ module.exports = {
 
 		afterPositionChange: function (item, event) {
 			handler(this, item, event, 'afterPositionChange');
+		},
+
+		afterFollowerDeath: function (item, event) {
+			handler(this, item, event, 'afterFollowerDeath');
 		}
 	}
 };
