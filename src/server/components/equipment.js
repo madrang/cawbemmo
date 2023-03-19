@@ -285,6 +285,9 @@ module.exports = {
 				console.log({
 					error: 'item not found',
 					itemId,
+					slot,
+					factionId,
+					tier,
 					character: this.obj.name,
 					eq: this.eq
 				});
