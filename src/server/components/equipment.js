@@ -281,6 +281,17 @@ module.exports = {
 			let itemId = eq[slot];
 			let item = inventory.findItem(itemId);
 
+			if (!item) {
+				console.log({
+					error: 'item not found',
+					itemId,
+					character: this.obj.name,
+					eq: this.eq
+				});
+
+				return;
+			}
+
 			let factions = item.factions;
 			if (!factions)
 				return;
