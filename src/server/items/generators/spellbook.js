@@ -47,7 +47,7 @@ module.exports = {
 	generate: function (item, blueprint) {
 		blueprint = blueprint || {};
 		let spellQuality = blueprint ? blueprint.spellQuality : '';
-		let spellName = blueprint.spellName;
+		let spellName = blueprint.spellName?.replaceAll('_', ' ');
 
 		if (!spellName) {
 			let spellList = Object.keys(spellsConfig.spells).filter(s => !spellsConfig.spells[s].auto && !spellsConfig.spells[s].noDrop);

@@ -17,9 +17,11 @@ define([
 			let tx = config.toX * scale;
 			let ty = config.toY * scale;
 
+			const linkSize = config.linkSize ?? 3;
+
 			let angle = Math.atan2(ty - fy, tx - fx);
 			let distance = Math.sqrt(Math.pow(tx - fx, 2) + Math.pow(ty - fy, 2));
-			let divDistance = Math.min(20, distance);
+			let divDistance = config.divDistance ?? Math.min(20, distance);
 			let divisions = config.divisions || Math.max(1, distance / divDistance);
 
 			let x = fx;
@@ -75,8 +77,8 @@ define([
 						lightPatch.tint = '0xffffff';
 						lightPatch.x = ~~((xx - scaleMult) / scaleMult) * scaleMult;
 						lightPatch.y = ~~((yy - scaleMult) / scaleMult) * scaleMult;
-						lightPatch.width = scaleMult * 3;
-						lightPatch.height = scaleMult * 3;
+						lightPatch.width = scaleMult * linkSize;
+						lightPatch.height = scaleMult * linkSize;
 
 						lightPatch.blendMode = PIXI.BLEND_MODES.ADD;
 
