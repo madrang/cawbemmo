@@ -104,7 +104,7 @@ let spells = {
 		statType: 'str',
 		statMult: 1,
 		threatMult: 4,
-		cdMax: 1,
+		cdMax: 9,
 		castTimeMax: 1,
 		manaCost: 4,
 		useWeaponRange: true,
@@ -140,7 +140,7 @@ let spells = {
 		statType: 'str',
 		statMult: 1,
 		threatMult: 6,
-		cdMax: 1,
+		cdMax: 12,
 		castTimeMax: 2,
 		manaCost: 7,
 		random: {
