@@ -18,7 +18,15 @@ module.exports = {
 
 		events.emit('onBeforePlayerEnterWorld', obj);
 
-		const { zoneName, zoneId } = obj;
+		let { zoneName, zoneId } = obj;
+
+		const partyIds = obj.components.find(c => c.type === 'social')?.party;
+		if (partyIds) {
+			const partyLeader = cons.players.find(p => partyIds.includes(p.id) && p.components.find(c => c.type === 'social').isPartyLeader);
+
+			if (partyLeader?.zoneName === zoneName)
+				zoneId = partyLeader.zoneId;
+		}
 
 		const { thread, resetObjPosition } = await getThread({
 			zoneName,
