@@ -282,6 +282,8 @@ module.exports = {
 		if (!instance)
 			return;
 
+		const { syncer } = instance;
+
 		syncer.queue('onGetMessages', {
 			id,
 			messages: [{
