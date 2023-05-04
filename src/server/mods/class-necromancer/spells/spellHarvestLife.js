@@ -49,7 +49,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: obj,
 			target,
-			spellName: 'harvestLife'
+			spellName: 'harvestLife',
+			noEvents: this.noEvents
 		});
 
 		let healAmount = damage.amount * (this.healPercent / 100);

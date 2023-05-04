@@ -36,7 +36,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'chainLightning'
+			spellName: 'chainLightning',
+			noEvents: this.noEvents
 		});
 	}
 };

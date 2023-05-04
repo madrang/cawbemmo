@@ -10,7 +10,8 @@ let cpnSmokePatch = {
 			threatMult: 1,
 			source: this.caster,
 			target: target,
-			spellName: 'smokeBomb'
+			spellName: 'smokeBomb',
+			noEvents: this.noEvents
 		});
 	},
 
@@ -177,7 +178,8 @@ module.exports = {
 								caster: obj,
 								statType: this.statType,
 								getDamage: this.getDamage.bind(this),
-								ttl: this.duration
+								ttl: this.duration,
+								noEvents: this.noEvents
 							}
 						} 
 					}]);

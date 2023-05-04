@@ -48,7 +48,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'melee'
+			spellName: 'melee',
+			noEvents: this.noEvents
 		});
 	}
 };

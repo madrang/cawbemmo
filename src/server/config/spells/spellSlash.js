@@ -48,7 +48,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'slash'
+			spellName: 'slash',
+			noEvents: this.noEvents
 		});
 	}
 };

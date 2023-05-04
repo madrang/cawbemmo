@@ -18,14 +18,14 @@ module.exports = {
 		const { x, y } = target;
 
 		const heal = this.getDamage(target, true);
-		heal.noEvents = this.noEvents;
 
 		const event = {
 			heal,
 			source: this.obj,
 			target,
 			spellName: 'singleTargetHeal',
-			spell: this
+			spell: this,
+			noEvents: this.noEvents
 		};
 
 		target.stats.getHp(event);

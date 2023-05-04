@@ -143,7 +143,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'projectile'
+			spellName: 'projectile',
+			noEvents: this.noEvents
 		});
 	}
 };

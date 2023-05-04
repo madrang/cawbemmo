@@ -29,14 +29,13 @@ module.exports = {
 				noCrit: true
 			});
 
-			newDamage.noEvents = true;
-
 			this.stats.takeDamage({
 				damage: newDamage,
 				threatMult: 1,
 				source: this,
 				target: this,
-				effectName: 'damageSelf'
+				effectName: 'damageSelf',
+				noEvents: true
 			});
 		}
 	}

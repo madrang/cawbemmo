@@ -94,7 +94,8 @@ module.exports = {
 							threatMult: 1,
 							source: obj,
 							target: m,
-							spellName: 'slowBlast'
+							spellName: 'slowBlast',
+							noEvents: this.noEvents
 						});
 					}
 				}

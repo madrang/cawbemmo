@@ -129,7 +129,8 @@ module.exports = {
 				threatMult: 1,
 				source: obj,
 				target: m,
-				spellName: 'warnBlast'
+				spellName: 'warnBlast',
+				noEvents: this.noEvents
 			});
 		}
 	}

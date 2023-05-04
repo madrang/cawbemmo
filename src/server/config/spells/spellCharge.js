@@ -131,7 +131,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'charge'
+			spellName: 'charge',
+			noEvents: this.noEvents
 		});
 
 		this.obj.fireEvent('afterPositionChange', moveEvent);

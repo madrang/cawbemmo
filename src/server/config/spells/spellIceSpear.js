@@ -65,7 +65,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'iceSpear'
+			spellName: 'iceSpear',
+			noEvents: this.noEvents
 		});
 	}
 };

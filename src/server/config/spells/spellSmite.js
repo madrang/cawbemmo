@@ -47,7 +47,8 @@ module.exports = {
 			threatMult: this.threatMult,
 			source: this.obj,
 			target,
-			spellName: 'smite'
+			spellName: 'smite',
+			noEvents: this.noEvents
 		});
 
 		target.effects.addEffect({

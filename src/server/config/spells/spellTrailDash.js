@@ -9,7 +9,8 @@ let cpnSpikePatch = {
 			threatMult: 1,
 			source: this.caster,
 			target: target,
-			spellName: 'smokeBomb'
+			spellName: 'smokeBomb',
+			noEvents: this.noEvents
 		});
 	},
 
@@ -122,6 +123,7 @@ module.exports = {
 			}]);
 			spike.spikePatch.caster = this.obj;
 			spike.spikePatch.damage = this.damage;
+			spike.spikePatch.noEvents = this.noEvents;
 
 			this.queueCallback(null, this.spikeDuration * consts.tickTime, this.endEffect.bind(this, spike), null, true);
 

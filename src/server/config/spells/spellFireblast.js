@@ -110,7 +110,8 @@ module.exports = {
 						threatMult: 1,
 						source: this.obj,
 						target: m,
-						spellName: 'fireblast'
+						spellName: 'fireblast',
+						noEvents: this.noEvents
 					});
 
 					if (m.destroyed)
