@@ -322,7 +322,7 @@ define([
 
 			item.factions.forEach((f, i) => {
 				let htmlF = f.name + ': ' + f.tierName;
-				if (f.noEquip)
+				if (f.tier > window.player.reputation.getTier(f.id))
 					htmlF = '<font class="color-red">' + htmlF + '</font>';
 
 				htmlFactions += htmlF;

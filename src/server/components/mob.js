@@ -144,7 +144,7 @@ module.exports = {
 
 			//Are we too far from home?
 			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
-			if (distanceFromHome > this.maxChaseDistance || (distanceFromHome > this.walkDistance && !target))
+			if (distanceFromHome > this.maxChaseDistance || (distanceFromHome > this.walkDistance && !target && !this.patrol))
 				this.goHome = true;
 			else if (target && target !== obj && (!obj.follower || obj.follower.master !== target)) {
 				//If we just started attacking, patrols need to know where home is
