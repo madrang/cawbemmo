@@ -305,7 +305,6 @@ module.exports = {
 			config.damage = target.stats.values.hpMax * this.damage;
 
 		let damage = combat.getDamage(config);
-		damage.noEvents = this.noEvents;
 
 		return damage;
 	},

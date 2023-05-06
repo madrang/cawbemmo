@@ -9,8 +9,8 @@ const takeDamage = (cpnStats, eventDamage) => {
 		obj.fireEvent('beforeTakeDamage', eventDamage);
 	}
 
-	const { source, damage, threatMult = 1 } = eventDamage;
-	const { noEvents, failed, blocked, dodged, crit, element } = damage;
+	const { source, damage, threatMult = 1, noEvents } = eventDamage;
+	const { failed, blocked, dodged, crit, element } = damage;
 
 	if (failed || obj.destroyed)
 		return;
