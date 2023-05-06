@@ -101,8 +101,8 @@ module.exports = {
 				y: obj.y
 			},
 			newPos: targetPos,
-			source: this,
-			target: this,
+			source: this.obj,
+			target: this.obj,
 			spellName: 'charge',
 			spell: this
 		};
