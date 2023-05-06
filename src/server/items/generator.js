@@ -75,6 +75,14 @@ module.exports = {
 		if (blueprint.isSpell)
 			isSpell = true;
 
+		const beforeGenerateItemEvent = {
+			blueprint,
+			item: null
+		};
+		global.instancer.instances[0].eventEmitter.emit('beforeGenerateItem', beforeGenerateItemEvent);
+		if (beforeGenerateItemEvent.item)
+			return beforeGenerateItemEvent.item;
+
 		if (isSpell)
 			spellGenerators.forEach(g => g.generate(item, blueprint));
 		else if (isCurrency) 

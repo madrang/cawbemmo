@@ -5,7 +5,7 @@ define([
 ) {
 	const percentageStats = [
 		'addCritChance',
-		'addCritemultiplier',
+		'addCritMultiplier',
 		'addAttackCritChance',
 		'addAttackCritMultiplier',
 		'addSpellCritChance',

@@ -73,32 +73,19 @@ const buildCpnInventory = (mob, blueprint, { drops }, preferStat) => {
 	cpnInventory.inventorySize = -1;
 	cpnInventory.dailyDrops = blueprint.dailyDrops;
 
-	if (!drops?.blueprints || drops?.alsoRandom) {
-		generateSlots.forEach(slot => {
-			const item = itemGenerator.generate({
-				noSpell: true,
-				level,
-				slot,
-				quality: 4,
-				forceStats: [preferStat]
-			});
-			delete item.spell;
-			item.eq = true;
-
-			cpnInventory.getItem(item);
+	generateSlots.forEach(slot => {
+		const item = itemGenerator.generate({
+			noSpell: true,
+			level,
+			slot,
+			quality: 4,
+			forceStats: [preferStat]
 		});
-	} else {
-		//TODO: Don't give mobs these items: they'll drop them anyway
-		drops.blueprints.forEach(d => {
-			if (d.type === 'key')
-				return;
+		delete item.spell;
+		item.eq = true;
 
-			const drop = extend({}, d);
-			drop.level = level;
-
-			cpnInventory.getItem(itemGenerator.generate(drop));
-		});
-	}
+		cpnInventory.getItem(item);
+	});
 };
 
 const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
