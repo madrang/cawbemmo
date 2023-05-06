@@ -414,7 +414,7 @@ module.exports = {
 
 	setAllAmounts: function (amount) {
 		this.list.forEach(l => {
-			l.amount = amount;
+			l.threat = amount;
 		});
 	}
 };

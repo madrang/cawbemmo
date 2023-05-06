@@ -385,6 +385,18 @@ module.exports = {
 				id: callbackId
 			}
 		});
-	}
+	},
 
+	getPlayerCount: function ({ callbackId }) {
+		process.send({
+			module: 'atlas',
+			method: 'resolveCallback',
+			msg: {
+				id: callbackId,
+				result: {
+					playerCount: objects.objects.filter(o => o.player !== undefined).length
+				}
+			}
+		});
+	}
 };
