@@ -410,5 +410,11 @@ module.exports = {
 
 	isInCombat: function () {
 		return this.list.length > 0;
+	},
+
+	setAllAmounts: function (amount) {
+		this.list.forEach(l => {
+			l.amount = amount;
+		});
 	}
 };
