@@ -5,6 +5,7 @@ const childProcess = require('child_process');
 const objects = require('../objects/objects');
 const connections = require('../security/connections');
 const { mapList } = require('./mapManager');
+const { registerCallback } = require('./atlas/registerCallback');
 
 //Internals
 const threads = [];
@@ -17,6 +18,21 @@ const getThreadFromName = name => {
 
 const getThreadFromId = threadId => {
 	return threads.find(t => t.id === threadId);
+};
+
+const canThreadBeClosed = async thread => {
+	const { playerCount } = await new Promise(res => {
+		const cb = registerCallback(res);
+
+		thread.worker.send({
+			method: 'getPlayerCount',
+			args: {
+				callbackId: cb
+			}
+		});
+	});
+
+	return playerCount === 0;
 };
 
 const messageHandlers = {
@@ -78,7 +94,7 @@ const messageHandlers = {
 	rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		if (thread.instanced) {
+		if (thread.instanced && await canThreadBeClosed(thread)) {
 			thread.worker.kill();
 			threads.spliceWhere(t => t === thread);
 		}
@@ -242,5 +258,6 @@ module.exports = {
 	spawnMapThreads,
 	messageAllThreads,
 	sendMessageToThread,
-	returnWhenThreadsIdle
+	returnWhenThreadsIdle,
+	canThreadBeClosed
 };

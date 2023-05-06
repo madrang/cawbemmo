@@ -2,14 +2,13 @@
 const objects = require('../objects/objects');
 const events = require('../misc/events');
 const {
-	getThread, killThread, sendMessageToThread, getThreadFromId, returnWhenThreadsIdle
+	getThread, killThread, sendMessageToThread, getThreadFromId, returnWhenThreadsIdle, canThreadBeClosed
 } = require('./threadManager');
+const { registerCallback, removeCallback } = require('./atlas/registerCallback');
 
 //Exports
 module.exports = {
 	nextId: 0,
-	lastCallbackId: 0,
-	callbacks: [],
 
 	addObject: async function (obj, keepPos, transfer) {
 		const serverObj = objects.objects.find(o => o.id === obj.id);
@@ -80,7 +79,7 @@ module.exports = {
 			callback();
 	},
 
-	removeObject: function (obj, skipLocal, callback) {
+	removeObject: async function (obj, skipLocal, callback) {
 		if (!skipLocal)
 			objects.removeObject(obj);
 
@@ -88,7 +87,7 @@ module.exports = {
 		if (!thread)
 			return;
 
-		if (thread.instanced) {
+		if (thread.instanced && await canThreadBeClosed(thread, this.registerCallback.bind(this))) {
 			this.removeObjectFromInstancedZone(thread, obj, callback);
 
 			return;
@@ -147,15 +146,11 @@ module.exports = {
 	},
 
 	registerCallback: function (callback) {
-		this.callbacks.push({
-			id: ++this.lastCallbackId,
-			callback: callback
-		});
-
-		return this.lastCallbackId;
+		return registerCallback(callback);
 	},
+
 	resolveCallback: function (msg) {
-		let callback = this.callbacks.spliceFirstWhere(c => c.id === msg.msg.id);
+		const callback = removeCallback(msg.msg.id);
 		if (!callback)
 			return;
 

@@ -25,7 +25,7 @@ module.exports = {
 		this.players.push(p);
 	},
 
-	onDisconnect: function (socket) {
+	onDisconnect: async function (socket) {
 		let player = this.players.find(p => p.socket.id === socket.id);
 
 		if (!player)
