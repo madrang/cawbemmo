@@ -124,7 +124,14 @@ module.exports = {
 				continue;
 
 			let damage = this.getDamage(m);
-			m.stats.takeDamage(damage, 1, obj);
+			m.stats.takeDamage({
+				damage,
+				threatMult: 1,
+				source: obj,
+				target: m,
+				spellName: 'warnBlast',
+				noEvents: this.noEvents
+			});
 		}
 	}
 };

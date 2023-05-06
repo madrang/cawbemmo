@@ -1,7 +1,11 @@
-let phaseTemplate = require('./phases/phaseTemplate');
-let fs = require('fs');
-let mapList = require('../config/maps/mapList');
+//System Imports
+const fs = require('fs');
 
+//Imports
+const phaseTemplate = require('./phases/phaseTemplate');
+const { mapList } = require('../world/mapManager');
+
+//Helpers
 const applyVariablesToDescription = (desc, variables) => {
 	if (!variables)
 		return desc;
@@ -14,6 +18,7 @@ const applyVariablesToDescription = (desc, variables) => {
 	return desc;
 };
 
+//Exports
 module.exports = {
 	configs: [],
 	nextId: 0,
@@ -22,7 +27,7 @@ module.exports = {
 		this.instance = instance;
 
 		const zoneName = this.instance.map.name;
-		const zonePath = mapList.mapList.find(z => z.name === zoneName).path;
+		const zonePath = mapList.find(z => z.name === zoneName).path;
 		const zoneEventPath = zonePath + '/' + zoneName + '/events';
 
 		const paths = ['config/globalEvents', zoneEventPath];

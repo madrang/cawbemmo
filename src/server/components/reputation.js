@@ -1,6 +1,7 @@
-let factionBase = require('../config/factionBase');
-let factions = require('../config/factions');
+//Helpers
+const { getFactionBlueprint } = require('../config/factions/helpers');
 
+//Component
 module.exports = {
 	type: 'reputation',
 
@@ -13,7 +14,7 @@ module.exports = {
 		delete blueprint.list;
 
 		list.forEach(function (l) {
-			let bpt = this.getBlueprint(l.id);
+			let bpt = getFactionBlueprint(l.id);
 			if (!bpt)
 				return;
 
@@ -27,25 +28,6 @@ module.exports = {
 		}, this);
 	},
 
-	getBlueprint: function (factionId) {
-		if (this.factions[factionId])
-			return this.factions[factionId];
-
-		let factionBlueprint = null;
-		try {
-			factionBlueprint = factions.getFaction(factionId);
-		} catch (e) {}
-
-		if (!factionBlueprint)
-			return;
-
-		factionBlueprint = extend({}, factionBase, factionBlueprint);
-
-		this.factions[factionBlueprint.id] = factionBlueprint;
-
-		return factionBlueprint;
-	},
-
 	getTier: function (factionId) {
 		let faction = this.list.find(l => l.id === factionId);
 		if (!faction) {
@@ -53,9 +35,7 @@ module.exports = {
 			faction = this.list.find(l => l.id === factionId);
 		}
 
-		return (faction || {
-			tier: 3
-		}).tier;
+		return faction?.tier ?? 3;
 	},
 
 	canEquipItem: function (item) {
@@ -71,7 +51,7 @@ module.exports = {
 	},
 
 	calculateTier: function (factionId) {
-		let blueprint = this.getBlueprint(factionId);
+		let blueprint = getFactionBlueprint(factionId);
 
 		let faction = this.list.find(l => l.id === factionId);
 		let rep = faction.rep;
@@ -99,7 +79,7 @@ module.exports = {
 
 	getReputation: function (factionId, gain) {
 		let fullSync = false;
-		let blueprint = this.getBlueprint(factionId);
+		let blueprint = getFactionBlueprint(factionId);
 
 		let faction = this.list.find(l => l.id === factionId);
 		if (!faction) {
@@ -147,7 +127,7 @@ module.exports = {
 		if (this.list.some(l => l.id === factionId))
 			return;
 
-		let blueprint = this.getBlueprint(factionId);
+		let blueprint = getFactionBlueprint(factionId);
 
 		if (!blueprint)
 			return;
@@ -185,7 +165,7 @@ module.exports = {
 		let sendList = this.list
 			.map(function (l) {
 				let result = {};
-				let blueprint = this.getBlueprint(l.id);
+				let blueprint = getFactionBlueprint(l.id);
 				extend(result, l, blueprint);
 
 				return result;
@@ -206,7 +186,7 @@ module.exports = {
 		};
 
 		if (full) {
-			let blueprint = this.getBlueprint(factionId);
+			let blueprint = getFactionBlueprint(factionId);
 			extend(faction, l, blueprint);
 		}
 

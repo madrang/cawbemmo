@@ -47,7 +47,7 @@ module.exports = {
 		},
 
 		events: {
-			beforeDealDamage: function (item, damage, target) {
+			beforeDealDamage: function (item, { damage, target }) {
 				if (!damage.crit)
 					return;
 
@@ -69,7 +69,13 @@ module.exports = {
 						noCrit: true
 					});
 
-					boundTarget.stats.takeDamage(damageConfig, 1, this);
+					boundTarget.stats.takeDamage({
+						damage: damageConfig,
+						threatMult: 1,
+						source: this,
+						target: boundTarget,
+						effectName: 'akareiZap'
+					});
 				};
 
 				this.instance.syncer.queue('onGetObject', {

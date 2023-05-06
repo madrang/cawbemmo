@@ -4,9 +4,9 @@ const max = Math.max.bind(Math);
 
 //Helpers
 const scaleStatType = (config, result) => {
-	const { statType, statMult = 1, srcValues } = config;
+	const { statType, statMult = 1, srcValues, scaleConfig } = config;
 
-	if (!statType)
+	if (!statType || scaleConfig?.statMult === false)
 		return;
 	
 	let statValue = 0;
@@ -24,7 +24,10 @@ const scaleStatType = (config, result) => {
 	result.amount *= statValue * statMult;
 };
 
-const scalePercentMultipliers = ({ isAttack, elementName, srcValues }, result) => {
+const scalePercentMultipliers = ({ isAttack, elementName, srcValues, scaleConfig }, result) => {
+	if (scaleConfig?.percentMult === false)
+		return;
+
 	const { dmgPercent = 0, physicalPercent = 0, spellPercent = 0 } = srcValues;
 
 	let totalPercent = 100 + dmgPercent;	
@@ -40,8 +43,8 @@ const scalePercentMultipliers = ({ isAttack, elementName, srcValues }, result) =
 	result.amount *= (totalPercent / 100);
 };
 
-const scaleCrit = ({ noCrit, isAttack, crit: forceCrit, srcValues }, result) => {
-	if (noCrit)
+const scaleCrit = ({ noCrit, isAttack, crit: forceCrit, srcValues, scaleConfig }, result) => {
+	if (noCrit || scaleConfig?.critMult === false)
 		return;
 
 	const { critChance, attackCritChance, spellCritChance } = srcValues;

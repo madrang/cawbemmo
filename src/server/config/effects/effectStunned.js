@@ -11,7 +11,7 @@ module.exports = {
 			targetPos.success = false;
 		},
 
-		beforeDealDamage: function (damage) {
+		beforeDealDamage: function ({ damage }) {
 			if (damage)
 				damage.failed = true;
 		},

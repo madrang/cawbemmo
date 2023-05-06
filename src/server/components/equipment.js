@@ -4,7 +4,6 @@ module.exports = {
 	type: 'equipment',
 
 	eq: {},
-	doAutoEq: true,
 
 	quickSlots: {},
 
@@ -30,24 +29,6 @@ module.exports = {
 
 	isSlotEmpty: function (slot) {
 		return !this.eq.has(slot);
-	},
-
-	autoEquip: function (itemId) {
-		if (!this.doAutoEq)
-			return;
-
-		let item = this.obj.inventory.findItem(itemId);
-		if (!item)
-			return;
-		else if ((!item.slot) || (item.material) || (item.quest) || (item.ability) || (!this.obj.inventory.canEquipItem(item))) {
-			item.eq = false;
-			return;
-		}
-
-		if (!this.eq.has(item.slot)) {
-			this.equip({ itemId });
-			return true;
-		}
 	},
 
 	equip: function (itemId) {
@@ -122,7 +103,8 @@ module.exports = {
 		this.eq[slot] = itemId;
 		item.equipSlot = slot;
 
-		obj.spellbook.calcDps();
+		if (obj.spellbook)
+			obj.spellbook.calcDps();
 
 		if ((!obj.mob) || (item.ability)) {
 			if (item.spell)

@@ -38,8 +38,12 @@ let cpnArcanePatch = {
 		for (let i = 0; i < cLen; i++) {
 			let c = contents[i];
 
-			let amount = this.spell.getDamage(c, true);
-			c.stats.getHp(amount, this.caster);
+			let heal = this.spell.getDamage(c, true);
+			c.stats.getHp({
+				heal,
+				source: this.caster,
+				target: c
+			});
 		}
 	}
 };

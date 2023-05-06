@@ -152,6 +152,7 @@ module.exports = {
 
 			result.push({
 				zoneName: p.zoneName,
+				zoneId: p.zoneId,
 				name: p.name,
 				level: p.level,
 				class: p.class,

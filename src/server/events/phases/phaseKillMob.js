@@ -4,7 +4,7 @@ let cpnDeathStopper = {
 	end: false,
 
 	events: {
-		beforeTakeDamage: function (damage, source) {
+		beforeTakeDamage: function ({ damage }) {
 			let statValues = this.obj.stats.values;
 			let minHp = statValues.hpMax * this.percentage;
 			if (statValues.hp - damage.amount < minHp) {

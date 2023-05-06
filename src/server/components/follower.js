@@ -169,5 +169,15 @@ module.exports = {
 			type: 'follower',
 			master: this.master.id
 		};
+	},
+
+	events: {
+		afterDeath: function (deathEvent) {
+			this.master.fireEvent('afterFollowerDeath', {
+				deathEvent,
+				follower: this.obj,
+				master: this.master
+			});
+		}
 	}
 };

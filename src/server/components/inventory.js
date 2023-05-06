@@ -1,16 +1,21 @@
+//System
+const events = require('../misc/events');
+
+//External Helpers
 let generator = require('../items/generator');
 let salvager = require('../items/salvager');
 let classes = require('../config/spirits');
 let factions = require('../config/factions');
 let itemEffects = require('../items/itemEffects');
-const events = require('../misc/events');
 
-const { isItemStackable } = require('./inventory/helpers');
-
+//Helpers
+const simplifyItem = require('./inventory/simplifyItem');
 const getItem = require('./inventory/getItem');
 const dropBag = require('./inventory/dropBag');
 const useItem = require('./inventory/useItem');
+const { isItemStackable } = require('./inventory/helpers');
 
+//Component
 module.exports = {
 	type: 'inventory',
 
@@ -91,44 +96,7 @@ module.exports = {
 	},
 
 	simplifyItem: function (item) {
-		let result = extend({}, item);
-
-		if (result.effects) {
-			result.effects = result.effects.map(e => ({
-				factionId: e.factionId || null,
-				text: e.text || null,
-				properties: e.properties || null,
-				type: e.type || null,
-				rolls: e.rolls || null
-			}));
-		}
-
-		let reputation = this.obj.reputation;
-		if (result.factions) {
-			result.factions = result.factions.map(function (f) {
-				let res = {
-					id: f.id,
-					tier: f.tier,
-					tierName: ['Hated', 'Hostile', 'Unfriendly', 'Neutral', 'Friendly', 'Honored', 'Revered', 'Exalted'][f.tier]
-				};
-
-				if (reputation) {
-					let faction = reputation.getBlueprint(f.id);
-					let factionTier = reputation.getTier(f.id);
-
-					let noEquip = null;
-					if (factionTier < f.tier)
-						noEquip = true;
-
-					res.name = faction.name;
-					res.noEquip = noEquip;
-				}
-
-				return res;
-			}, this);
-		}
-
-		return result;
+		return simplifyItem(this, item);
 	},
 
 	update: function () {
@@ -403,13 +371,53 @@ module.exports = {
 						try {
 							let effectModule = require('../' + effectUrl);
 							e.events = effectModule.events;
-							if (effectModule.events.onGetText)
+
+							const { rolls } = e;
+
+							if (rolls.textTemplate) {
+								let text = rolls.textTemplate;
+
+								while (text.includes('((')) {
+									Object.entries(rolls).forEach(([k, v]) => {
+										text = text.replaceAll(`((${k}))`, v);
+									});
+
+									if (rolls.applyEffect) {
+										Object.entries(rolls.applyEffect).forEach(([k, v]) => {
+											text = text.replaceAll(`((applyEffect.${k}))`, v);
+										});
+									}
+
+									if (rolls.castSpell) {
+										Object.entries(rolls.castSpell).forEach(([k, v]) => {
+											text = text.replaceAll(`((castSpell.${k}))`, v);
+										});
+									}
+
+									if (rolls.applyEffect?.scaleDamage) {
+										Object.entries(rolls.applyEffect.scaleDamage).forEach(([k, v]) => {
+											text = text.replaceAll(`((applyEffect.scaleDamage.${k}))`, v);
+										});
+									}
+
+									if (rolls.castSpell?.scaleDamage) {
+										Object.entries(rolls.castSpell.scaleDamage).forEach(([k, v]) => {
+											text = text.replaceAll(`((castSpell.scaleDamage.${k}))`, v);
+										});
+									}
+								}
+
+								e.text = text;
+							} else if (effectModule.events.onGetText)
 								e.text = effectModule.events.onGetText(item, e);
 						} catch (error) {
 							_.log(`Effect not found: ${e.type}`);
+							_.log(error);
 						}
 					}
 				});
+
+				item.effects.spliceWhere(e => !e.events);
 			}
 
 			if (!item.has('pos') && !item.eq) {
@@ -682,25 +690,21 @@ module.exports = {
 	},
 
 	equipItemErrors: function (item) {
-		let errors = [];
+		const { obj: { player, stats: { values: statValues }, reputation } } = this;
 
-		if (!this.obj.player)
-			return [];
+		const errors = [];
 
-		let stats = this.obj.stats.values;
+		if (!player)
+			return errors;
 
-		if (item.level > stats.level)
+		if (item.level > statValues.level)
 			errors.push('level');
 
-		if ((item.requires) && (stats[item.requires[0].stat] < item.requires[0].value))
+		if (item.requires && statValues[item.requires[0].stat] < item.requires[0].value)
 			errors.push(item.requires[0].stat);
 
-		if (item.factions) {
-			if (item.factions.some(function (f) {
-				return f.noEquip;
-			}))
-				errors.push('faction');
-		}
+		if (item.factions?.some(f => reputation.getTier(f.id) < f.tier))
+			errors.push('faction');
 
 		return errors;
 	},

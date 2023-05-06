@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 define([
 	'js/rendering/lightningBuilder',
 	'js/rendering/effects'
@@ -23,13 +25,13 @@ define([
 		init: function () {
 			effects.register(this);
 
-			let xOffset = (this.toX >= this.obj.x) ? 1 : 0;
+			let { toX = this.target.x, toY = this.target.y } = this;
 
-			let fromX = this.obj.x + xOffset;
-			let fromY = this.obj.y + 0.5;
+			const fromX = this.obj.x + ((toX >= this.obj.x) ? 1 : 0);
+			const fromY = this.obj.y + 0.5;
 
-			let toX = this.lineGrow ? fromX : this.toX + 0.5;
-			let toY = this.lineGrow ? fromY : this.toY + 0.5;
+			toX = this.lineGrow ? fromX : toX + 0.5;
+			toY = this.lineGrow ? fromY : toY + 0.5;
 
 			this.effect = lightningBuilder.build({
 				fromX: fromX,
@@ -38,7 +40,9 @@ define([
 				toY: toY,
 				divisions: this.divisions,
 				colors: this.colors,
-				maxDeviate: this.maxDeviate
+				maxDeviate: this.maxDeviate,
+				divDistance: this.divDistance,
+				linkSize: this.linkSize
 			});
 		},
 
@@ -56,8 +60,10 @@ define([
 
 			this.cd = cdMax;
 
-			lightningBuilder.destroy(this.effect);
-			this.effect = null;
+			if (this.effect) {
+				lightningBuilder.destroy(this.effect);
+				this.effect = null;
+			}
 
 			if (!this.shrinking) {
 				this.ttl--;
@@ -67,13 +73,14 @@ define([
 				}
 			}
 
-			let xOffset = (this.toX >= this.obj.x) ? 1 : 0;
+			let { toX = this.target.x, toY = this.target.y } = this;
+			toX += 0.5;
+			toY += 0.5;
+
+			let xOffset = (toX >= this.obj.x) ? 1 : 0;
 
 			let fromX = this.obj.x + xOffset;
 			let fromY = this.obj.y + 0.5;
-
-			let toX = this.toX + 0.5;
-			let toY = this.toY + 0.5;
 
 			let changeTo = (
 				(
@@ -108,7 +115,9 @@ define([
 				toY: toY,
 				divisions: this.divisions,
 				colors: this.colors,
-				maxDeviate: this.maxDeviate
+				maxDeviate: this.maxDeviate,
+				divDistance: this.divDistance,
+				linkSize: this.linkSize
 			});
 
 			if ((this.shrinking) && (linePercentage < 0.1))

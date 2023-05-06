@@ -59,19 +59,18 @@ define([
 		},
 
 		equipItemErrors: function (item) {
-			let errors = [];
-			let stats = this.obj.stats.values;
+			const { obj: { reputation, stats: { values: statValues } } } = this;
 
-			if (item.level > stats.level)
+			const errors = [];
+
+			if (item.level > statValues.level)
 				errors.push('level');
 
-			if (item.requires && item.requires[0] && stats[item.requires[0].stat] < item.requires[0].value)
+			if (item.requires && item.requires[0] && statValues[item.requires[0].stat] < item.requires[0].value)
 				errors.push('stats');
 
-			if (item.factions) {
-				if (item.factions.some(f => f.noEquip))
-					errors.push('faction');
-			}
+			if (item.factions?.some(f => reputation.getTier(f.id) < f.tier))
+				errors.push('faction');
 
 			return errors;
 		},

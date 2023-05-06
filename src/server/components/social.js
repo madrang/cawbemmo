@@ -276,7 +276,13 @@ module.exports = {
 	//Sends a notification to yourself
 	// arg1 = { message, className, type }
 	notifySelf: function ({ message, className = 'color-redA', type = 'info', subType }) {
-		const { obj: { id, serverId, instance: { syncer } } } = this;
+		const { obj: { id, serverId, instance } } = this;
+
+		//Maybe we are in the main thread
+		if (!instance)
+			return;
+
+		const { syncer } = instance;
 
 		syncer.queue('onGetMessages', {
 			id,

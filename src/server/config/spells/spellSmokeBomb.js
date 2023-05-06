@@ -4,8 +4,15 @@ let cpnSmokePatch = {
 	contents: [],
 	ttl: 0,
 
-	applyDamage: function (o, amount) {
-		o.stats.takeDamage(amount, 1, this.caster);
+	applyDamage: function (target, damage) {
+		target.stats.takeDamage({
+			damage,
+			threatMult: 1,
+			source: this.caster,
+			target: target,
+			spellName: 'smokeBomb',
+			noEvents: this.noEvents
+		});
 	},
 
 	collisionEnter: function (o) {
@@ -171,7 +178,8 @@ module.exports = {
 								caster: obj,
 								statType: this.statType,
 								getDamage: this.getDamage.bind(this),
-								ttl: this.duration
+								ttl: this.duration,
+								noEvents: this.noEvents
 							}
 						} 
 					}]);

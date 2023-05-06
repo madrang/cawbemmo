@@ -138,6 +138,13 @@ module.exports = {
 		if (this.applyEffect)
 			target.effects.addEffect(this.applyEffect, this.obj);
 
-		target.stats.takeDamage(damage, this.threatMult, this.obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'projectile',
+			noEvents: this.noEvents
+		});
 	}
 };

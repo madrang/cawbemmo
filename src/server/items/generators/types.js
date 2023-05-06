@@ -8,7 +8,10 @@ module.exports = {
 		if (!type || !configTypes.types[item.slot][type]) {
 			//Pick a material type first
 			const types = configTypes.types[item.slot];
-			const typeArray = Object.entries(types);
+			const typeArray = Object
+				.entries(types)
+				.filter(t => t.noDrop !== true);
+
 			const materials = Object.values(types)
 				.map(t => {
 					return t.material;

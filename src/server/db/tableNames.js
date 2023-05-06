@@ -1,15 +1,14 @@
 const tableNames = [
+	'accountInfo',
 	'character',
 	'characterList',
-	'stash',
-	'login',
-	'leaderboard',
-	'customMap',
 	'customChannels',
 	'error',
+	'leaderboard',
+	'login',
 	'modLog',
-	'accountInfo',
-	'recipes'
+	'recipes',
+	'stash'
 ];
 
 module.exports = tableNames;

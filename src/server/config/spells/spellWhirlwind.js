@@ -3,8 +3,14 @@ const coordinateDeltas = [
 	[[0, -2], [0, -1], [1, -2], [2, -2], [1, -1], [2, -1], [2, 0], [1, 0], [2, 1], [2, 2], [1, 1], [1, 2], [0, 2], [0, 1], [-1, 2], [-2, 2], [-2, 1], [-1, 1], [-2, 0], [-1, 0], [-2, -1], [-2, -2], [-1, -1], [-1, -2]]
 ];
 
-const applyDamage = (target, damage, threat, source) => {
-	target.stats.takeDamage(damage, threat, source);
+const applyDamage = (target, damage, threatMult, source) => {
+	target.stats.takeDamage({
+		damage,
+		threatMult,
+		source,
+		target,
+		spellName: 'whirlwind'
+	});
 };
 
 const dealDamage = (spell, obj, coords) => {

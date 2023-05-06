@@ -1,4 +1,7 @@
-let mappings = {
+//Imports
+const events = require('../misc/events');
+
+const mappings = {
 	rune: [{
 		materials: [{
 			name: 'Essence',
@@ -68,7 +71,7 @@ let mappings = {
 	}]
 };
 
-let materialItems = {
+const materialItems = {
 	'Iron Bar': {
 		sprite: [0, 0]
 	},
@@ -99,6 +102,11 @@ let materialItems = {
 };
 	
 module.exports = {
+	init: function () {
+		events.emit('onBeforeGetSalvagerMappings', {
+			mappings
+		});
+	},
 	salvage: function (item, maxRoll) {
 		let result = [];
 

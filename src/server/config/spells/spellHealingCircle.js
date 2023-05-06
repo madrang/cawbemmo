@@ -8,8 +8,12 @@ let cpnHealPatch = {
 			this[p] = blueprint[p];
 	},
 
-	applyHeal: function (o, amount) {
-		o.stats.getHp(amount, this.caster);
+	applyHeal: function (target, heal) {
+		target.stats.getHp({
+			heal,
+			source: this.caster,
+			target
+		});
 	},
 
 	collisionEnter: function (o) {

@@ -1,10 +1,13 @@
+//Imports
+const animations = require('../config/animations');
+const spirits = require('../config/spirits');
+const scheduler = require('../misc/scheduler');
+
 //Methods
 const die = require('./stats/die');
+const takeDamage = require('./stats/takeDamage');
 
-let animations = require('../config/animations');
-let spirits = require('../config/spirits');
-let scheduler = require('../misc/scheduler');
-
+//Internals
 let baseStats = {
 	mana: 20,
 	manaMax: 20,
@@ -82,6 +85,7 @@ let baseStats = {
 	fishItems: 0
 };
 
+//Exports
 module.exports = {
 	type: 'stats',
 
@@ -348,8 +352,6 @@ module.exports = {
 		let mobDiffMult = 1;
 		if (target.isRare)
 			mobDiffMult = 2;
-		else if (target.isChampion)
-			mobDiffMult = 5;
 
 		//Who should get xp?
 		let aggroList = target.aggro.list;
@@ -520,85 +522,23 @@ module.exports = {
 			this.addStat(s, gainStats[s] * count);
 	},
 
-	takeDamage: function (damage, threatMult, source) {
-		if (this.values.hp <= 0)
-			return;
-
-		let obj = this.obj;
-
-		if (!damage.noEvents) {
-			source.fireEvent('beforeDealDamage', damage, obj);
-			obj.fireEvent('beforeTakeDamage', damage, source);
-		}
-
-		if (damage.failed || obj.destroyed)
-			return;
-
-		let amount = Math.min(this.values.hp, damage.amount);
-
-		damage.dealt = amount;
-
-		let msg = {
-			id: obj.id,
-			source: source.id,
-			crit: damage.crit,
-			amount: amount,
-			element: damage.element
-		};
-
-		this.values.hp -= amount;
-		let recipients = [];
-		if (obj.serverId)
-			recipients.push(obj.serverId);
-		if (source.serverId)
-			recipients.push(source.serverId);
-
-		if (source.follower && source.follower.master.serverId) {
-			recipients.push(source.follower.master.serverId);
-			msg.masterSource = source.follower.master.id;
-		}
-		
-		if (obj.follower && obj.follower.master.serverId) {
-			recipients.push(obj.follower.master.serverId);
-			msg.masterId = obj.follower.master.id;
-		}
-
-		if (recipients.length) {
-			if (!damage.blocked && !damage.dodged)
-				this.syncer.queue('onGetDamage', msg, recipients);
-			else {
-				this.syncer.queue('onGetDamage', {
-					id: obj.id,
-					source: source.id,
-					event: true,
-					text: damage.blocked ? 'blocked' : 'dodged'
-				}, recipients);
-			}
-		}
-
-		obj.aggro.tryEngage(source, amount, threatMult);
-
-		let died = (this.values.hp <= 0);
-
-		if (died) {
-			let death = {
-				success: true
-			};
-			obj.instance.eventEmitter.emit('onBeforeActorDies', death, obj, source);
-			obj.fireEvent('beforeDeath', death);
-
-			if (death.success) 
-				this.preDeath(source);
-		} else {
-			source.aggro.tryEngage(obj, 0);
-			obj.syncer.setObject(false, 'stats', 'values', 'hp', this.values.hp);
-		}
-
-		if (!damage.noEvents)
-			source.fireEvent('afterDealDamage', damage, obj);
+	takeDamage: function (eventDamage) {
+		takeDamage(this, eventDamage);
 	},
 
-	getHp: function (heal, source) {
+	/*
+	Gives hp to heal.target
+		heal: Damage object returned by combat.getDamage
+		source: Source object
+		event: Optional config object. We want to eventually phase out the first 2 args.
+			heal: Same as 1st parameter
+			source: Same as 2nd parameter
+			target: Target object (heal.target)
+			spell: Optional spell object that caused this event
+	*/
+	getHp: function (event) {
+		const { heal, source } = event;
+
 		let amount = heal.amount;
 		if (amount === 0)
 			return;
@@ -610,44 +550,46 @@ module.exports = {
 		let values = this.values;
 		let hpMax = values.hpMax;
 
-		if (values.hp >= hpMax)
-			return;
+		if (values.hp < hpMax) {
+			if (hpMax - values.hp < amount)
+				amount = hpMax - values.hp;
 
-		if (hpMax - values.hp < amount)
-			amount = hpMax - values.hp;
+			values.hp += amount;
+			if (values.hp > hpMax)
+				values.hp = hpMax;
 
-		values.hp += amount;
-		if (values.hp > hpMax)
-			values.hp = hpMax;
-
-		let recipients = [];
-		if (this.obj.serverId)
-			recipients.push(this.obj.serverId);
-		if (source.serverId)
-			recipients.push(source.serverId);
-		if (recipients.length > 0) {
-			this.syncer.queue('onGetDamage', {
-				id: this.obj.id,
-				source: source.id,
-				heal: true,
-				amount: amount,
-				crit: heal.crit,
-				element: heal.element
-			}, recipients);
-		}
-
-		//Add aggro to all our attackers
-		let threat = amount * 0.4 * threatMult;
-		if (threat !== 0) {
-			let aggroList = this.obj.aggro.list;
-			let aLen = aggroList.length;
-			for (let i = 0; i < aLen; i++) {
-				let a = aggroList[i].obj;
-				a.aggro.tryEngage(source, threat);
+			let recipients = [];
+			if (this.obj.serverId)
+				recipients.push(this.obj.serverId);
+			if (source.serverId)
+				recipients.push(source.serverId);
+			if (recipients.length > 0) {
+				this.syncer.queue('onGetDamage', {
+					id: this.obj.id,
+					source: source.id,
+					heal: true,
+					amount: amount,
+					crit: heal.crit,
+					element: heal.element
+				}, recipients);
 			}
+
+			//Add aggro to all our attackers
+			let threat = amount * 0.4 * threatMult;
+			if (threat !== 0) {
+				let aggroList = this.obj.aggro.list;
+				let aLen = aggroList.length;
+				for (let i = 0; i < aLen; i++) {
+					let a = aggroList[i].obj;
+					a.aggro.tryEngage(source, threat);
+				}
+			}
+
+			this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
 		}
 
-		this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
+		if (!heal.noEvents)
+			source.fireEvent('afterGiveHp', event);
 	},
 
 	save: function () {
@@ -778,8 +720,8 @@ module.exports = {
 			}
 		},
 
-		afterDealDamage: function (damageEvent, target) {
-			if (damageEvent.element)
+		afterDealDamage: function ({ damage, target }) {
+			if (damage.element)
 				return;
 
 			const { obj, values: { lifeOnHit } } = this;
@@ -787,7 +729,11 @@ module.exports = {
 			if (target === obj || !lifeOnHit)
 				return;
 
-			this.getHp({ amount: lifeOnHit }, obj);
+			this.getHp({
+				heal: { amount: lifeOnHit },
+				source: obj,
+				target: obj
+			});
 		}
 	}
 };

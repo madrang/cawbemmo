@@ -29,6 +29,10 @@ define([
 
 				events.emit('onGetReputations', this.list);
 			}
+		},
+
+		getTier: function (factionId) {
+			return this.factions.find(f => f.id === factionId)?.tier ?? 3;
 		}
 	};
 });

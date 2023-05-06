@@ -17,8 +17,18 @@ module.exports = {
 		const target = action.target;
 		const { x, y } = target;
 
-		const amount = this.getDamage(target, true);
-		target.stats.getHp(amount, this.obj);
+		const heal = this.getDamage(target, true);
+
+		const event = {
+			heal,
+			source: this.obj,
+			target,
+			spellName: 'singleTargetHeal',
+			spell: this,
+			noEvents: this.noEvents
+		};
+
+		target.stats.getHp(event);
 
 		const effect = {
 			x,

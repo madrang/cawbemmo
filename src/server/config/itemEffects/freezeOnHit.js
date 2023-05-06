@@ -6,7 +6,7 @@ module.exports = {
 			return `${rolls.chance}% chance on hit to freeze target for ${rolls.duration} ticks`;
 		},
 
-		afterDealDamage: function (item, damage, target) {
+		afterDealDamage: function (item, { damage, target }) {
 			let rolls = item.effects.find(e => (e.type === 'freezeOnHit')).rolls;
 
 			let chanceRoll = Math.random() * 100;

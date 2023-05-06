@@ -3,23 +3,39 @@ let combat = require('../../combat/combat');
 module.exports = {
 	type: 'lifeDrain',
 
+	amount: 0,
+
+	scaleDamage: {
+		isAttack: false,
+		damage: 1,
+		element: undefined,
+		noScale: false,
+		noMitigate: false,
+		noCrit: false
+	},
+
 	events: {
 		afterTick: function () {
-			let newDamage = combat.getDamage({
-				source: {
-					stats: {
-						values: {}
-					}
-				},
-				isAttack: false,
+			const { isAttack, damage, element, noScale, noMitigate, noCrit } = this.scaleDamage;
+
+			const damageEvent = combat.getDamage({
+				source: this.caster,
 				target: this.obj,
-				damage: this.amount,
-				element: this.element,
-				noScale: this.noScale,
-				noCrit: true
+				isAttack,
+				damage,
+				element,
+				noScale,
+				noMitigate,
+				noCrit
 			});
 				
-			this.obj.stats.takeDamage(newDamage, 1, this.caster);
+			this.obj.stats.takeDamage({
+				damage: damageEvent,
+				threatMult: 1,
+				source: this.caster,
+				target: this.obj,
+				effectName: 'lifeDrain'
+			});
 		}
 	}
 };

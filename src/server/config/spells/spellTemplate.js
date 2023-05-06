@@ -292,7 +292,8 @@ module.exports = {
 			isAttack: this.isAttack,
 			noScale: this.noScale,
 			noMitigate: noMitigate,
-			spell: this
+			spell: this,
+			scaleConfig: this.scaleConfig
 		};
 
 		if (this.obj.mob)

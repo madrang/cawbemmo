@@ -213,7 +213,7 @@ module.exports = {
 		if (effect.silent)
 			return;
 
-		this.obj.syncer.setArray(true, 'effects', 'extendEffects', {
+		this.obj.syncer.setArray(false, 'effects', 'extendEffects', {
 			id,
 			data
 		});

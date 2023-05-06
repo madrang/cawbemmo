@@ -1,13 +1,15 @@
 let generator = require('../../items/generator');
 
 module.exports = (cpnInv, ownerName, killSource) => {
-	if (!cpnInv.blueprint)
+	const { obj, blueprint } = cpnInv;
+
+	if (!blueprint)
 		return;
 
-	const obj = cpnInv.obj;
+	const { stats, instance: { objects, eventEmitter } } = obj;
 
 	//Only drop loot if this player is in the zone
-	let playerObject = obj.instance.objects.find(o => o.player && o.name === ownerName);
+	let playerObject = objects.find(o => o.player && o.name === ownerName);
 	if (!playerObject)
 		return;
 
@@ -18,7 +20,6 @@ module.exports = (cpnInv, ownerName, killSource) => {
 		delete items[i].pos;
 	}
 
-	let blueprint = cpnInv.blueprint;
 	let magicFind = (blueprint.magicFind || 0);
 
 	let savedItems = extend([], cpnInv.items);
@@ -44,7 +45,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 				continue;
 
 			let itemBlueprint = {
-				level: obj.stats.values.level,
+				level: stats.values.level,
 				magicFind: magicFind,
 				bonusMagicFind: bonusMagicFind,
 				noCurrency: i > 0
@@ -64,7 +65,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 			else if ((drop.chance) && (~~(Math.random() * 100) >= drop.chance * dropEvent.chanceMultiplier)) 
 				continue;
 
-			drop.level = drop.level || obj.stats.values.level;
+			drop.level = drop.level || stats.values.level;
 			drop.magicFind = magicFind;
 
 			let item = drop;
@@ -80,8 +81,17 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 	playerObject.fireEvent('beforeTargetDeath', obj, cpnInv.items);
 
-	obj.instance.eventEmitter.emit('onBeforeDropBag', obj, cpnInv.items, killSource);
+	//Deprecated
+	eventEmitter.emit('onBeforeDropBag', obj, cpnInv.items, killSource);
 	obj.fireEvent('onBeforeDropBag', cpnInv.items, killSource);
+	//New
+	const eventMsg = {
+		objDropper: obj,
+		objLooter: playerObject,
+		objKillSource: killSource,
+		items: cpnInv.items
+	};
+	eventEmitter.emit('beforeDropBag', eventMsg);
 
 	if (cpnInv.items.length > 0)
 		cpnInv.createBag(obj.x, obj.y, cpnInv.items, ownerName);

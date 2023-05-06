@@ -60,6 +60,13 @@ module.exports = {
 		});
 
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, this.obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'iceSpear',
+			noEvents: this.noEvents
+		});
 	}
 };

@@ -21,7 +21,7 @@ module.exports = {
 			return text;
 		},
 
-		afterDealDamage: function (item, damage, target) {
+		afterDealDamage: function (item, { damage, target }) {
 			if (!damage.crit)
 				return;
 
@@ -34,8 +34,12 @@ module.exports = {
 			let amount = rolls.amount || ((damage.dealt / 100) * rolls.percentage);
 
 			this.stats.getHp({
-				amount: amount
-			}, this);
+				heal: {
+					amount
+				},
+				source: this,
+				target: this
+			});
 		}
 	}
 };

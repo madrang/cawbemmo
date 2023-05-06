@@ -43,6 +43,13 @@ module.exports = {
 			return;
 
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, this.obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'slash',
+			noEvents: this.noEvents
+		});
 	}
 };

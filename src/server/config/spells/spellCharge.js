@@ -95,6 +95,18 @@ module.exports = {
 
 		let obj = this.obj;
 
+		const moveEvent = {
+			oldPos: {
+				x: obj.x,
+				y: obj.y
+			},
+			newPos: targetPos,
+			source: this,
+			target: this,
+			spellName: 'charge',
+			spell: this
+		};
+
 		obj.instance.physics.removeObject(obj, obj.x, obj.y);
 
 		obj.x = targetPos.x;
@@ -114,12 +126,15 @@ module.exports = {
 			targetEffect.ttl = this.stunDuration;
 
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'charge',
+			noEvents: this.noEvents
+		});
 
-		const moveEvent = {
-			newPos: targetPos,
-			source: this
-		};
 		this.obj.fireEvent('afterPositionChange', moveEvent);
 
 		if (this.castOnEnd)

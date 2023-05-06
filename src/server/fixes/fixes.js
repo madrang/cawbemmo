@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 module.exports = {
 	fixDb: async function () {
 		await io.deleteAsync({
@@ -117,7 +119,65 @@ module.exports = {
 			});
 
 		items
-			.filter(f => ((f.effects) && (f.effects[0].factionId === 'akarei') && (!f.effects[0].properties)))
+			.filter(i => i.name === 'Gourdhowl')
+			.forEach(i => {
+				const effect = i.effects[0];
+
+				if (!effect.rolls.castSpell) {
+					effect.rolls = {
+						castSpell: {
+							type: 'whirlwind',
+							damage: effect.rolls.damage,
+							range: 1,
+							statType: 'str',
+							statMult: 1,
+							isAttack: true
+						},
+						castTarget: 'none',
+						chance: effect.rolls.chance,
+						textTemplate: 'Grants you a ((chance))% chance to cast a ((castSpell.damage)) damage whirlwind on hit',
+						combatEvent: {
+							name: 'afterDealDamage',
+							afterDealDamage: {
+								spellName: 'melee'
+							}
+						}
+					};
+				}
+			});
+
+		items
+			.filter(i => i.name === 'Putrid Shank')
+			.forEach(i => {
+				const effect = i.effects[0];
+
+				if (!effect.rolls.castSpell) {
+					effect.rolls = {
+						chance: effect.rolls.chance,
+						textTemplate: 'Grants you a ((chance))% chance to cast a ((castSpell.damage)) damage smokebomb on hit',
+						combatEvent: {
+							name: 'afterDealDamage',
+							afterDealDamage: {
+								spellName: 'melee'
+							}
+						},
+						castTarget: 'none',					
+						castSpell: {
+							type: 'smokebomb',
+							damage: 1,
+							range: 1,
+							element: 'poison',
+							statType: 'dex',
+							statMult: 1,
+							duration: 5,
+							isAttack: true
+						}
+					};
+				}
+			});
+
+		items
+			.filter(f => f.effects?.[0]?.factionId === 'akarei' && !f.effects[0].properties)
 			.forEach(function (i) {
 				let effect = i.effects[0];
 				let chance = parseFloat(effect.text.split(' ')[0].replace('%', ''));

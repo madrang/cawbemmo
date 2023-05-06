@@ -10,7 +10,7 @@ module.exports = {
 			return `you take ${rolls.percentage}% of the damage you deal`;
 		},
 
-		afterDealDamage: function (item, damage, target) {
+		afterDealDamage: function (item, { damage, target }) {
 			let effect = item.effects.find(e => (e.type === 'damageSelf'));
 			let rolls = effect.rolls;
 
@@ -29,9 +29,14 @@ module.exports = {
 				noCrit: true
 			});
 
-			newDamage.noEvents = true;
-
-			this.stats.takeDamage(newDamage, 1, this);
+			this.stats.takeDamage({
+				damage: newDamage,
+				threatMult: 1,
+				source: this,
+				target: this,
+				effectName: 'damageSelf',
+				noEvents: true
+			});
 		}
 	}
 };

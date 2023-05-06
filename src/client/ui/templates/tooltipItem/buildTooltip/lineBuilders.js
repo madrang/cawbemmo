@@ -214,7 +214,15 @@ define([
 					html += '<br />';
 			});
 
-			return html;
+			const result = (
+				lineBuilders.div('space', ' ') +
+				(!!item.spell?.values ? lineBuilders.div('line', ' ') + lineBuilders.div('space', ' ') : '') +
+				html +
+				lineBuilders.div('space', ' ') +
+				lineBuilders.div('line', ' ')
+			);
+
+			return result;
 		},
 
 		material: () => {
@@ -314,7 +322,7 @@ define([
 
 			item.factions.forEach((f, i) => {
 				let htmlF = f.name + ': ' + f.tierName;
-				if (f.noEquip)
+				if (f.tier > window.player.reputation.getTier(f.id))
 					htmlF = '<font class="color-red">' + htmlF + '</font>';
 
 				htmlFactions += htmlF;

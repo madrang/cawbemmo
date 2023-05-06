@@ -1,5 +1,9 @@
+//Imports
+const { messageAllThreads } = require('../../world/threadManager');
+
+//Exports
 module.exports = async (cpnSocial, eventName) => {
-	atlas.messageAllThreads({
+	messageAllThreads({
 		threadModule: 'eventManager',
 		method: 'startEventByCode',
 		data: eventName

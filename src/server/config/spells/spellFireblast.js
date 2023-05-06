@@ -48,8 +48,14 @@ module.exports = {
 	damage: 1,
 
 	cast: function (action) {
-		let obj = this.obj;
+		const { obj, targetPlayerPos } = this;
+
 		let { x, y, instance: { physics, syncer } } = obj;
+
+		if (!targetPlayerPos) {
+			x = action.target.x;
+			y = action.target.y;
+		}
 
 		let radius = this.radius;
 
@@ -99,7 +105,14 @@ module.exports = {
 					m.clearQueue();
 
 					let damage = this.getDamage(m);
-					m.stats.takeDamage(damage, 1, obj);
+					m.stats.takeDamage({
+						damage,
+						threatMult: 1,
+						source: this.obj,
+						target: m,
+						spellName: 'fireblast',
+						noEvents: this.noEvents
+					});
 
 					if (m.destroyed)
 						continue;
@@ -173,11 +186,18 @@ module.exports = {
 		syncer.o.y = yFinal;
 
 		const moveEvent = {
+			oldPos: {
+				x: xOld,
+				y: yOld
+			},
 			newPos: {
 				x: xFinal,
 				y: yFinal
 			},
-			source: this
+			source: this.obj,
+			target,
+			spellName: 'fireblast',
+			spell: this
 		};
 		target.fireEvent('afterPositionChange', moveEvent);
 	}

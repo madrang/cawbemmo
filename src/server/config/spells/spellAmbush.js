@@ -183,7 +183,14 @@ module.exports = {
 		this.obj.aggro.move();
 
 		let damage = this.getDamage(target);
-		target.stats.takeDamage(damage, this.threatMult, obj);
+		target.stats.takeDamage({
+			damage,
+			threatMult: this.threatMult,
+			source: this.obj,
+			target,
+			spellName: 'ambush',
+			noEvents: this.noEvents
+		});
 	},
 
 	isTileValid: function (physics, fromX, fromY, toX, toY) {

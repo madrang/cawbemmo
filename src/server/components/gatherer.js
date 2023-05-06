@@ -311,7 +311,7 @@ module.exports = {
 			this.events.beforeMove.call(this);
 		},
 
-		beforeTakeDamage: function () {
+		beforeTakeDamage: function (damageEvent) {
 			this.events.beforeMove.call(this);
 		},
 

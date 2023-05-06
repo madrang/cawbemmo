@@ -107,7 +107,7 @@ module.exports = {
 			o = this;
 		}
 
-		const syncTypes = ['portrait', 'area'];
+		const syncTypes = ['portrait', 'area', 'filters'];
 		const ignoreKeysWhenNotSelf = ['account'];
 
 		for (let p in o) {

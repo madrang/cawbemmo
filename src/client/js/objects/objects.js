@@ -144,6 +144,9 @@ define([
 				});
 			}
 
+			if (template.filters && obj.sprite)
+				renderer.addFilter(obj.sprite, template.filters[0]);
+
 			//We need to set visibility before components kick in as they sometimes need access to isVisible
 			obj.updateVisibility();
 
@@ -240,6 +243,9 @@ define([
 
 			if ((!obj.sprite) && (template.sheetName))
 				obj.sprite = renderer.buildObject(obj);
+
+			if (template.filters && !obj.sprite?.filters?.length)
+				renderer.addFilter(obj.sprite, template.filters[0]);
 
 			if (template.name) {
 				if (obj.nameSprite)

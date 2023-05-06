@@ -7,8 +7,10 @@ define([
 		renderKeyboard: function () {
 			this.find('.keyboard').remove();
 
+			let mainContainer = this.find('.main');
+
 			let container = $('<div class="keyboard"></div>')
-				.appendTo(this.el);
+				.appendTo(mainContainer);
 
 			let keyboard = {
 				0: 'qwertyuiop|asdfghjkl|zxcvbnm',

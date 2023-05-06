@@ -126,19 +126,14 @@ module.exports = {
 			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
 			if (!distanceFromHome) {
 				this.goHome = false;
-				if (!obj.spellbook) {
-					/* eslint-disable-next-line no-console */
-					console.log('MOB HAS NO SPELLBOOK BUT WANTS TO RESET ROTATION');
-					/* eslint-disable-next-line no-console */
-					console.log(obj.name, obj.zone, obj.zoneName, obj.x, obj.y, obj.components.map(c => c.type).join(','));
-				}
 
-				obj.spellbook.resetRotation();
+				if (obj.spellbook)
+					obj.spellbook.resetRotation();
 			}
 		}
 
 		if (!this.goHome) {
-			//Are we too far from home?
+			//Are we chasing a target too far from home?
 			if (!obj.follower && target) {
 				if (!this.canChase(target)) {
 					obj.clearQueue();
@@ -147,7 +142,11 @@ module.exports = {
 				}
 			}
 
-			if ((target) && (target !== obj) && ((!obj.follower) || (obj.follower.master !== target))) {
+			//Are we too far from home?
+			let distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
+			if (distanceFromHome > this.maxChaseDistance || (distanceFromHome > this.walkDistance && !target && !this.patrol))
+				this.goHome = true;
+			else if (target && target !== obj && (!obj.follower || obj.follower.master !== target)) {
 				//If we just started attacking, patrols need to know where home is
 				if (!this.target && this.patrol) {
 					this.originX = obj.x;
@@ -361,9 +360,9 @@ module.exports = {
 	},
 
 	events: {
-		beforeTakeDamage: function (msg) {
+		beforeTakeDamage: function ({ damage }) {
 			if (this.goHome)
-				msg.failed = true;
+				damage.failed = true;
 		}
 	}
 };

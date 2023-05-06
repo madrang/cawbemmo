@@ -35,12 +35,21 @@ module.exports = {
 			return;
 
 		let amount = (obj.stats.values.hpMax / 100) * this.drainPercentage;
-		const damage = { amount };
-		obj.stats.takeDamage(damage, 0, obj);
+		obj.stats.takeDamage({
+			damage: { amount },
+			threatMult: 0,
+			source: obj,
+			target: obj,
+			spellName: 'bloodBarrier'
+		});
 
 		amount = amount * this.shieldMultiplier;
 		const heal = { amount };
-		target.stats.getHp(heal, obj);
+		target.stats.getHp({
+			heal, 
+			source: obj,
+			target
+		});
 
 		//Only reset the first spell's cooldown if it's an auto attack and not a spell
 		const firstSpell = target.spellbook.spells[0];
