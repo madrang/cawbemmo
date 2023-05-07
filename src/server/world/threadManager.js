@@ -20,7 +20,7 @@ const getThreadFromId = threadId => {
 	return threads.find(t => t.id === threadId);
 };
 
-const canThreadBeClosed = async thread => {
+const gePlayerCountInThread = async thread => {
 	const { playerCount } = await new Promise(res => {
 		const cb = registerCallback(res);
 
@@ -32,7 +32,7 @@ const canThreadBeClosed = async thread => {
 		});
 	});
 
-	return playerCount === 0;
+	return playerCount;
 };
 
 const messageHandlers = {
@@ -94,7 +94,7 @@ const messageHandlers = {
 	rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		if (thread.instanced && await canThreadBeClosed(thread)) {
+		if (thread.instanced && (await gePlayerCountInThread(thread)) === 0) {
 			thread.worker.kill();
 			threads.spliceWhere(t => t === thread);
 		}
@@ -259,5 +259,5 @@ module.exports = {
 	messageAllThreads,
 	sendMessageToThread,
 	returnWhenThreadsIdle,
-	canThreadBeClosed
+	gePlayerCountInThread
 };
