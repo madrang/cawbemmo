@@ -51,7 +51,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 				noCurrency: i > 0
 			};
 
-			let useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
+			const useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
 			cpnInv.getItem(useItem);
 		}
 	}
@@ -70,7 +70,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 			let item = drop;
 			if ((!item.quest) && (item.type !== 'key'))
-				item = generator.generate(drop);
+				item = generator.generate(extend({}, drop));
 
 			if (!item.slot)
 				delete item.level;
