@@ -51,11 +51,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 				noCurrency: i > 0
 			};
 
-			let useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
-			if (!useItem.ability && useItem.spell && !['oneHanded', 'twoHanded'].includes(useItem.slot)) {
-				console.log(1);
-				console.log(useItem);
-			}
+			const useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
 			cpnInv.getItem(useItem);
 		}
 	}
@@ -74,15 +70,10 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 			let item = drop;
 			if ((!item.quest) && (item.type !== 'key'))
-				item = generator.generate(drop);
+				item = generator.generate(extend({}, drop));
 
 			if (!item.slot)
 				delete item.level;
-
-			if (!item.ability && item.spell && !['oneHanded', 'twoHanded'].includes(item.slot)) {
-				console.log(2);
-				console.log(item);
-			}
 
 			cpnInv.getItem(item, true);
 		}
