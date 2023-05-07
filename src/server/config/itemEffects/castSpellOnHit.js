@@ -73,10 +73,8 @@ const handler = (obj, item, event, firedEventName) => {
 	};
 	obj.instance.eventEmitter.emit('onBeforeGetSpellTemplate', typeTemplate);
 
-	if (!typeTemplate.template) {
-		console.log('getting');
+	if (!typeTemplate.template)
 		typeTemplate.template = require('../spells/spell' + typeTemplate.type);
-	}
 
 	const builtSpell = extend({ obj }, spellBaseTemplate, typeTemplate.template, spellConfig);
 
