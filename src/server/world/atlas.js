@@ -2,7 +2,7 @@
 const objects = require('../objects/objects');
 const events = require('../misc/events');
 const {
-	getThread, killThread, sendMessageToThread, getThreadFromId, returnWhenThreadsIdle, canThreadBeClosed
+	getThread, killThread, sendMessageToThread, getThreadFromId, returnWhenThreadsIdle, gePlayerCountInThread
 } = require('./threadManager');
 const { registerCallback, removeCallback } = require('./atlas/registerCallback');
 
@@ -87,7 +87,7 @@ module.exports = {
 		if (!thread)
 			return;
 
-		if (thread.instanced && await canThreadBeClosed(thread, this.registerCallback.bind(this))) {
+		if (thread.instanced && (await gePlayerCountInThread(thread)) === 1) {
 			this.removeObjectFromInstancedZone(thread, obj, callback);
 
 			return;
