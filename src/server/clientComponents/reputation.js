@@ -32,7 +32,7 @@ define([
 		},
 
 		getTier: function (factionId) {
-			return this.factions.find(f => f.id === factionId)?.tier ?? 3;
+			return this.list.find(f => f.id === factionId)?.tier ?? 3;
 		}
 	};
 });
