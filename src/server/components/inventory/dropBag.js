@@ -52,6 +52,10 @@ module.exports = (cpnInv, ownerName, killSource) => {
 			};
 
 			let useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
+			if (!useItem.ability && useItem.spell && !['oneHanded', 'twoHanded'].includes(useItem.slot)) {
+				console.log(1);
+				console.log(useItem);
+			}
 			cpnInv.getItem(useItem);
 		}
 	}
@@ -74,6 +78,11 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 			if (!item.slot)
 				delete item.level;
+
+			if (!item.ability && item.spell && !['oneHanded', 'twoHanded'].includes(item.slot)) {
+				console.log(2);
+				console.log(item);
+			}
 
 			cpnInv.getItem(item, true);
 		}
