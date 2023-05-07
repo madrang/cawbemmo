@@ -163,7 +163,7 @@ module.exports = {
 						},
 						castTarget: 'none',					
 						castSpell: {
-							type: 'smokebomb',
+							type: 'smokeBomb',
 							damage: 1,
 							range: 1,
 							element: 'poison',
@@ -174,6 +174,9 @@ module.exports = {
 						}
 					};
 				}
+
+				if (effect.rolls.castSpell.type === 'smokebomb')
+					effect.rolls.castSpell.type = 'smokeBomb';
 			});
 
 		items
