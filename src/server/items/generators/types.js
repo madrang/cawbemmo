@@ -10,7 +10,7 @@ module.exports = {
 			const types = configTypes.types[item.slot];
 			const typeArray = Object
 				.entries(types)
-				.filter(t => t.noDrop !== true);
+				.filter(t => t[1].noDrop !== true);
 
 			const materials = Object.values(types)
 				.map(t => {
@@ -26,7 +26,7 @@ module.exports = {
 				.forEach(t => {
 					const [ typeName, typeConfig ] = t;
 
-					if (typeConfig.material === material)
+					if (typeConfig.material === material && typeConfig.noDrop !== true)
 						possibleTypes[typeName] = typeConfig;
 				});
 
