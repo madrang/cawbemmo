@@ -363,14 +363,14 @@ module.exports = {
 		});
 	},
 
-	forceSavePlayer: async function ({ playerName, callbackId }) {
-		const player = objects.objects.find(o => o.player && o.name === playerName);
+	forceSavePlayer: async function ({ playerId, callbackId }) {
+		const player = objects.objects.find(o => o.serverId === playerId);
 
 		if (!player?.auth) {
 			await io.setAsync({
 				key: new Date(),
 				table: 'error',
-				value: 'no auth found for forcesave ' + playerName
+				value: 'no auth found for forcesave ' + player?.name
 			});
 
 			return;

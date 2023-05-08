@@ -60,14 +60,14 @@ module.exports = {
 		});
 	},
 
-	removeObjectFromInstancedZone: async function (thread, obj, callback) {
+	removeObjectFromInstancedZone: async function (thread, objId, callback) {
 		await new Promise(res => {
 			const cb = this.registerCallback(res);
 
 			thread.worker.send({
 				method: 'forceSavePlayer',
 				args: {
-					playerName: obj.name,
+					playerId: objId,
 					callbackId: cb
 				}
 			});
@@ -80,6 +80,9 @@ module.exports = {
 	},
 
 	removeObject: async function (obj, skipLocal, callback) {
+		//We need to store the player id because the calling thread might delete it (connections.unzone)
+		const playerId = obj.id;
+
 		if (!skipLocal)
 			objects.removeObject(obj);
 
@@ -88,7 +91,7 @@ module.exports = {
 			return;
 
 		if (thread.instanced && (await gePlayerCountInThread(thread)) === 1) {
-			this.removeObjectFromInstancedZone(thread, obj, callback);
+			this.removeObjectFromInstancedZone(thread, playerId, callback);
 
 			return;
 		}
@@ -161,7 +164,7 @@ module.exports = {
 		await returnWhenThreadsIdle();
 	},
 
-	forceSavePlayer: async function (playerName, zoneId) {
+	forceSavePlayer: async function (playerId, zoneId) {
 		const thread = getThreadFromId(zoneId);
 
 		if (!thread)
@@ -173,7 +176,7 @@ module.exports = {
 			thread.worker.send({
 				method: 'forceSavePlayer',
 				args: {
-					playerName,
+					playerId,
 					callbackId
 				}
 			});
