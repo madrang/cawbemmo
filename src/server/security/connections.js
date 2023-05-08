@@ -130,7 +130,7 @@ module.exports = {
 
 			if (p.auth.username === exclude.auth.username) {
 				if (p.name && p.zoneId)
-					await atlas.forceSavePlayer(p.name, p.zoneId);
+					await atlas.forceSavePlayer(p.id, p.zoneId);
 
 				p.socket.emit('dc', {});
 			}
