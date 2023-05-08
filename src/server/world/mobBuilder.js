@@ -65,7 +65,7 @@ const buildCpnStats = (mob, blueprint, typeDefinition) => {
 		cpnStats.values.lifeOnHit = 0;
 };
 
-const buildCpnInventory = (mob, blueprint, { drops }, preferStat) => {
+const buildCpnInventory = (mob, blueprint, { drops, hasNoItems = false }, preferStat) => {
 	const { level } = blueprint;
 
 	const cpnInventory = mob.addComponent('inventory', drops);
@@ -73,19 +73,21 @@ const buildCpnInventory = (mob, blueprint, { drops }, preferStat) => {
 	cpnInventory.inventorySize = -1;
 	cpnInventory.dailyDrops = blueprint.dailyDrops;
 
-	generateSlots.forEach(slot => {
-		const item = itemGenerator.generate({
-			noSpell: true,
-			level,
-			slot,
-			quality: 4,
-			forceStats: [preferStat]
-		});
-		delete item.spell;
-		item.eq = true;
+	if (hasNoItems !== true) {
+		generateSlots.forEach(slot => {
+			const item = itemGenerator.generate({
+				noSpell: true,
+				level,
+				slot,
+				quality: 4,
+				forceStats: [preferStat]
+			});
+			delete item.spell;
+			item.eq = true;
 
-		cpnInventory.getItem(item);
-	});
+			cpnInventory.getItem(item);
+		});
+	}
 };
 
 const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
