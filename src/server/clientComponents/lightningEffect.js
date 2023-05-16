@@ -25,6 +25,12 @@ define([
 		init: function () {
 			effects.register(this);
 
+			if (this.toX === undefined && this.target === undefined) {
+				this.destroyed = true;
+
+				return;
+			}
+
 			let { toX = this.target.x, toY = this.target.y } = this;
 
 			const fromX = this.obj.x + ((toX >= this.obj.x) ? 1 : 0);
