@@ -536,8 +536,8 @@ module.exports = {
 			target: Target object (heal.target)
 			spell: Optional spell object that caused this event
 	*/
-	getHp: function (event) {
-		const { heal, source } = event;
+	getHp: function (eventHeal) {
+		const { heal, source } = eventHeal;
 
 		let amount = heal.amount;
 		if (amount === 0)
@@ -588,8 +588,8 @@ module.exports = {
 			this.obj.syncer.setObject(false, 'stats', 'values', 'hp', values.hp);
 		}
 
-		if (!heal.noEvents)
-			source.fireEvent('afterGiveHp', event);
+		if (!eventHeal.noEvents)
+			source.fireEvent('afterGiveHp', eventHeal);
 	},
 
 	save: function () {
