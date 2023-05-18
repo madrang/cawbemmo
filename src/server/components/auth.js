@@ -91,7 +91,7 @@ module.exports = {
 		await leaderboard.setLevel(character.name, this.obj.stats.values.level, prophecies);
 	},
 
-	doSave: async function (callback, saveStash = true) {	
+	doSave: async function (callback) {
 		const simple = this.obj.getSimple(true, true);
 		delete simple.destroyed;
 		delete simple.forceDestroy;
@@ -106,8 +106,7 @@ module.exports = {
 			serialize: true
 		});
 
-		if (saveStash)
-			await this.doSaveStash();
+		await this.doSaveStash();
 
 		if (callback)
 			callback();
@@ -116,7 +115,7 @@ module.exports = {
 	//This function is called from the 'forceSave' command. Because of this, the first argument is the action data
 	// instead of (callback, saveStash)
 	doSaveManual: async function (msg) {
-		await this.doSave(null, true);
+		await this.doSave();
 
 		process.send({
 			module: 'atlas',
@@ -213,22 +212,6 @@ module.exports = {
 		this.customChannels = fixes.fixCustomChannels(this.customChannels);
 		if (social)
 			social.customChannels = this.customChannels;
-	},
-
-	getStash: async function (data, character) {
-		this.stash = await io.getAsync({
-			key: this.username,
-			table: 'stash',
-			isArray: true,
-			clean: true
-		});
-
-		fixes.fixStash(this.stash);
-
-		await eventEmitter.emit('onAfterGetStash', {
-			obj: this.obj,
-			stash: this.stash
-		});
 	},
 
 	verifySkin: async function (character) {
