@@ -43,7 +43,10 @@ module.exports = {
 					sessionDuration: sessionDuration
 				}]
 			});
-			atlas.removeObject(player);
+
+			await new Promise(res => {
+				atlas.removeObject(player, false, res);
+			});
 		}
 
 		if (player.name) {
@@ -72,7 +75,7 @@ module.exports = {
 		routeGlobal.call(this, msg);
 	},
 
-	unzone: function (msg) {
+	unzone: async function (msg) {
 		let socket = msg.socket;
 		let player = this.players.find(p => p.socket.id === socket.id);
 
@@ -82,7 +85,9 @@ module.exports = {
 		if (player.social)
 			player.social.dc();
 
-		atlas.removeObject(player, true, this.onUnzone.bind(this, player, msg));
+		await new Promise(res => {
+			atlas.removeObject(player, true, res);
+		});
 
 		let keys = Object.keys(player);
 		keys.forEach(function (k) {
@@ -113,9 +118,7 @@ module.exports = {
 		delete player.auth.charname;
 
 		this.modifyPlayerCount(-1);
-	},
 
-	onUnzone: async function (player, msg) {
 		msg.callback();
 	},
 
