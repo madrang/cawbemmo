@@ -171,7 +171,7 @@ module.exports = {
 			spawnCd: 1714,
 
 			regular: {
-				hpMult: 75,
+				hpMult: 90,
 				dmgMult: 2,
 
 				drops: {
