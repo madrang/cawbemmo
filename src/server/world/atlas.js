@@ -87,8 +87,11 @@ module.exports = {
 			objects.removeObject(obj);
 
 		const thread = getThreadFromId(obj.zoneId);
-		if (!thread)
+		if (!thread) {
+			callback();
+
 			return;
+		}
 
 		if (thread.instanced && (await gePlayerCountInThread(thread)) === 1) {
 			this.removeObjectFromInstancedZone(thread, playerId, callback);
