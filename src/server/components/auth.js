@@ -182,7 +182,7 @@ module.exports = {
 			clean: true
 		});
 
-		eventEmitter.emit('onAfterGetCharacter', {
+		await eventEmitter.emit('onAfterGetCharacter', {
 			obj: this.obj,
 			character
 		});
