@@ -319,6 +319,16 @@ module.exports = {
 		if (this.regenBusy) {
 			this.unqueueMessage(msg);
 
+			if (msg.callbackId) {
+				process.send({
+					module: 'atlas',
+					method: 'resolveCallback',
+					msg: {
+						id: msg.callbackId
+					}
+				});
+			}
+
 			return;
 		}
 
