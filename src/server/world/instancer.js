@@ -339,6 +339,7 @@ module.exports = {
 		let obj = msg.obj;
 		obj = objects.find(o => o.serverId === obj.id);
 		if (!obj) {
+			console.log('No object found to remove');
 			//We should probably never reach this
 			return;
 		}
