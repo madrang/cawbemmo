@@ -103,6 +103,10 @@ module.exports = {
 		if (callback)
 			callbackId = this.registerCallback(callback);
 
+		const simple = obj.getSimple(true);
+		if (!simple.name) 
+			console.log(`Object has no name. Username: ${obj.auth?.username}`);
+
 		sendMessageToThread({
 			threadId: obj.zoneId,
 			msg: {
