@@ -103,10 +103,6 @@ module.exports = {
 		if (callback)
 			callbackId = this.registerCallback(callback);
 
-		const simple = obj.getSimple(true);
-		if (!simple.name)
-			console.log(`Object has no name: ${JSON.stringify(simple, null, '\t')}`);
-
 		sendMessageToThread({
 			threadId: obj.zoneId,
 			msg: {

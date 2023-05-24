@@ -44,9 +44,13 @@ module.exports = {
 				}]
 			});
 
-			await new Promise(res => {
-				atlas.removeObject(player, false, res);
-			});
+			//If the player doesn't have a 'social' component, they are no longer in a threat
+			// Likely due to unzoning (character select screen)
+			if (player.components.some(c => c.type === 'social')) {
+				await new Promise(res => {
+					atlas.removeObject(player, false, res);
+				});
+			}
 		}
 
 		if (player.name) {
@@ -93,8 +97,11 @@ module.exports = {
 		keys.forEach(function (k) {
 			let val = player[k];
 			if (val && val.type) {
-				if (['player', 'auth', 'syncer'].indexOf(val.type) === -1)
+				if (['player', 'auth', 'syncer'].indexOf(val.type) === -1) {
 					delete player[k];
+
+					player.components.spliceWhere(c => c.type === val.type);
+				}
 			}
 		});
 
