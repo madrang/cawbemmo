@@ -339,7 +339,7 @@ module.exports = {
 		let obj = msg.obj;
 		obj = objects.find(o => o.serverId === obj.id);
 		if (!obj) {
-			console.log('No object found', msg);
+			console.log(`No object found in ${this.zoneId}`, msg);
 			//We should probably never reach this
 			return;
 		}
