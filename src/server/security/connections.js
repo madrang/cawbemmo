@@ -44,9 +44,11 @@ module.exports = {
 				}]
 			});
 
-			//Rezoning is set to true while rezoning so we don't try to remove objects
+			//If the player doesn't have a 'social' component, they are no longer in a threat
+			// Likely due to unzoning (character select screen)
+			// Also, rezoning is set to true while rezoning so we don't try to remove objects
 			// from zones if they are currently rezoning
-			if (player.rezoning !== true) {
+			if (player.components.some(c => c.type === 'social') && player.rezoning !== true) {
 				await new Promise(res => {
 					atlas.removeObject(player, false, res);
 				});
@@ -97,8 +99,11 @@ module.exports = {
 		keys.forEach(function (k) {
 			let val = player[k];
 			if (val && val.type) {
-				if (['player', 'auth', 'syncer'].indexOf(val.type) === -1)
+				if (['player', 'auth', 'syncer'].indexOf(val.type) === -1) {
 					delete player[k];
+
+					player.components.spliceWhere(c => c.type === val.type);
+				}
 			}
 		});
 
