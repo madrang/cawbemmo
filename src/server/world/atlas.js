@@ -15,6 +15,9 @@ module.exports = {
 		if (!serverObj)
 			return;
 
+		//While rezoning, this is set to true. So we remove it
+		delete serverObj.rezoning;
+
 		events.emit('onBeforePlayerEnterWorld', obj);
 
 		let { zoneName, zoneId } = obj;

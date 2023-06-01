@@ -46,6 +46,16 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	globalSyncer.processDestroyedObject(obj);
 	await obj.auth.doSave();
 
+	//Inform the main thread that we are rezoning. We do this because if the player 
+	// dc's before rezone is complete the player might become stuck in the main thread
+	process.send({
+		method: 'object',
+		serverId: obj.serverId,
+		obj: {
+			rezoning: true
+		}
+	});
+
 	//We have to do this again. This is because onCollisionEnter in portal is not blocking (even though it is async)
 	// So physics will carry on and allow the obj to move onto the next tile (changing the position while we save above)
 	fixPosition(obj, toPos, toRelativePos, invokingObj);

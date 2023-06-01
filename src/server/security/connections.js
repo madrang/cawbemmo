@@ -44,9 +44,13 @@ module.exports = {
 				}]
 			});
 
-			await new Promise(res => {
-				atlas.removeObject(player, false, res);
-			});
+			//Rezoning is set to true while rezoning so we don't try to remove objects
+			// from zones if they are currently rezoning
+			if (player.rezoning !== true) {
+				await new Promise(res => {
+					atlas.removeObject(player, false, res);
+				});
+			}
 		}
 
 		if (player.name) {
@@ -123,19 +127,25 @@ module.exports = {
 	},
 
 	logOut: async function (exclude) {
-		let players = this.players;
+		const { players } = this;
+
 		let pLen = players.length;
 		for (let i = 0; i < pLen; i++) {
-			let p = players[i];
+			const p = players[i];
 
-			if ((!p) || (p === exclude) || (!p.auth))
+			if (!p || p === exclude || !p.auth)
 				continue;
-
-			if (p.auth.username === exclude.auth.username) {
+			else if (p.auth.username === exclude.auth.username) {
 				if (p.name && p.zoneId)
 					await atlas.forceSavePlayer(p.id, p.zoneId);
 
-				p.socket.emit('dc', {});
+				if (p.socket?.connected)
+					p.socket.emit('dc', {});
+				else {
+					players.splice(i, 1);
+					i--;
+					pLen--;
+				}
 			}
 		}
 	},
