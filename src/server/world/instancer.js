@@ -319,15 +319,7 @@ module.exports = {
 		if (this.regenBusy) {
 			this.unqueueMessage(msg);
 
-			if (msg.callbackId) {
-				process.send({
-					module: 'atlas',
-					method: 'resolveCallback',
-					msg: {
-						id: msg.callbackId
-					}
-				});
-			}
+			this.resolveCallback(msg);
 
 			return;
 		}
@@ -339,8 +331,9 @@ module.exports = {
 		let obj = msg.obj;
 		obj = objects.find(o => o.serverId === obj.id);
 		if (!obj) {
-			console.log(`No object found in ${this.zoneId}`, msg);
-			//We should probably never reach this
+			//We could reach this if a player dc's while zoning in
+			this.resolveCallback(msg);
+
 			return;
 		}
 
@@ -355,15 +348,7 @@ module.exports = {
 
 		obj.destroyed = true;
 
-		if (msg.callbackId) {
-			process.send({
-				module: 'atlas',
-				method: 'resolveCallback',
-				msg: {
-					id: msg.callbackId
-				}
-			});
-		}
+		this.resolveCallback(msg);
 	},
 
 	notifyOnceIdle: async function () {
@@ -374,7 +359,8 @@ module.exports = {
 		});
 	},
 
-	forceSavePlayer: async function ({ playerId, callbackId }) {
+	forceSavePlayer: async function (msg) {
+		const { playerId } = msg;
 		const player = objects.objects.find(o => o.serverId === playerId);
 
 		if (!player?.auth) {
@@ -389,25 +375,32 @@ module.exports = {
 
 		await player.auth.doSave();
 
-		process.send({
+		this.resolveCallback(msg);
+	},
+
+	getPlayerCount: function (msg) {
+		this.resolveCallback(msg, {
+			result: {
+				playerCount: objects.objects.filter(o => o.player !== undefined).length
+			}
+		});
+	},
+
+	resolveCallback: function ({ callbackId }, data) {
+		if (!callbackId)
+			return;
+
+		const payload = {
 			module: 'atlas',
 			method: 'resolveCallback',
 			msg: {
 				id: callbackId
 			}
-		});
-	},
+		};
 
-	getPlayerCount: function ({ callbackId }) {
-		process.send({
-			module: 'atlas',
-			method: 'resolveCallback',
-			msg: {
-				id: callbackId,
-				result: {
-					playerCount: objects.objects.filter(o => o.player !== undefined).length
-				}
-			}
-		});
+		if (data)
+			Object.assign(payload.msg, data);
+
+		process.send(payload);
 	}
 };
