@@ -29,6 +29,9 @@ module.exports = {
 		if (blueprint.faction) 
 			this.faction = blueprint.faction;
 
+		if (blueprint.range)
+			this.range = blueprint.range;
+
 		//TODO: Why don't we move if faction is null?
 		if (!this.has('faction'))
 			return;
