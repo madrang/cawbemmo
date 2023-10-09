@@ -8,6 +8,7 @@ audit:
   stage: test
   script:
     - cd src/server
+    - npm install
     - npm audit
   allow_failure: true
   only:
@@ -17,9 +18,10 @@ audit:
 lint-server:
   stage: test
   script:
-    - npm install eslint@7.32.0 eslint-plugin-prettier prettier babel-eslint eslint-plugin-requirejs
-    - cd src/server
-    - ../../node_modules/.bin/eslint . 
+    - cd src
+    - npm install
+    - cd server
+    - ../node_modules/.bin/eslint . 
   only:
     - merge_requests
     - master
@@ -27,9 +29,10 @@ lint-server:
 lint-client:
   stage: test
   script:
-    - npm install eslint@7.32.0 eslint-plugin-prettier prettier babel-eslint eslint-plugin-requirejs
-    - cd src/client
-    - ../../node_modules/.bin/eslint .
+    - cd src
+    - npm install
+    - cd client
+    - ../node_modules/.bin/eslint . 
   only:
     - merge_requests
     - master
