@@ -245,9 +245,9 @@ define([
 					const isChannel = m?.subType === 'custom';
 					if (isChannel) {
 						if (this.find('.filter[filter="' + m.channel + '"]').hasClass('active'))
-							el.show();
+							el.css({ display: 'flex' });
 						else
-							el.hide();
+							el.css({ display: 'none' });
 					}
 
 					if (isMobile && ['loot', 'info'].indexOf(m.type) !== -1) {
