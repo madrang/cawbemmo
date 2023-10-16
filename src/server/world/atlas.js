@@ -24,7 +24,7 @@ module.exports = {
 
 		const partyIds = obj.components.find(c => c.type === 'social')?.party;
 		if (partyIds) {
-			const partyLeader = cons.players.find(p => partyIds.includes(p.id) && p.components.find(c => c.type === 'social').isPartyLeader);
+			const partyLeader = cons.players.find(p => partyIds.includes(p.id) && p.components.find(c => c.type === 'social')?.isPartyLeader);
 
 			if (partyLeader?.zoneName === zoneName)
 				zoneId = partyLeader.zoneId;
