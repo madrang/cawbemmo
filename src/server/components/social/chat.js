@@ -7,13 +7,13 @@ const sendRegularMessage = async ({ obj }, msg) => {
 
 	const msgEvent = {
 		username: obj.account,
-		tagPrefix: '(',
-		tagSuffix: ')',
+		tagPrefix: null,
+		tagSuffix: null,
 		tags: [],
 		emojiTag: null,
 		namePrefix: '',
 		nameSuffix: '',
-		msgStyle: 'color-grayB',
+		msgStyle: null,
 		obj
 	};
 
@@ -45,7 +45,7 @@ const sendRegularMessage = async ({ obj }, msg) => {
 		event: 'onGetMessages',
 		data: {
 			messages: [{
-				class: msgEvent.msgStyle,
+				class: msgEvent.msgStyle ?? 'color-grayB',
 				message: finalMessage,
 				item,
 				type: 'chat',
