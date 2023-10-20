@@ -214,8 +214,8 @@ define([
 				}
 
 				if (m.item) {
-					let source = message.split(':')[0];
-					message = source + ': <span class="q' + (m.item.quality || 0) + '">' + message.replace(source + ': ', '') + '</span>';
+					const [source, useMessage] = message.split(': {');
+					message = source + ': <span class="q' + (m.item.quality || 0) + '">&nbsp;{' + useMessage + '</span>';
 				}
 
 				let el = $('<div class="list-message ' + m.class + '">' + message + '</div>')
