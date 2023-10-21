@@ -2,7 +2,10 @@ module.exports = async (cpnSocial, targetName) => {
 	const { obj } = cpnSocial;
 	const { instance: { objects, physics }, syncer } = obj;
 
-	const target = objects.find(o => o.name && o.name.toLowerCase().includes(targetName.toLowerCase()));
+	if (typeof(targetName) !== 'string')
+		return;
+
+	const target = objects.find(o => o.name?.toLowerCase().includes(targetName.toLowerCase()));
 
 	if (!target)
 		return;
