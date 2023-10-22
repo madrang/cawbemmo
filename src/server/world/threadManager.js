@@ -174,22 +174,9 @@ const spawnThread = async ({ name, path, instanced }) => {
 };
 
 const doesThreadExist = ({ zoneName, zoneId }) => {
-	let map = mapList.find(m => m.name === zoneName);
-
-	if (!map)
-		map = mapList.find(m => m.name === clientConfig.config.defaultZone);
-
 	const exists = threads.some(t => t.id === zoneId && t.name === zoneName);
 
-	if (exists)
-		return true;
-
-	if (map.instanced)
-		return false;
-
-	const thread = getThreadFromName(map.name);
-
-	return !!thread;
+	return exists;
 };
 
 const getThread = async ({ zoneName, zoneId }) => {
