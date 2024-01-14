@@ -195,6 +195,16 @@ module.exports = {
 			.run();
 	},
 
+	deleteFilterAsync: async function ({
+		table,
+		filter
+	}) {
+		await r.table(table)
+			.filter(filter)
+			.delete()
+			.run();
+	},
+
 	subscribe: function (table) {
 		return r.table(table)
 			.changes()
