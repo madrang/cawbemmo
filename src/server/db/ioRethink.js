@@ -150,7 +150,7 @@ module.exports = {
 				})
 				.run();
 		} catch (e) {
-			this.logError({
+			await this.logError({
 				sourceModule: 'ioRethink',
 				sourceMethod: 'setAsync',
 				error: e,
@@ -173,7 +173,7 @@ module.exports = {
 				.insert(value, { conflict })
 				.run();
 		} catch (e) {
-			this.logError({
+			await this.logError({
 				sourceModule: 'ioRethink',
 				sourceMethod: 'setFlat',
 				error: e,
@@ -233,7 +233,7 @@ module.exports = {
 				})
 				.run();
 		} catch (e) {
-			this.logError({
+			await this.logError({
 				sourceModule: 'ioRethink',
 				sourceMethod: 'append',
 				error: e,
@@ -279,5 +279,7 @@ module.exports = {
 			});
 		} else
 			process.exit();
+
+		throw new Error('Forcing crash');
 	}
 };
