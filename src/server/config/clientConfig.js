@@ -8,7 +8,7 @@ const config = {
 	logoPath: null,
 	loginBgGeneratorPath: null,
 	resourceList: [],
-	defaultZone: 'fjolarok',
+	defaultZone: 'town',
 	textureList: [
 		'tiles',
 		'walls',
@@ -187,6 +187,7 @@ const config = {
 		'talk',
 		'trade',
 		'overlay',
+		'online',
 		'death',
 		'leaderboard',
 		'reputation',

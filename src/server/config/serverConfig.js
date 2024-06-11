@@ -1,8 +1,8 @@
 /* eslint-disable no-process-env */
 
 module.exports = {
-	version: '0.14.0',
-	port: 4000,
+	version: '0',
+	port: 4001,
 	startupMessage: 'Server: ready',
 
 	nodeEnv: process.env.NODE_ENV,
