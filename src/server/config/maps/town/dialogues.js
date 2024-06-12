@@ -16,16 +16,8 @@ module.exports = {
 		},
 		2:  {
 			msg: [{
-				msg: 'Nenon je check mon téléphone',
-				options: [2.1]
-			}],
-			options: {
-				2.1: {
-					msg: 'ha bon',
-					goto : 1
-				}
-
-			}
+				msg: 'Nenon je check mon téléphone'
+			}]
 		}
 	},
 

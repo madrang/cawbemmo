@@ -1,12 +1,12 @@
 module.exports = {
 	dealer: {
-		zoneName: 'sewer',
+		zoneName: 'town',
 		pos: {
-			x: 74,
-			y: 99
+			x: 875,
+			y: 642
 		},
 		zoneConfig: {
-			name: 'Shady Dealer',
+			name: 'Dealer Louche',
 			cell: 0,
 			sheetName: '$MODFOLDER$/images/mobs.png',
 			components: {
