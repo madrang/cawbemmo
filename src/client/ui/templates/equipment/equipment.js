@@ -385,7 +385,7 @@ define([
 			let xpRemaining = (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 			let newStats = {
-				basic: {
+				info: {
 					level: stats.level,
 					'next level': xpRemaining + 'xp',
 					gap1: '',
@@ -421,7 +421,7 @@ define([
 					'attack speed': (100 + stats.attackSpeed) + '%',
 					'cast speed': (100 + stats.castSpeed) + '%'
 				},
-				defense: {
+				défense: {
 					armor: stats.armor,
 					'chance to block attacks': stats.blockAttackChance + '%',
 					'chance to block spells': stats.blockSpellChance + '%',
@@ -439,7 +439,7 @@ define([
 					gap4: '',
 					'life gained on hit': stats.lifeOnHit
 				},
-				misc: {
+				autres: {
 					'item quality': stats.magicFind + '%',
 					'item quantity': stats.itemQuantity + '%',
 					gap1: '',
