@@ -1,4 +1,4 @@
-{ "backgroundcolor":"#32222e",
+{ "backgroundcolor":"#322a05",
  "compressionlevel":-1,
  "height":164,
  "infinite":false,
@@ -3681,7 +3681,7 @@
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":132,\"y\":82}]"
+         "value":"[{\"x\":104,\"y\":96}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
@@ -3740,7 +3740,7 @@
         {
          "columns":8,
          "firstgid":257,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/mobs.png",
+         "image":"..\/..\/..\/..\/..\/src\/client\/images\/mobs.png",
          "imageheight":88,
          "imagewidth":64,
          "margin":0,
@@ -3763,7 +3763,7 @@
         {
          "columns":16,
          "firstgid":345,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/tiles.png",
+         "image":"..\/..\/..\/..\/..\/src\/client\/images\/tiles.png",
          "imageheight":224,
          "imagewidth":128,
          "margin":0,
@@ -3865,7 +3865,7 @@
         {
          "columns":8,
          "firstgid":793,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/objects.png",
+         "image":"..\/..\/..\/..\/..\/src\/client\/images\/objects.png",
          "imageheight":176,
          "imagewidth":64,
          "margin":0,
@@ -3883,7 +3883,7 @@
         {
          "columns":8,
          "firstgid":969,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/bigObjects.png",
+         "image":"..\/..\/..\/..\/..\/src\/client\/images\/bigObjects.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,
@@ -3896,7 +3896,7 @@
         {
          "columns":8,
          "firstgid":1049,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/bosses.png",
+         "image":"..\/..\/..\/..\/..\/src\/client\/images\/bosses.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,
