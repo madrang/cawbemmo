@@ -1440,15 +1440,15 @@
                  "y":672
                 }, 
                 {
-                 "height":21.25,
+                 "height":24,
                  "id":1018,
                  "name":"mrBoner",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":22.75,
-                 "x":904.75,
-                 "y":631.25
+                 "width":24,
+                 "x":904,
+                 "y":632
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3632,7 +3632,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1019,
+ "nextobjectid":1021,
  "orientation":"orthogonal",
  "properties":[
         {
