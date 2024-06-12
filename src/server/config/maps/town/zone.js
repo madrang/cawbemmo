@@ -200,6 +200,14 @@ module.exports = {
 				}
 			}
 		},
+		binary: {
+			level: 50,
+			walkDistance: 0,
+			attackable: false,
+			rare: {
+				count: 0
+			},
+		},
 		hermit: {
 			level: 10,
 			walkDistance: 0,
