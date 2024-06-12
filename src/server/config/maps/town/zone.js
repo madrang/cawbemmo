@@ -201,7 +201,7 @@ module.exports = {
 			}
 		},
 		binary: {
-			level: 50,
+			level: 10,
 			walkDistance: 0,
 			attackable: false,
 			rare: {
