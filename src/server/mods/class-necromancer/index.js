@@ -18,8 +18,7 @@ module.exports = {
 	},
 
 	onAfterGetZone: function (zoneName, config) {
-		if (zoneName !== 'town')
-			return;
+
 
 		let newRunes = [{
 			generate: true,
