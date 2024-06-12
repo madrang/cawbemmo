@@ -18,7 +18,8 @@ module.exports = {
 	},
 
 	onAfterGetZone: function (zoneName, config) {
-
+		if (zoneName !== 'fjolgard')
+			return;
 
 		let newRunes = [{
 			generate: true,
