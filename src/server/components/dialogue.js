@@ -170,7 +170,7 @@ module.exports = {
 			.filter(o => !!o);
 
 		result.options.push({
-			msg: 'Goodbye',
+			msg: 'Au revoir',
 			id: 999
 		});
 
