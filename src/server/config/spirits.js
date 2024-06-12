@@ -1,7 +1,7 @@
 let events = require('../misc/events');
 
 module.exports = {
-	list: ['bear', 'owl', 'lynx'],
+	list: ['bear', 'owl', 'lynx','necro'],
 	portraits: {
 		bear: {
 			x: 0,
@@ -19,7 +19,8 @@ module.exports = {
 	spells: {
 		owl: ['magic missile', 'ice spear'],
 		bear: ['slash', 'charge'],
-		lynx: ['flurry', 'smokebomb']
+		lynx: ['flurry', 'smokebomb'],
+		necro: ['harvest life','summon skeleton']
 	},
 	stats: {
 		owl: {
@@ -48,12 +49,22 @@ module.exports = {
 			gainStats: {
 				str: 1
 			}
+		},
+		necro: {
+			values: {
+				hpMax: 40,
+				hpPerLevel: 37
+			},
+			gainStats: {
+				int: 1
+			}
 		}
 	},
 	weapons: {
 		owl: 'Gnarled Staff',
 		lynx: 'Dagger',
-		bear: 'Sword'
+		bear: 'Sword',
+		necro: 'Sickle'
 	},
 
 	getSpritesheet: function (className) {

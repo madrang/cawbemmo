@@ -386,10 +386,10 @@ define([
 
 			let newStats = {
 				info: {
-					level: stats.level,
-					'next level': xpRemaining + 'xp',
+					niveau: stats.level,
+					'prochain niveau': xpRemaining + 'xp',
 					gap1: '',
-					gold: window.player.trade.gold,
+					Argent: window.player.trade.gold,
 					gap2: '',
 					hp: ~~stats.hp + '/' + ~~stats.hpMax,
 					mana: ~~stats.mana + '/' + ~~stats.manaMax,
