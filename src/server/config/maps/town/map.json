@@ -1448,6 +1448,23 @@
                  "width":24,
                  "x":904,
                  "y":632
+                }, 
+                {
+                 "height":55.6363636363637,
+                 "id":1022,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"cpnNotice",
+                         "type":"string",
+                         "value":"{ \"msg\": \"Les Cossins \u00e0 Peter\"}"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":79.0909090909091,
+                 "x":800.727272727273,
+                 "y":688.909090909091
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3648,7 +3665,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1022,
+ "nextobjectid":1023,
  "orientation":"orthogonal",
  "properties":[
         {
