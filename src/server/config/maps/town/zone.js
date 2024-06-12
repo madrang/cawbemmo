@@ -207,6 +207,9 @@ module.exports = {
 			rare: {
 				count: 0
 			},
+			properties: {
+
+			}
 		},
 		hermit: {
 			level: 10,
@@ -219,7 +222,7 @@ module.exports = {
 				cpnTrade: {
 					items: {
 						min: 3,
-						max: 5
+						max: 10
 					},
 					forceItems: [{
 						name: 'Flimsy Fishing Rod',
@@ -240,10 +243,10 @@ module.exports = {
 					}],
 					level: {
 						min: 1,
-						max: 5
+						max: 10
 					},
 					markup: {
-						buy: 0.25,
+						buy: 0.50,
 						sell: 2.5
 					}
 				}
