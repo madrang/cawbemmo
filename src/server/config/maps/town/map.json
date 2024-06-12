@@ -3690,7 +3690,7 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/walls.png",
+         "image":"..\/..\/..\/..\/client\/images\/walls.png",
          "imageheight":256,
          "imagewidth":64,
          "margin":0,
@@ -3740,7 +3740,7 @@
         {
          "columns":8,
          "firstgid":257,
-         "image":"..\/..\/..\/..\/..\/src\/client\/images\/mobs.png",
+         "image":"..\/..\/..\/..\/client\/images\/mobs.png",
          "imageheight":88,
          "imagewidth":64,
          "margin":0,
