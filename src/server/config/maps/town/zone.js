@@ -32,6 +32,25 @@ module.exports = {
 				}
 			}
 		},
+		mrBoner: {
+			properties: {
+				cpnNotice: {
+					actions: {
+						enter: {
+							cpn: 'dialogue',
+							method: 'talk',
+							args: [{
+								targetName: 'binary'
+							}]
+						},
+						exit: {
+							cpn: 'dialogue',
+							method: 'stopTalk'
+						}
+					}
+				}
+			}
+		},
 		'sun carp school': {
 			max: 9,
 			type: 'fish',

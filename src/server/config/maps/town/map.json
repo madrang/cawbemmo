@@ -1438,6 +1438,17 @@
                  "width":0,
                  "x":927,
                  "y":672
+                }, 
+                {
+                 "height":0,
+                 "id":1017,
+                 "name":"mrBoner",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":917.75,
+                 "y":646
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -2491,6 +2502,18 @@
                  "width":8,
                  "x":624.25,
                  "y":647.5
+                }, 
+                {
+                 "gid":289,
+                 "height":8,
+                 "id":1015,
+                 "name":"binary",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":914,
+                 "y":649.25
                 }],
          "opacity":1,
          "properties":[
@@ -3609,7 +3632,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1014,
+ "nextobjectid":1018,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -3634,7 +3657,7 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/client\/images\/walls.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/walls.png",
          "imageheight":256,
          "imagewidth":64,
          "margin":0,
@@ -3684,7 +3707,7 @@
         {
          "columns":8,
          "firstgid":257,
-         "image":"..\/..\/..\/..\/client\/images\/mobs.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/mobs.png",
          "imageheight":88,
          "imagewidth":64,
          "margin":0,
@@ -3707,7 +3730,7 @@
         {
          "columns":8,
          "firstgid":345,
-         "image":"..\/..\/..\/..\/client\/images\/tiles.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/tiles.png",
          "imageheight":224,
          "imagewidth":64,
          "margin":0,
@@ -3809,7 +3832,7 @@
         {
          "columns":8,
          "firstgid":569,
-         "image":"..\/..\/..\/..\/client\/images\/objects.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/objects.png",
          "imageheight":176,
          "imagewidth":64,
          "margin":0,
@@ -3827,7 +3850,7 @@
         {
          "columns":8,
          "firstgid":745,
-         "image":"..\/..\/..\/..\/client\/images\/bigObjects.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/bigObjects.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,
@@ -3840,7 +3863,7 @@
         {
          "columns":8,
          "firstgid":825,
-         "image":"..\/..\/..\/..\/client\/images\/bosses.png",
+         "image":"..\/..\/..\/..\/..\/..\/isleward\/src\/client\/images\/bosses.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,

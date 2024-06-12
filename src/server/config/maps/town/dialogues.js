@@ -1,4 +1,34 @@
 module.exports = {
+
+	binary: {
+		1: {
+			msg: [{
+				msg: 'ZZzZZZz',
+				options: [1.1]
+			}],
+			options: {
+				1.1: {
+					msg: 'Coudonc dort tu?',
+					goto : 2
+				}
+
+			}
+		},
+		2:  {
+			msg: [{
+				msg: 'Nenon je check mon téléphone',
+				options: [2.1]
+			}],
+			options: {
+				2.1: {
+					msg: 'ha bon',
+					goto : 1
+				}
+
+			}
+		}
+	},
+
 	hermit: {
 		1: {
 			msg: [{

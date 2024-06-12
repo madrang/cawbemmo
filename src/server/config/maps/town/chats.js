@@ -1,4 +1,11 @@
 module.exports = {
+	binary: [{
+		msg: 'ZZZZzzzzZZZZzzzzZZ'
+	}, {
+		msg: 'zZzZZz'
+	}, {
+		msg: 'zZzZZzZZzZZz'
+	}],
 	hermit: [{
 		msg: '*strokes his beard*'
 	}, {
