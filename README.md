@@ -13,7 +13,7 @@ Installation:
 
 1. Cloné le dépot
 2. allé dans src/server/
-3. Installé les dépendances: npm Installé
+3. Installé les dépendances: npm install
 4. run: node index.js
 5. allé sur http:://ip:4001/
 
