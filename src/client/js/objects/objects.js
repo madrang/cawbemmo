@@ -114,6 +114,7 @@ define([
 		},
 
 		buildObject: function (template) {
+			//console.log("Building object from template", template);
 			let obj = $.extend(true, {}, objBase);
 
 			let components = template.components || [];
@@ -184,6 +185,7 @@ define([
 		},
 
 		updateObject: function (obj, template) {
+			//console.log("Updating object", obj);
 			let components = template.components || [];
 
 			components.forEach(c => {
@@ -238,8 +240,9 @@ define([
 				}
 			}
 
-			if (((template.sheetName) || (template.cell)) && (sprite))
+			if ((template.sheetName || template.cell) && sprite) {
 				renderer.setSprite(obj);
+			}
 
 			if ((!obj.sprite) && (template.sheetName))
 				obj.sprite = renderer.buildObject(obj);

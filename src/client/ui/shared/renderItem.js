@@ -102,13 +102,10 @@ define([
 	};
 
 	return (container, item, useEl, manageTooltip, getItemContextConfig, showNewIndicators = true) => {
-		const { clientConfig: { spriteSizes } } = globals;
-
 		const itemEl = useEl || $(tplItem).appendTo(container);
 
 		if (!item) {
 			itemEl.addClass('empty');
-
 			return itemEl;
 		}
 
@@ -132,8 +129,12 @@ define([
 		if (item.spriteSize)
 			size = item.spriteSize;
 
-		if (spriteSizes[spritesheet])
-			size = spriteSizes[spritesheet];
+		const spriteSizes = globals.clientConfig.spriteSizes;
+		// Extract filename from path.
+		const sheetName = spritesheet.split(/[\\/]/g).pop().split('.')[0];
+		if (spriteSizes[sheetName]) {
+			size = spriteSizes[sheetName];
+		}
 
 		const imgX = (-item.sprite[0] * size);
 		const imgY = (-item.sprite[1] * size);
