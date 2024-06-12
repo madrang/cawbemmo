@@ -2,8 +2,8 @@ module.exports = {
 	dealer: {
 		zoneName: 'town',
 		pos: {
-			x: 875,
-			y: 642
+			x: 106,
+			y: 78
 		},
 		zoneConfig: {
 			name: 'Dealer Louche',
