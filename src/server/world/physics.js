@@ -349,6 +349,13 @@ module.exports = {
 		return true;
 	},
 	hasLos: function (fromX, fromY, toX, toY) {
+		// Fix modules passings invalid floats as args. No effect on integers.
+		fromX = Math.round(fromX);
+		fromY = Math.round(fromY);
+		toX = Math.round(toX);
+		toY = Math.round(toY);
+
+		// Check if out of range.
 		if ((fromX < 0) || (fromY < 0) || (fromX >= this.width) | (fromY >= this.height) || (toX < 0) || (toY < 0) || (toX >= this.width) | (toY >= this.height))
 			return false;
 
