@@ -74,7 +74,7 @@ define([
 						53: 54
 					}[tile];
 				}
-				
+				tile = 3
 				let sprite = new PIXI.Sprite(renderer.getTexture('sprites', tile));
 
 				alpha = Math.min(Math.max(0.15, alpha), 0.65);
