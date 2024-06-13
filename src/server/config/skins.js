@@ -19,6 +19,12 @@ const config = {
 		defaultSpirit: 'bear',
 		default: true
 	}
+	magicien: {
+		name: 'Magicien',
+		sprite: [3, 0],
+		defaultSpirit: 'owl',
+		default: true
+	}
 };
 
 module.exports = {

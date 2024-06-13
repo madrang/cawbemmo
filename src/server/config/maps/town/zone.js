@@ -77,8 +77,8 @@ module.exports = {
 			level: 1,
 			attackable: false
 		},
-		seagull: {
-			level: 2,
+		mouette: {
+			level: 1,
 			regular: {
 				drops: {
 					chance: 55,
