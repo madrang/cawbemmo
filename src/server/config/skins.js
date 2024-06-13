@@ -18,7 +18,7 @@ const config = {
 		sprite: [2, 0],
 		defaultSpirit: 'bear',
 		default: true
-	}
+	},
 	magicien: {
 		name: 'Magicien',
 		sprite: [3, 0],
