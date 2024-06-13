@@ -155,7 +155,7 @@ const build = (mob, blueprint, type, zoneName) => {
 
 	mob.addComponent('equipment');
 
-	const preferStat = statSelector[~~(Math.random() * 3)];
+	const preferStat = statSelector[Math.floor(Math.random() * 3)];
 
 	fnComponentGenerators.forEach(fn => fn(mob, blueprint, typeDefinition, preferStat));
 

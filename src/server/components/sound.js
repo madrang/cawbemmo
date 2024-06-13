@@ -19,7 +19,7 @@ module.exports = {
 
 					return [p, this[p]];
 				})
-				.filter(p => !!p)
+				.filter(p => Boolean(p))
 		);
 
 		s.type = 'sound';

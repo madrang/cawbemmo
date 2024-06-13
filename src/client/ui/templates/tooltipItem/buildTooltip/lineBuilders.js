@@ -216,7 +216,7 @@ define([
 
 			const result = (
 				lineBuilders.div('space', ' ') +
-				(!!item.spell?.values ? lineBuilders.div('line', ' ') + lineBuilders.div('space', ' ') : '') +
+				(item.spell?.values ? lineBuilders.div('line', ' ') + lineBuilders.div('space', ' ') : '') +
 				html +
 				lineBuilders.div('space', ' ') +
 				lineBuilders.div('line', ' ')

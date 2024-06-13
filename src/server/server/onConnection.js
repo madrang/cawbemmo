@@ -2,11 +2,11 @@
 const router = require('../security/router');
 
 //Events
-const onHandshake = socket => {
+const onHandshake = (socket) => {
 	cons.onHandshake(socket);
 };
 
-const onDisconnect = socket => {
+const onDisconnect = (socket) => {
 	cons.onDisconnect(socket);
 };
 
@@ -35,7 +35,7 @@ const onRequest = (socket, msg, callback) => {
 	}
 };
 
-const onConnection = socket => {
+const onConnection = (socket) => {
 	socket.on('handshake', onHandshake.bind(null, socket));
 	socket.on('disconnect', onDisconnect.bind(null, socket));
 	socket.on('request', onRequest.bind(null, socket));

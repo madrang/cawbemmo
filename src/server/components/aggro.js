@@ -149,7 +149,7 @@ module.exports = {
 			return true;
 		else if (target.aggro.faction !== obj.aggro.faction)
 			return true;
-		else if (!!target.player !== !!obj.player)
+		else if (Boolean(target.player) !== Boolean(obj.player))
 			return true;
 	},
 

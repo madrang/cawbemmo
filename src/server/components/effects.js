@@ -39,7 +39,7 @@ module.exports = {
 			type: 'effects',
 			effects: this.effects
 				.map(f => f.save ? f.save() : f)
-				.filter(f => !!f)
+				.filter(f => Boolean(f))
 		};
 
 		return e;
@@ -54,7 +54,7 @@ module.exports = {
 		if ((effects.length > 0) && (effects[0].obj)) {
 			effects = effects
 				.map(f => f.simplify())
-				.filter(f => !!f);
+				.filter(f => Boolean(f));
 		}
 		e.effects = effects;
 

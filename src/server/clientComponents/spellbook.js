@@ -131,7 +131,7 @@ define([
 			let closest = objects.getClosest(window.player.x, window.player.y, 10, input.isKeyDown('shift'), compareAgainst);
 
 			this.target = closest;
-			this.targetSprite.visible = !!this.target;
+			this.targetSprite.visible = Boolean(this.target);
 
 			events.emit('onSetTarget', this.target, null);
 		},

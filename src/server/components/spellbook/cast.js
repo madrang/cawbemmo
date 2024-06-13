@@ -99,7 +99,7 @@ const cast = (cpnSpellbook, action, isAuto) => {
 	else if (spell.targetRandom)
 		spell.target = obj.aggro.getRandom();
 
-	if (!!eventBeforeCastSpell.action.target?.effects) {
+	if (eventBeforeCastSpell.action.target?.effects) {
 		const eventBeforeIsSpellTarget = {
 			source: obj,
 			spell,

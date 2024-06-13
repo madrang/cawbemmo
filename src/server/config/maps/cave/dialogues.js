@@ -30,7 +30,7 @@ module.exports = {
 					msg: 'I have some crystals for you.',
 					prereq: function (obj) {
 						let crystals = obj.inventory.items.find(i => (i.name === 'Digested Crystal'));
-						return !!crystals;
+						return Boolean(crystals);
 					},
 					goto: 'giveCrystals'
 				}

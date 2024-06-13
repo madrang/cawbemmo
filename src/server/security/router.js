@@ -126,9 +126,9 @@ module.exports = {
 
 	signatureCorrect: function (msg, config) {
 		if (config.callback !== 'deferred') {
-			if (config.callback === true && !msg.callback)
+			if (config.callback && !msg.callback)
 				return false;
-			else if (config.callback === false && !!msg.callback)
+			else if (!config.callback && msg.callback)
 				return false;
 		}
 

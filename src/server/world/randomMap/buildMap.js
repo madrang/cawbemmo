@@ -15,8 +15,8 @@ module.exports = (scope, instance, startRoom) => {
 
 	let startTemplate = startRoom.template;
 	map.spawn = [{
-		x: startRoom.x + ~~(startTemplate.width / 2),
-		y: startRoom.y + ~~(startTemplate.height / 2)
+		x: startRoom.x + Math.floor(startTemplate.width / 2),
+		y: startRoom.y + Math.floor(startTemplate.height / 2)
 	}];
 
 	drawRoom(scope, instance, startRoom);

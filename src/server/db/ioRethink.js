@@ -255,7 +255,7 @@ module.exports = {
 			.get(key)
 			.run();
 
-		return !!res;
+		return Boolean(res);
 	},
 
 	logError: async function ({ sourceModule, sourceMethod, error, info }) {
