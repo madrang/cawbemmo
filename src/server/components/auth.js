@@ -264,11 +264,9 @@ module.exports = {
 
 		if (credentials.username === '' || credentials.password === '') {
 			msg.callback(messages.login.allFields);
-
 			return;
 		} else if (credentials.username.length > 32) {
 			msg.callback(messages.login.maxUsernameLength);
-
 			return;
 		}
 
@@ -286,8 +284,10 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
+			console.info("User %s - Login denied! Invalid password.", username);
 			return;
 		}
+		console.info("User %s - Connected!", username);
 
 		const emBeforeLogin = {
 			obj: this.obj,

@@ -12,11 +12,12 @@ const config = {
 	textureList: [
 		'tiles',
 		'walls',
+		'objects', //TODO Temporary fix.
 		'mobs',
 		'bosses',
 		'animBigObjects',
 		'bigObjects',
-		'objects',
+		//'objects',
 		'characters',
 		'attacks',
 		'ui',
@@ -27,14 +28,6 @@ const config = {
 		'white',
 		'ray'
 	],
-	//Textures that are 24x24. The renderer needs to know this
-	bigTextures: [
-		'animBigObjects',
-		'animBoss',
-		'bigObjects',
-		'bosses',
-		'auras'
-	],
 	atlasTextureDimensions: {},
 	atlasTextures: [
 		'tiles',
@@ -42,11 +35,17 @@ const config = {
 		'objects'
 	],
 	spriteSizes: {
-		'images/tiles.png': 8,
-		'images/walls.png': 8,
-		'images/objects.png': 8,
-		'images/mobs.png': 8,
-		'images/characters.png': 8
+		'tiles': 8
+		, 'walls': 8
+		, 'objects': 8
+		, 'mobs': 8
+		, 'characters': 8
+
+		, 'animBigObjects': 24
+		, 'animBoss': 24
+		, 'bigObjects': 24
+		, 'bosses': 24
+		, 'auras': 24
 	},
 	blockingTileIndices: [
 		6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197
@@ -129,7 +128,7 @@ const config = {
 	tilesNoFlip: {
 		tiles: [
 			//Stairs
-			171, 179
+			171, 179,10,11,12,13,14,15,26,27,28,29,42,43,44,45,46,47,58,59,60,61,62,63,74,75,76,77,78,79,90,91,91,93,94,95
 		],
 		walls: [
 			//Ledges
@@ -254,7 +253,6 @@ module.exports = {
 			const dimensions = await imageSize(path);
 
 			delete dimensions.type;
-
 			atlasTextureDimensions[tex] = dimensions;
 		}
 	},
@@ -270,18 +268,16 @@ module.exports = {
 		const indexOfSheet = atlasTextures.indexOf(spriteSheet);
 
 		let tileCountBeforeSheet = 0;
-
 		for (let i = 0; i < indexOfSheet; i++) {
 			const sheet = atlasTextures[i];
 			const { width, height } = atlasTextureDimensions[sheet];
 
-			tileCountBeforeSheet += ((width / 8) * (height / 8));
+			const spSize = config.spriteSizes[sheet] || 8;
+			tileCountBeforeSheet += ((width / spSize) * (height / spSize));
 		}
 
 		//Tile index 0 is 'no tile' in map files so we need to increment by 1
-		const result = tileCountBeforeSheet + tileIndexInSource + 1;
-
-		return result;
+		return tileCountBeforeSheet + tileIndexInSource + 1;
 	},
 
 	getTileIndexInAtlasSync: function (spriteSheet, tileIndexInSource) {
@@ -295,13 +291,12 @@ module.exports = {
 			const sheet = atlasTextures[i];
 			const { width, height } = atlasTextureDimensions[sheet];
 
-			tileCountBeforeSheet += ((width / 8) * (height / 8));
+			const spSize = config.spriteSizes[sheet] || 8;
+			tileCountBeforeSheet += ((width / spSize) * (height / spSize));
 		}
 
 		//Tile index 0 is 'no tile' in map files so we need to increment by 1
-		const result = tileCountBeforeSheet + tileIndexInSource + 1;
-
-		return result;
+		return tileCountBeforeSheet + tileIndexInSource + 1;
 	},
 
 	//Used to send to clients

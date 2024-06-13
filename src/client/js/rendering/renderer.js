@@ -28,6 +28,9 @@ define([
 	const particleLayers = ['particlesUnder', 'particles'];
 	const particleEngines = {};
 
+	// Minimum number of textures available.
+	const PIXI_REQUIRED_SPRITE_MAX_TEXTURES = 16;
+
 	return {
 		stage: null,
 		layers: {
@@ -80,7 +83,11 @@ define([
 		init: function () {
 			PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
 			PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-			PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES, 16);
+			if (PIXI.settings.SPRITE_MAX_TEXTURES < PIXI_REQUIRED_SPRITE_MAX_TEXTURES) {
+				console.warn("Texture limit of %s lower then minimum of %s", PIXI.settings.SPRITE_MAX_TEXTURES, PIXI_REQUIRED_SPRITE_MAX_TEXTURES);
+				PIXI.settings.SPRITE_MAX_TEXTURES = PIXI_REQUIRED_SPRITE_MAX_TEXTURES;
+				console.warn("Low texture limit raised to %s", PIXI.settings.SPRITE_MAX_TEXTURES);
+			}
 			PIXI.settings.RESOLUTION = 1;
 
 			events.on('onGetMap', this.onGetMap.bind(this));
@@ -119,7 +126,7 @@ define([
 
 			textureList.forEach(t => {
 				this.textures[t] = new PIXI.BaseTexture(sprites[t]);
-				this.textures[t].scaleMode = PIXI.SCALE_MODES.NEAREST;
+				this.textures[t].scaleMode = this.textures.scaleMode;
 			});
 
 			particleLayers.forEach(p => {
@@ -137,7 +144,7 @@ define([
 		},
 
 		buildSpritesTexture: function () {
-			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
+			const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes } } = globals;
 
 			let container = new PIXI.Container();
 
@@ -150,9 +157,10 @@ define([
 				tile.x = 0;
 				tile.y = totalHeight;
 
+				const spSize = spriteSizes[t] || 8;
 				atlasTextureDimensions[t] = {
-					w: texture.width / 8,
-					h: texture.height / 8
+					w: texture.width / spSize,
+					h: texture.height / spSize
 				};
 
 				container.addChild(tile);
@@ -164,7 +172,7 @@ define([
 			this.renderer.render(container, renderTexture);
 
 			this.textures.sprites = renderTexture;
-			this.textures.scaleMult = PIXI.SCALE_MODES.NEAREST;
+			this.textures.scaleMode = PIXI.settings.SCALE_MODE;
 		},
 
 		toggleScreen: function () {
@@ -213,21 +221,39 @@ define([
 			events.emit('onResize');
 		},
 
-		getTexture: function (baseTex, cell, size) {
-			size = size || 8;
-			let textureName = baseTex + '_' + cell;
-
-			let textureCache = this.textureCache;
-
-			let cached = textureCache[textureName];
-
-			if (!cached) {
-				let y = ~~(cell / 8);
-				let x = cell - (y * 8);
-				cached = new PIXI.Texture(this.textures[baseTex], new PIXI.Rectangle(x * size, y * size, size, size));
-				textureCache[textureName] = cached;
+		getTexture: function (baseTex, cell, size=8) {
+			if (!baseTex) {
+				throw Error(`Missing baseTex!`);
 			}
-
+			if (baseTex == "sprites") {
+				// The 'sprites' texture maps to all the sheets in loading order.
+				const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes } } = globals;
+				let curId = 0;
+				baseTex = atlasTextures.find(t => {
+					const texture = this.textures[t];
+					const spSize = spriteSizes[t] || 8;
+					const spCount = (texture.width / spSize) * (texture.height / spSize);
+					if (cell - (curId + spCount) >= 0) {
+						curId += spCount;
+						return false;
+					} else {
+						return true;
+					}
+				});
+				//console.log(`Texture 'sprites':${cell} remapped to '${baseTex}':${cell - curId}`);
+				cell = cell - curId;
+			}
+			const textureName = `${baseTex}_${cell}`;
+			let cached = this.textureCache[textureName];
+			if (cached) {
+				return cached;
+			}
+			const sheetColumns = (this.textures[baseTex].width / size);
+			let y = Math.floor(cell / sheetColumns);
+			let x = cell - (y * sheetColumns);
+			//console.log(`Creating sub texture[${x}, ${y}]`, this.textures[baseTex], new PIXI.Rectangle(x * size, y * size, size, size));
+			cached = new PIXI.Texture(this.textures[baseTex], new PIXI.Rectangle(x * size, y * size, size, size));
+			this.textureCache[textureName] = cached;
 			return cached;
 		},
 
@@ -401,8 +427,13 @@ define([
 			hiddenRooms.forEach(h => {
 				const { discovered, layer, interior } = h;
 
-				const playerInHider = fnPlayerInArea(h);
-				const tileInHider = fnTileInArea(h);
+				/*
+				if (!Array.isArray(h.area)) {
+					console.warn("Missing area for", h);
+				}
+				*/
+				const playerInHider = (Array.isArray(h.area) ? fnPlayerInArea(h) : false);
+				const tileInHider = (Array.isArray(h.area) ? fnTileInArea(h) : false);
 
 				if (playerInHider) {
 					if (interior && !tileInHider) {
@@ -724,7 +755,6 @@ define([
 			const { sheetName, parent: container, layerName, visible = true } = obj;
 
 			const sprite = new PIXI.Sprite();
-
 			obj.sprite = sprite;
 
 			this.setSprite(obj);
@@ -794,16 +824,13 @@ define([
 		},
 
 		setSprite: function (obj) {
+			//console.log("Building sprite", obj);
 			const { sprite, sheetName, cell } = obj;
 
-			const bigSheets = globals.clientConfig.bigTextures;
-			const isBigSheet = bigSheets.includes(sheetName);
-
-			const newSize = isBigSheet ? 24 : 8;
-
+			const spriteSizes = globals.clientConfig.spriteSizes;
+			const newSize = spriteSizes[sheetName] || 8;
 			obj.w = newSize * scaleMult;
-			obj.h = obj.w;
-
+			obj.h = newSize * scaleMult;
 			sprite.width = obj.w;
 			sprite.height = obj.h;
 			sprite.texture = this.getTexture(sheetName, cell, newSize);
@@ -881,7 +908,7 @@ define([
 
 			map[x][y].forEach(m => {
 				m--;
-				
+
 				let tile = spritePool.getSprite(m);
 				if (!tile) {
 					tile = this.buildTile(m, x, y);

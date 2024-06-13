@@ -53,9 +53,9 @@ module.exports = (scope, map) => {
 						continue;
 
 					let flipped = extend({
-						flipX: !!i,
-						flipY: !!j,
-						rotate: !!k
+						flipX: Boolean(i)
+						, flipY: Boolean(j)
+						, rotate: Boolean(k)
 					}, r);
 
 					flipped.exits.forEach(e => {

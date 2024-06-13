@@ -329,16 +329,16 @@ module.exports = {
 	},
 
 	getOffsetCellPos: function (sheetName, cell) {
-		const { config: { atlasTextureDimensions, atlasTextures } } = clientConfig;
+		const { config: { atlasTextureDimensions, atlasTextures, spriteSizes } } = clientConfig;
 		const indexInAtlas = atlasTextures.indexOf(sheetName);
 
 		let offset = 0;
 		for (let i = 0; i < indexInAtlas; i++) {
-			const dimensions = atlasTextureDimensions[atlasTextures[i]];
-
-			offset += (dimensions.width / 8) * (dimensions.height / 8);
+			const textureName = atlasTextures[i];
+			const spriteSize = spriteSizes[textureName] || 8;
+			const textureDimensions = atlasTextureDimensions[textureName];
+			offset += (textureDimensions.width / spriteSize) * (textureDimensions.height / spriteSize);
 		}
-
 		return cell + offset;
 	},
 
@@ -355,25 +355,21 @@ module.exports = {
 
 		const tilesets = cellInfoMsg.tilesets;
 
-		let flipX = null;
-
-		if ((gid ^ 0x80000000) > 0) {
-			flipX = true;
+		let flipX = Boolean((gid & 0x80000000) != 0);
+		if (flipX) {
 			gid = gid ^ 0x80000000;
 		}
 
-		let firstGid = 0;
 		let sheetName = cellInfoMsg.sheetName;
-
 		if (!sheetName) {
-			for (let s = 0; s < tilesets.length; s++) {
-				let tileset = tilesets[s];
-				if (tileset.firstgid <= gid) {
-					sheetName = tileset.name;
-					firstGid = tileset.firstgid;
+			let firstGid = 0;
+			for (let tileset of tilesets) {
+				if (tileset.firstgid <= firstGid || tileset.firstgid > gid) {
+					continue;
 				}
+				sheetName = tileset.name;
+				firstGid = tileset.firstgid;
 			}
-
 			gid = gid - firstGid + 1;
 		}
 
@@ -402,9 +398,7 @@ module.exports = {
 			}
 
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
-
 			const isHiddenLayer = layerName.indexOf('hidden') === 0;
-
 			if (isHiddenLayer)
 				this[layerName][x][y] = offsetCell;
 			else {
@@ -441,7 +435,7 @@ module.exports = {
 				objZoneName = split[1];
 			}
 
-			let blueprint = {
+			const blueprint = {
 				id: cell.properties.id,
 				clientObj: clientObj,
 				sheetName: cell.has('sheetName') ? cell.sheetName : cellInfo.sheetName,
