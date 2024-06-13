@@ -109,7 +109,7 @@ module.exports = {
 				sprite: [0, 1]
 			}
 		},
-		"Grosse Vidange": {
+		'Grosse Vidange': {
 			level: 5,
 			cron: '0 * * * *',
 
