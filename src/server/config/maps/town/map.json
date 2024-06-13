@@ -1203,8 +1203,8 @@
                  "properties":[
                         {
                          "name":"fog",
-                         "type":"int",
-                         "value":1
+                         "type":"string",
+                         "value":"1"
                         }],
                  "rotation":0,
                  "type":"",
