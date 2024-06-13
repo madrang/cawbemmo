@@ -26,11 +26,11 @@ module.exports = {
 	},
 
 	addRegion: function (obj) {
-		let lowX = obj.x;
-		let lowY = obj.y;
-		let highX = lowX + obj.width;
-		let highY = lowY + obj.height;
-		let cells = this.cells;
+		const lowX = Math.round(obj.x);
+		const lowY = Math.round(obj.y);
+		const highX = Math.round(obj.x + obj.width);
+		const highY = Math.round(obj.y + obj.height);
+		const cells = this.cells;
 
 		for (let i = lowX; i < highX; i++) {
 			let row = cells[i];

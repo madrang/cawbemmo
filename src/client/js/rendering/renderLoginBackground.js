@@ -24,7 +24,6 @@ define([
 		const { loginBgGeneratorPath } = globals.clientConfig;
 		if (loginBgGeneratorPath) {
 			renderCustomLoginBg(renderer, loginBgGeneratorPath);
-
 			return;
 		}
 
