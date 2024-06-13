@@ -8,10 +8,6 @@ const mapList = [
 		path: 'config/maps'
 	},
 	{
-		name: 'fjolarok',
-		path: 'config/maps'
-	},
-	{
 		name: 'town',
 		path: 'config/maps'
 	}
