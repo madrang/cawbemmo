@@ -167,7 +167,7 @@ module.exports = {
 					msg: picked.msg
 				};
 			}, this)
-			.filter(o => !!o);
+			.filter(o => Boolean(o));
 
 		result.options.push({
 			msg: 'Au revoir',

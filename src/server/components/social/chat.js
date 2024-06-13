@@ -200,7 +200,7 @@ module.exports = async (cpnSocial, msg) => {
 	if (messageString.length > maxChatLength)
 		return;
 
-	let time = +new Date();
+	const time = Date.now();
 	messageHistory.spliceWhere(h => ((time - h.time) > 5000));
 
 	if (messageHistory.length) {

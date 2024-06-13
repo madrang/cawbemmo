@@ -188,7 +188,7 @@ const doesThreadExist = ({ zoneName, zoneId }) => {
 
 	const thread = getThreadFromName(map.name);
 
-	return !!thread;
+	return Boolean(thread);
 };
 
 const getThread = async ({ zoneName, zoneId }) => {

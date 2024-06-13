@@ -121,14 +121,6 @@ define([
 				this.stage.addChild(layers[l]);
 			});
 
-			const textureList = globals.clientConfig.textureList;
-			const sprites = resources.sprites;
-
-			textureList.forEach(t => {
-				this.textures[t] = new PIXI.BaseTexture(sprites[t]);
-				this.textures[t].scaleMode = this.textures.scaleMode;
-			});
-
 			particleLayers.forEach(p => {
 				const engine = $.extend({}, particles);
 				engine.init({
@@ -144,35 +136,20 @@ define([
 		},
 
 		buildSpritesTexture: function () {
-			const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes } } = globals;
-
-			let container = new PIXI.Container();
-
-			let totalHeight = 0;
+			const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes, textureList } } = globals;
+			const sprites = resources.sprites;
+			textureList.forEach(t => {
+				this.textures[t] = new PIXI.BaseTexture(sprites[t]);
+				this.textures[t].scaleMode = PIXI.settings.SCALE_MODE;
+			});
 			atlasTextures.forEach(t => {
-				let texture = this.textures[t];
-				let tile = new PIXI.Sprite(new PIXI.Texture(texture));
-				tile.width = texture.width;
-				tile.height = texture.height;
-				tile.x = 0;
-				tile.y = totalHeight;
-
+				const texture = this.textures[t];
 				const spSize = spriteSizes[t] || 8;
 				atlasTextureDimensions[t] = {
 					w: texture.width / spSize,
 					h: texture.height / spSize
 				};
-
-				container.addChild(tile);
-
-				totalHeight += tile.height;
 			});
-
-			let renderTexture = PIXI.RenderTexture.create(this.textures.tiles.width, totalHeight);
-			this.renderer.render(container, renderTexture);
-
-			this.textures.sprites = renderTexture;
-			this.textures.scaleMode = PIXI.settings.SCALE_MODE;
 		},
 
 		toggleScreen: function () {
@@ -650,17 +627,14 @@ define([
 					spriteRow[j] = [];
 				}
 			}
-
-			events.emit('onTilesVisible', newVisible, true);
-			events.emit('onTilesVisible', newHidden, false);
+			events.emit('onTilesVisible', { visible: newVisible, hidden: newHidden });
 
 			if (addedSprite)
 				container.children.sort((a, b) => a.z - b.z);
 		},
 
 		update: function () {
-			let time = +new Date();
-
+			const time = Date.now();
 			if (this.moveTo) {
 				let deltaX = this.moveTo.x - this.pos.x;
 				let deltaY = this.moveTo.y - this.pos.y;

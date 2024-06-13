@@ -79,7 +79,7 @@ module.exports = {
 		quest.obj = obj;
 		quest.zoneName = zoneName;
 
-		if (!oQuests.obtain(quest, !!template))
+		if (!oQuests.obtain(quest, Boolean(template)))
 			this.obtain(obj, template);
 	}
 };

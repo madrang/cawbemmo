@@ -9,7 +9,7 @@ module.exports = (scope, fromRoom, isHallway, buildRoom) => {
 	let allowedTemplates = templates.filter(t => {
 		if (
 			(t.properties.mapping) ||
-				(!!t.properties.hallway !== isHallway) ||
+				(Boolean(t.properties.hallway) !== isHallway) ||
 				(t.properties.start) ||
 				(
 					(t.properties.end) &&
@@ -25,7 +25,7 @@ module.exports = (scope, fromRoom, isHallway, buildRoom) => {
 
 		if ((isValid) && (t.properties.maxOccur)) {
 			let occurs = rooms.some(r => (r.template.typeId === t.typeId));
-			if (occurs >= ~~t.properties.maxOccur)
+			if (occurs >= Math.floor(t.properties.maxOccur))
 				isValid = false;
 		}
 
@@ -37,7 +37,7 @@ module.exports = (scope, fromRoom, isHallway, buildRoom) => {
 						return false;
 					else if (!~~tt.properties.maxOccur)
 						return true;
-					else if (rooms.filter(r => r.template.typeId === tt.typeId).length < ~~tt.properties.maxOccur)
+					else if (rooms.filter(r => r.template.typeId === tt.typeId).length < Math.floor(tt.properties.maxOccur))
 						return true;
 				});
 

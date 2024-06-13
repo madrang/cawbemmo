@@ -194,11 +194,11 @@ module.exports = {
 		let width = this.width;
 		let height = this.height;
 
-		x1 = ~~x1;
-		y1 = ~~y1;
+		x1 = Math.floor(x1);
+		y1 = Math.floor(y1);
 
-		x2 = ~~x2;
-		y2 = ~~y2;
+		x2 = Math.floor(x2);
+		y2 = Math.floor(y2);
 
 		if (x1 < 0)
 			x1 = 0;
@@ -241,11 +241,11 @@ module.exports = {
 		let width = this.width;
 		let height = this.height;
 
-		x1 = ~~x1;
-		y1 = ~~y1;
+		x1 = Math.floor(x1);
+		y1 = Math.floor(y1);
 
-		x2 = ~~x2;
-		y2 = ~~y2;
+		x2 = Math.floor(x2);
+		y2 = Math.floor(y2);
 
 		if (x1 < 0)
 			x1 = 0;
@@ -293,19 +293,19 @@ module.exports = {
 
 		if (!to) {
 			to = {
-				x: ~~(mathRand() * grid.length),
-				y: ~~(mathRand() * grid[0].length)
+				x: Math.floor(mathRand() * grid.length),
+				y: Math.floor(mathRand() * grid[0].length)
 			};
 		}
 
-		let fromX = ~~from.x;
-		let fromY = ~~from.y;
+		let fromX = Math.floor(from.x);
+		let fromY = Math.floor(from.y);
 
 		if ((!grid[fromX]) || (grid[fromX].length <= fromY) || (fromX < 0) || (fromY < 0))
 			return [];
 
-		let toX = ~~to.x;
-		let toY = ~~to.y;
+		let toX = Math.floor(to.x);
+		let toY = Math.floor(to.y);
 
 		if ((!grid[toX]) || (grid[toX].length <= toY) || (toX < 0) || (toY < 0))
 			return [];
@@ -326,8 +326,8 @@ module.exports = {
 		if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height))
 			return true;
 
-		x = ~~x;
-		y = ~~y;
+		x = Math.floor(x);
+		y = Math.floor(y);
 
 		let node = this.graph.grid[x][y];
 		if (node)
@@ -384,8 +384,8 @@ module.exports = {
 			fromX += dx;
 			fromY += dy;
 
-			x = ~~fromX;
-			y = ~~fromY;
+			x = Math.floor(fromX);
+			y = Math.floor(fromY);
 
 			let node = graphGrid[x][y];
 

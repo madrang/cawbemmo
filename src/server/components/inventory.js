@@ -559,7 +559,7 @@ module.exports = {
 		let iLen = items.length;
 		for (let i = 0; i < iLen; i++) {
 			let quality = items[i].quality;
-			items[i].fromMob = !!this.obj.mob;
+			items[i].fromMob = Boolean(this.obj.mob);
 			if (quality > topQuality)
 				topQuality = ~~quality;
 		}

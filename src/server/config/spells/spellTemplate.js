@@ -145,7 +145,7 @@ module.exports = {
 				id: this.obj.id,
 				spell: this.id,
 				cd: (this.cd * consts.tickTime),
-				active: !!autoConfig
+				active: Boolean(autoConfig)
 			}, [this.obj.serverId]);
 		}
 	},

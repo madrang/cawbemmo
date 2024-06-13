@@ -6,8 +6,8 @@ module.exports = {
 		let highY = 0;
 
 		blueprint.area = cell.polyline.map(function (v) {
-			let x = ~~((v.x + cell.x) / mapScale);
-			let y = ~~((v.y + cell.y) / mapScale);
+			let x = Math.floor((v.x + cell.x) / mapScale);
+			let y = Math.floor((v.y + cell.y) / mapScale);
 
 			if (x < lowX)
 				lowX = x;

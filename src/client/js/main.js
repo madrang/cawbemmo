@@ -116,7 +116,7 @@ define([
 		},
 
 		update: function () {
-			const time = +new Date();
+			const time = Date.now();
 			if (time - this.lastRender < this.msPerFrame - 1) {
 				fnQueueTick();
 

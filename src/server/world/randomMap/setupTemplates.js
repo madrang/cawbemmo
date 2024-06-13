@@ -9,9 +9,14 @@ module.exports = (scope, map) => {
 		r.typeId = typeId;
 
 		let { noRotate = false, canFlipX = true, canFlipY = true } = r.properties;
+
 		//Property values are strings. So we turn '1' and '0' into 1 and 0
-		canFlipX = ~~canFlipX;
-		canFlipY = ~~canFlipY;
+		if (typeof canFlipX === "string") {
+			canFlipX = Number.parseInt(canFlipX);
+		}
+		if (typeof canFlipY === "string") {
+			canFlipY = Number.parseInt(canFlipY);
+		}
 
 		//Fix Polygons
 		r.objects.forEach(o => {

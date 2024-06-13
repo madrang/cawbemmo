@@ -25,7 +25,7 @@ define([
 		damageNumbers: ['element', 'white', 'off']
 	};
 
-	const getNextValue = key => {
+	const getNextValue = (key) => {
 		const currentValue = config[key];
 		const chain = valueChains[key];
 		const currentIndex = chain.indexOf(currentValue);
@@ -35,7 +35,7 @@ define([
 		return nextValue;
 	};
 
-	const getKeyName = key => {
+	const getKeyName = (key) => {
 		return `opt_${key.toLowerCase()}`;
 	};
 
@@ -45,7 +45,7 @@ define([
 		browserStorage.set(getKeyName(key), config[key]);
 	};
 
-	config.toggle = key => {
+	config.toggle = (key) => {
 		if (valueChains[key])
 			config[key] = getNextValue(key);
 		else
@@ -54,18 +54,21 @@ define([
 		browserStorage.set(getKeyName(key), config[key]);
 	};
 
-	const loadValue = key => {
+	const loadValue = (key) => {
 		const currentValue = browserStorage.get(getKeyName(key));
-
-		if (currentValue === '{unset}')
+		if (currentValue === '{unset}') {
 			return;
-
-		if (['true', 'false'].includes(currentValue))
+		}
+		if (['true', 'false'].includes(currentValue)) {
 			config[key] = currentValue === 'true';
-		else if (~~currentValue === parseInt(currentValue))
-			config[key] = ~~currentValue;
-		else
-			config[key] = currentValue;
+			return;
+		}
+		const floatValue = Number.parseFloat(currentValue);
+		if (Number.isFinite(floatValue)) {
+			config[key] = floatValue;
+			return;
+		}
+		config[key] = currentValue;
 	};
 
 	Object.keys(config).forEach(key => loadValue(key) );

@@ -92,10 +92,9 @@ define([
 		},
 
 		destroyAllObjects: function () {
-			this.objects.forEach(o => {
+			for (let o of this.objects) {
 				o.destroy();
-			});
-
+			}
 			this.objects.length = 0;
 
 			window?.player?.offEvents();
@@ -276,7 +275,6 @@ define([
 		update: function () {
 			let objects = this.objects;
 			let len = objects.length;
-
 			for (let i = 0; i < len; i++) {
 				let o = objects[i];
 
@@ -292,31 +290,28 @@ define([
 			}
 		},
 
-		onTilesVisible: function (tiles, visible) {
-			let objects = this.objects;
-			let oLen = objects.length;
-			for (let i = 0; i < oLen; i++) {
-				let o = objects[i];
-
-				let onPos = tiles.some(t => {
-					return (!(t.x !== o.x || t.y !== o.y));
-				});
-				if (!onPos)
+		onTilesVisible: function (tiles) {
+			for (let o of this.objects) {
+				let onPos;
+				for (let t of tiles.visible.concat(tiles.hidden) ) {
+					if (t.x == o.x && t.y == o.y) {
+						onPos = true;
+						break;
+					}
+				}
+				if (!onPos) {
 					continue;
-
+				}
 				o.updateVisibility();
 			}
 		},
 
 		onToggleNameplates: function (show) {
-			let objects = this.objects;
-			let oLen = objects.length;
-			for (let i = 0; i < oLen; i++) {
-				let obj = objects[i];
-				let ns = obj.nameSprite;
-				if ((!ns) || (obj.dead) || ((obj.sprite) && (!obj.sprite.visible)))
+			for (let obj of this.objects) {
+				const ns = obj.nameSprite;
+				if ((!ns) || (obj.dead) || ((obj.sprite) && (!obj.sprite.visible))) {
 					continue;
-
+				}
 				ns.visible = show;
 			}
 		}

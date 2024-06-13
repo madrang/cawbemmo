@@ -34,13 +34,10 @@ define([
 		},
 
 		isTileBlocking: function (x, y, mob, obj) {
-			if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height))
+			if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height)) {
 				return true;
-
-			x = ~~x;
-			y = ~~y;
-
-			return this.grid[x][y];
+			}
+			return this.grid[Math.floor(x)][Math.floor(y)];
 		},
 
 		setCollision: function (config) {

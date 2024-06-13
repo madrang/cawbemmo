@@ -70,8 +70,8 @@ module.exports = {
 		//To spawn in another room
 		/*const spawnRoom = this.rooms.find(t => t.template.properties.end);
 		map.spawn = [{
-			x: spawnRoom.x + ~~(spawnRoom.template.width / 2) - 2,
-			y: spawnRoom.y + ~~(spawnRoom.template.height / 2) + 6
+			x: spawnRoom.x + Math.floor(spawnRoom.template.width / 2) - 2,
+			y: spawnRoom.y + Math.floor(spawnRoom.template.height / 2) + 6
 		}];*/
 
 		return true;
@@ -122,6 +122,6 @@ module.exports = {
 	},
 
 	randInt: function (min, max) {
-		return ~~(Math.random() * (max - min)) + min;
+		return Math.floor(Math.random() * (max - min)) + min;
 	}
 };

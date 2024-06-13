@@ -26,7 +26,7 @@ module.exports = {
 		let isSpell = false;
 		let isCurrency = false;
 
-		let hadBlueprint = !!blueprint;
+		let hadBlueprint = Boolean(blueprint);
 		blueprint = blueprint || {};
 
 		let item = {};
