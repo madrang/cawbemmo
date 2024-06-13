@@ -93,7 +93,7 @@ module.exports = {
 				sprite: [0, 0]
 			}
 		},
-		bunny: {
+		vidange: {
 			level: 3,
 			regular: {
 				drops: {
@@ -105,11 +105,11 @@ module.exports = {
 				count: 0
 			},
 			questItem: {
-				name: "Rabbit's Foot",
+				name: "Hamburger usagée",
 				sprite: [0, 1]
 			}
 		},
-		thumper: {
+		"Grosse Vidange": {
 			level: 5,
 			cron: '0 * * * *',
 
@@ -127,7 +127,7 @@ module.exports = {
 				chance: 100
 			}
 		},
-		elk: {
+		sbire: {
 			level: 4,
 			regular: {
 				drops: {
@@ -139,16 +139,20 @@ module.exports = {
 				name: 'Ironhorn'
 			},
 			questItem: {
-				name: 'Elk Antler',
+				name: 'Cagoule',
 				sprite: [0, 2]
 			}
 		},
-		flamingo: {
+		"45 Tours": {
 			level: 5,
 			regular: {
 				drops: {
 					rolls: 1
 				}
+
+			},
+			rare: {
+				name: 'Evan Joanes'
 			}
 		},
 		crab: {
