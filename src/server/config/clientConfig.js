@@ -48,7 +48,7 @@ const config = {
 		, 'auras': 24
 	},
 	blockingTileIndices: [
-		6, 7, 54, 55, 62, 63, 154, 189, 190, 192, 193, 194, 195, 196, 197
+		6, 7, 87, 88, 102, 374, 154, 189
 	],
 	tileOpacities: {
 		default: {
