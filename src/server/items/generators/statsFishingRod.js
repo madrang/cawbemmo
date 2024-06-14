@@ -29,7 +29,7 @@ module.exports = {
 			item.stats = {};
 
 		for (let i = 0; i < statCount; i++) {
-			let stat = stats[~~(Math.random() * stats.length)];
+			let stat = stats[Math.floor(Math.random() * stats.length)];
 			let value = Math.ceil(this.generators[stat].call(this, item, blueprint));
 
 			if (result) {

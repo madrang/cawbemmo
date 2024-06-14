@@ -26,12 +26,12 @@ module.exports = {
 		};
 
 		let angle = Math.random() * Math.PI * 2;
-		target.x = obj.x + ~~(Math.cos(angle) * this.range);
-		target.y = obj.y + ~~(Math.sin(angle) * this.range);
+		target.x = obj.x + Math.floor(Math.cos(angle) * this.range);
+		target.y = obj.y + Math.floor(Math.sin(angle) * this.range);
 		target = obj.instance.physics.getClosestPos(target.x, target.y, target.x, target.y);
-		if (!target)
+		if (!target) {
 			return false;
-
+		}
 		obj.syncer.set(false, 'chatter', 'msg', '*tummy grumbles*');
 
 		//Spawn a mob

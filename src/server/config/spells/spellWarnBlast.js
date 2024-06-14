@@ -40,37 +40,35 @@ module.exports = {
 		let yMax = y + radius;
 
 		let attackTemplate = this.attackTemplate;
-		if (attackTemplate)
+		if (attackTemplate) {
 			attackTemplate = attackTemplate.split(' ');
+		}
 		let count = -1;
 
 		for (let i = xMin; i <= xMax; i++) {
 			for (let j = yMin; j <= yMax; j++) {
 				count++;
-
-				if (!physics.hasLos(x, y, i, j))
+				if (!physics.hasLos(x, y, i, j)) {
 					continue;
-				else if ((attackTemplate) && (attackTemplate[count] === 'x'))
+				} else if (attackTemplate && attackTemplate[count] === 'x') {
 					continue;
-
-				if ((attackTemplate) && (~~attackTemplate[count] > 0)) {
+				}
+				if (attackTemplate && Math.floor(attackTemplate[count]) > 0) {
 					this.queueCallback(this.spawnWarning.bind(this, i, j), ~~attackTemplate[count] * consts.tickTime);
 					continue;
-				} else
+				} else {
 					this.spawnWarning(i, j);
+				}
 			}
 		}
-
 		this.sendBump(target);
-
 		return true;
 	},
 
 	spawnWarning: function (x, y) {
-		let obj = this.obj;
-		let syncer = obj.instance.syncer;
-
-		let effect = {
+		const obj = this.obj;
+		const syncer = obj.instance.syncer;
+		const effect = {
 			x: x,
 			y: y,
 			components: [{
@@ -80,9 +78,7 @@ module.exports = {
 				blueprint: this.particles
 			}]
 		};
-
 		syncer.queue('onGetObject', effect, -1);
-
 		this.queueCallback(this.onWarningOver.bind(this, x, y), this.delay * consts.tickTime);
 	},
 
@@ -91,9 +87,7 @@ module.exports = {
 
 		let physics = obj.instance.physics;
 		let syncer = obj.instance.syncer;
-
-		const useRow = (row !== null) ? row : rowOptions[~~(Math.random() * rowOptions.length)];
-
+		const useRow = (row !== null) ? row : rowOptions[Math.floor(Math.random() * rowOptions.length)];
 		let effect = {
 			x: x,
 			y: y,
@@ -102,27 +96,25 @@ module.exports = {
 				destroyObject: true,
 				row: useRow,
 				col,
-				frameDelay: 4 + ~~(Math.random() * 7),
+				frameDelay: 4 + Math.floor(Math.random() * 7),
 				spriteSheet
 			}]
 		};
-
 		syncer.queue('onGetObject', effect, -1);
 
 		let mobs = physics.getCell(x, y);
 		let mLen = mobs.length;
 		for (let k = 0; k < mLen; k++) {
 			let m = mobs[k];
-
 			//Maybe we killed something?
 			if (!m) {
 				mLen--;
 				continue;
-			} else if (!m.aggro)
+			} else if (!m.aggro) {
 				continue;
-			else if (!this.obj.aggro.canAttack(m))
+			} else if (!this.obj.aggro.canAttack(m)) {
 				continue;
-
+			}
 			let damage = this.getDamage(m);
 			m.stats.takeDamage({
 				damage,

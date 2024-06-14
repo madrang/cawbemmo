@@ -20,39 +20,38 @@ define([
 		hoverItem: null,
 
 		onHover: function (el, item, e) {
-			if (item)
+			if (item) {
 				this.hoverItem = item;
-			else
+			} else {
 				item = this.hoverItem;
-
+			}
 			let ttPos = null;
-
 			if (el) {
 				ttPos = {
-					x: ~~(e.clientX + 32),
-					y: ~~(e.clientY)
+					x: Math.floor(e.clientX + 32),
+					y: Math.floor(e.clientY)
 				};
 			}
-
 			events.emit('onShowItemTooltip', item, ttPos, true);
 		},
 
 		onKeyDown: function (key) {
-			if (key === 'shift' && this.hoverItem)
+			if (key === 'shift' && this.hoverItem) {
 				this.onHover();
+			}
 		},
 
 		onKeyUp: function (key) {
-			if (key === 'shift' && this.hoverItem)
+			if (key === 'shift' && this.hoverItem) {
 				this.onHover();
+			}
 		},
 
 		onMouseLeave: function (el, item, e) {
-			if (this.hoverItem !== item)
+			if (this.hoverItem !== item) {
 				return;
-
+			}
 			hideTooltip(el, item, e);
-
 			this.hoverItem = null;
 		}
 	};
@@ -71,8 +70,9 @@ define([
 
 		$.event.special.destroyed = {
 			remove: function (o) {
-				if (o.handler) 
+				if (o.handler) {
 					o.handler();
+				}
 			}
 		};
 
@@ -84,15 +84,14 @@ define([
 	};
 
 	const onShowContext = (item, getItemContextConfig, e) => {
-		if (isMobile)
+		if (isMobile) {
 			hideTooltip(null, item);
-
+		}
 		const contextConfig = getItemContextConfig(item);
-		if (!contextConfig.length)
+		if (!contextConfig.length) {
 			return;
-
+		}
 		events.emit('onContextMenu', contextConfig, e);
-
 		e.preventDefault();
 		return false;
 	};
@@ -111,24 +110,24 @@ define([
 
 		let spritesheet = item.spritesheet || '../../../images/items.png';
 		if (!item.spritesheet) {
-			if (item.material)
+			if (item.material) {
 				spritesheet = '../../../images/materials.png';
-			else if (item.quest)
+			} else if (item.quest) {
 				spritesheet = '../../../images/questItems.png';
-			else if (item.type === 'consumable')
+			} else if (item.type === 'consumable') {
 				spritesheet = '../../../images/consumables.png';
-			else if (item.type === 'skin')
+			} else if (item.type === 'skin') {
 				spritesheet = '../../../images/characters.png';
+			}
 		}
 
 		let size = 64;
-
-		if (item.type === 'skin')
+		if (item.type === 'skin') {
 			size = 8;
-
-		if (item.spriteSize)
+		}
+		if (item.spriteSize) {
 			size = item.spriteSize;
-
+		}
 		const spriteSizes = globals.clientConfig.spriteSizes;
 		// Extract filename from path.
 		const sheetName = spritesheet.split(/[\\/]/g).pop().split('.')[0];
@@ -151,37 +150,34 @@ define([
 		if (item.quantity > 1 || item.eq || item.active || item.has('quickSlot')) {
 			let elQuantity = itemEl.find('.quantity');
 			let txtQuantity = item.quantity;
-			if (!txtQuantity)
+			if (!txtQuantity) {
 				txtQuantity = item.has('quickSlot') ? 'QS' : 'EQ';
-
+			}
 			elQuantity.html(txtQuantity);
-
 			//If the item doesn't have a quantity and we reach this point
 			//it must mean that it's active, EQd or QSd
-			if (!item.quantity)
+			if (!item.quantity) {
 				itemEl.addClass('eq');
+			}
 		} else if (item.isNew && showNewIndicators) {
 			itemEl.addClass('new');
 			itemEl.find('.quantity').html('NEW');
 		}
-
 		if (item.slot) {
 			const equipErrors = window.player.inventory.equipItemErrors(item);
 			if (equipErrors.length)
 				itemEl.addClass('no-equip');
 		}
-
-		if (item.has('quality'))
+		if (item.has('quality')) {
 			itemEl.addClass(`quality-${item.quality}`);
-
-		if (manageTooltip)
+		}
+		if (manageTooltip) {
 			addTooltipEvents(itemEl, item);
-
-		if (getItemContextConfig)
+		}
+		if (getItemContextConfig) {
 			addContextEvents(itemEl, item, getItemContextConfig);
-
+		}
 		itemEl.addClass(`spriteSize${size}`);
-
 		return itemEl;
 	};
 });

@@ -1,11 +1,9 @@
 const eventEmitter = require('../misc/events');
-
-let objBase = require('./objBase');
+const objBase = require('./objBase');
 
 module.exports = {
 	lastId: 0,
 	instance: null,
-
 	objects: [],
 
 	init: function (_instance) {
@@ -19,15 +17,13 @@ module.exports = {
 
 	build: function (isClientObj, id) {
 		let o = extend({}, objBase);
-
-		if (isClientObj)
+		if (isClientObj) {
 			o.update = null;
-		else {
+		} else {
 			o.id = id || this.getNextId();
 			o.addComponent('syncer');
 			o.instance = this.instance;
 		}
-
 		return o;
 	},
 
@@ -37,30 +33,25 @@ module.exports = {
 
 	transferObject: function (o) {
 		const obj = this.build();
-
 		let components = o.components;
 		delete o.components;
 		delete o.id;
-
-		for (let p in o) 
+		for (let p in o) {
 			obj[p] = o[p];
-
+		}
 		const cLen = components.length;
 		for (let i = 0; i < cLen; i++) {
 			let c = components[i];
-
 			const cpn = obj.addComponent(c.type, null, true);
-
-			for (let p in c) 
+			for (let p in c) {
 				cpn[p] = c[p];
-
-			if (cpn.transfer)
+			}
+			if (cpn.transfer) {
 				cpn.transfer();
+			}
 		}
-
 		this.pushObjectToList(obj);
 		this.physics.addObject(obj, obj.x, obj.y);
-
 		return obj;
 	},
 
@@ -69,41 +60,36 @@ module.exports = {
 		for (let i = 0; i < lLen; i++) {
 			let l = list[i];
 
-			let obj = this.build(l.clientObj, l.id);
-
+			const obj = this.build(l.clientObj, l.id);
 			obj.sheetName = l.sheetName;
 			obj.cell = l.cell;
 			obj.name = l.name;
-
 			obj.x = l.x;
 			obj.y = l.y;
 
-			if (l.ttl)
+			if (l.ttl) {
 				obj.ttl = l.ttl;
-
+			}
 			if (l.width) {
 				obj.width = l.width;
 				obj.height = l.height;
 			}
-
-			if (l.area)
+			if (l.area) {
 				obj.area = l.area;
-
+			}
 			//Add components (certain ones need to happen first)
 			//TODO: Clean this part up
 			let properties = extend({}, l.properties);
 			['cpnMob'].forEach(function (c) {
 				let blueprint = properties[c] || null;
-				if ((blueprint) && (typeof (blueprint) === 'string'))
+				if ((blueprint) && (typeof (blueprint) === 'string')) {
 					blueprint = JSON.parse(blueprint);
-
-				if (!blueprint)
+				}
+				if (!blueprint) {
 					return;
-
+				}
 				delete properties[c];
-
 				let type = c.replace('cpn', '').toLowerCase();
-
 				obj.addComponent(type, blueprint);
 			}, this);
 
@@ -112,13 +98,12 @@ module.exports = {
 					obj[p] = properties[p];
 					continue;
 				}
-
 				let type = p.replace('cpn', '');
 				type = type[0].toLowerCase() + type.substr(1);
 				let blueprint = properties[p] || null;
-				if ((blueprint) && (typeof (blueprint) === 'string'))
+				if ((blueprint) && (typeof (blueprint) === 'string')) {
 					blueprint = JSON.parse(blueprint);
-
+				}
 				obj.addComponent(type, blueprint);
 			}
 
@@ -126,28 +111,29 @@ module.exports = {
 			for (let p in extraProperties) {
 				let cpn = obj[p];
 				let e = extraProperties[p];
-				for (let pp in e) 
+				for (let pp in e) {
 					cpn[pp] = e[pp];
-				
-				if (cpn.init)
+				}
+				if (cpn.init) {
 					cpn.init();
+				}
 			}
-
 			if ((this.physics) && (!obj.dead)) {
-				if (!obj.width)
+				if (!obj.width) {
 					this.physics.addObject(obj, obj.x, obj.y);
-				else
+				} else {
 					this.physics.addRegion(obj);
+				}
 			}
-
-			if (obj.aggro)
+			if (obj.aggro) {
 				obj.aggro.move();
-
-			if (!skipPush)
+			}
+			if (!skipPush) {
 				this.pushObjectToList(obj);
-
-			if (lLen === 1)
+			}
+			if (lLen === 1) {
 				return obj;
+			}
 		}
 	},
 
@@ -161,58 +147,50 @@ module.exports = {
 
 	removeObject: function (obj, callback, useServerId) {
 		let found = this.objects.spliceFirstWhere(o => obj.id === (useServerId ? o.serverId : o.id));
-		if (!found)
+		if (!found) {
 			return;
-
+		}
 		let physics = this.physics;
 		if (physics) {
-			if (!found.width)
+			if (!found.width) {
 				physics.removeObject(found, found.x, found.y);
-			else
+			} else {
 				physics.removeRegion(found);
+			}
 		}
-
 		found.destroy();
-
-		if (callback)
+		if (callback) {
 			callback(found);
+		}
 	},
 
 	addObject: function (o, callback) {
 		const newO = this.build();
-
 		const components = o.components;
-
 		delete o.components;
-
-		for (let p in o) 
+		for (let p in o) {
 			newO[p] = o[p];
-
+		}
 		const len = components.length;
 		for (let i = 0; i < len; i++) {
 			const c = components[i];
-
 			const newC = newO.addComponent(c.type, c);
 			extend(newC, c);
 		}
-
 		this.pushObjectToList(newO);
-
-		if (!newO.dead)
+		if (!newO.dead) {
 			this.physics.addObject(newO, newO.x, newO.y);
-
+		}
 		callback(newO);
-
 		return newO;
 	},
 
 	sendEvent: function (msg, { name: sourceZone }) {
 		const { id, data } = msg;
-
 		const player = this.objects.find(p => p.id === id);
-		if (!player || player.zoneName !== sourceZone)
+		if (!player || player.zoneName !== sourceZone) {
 			return;
-
+		}
 		player.socket.emit('event', {
 			event: data.event,
 			data: data.data
@@ -221,30 +199,23 @@ module.exports = {
 
 	sendEvents: function ({ data }, { name: sourceZone }) {
 		const { objects } = this;
-
 		//Store will contain all events to be sent to players
 		const store = {};
-
 		for (let e in data) {
 			const event = data[e];
 			const eLen = event.length;
-
 			for (let j = 0; j < eLen; j++) {
 				const eventEntry = event[j];
-
 				const { obj: eventObj, to } = eventEntry;
-
 				if (e === 'serverModule') {
 					const { method, msg } = eventObj;
-
-					if (Array.isArray(msg))
+					if (Array.isArray(msg)) {
 						global[eventObj.module][method](...msg);	
-					else
+					} else {
 						global[eventObj.module][method](msg);
-
+					}
 					continue;
 				}
-
 				const toLen = to.length;
 				for (let i = 0; i < toLen; i++) {
 					const toId = to[i];
@@ -263,10 +234,9 @@ module.exports = {
 
 						continue;
 					}
-
-					if (!storeEntry.events[e])
+					if (!storeEntry.events[e]) {
 						storeEntry.events[e] = [];
-
+					}
 					storeEntry.events[e].push(eventObj);
 				}
 			}
@@ -300,7 +270,7 @@ module.exports = {
 				onGetMessages: [{
 					messages: [{
 						class: 'color-blueB',
-						message: player.name + ' has reached level ' + obj.level
+						message: `${player.name} has reached level ${obj.level}`
 					}]
 				}]
 			});

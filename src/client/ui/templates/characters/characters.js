@@ -171,7 +171,7 @@ define([
 		onGetCharacter: function (charName, result) {
 			this.find('.btn').removeClass('disabled');
 
-			let spriteY = ~~(result.cell / 8);
+			let spriteY = Math.floor(result.cell / 8);
 			let spirteX = result.cell - (spriteY * 8);
 
 			spirteX = -(spirteX * 8);

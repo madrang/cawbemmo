@@ -137,8 +137,8 @@ module.exports = {
 			if (this.randomPos) {
 				let range = this.range;
 				while ((x === obj.x) && (y === obj.y)) {
-					x = obj.x + ~~(Math.random() * range * 2) - range;
-					y = obj.y + ~~(Math.random() * range * 2) - range;
+					x = obj.x + Math.floor(Math.random() * range * 2) - range;
+					y = obj.y + Math.floor(Math.random() * range * 2) - range;
 				}
 			}
 

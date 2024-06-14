@@ -57,22 +57,17 @@ module.exports = {
 				item.spritesheet = skinBlueprint.spritesheet;
 				item.skinId = item.skinId;
 			}
-
 			item.id = id;
-
 			this.items.push(item);
 		}, this);
-
-		if (!blueprint.items)
+		if (!blueprint.items) {
 			return;
-
+		}
 		this.markup = blueprint.markup;
-
 		if (blueprint.faction) {
 			this.obj.extendComponent('trade', 'factionVendor', blueprint);
 			return;
 		}
-
 		this.genLeft = blueprint.items.max;
 	},
 
@@ -81,51 +76,45 @@ module.exports = {
 			this.regenCd--;
 			return;
 		}
-
 		this.regenCd = this.regenCdMax;
-
-		if (!this.genLeft)
+		if (!this.genLeft) {
 			return;
-
+		}
 		this.genLeft--;
 
 		let blueprint = this.blueprint;
 		let level = 1;
-		if (blueprint.level)
-			level = blueprint.level.min + ~~(Math.random() * (blueprint.level.max - blueprint.level.min));
-
+		if (blueprint.level) {
+			level = blueprint.level.min + Math.floor(Math.random() * (blueprint.level.max - blueprint.level.min));
+		}
 		let item = generator.generate({
 			noSpell: true,
 			level: level
 		});
-
 		let id = 0;
 		this.items.forEach(function (checkItem) {
-			if (checkItem.id >= id)
+			if (checkItem.id >= id) {
 				id = checkItem.id + 1;
+			}
 		});
-
 		item.id = id;
-
 		this.items.push(item);
 	},
 
 	startBuy: function (msg) {
-		if (!msg.has('target') && !msg.targetName)
+		if (!msg.has('target') && !msg.targetName) {
 			return false;
-
+		}
 		let target = msg.target;
-
-		if (target && !target.id)
+		if (target && !target.id) {
 			target = this.obj.instance.objects.objects.find(o => o.id === target);
-		else if (msg.targetName)
+		} else if (msg.targetName) {
 			target = this.obj.instance.objects.objects.find(o => ((o.name) && (o.name.toLowerCase() === msg.targetName.toLowerCase())));
-
+		}
 		this.target = null;
-
-		if ((!target) || (!target.trade))
+		if ((!target) || (!target.trade)) {
 			return false;
-
+		}
 		this.target = target;
 
 		let itemList = target.trade.getItems(this.obj);
@@ -135,7 +124,6 @@ module.exports = {
 			itemList = target.trade.buybackList[this.obj.name] || [];
 			markup = target.trade.markup.buy;
 		}
-
 		this.obj.syncer.set(true, 'trade', 'buyList', {
 			markup: markup,
 			items: itemList,
@@ -144,19 +132,24 @@ module.exports = {
 	},
 
 	buySell: function (msg) {
-		if (msg.action === 'buy')
-			this.buy(msg);
-		else if (msg.action === 'sell')
-			this.sell(msg);
-		else if (msg.action === 'buyback')
-			this.buyback(msg);
+		switch (msg.action) {
+			case 'buy':
+				this.buy(msg);
+				break;
+			case 'sell':
+				this.sell(msg);
+				break;
+			case 'buyback':
+				this.buyback(msg);
+				break;
+		}
 	},
 
 	buy: async function (msg) {
 		let target = this.target;
-		if (!target)
+		if (!target) {
 			return;
-
+		}
 		let item = null;
 		let targetTrade = target.trade;
 		let markup = targetTrade.markup.sell;
@@ -164,9 +157,9 @@ module.exports = {
 		if (msg.action === 'buyback') {
 			item = targetTrade.findBuyback(msg.itemId, this.obj.name);
 			markup = targetTrade.markup.buy;
-		} else
+		} else {
 			item = targetTrade.findItem(msg.itemId, this.obj.name);
-
+		}
 		if (!item) {
 			this.resolveCallback(msg);
 			return;
@@ -176,9 +169,9 @@ module.exports = {
 		if (item.worth.currency) {
 			let currencyItem = this.obj.inventory.items.find(i => (i.name === item.worth.currency));
 			canAfford = ((currencyItem) && (currencyItem.quantity >= item.worth.amount));
-		} else
-			canAfford = this.gold >= ~~(item.worth * markup);
-
+		} else {
+			canAfford = this.gold >= Math.floor(item.worth * markup);
+		}
 		if (!canAfford) {
 			sendMessage(this.obj, 'color-redA', 'You can\'t afford that item.');
 			this.resolveCallback(msg);
@@ -192,7 +185,6 @@ module.exports = {
 
 		if (item.type === 'skin') {
 			let haveSkin = await this.obj.auth.doesOwnSkin(item.skinId);
-
 			if (haveSkin) {
 				sendMessage(this.obj, 'color-redA', 'You have already unlocked that skin.');
 				this.resolveCallback(msg);
@@ -200,9 +192,9 @@ module.exports = {
 			}
 		}
 
-		if (msg.action === 'buyback')
+		if (msg.action === 'buyback') {
 			targetTrade.removeBuyback(msg.itemId, this.obj.name);
-		else if ((item.type !== 'skin') && (!item.infinite)) {
+		} else if ((item.type !== 'skin') && (!item.infinite)) {
 			targetTrade.removeItem(msg.itemId, this.obj.name);
 			targetTrade.genLeft++;
 		}
@@ -212,8 +204,9 @@ module.exports = {
 			// for the item that should be given to the player (giveItem)
 			let clonedItem = extend({}, item.giveItem || item);
 
-			if (item.worth.currency)
+			if (item.worth.currency) {
 				clonedItem.worth = 0;
+			}
 			if ((item.stats) && (item.stats.stats)) {
 				delete clonedItem.stats;
 				statGenerator.generate(clonedItem, {});
@@ -224,32 +217,28 @@ module.exports = {
 			if (clonedItem.generate) {
 				clonedItem = generator.generate(clonedItem);
 				delete clonedItem.generate;
-
-				if (item.factions)
+				if (item.factions) {
 					clonedItem.factions = item.factions;
+				}
 			}
-
 			if (!this.obj.inventory.getItem(clonedItem)) {
 				this.resolveCallback(msg);
 				return;
 			}
-
-			if (!item.infinite)
+			if (!item.infinite) {
 				this.obj.syncer.setArray(true, 'trade', 'removeItems', item.id);
+			}
 		}
-
 		if (item.worth.currency) {
 			let currencyItem = this.obj.inventory.items.find(i => (i.name === item.worth.currency));
 			this.obj.inventory.destroyItem({ itemId: currencyItem.id }, item.worth.amount, true);
 		} else {
-			targetTrade.gold += ~~(item.worth * markup);
-			this.gold -= ~~(item.worth * markup);
+			targetTrade.gold += Math.floor(item.worth * markup);
+			this.gold -= Math.floor(item.worth * markup);
 			this.obj.syncer.set(true, 'trade', 'gold', this.gold);
 		}
-
 		//Hack to always redraw the UI (to give items the red overlay if they can't be afforded)
 		this.obj.syncer.setArray(true, 'trade', 'redraw', true);
-
 		this.resolveCallback(msg);
 	},
 
@@ -260,23 +249,22 @@ module.exports = {
 
 	sell: function (msg) {
 		let target = this.target;
-		if (!target)
+		if (!target) {
 			return;
-
+		}
 		let targetTrade = target.trade;
 
 		const item = this.obj.inventory.findItem(msg.itemId);
-		if (!item || item.worth <= 0 || item.eq || item.noDestroy)
+		if (!item || item.worth <= 0 || item.eq || item.noDestroy) {
 			return;
-
+		}
 		const oldQuantity = item.quantity;
 		this.obj.inventory.destroyItem({ itemId: msg.itemId });
 
-		if (oldQuantity)
+		if (oldQuantity) {
 			item.quantity = oldQuantity;
-
-		let worth = ~~((item.quantity ?? 1) * item.worth * targetTrade.markup.buy);
-
+		}
+		let worth = Math.floor((item.quantity ?? 1) * item.worth * targetTrade.markup.buy);
 		this.gold += worth;
 
 		this.obj.syncer.set(true, 'trade', 'gold', this.gold);
@@ -284,37 +272,34 @@ module.exports = {
 
 		let buybackList = targetTrade.buybackList;
 		let name = this.obj.name;
-		if (!buybackList[name])
+		if (!buybackList[name]) {
 			buybackList[name] = [];
-
+		}
 		buybackList[name].push(item);
-		if (buybackList[name].length > this.maxBuyback)
+		if (buybackList[name].length > this.maxBuyback) {
 			buybackList[name].splice(0, 1);
+		}
 	},
 
 	startSell: function (msg) {
 		let target = msg.target;
 		let targetName = (msg.targetName || '').toLowerCase();
-
-		if (!target && !targetName)
+		if (!target && !targetName) {
 			return false;
-
-		if (target && !target.id)
+		}
+		if (target && !target.id) {
 			target = this.obj.instance.objects.objects.find(o => o.id === target);
-		else if (targetName)
+		} else if (targetName) {
 			target = this.obj.instance.objects.objects.find(o => ((o.name) && (o.name.toLowerCase() === targetName)));
-
+		}
 		this.target = null;
-
-		if ((!target) || (!target.trade))
+		if ((!target) || (!target.trade)) {
 			return false;
-
+		}
 		this.target = target;
 
-		let itemList = this.obj.inventory.items
-			.filter(i => i.worth > 0 && !i.eq && !i.noDestroy);
+		let itemList = this.obj.inventory.items.filter(i => i.worth > 0 && !i.eq && !i.noDestroy);
 		itemList = extend([], itemList);
-
 		this.obj.syncer.set(true, 'trade', 'sellList', {
 			markup: target.trade.markup.buy,
 			items: itemList.map(i => this.obj.inventory.simplifyItem(i))
@@ -335,27 +320,24 @@ module.exports = {
 	},
 
 	getItems: function (requestedBy) {
-		let items = this.items.map(i => requestedBy.inventory.simplifyItem(i));
-
-		return items;
+		return this.items.map(i => requestedBy.inventory.simplifyItem(i));
 	},
 
 	canBuy: function (itemId, requestedBy, action) {
 		let item = null;
-		if (action === 'buy')
+		if (action === 'buy') {
 			item = this.findItem(itemId, requestedBy.name);
-		else if (action === 'buyback')
+		} else if (action === 'buyback') {
 			item = this.findBuyback(itemId, requestedBy.name);
-
+		}
 		let result = true;
-		if (item.factions)
+		if (item.factions) {
 			result = requestedBy.reputation.canEquipItem(item);
-
+		}
 		if (!result) {
 			const message = 'your reputation is too low to buy that item';
 			requestedBy.social.notifySelf({ message });
 		}
-
 		return result;
 	},
 
@@ -370,10 +352,9 @@ module.exports = {
 	resolveCallback: function (msg, result) {
 		let callbackId = msg.has('callbackId') ? msg.callbackId : msg;
 		result = result || [];
-
-		if (!callbackId)
+		if (!callbackId) {
 			return;
-
+		}
 		process.send({
 			module: 'atlas',
 			method: 'resolveCallback',
@@ -388,20 +369,18 @@ module.exports = {
 		let result = {
 			type: 'trade'
 		};
-
-		if (self)
+		if (self) {
 			result.gold = this.gold;
-
+		}
 		return result;
 	},
 
 	events: {
 		beforeMove: function () {
-			if (!this.target)
+			if (!this.target) {
 				return;
-
+			}
 			this.obj.syncer.set(true, 'trade', 'closeTrade', true);
-
 			this.target = null;
 		}
 	}

@@ -63,7 +63,7 @@ module.exports = {
 			});
 
 		for (let i = 0; i < Math.min(aggroList.length, projectileConfig.extraTargets); i++) {
-			let pick = ~~(Math.random() * aggroList.length);
+			let pick = Math.floor(Math.random() * aggroList.length);
 			targets.push(aggroList[pick].obj);
 			aggroList.splice(pick, 1);
 		}

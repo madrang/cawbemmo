@@ -10,15 +10,12 @@ const loseXpOnDeath = ({ stats: { values }, syncer }, deathSource) => {
 			deathSource.follower.master.player
 		)
 	);
-
-	if (noLoseXp)
+	if (noLoseXp) {
 		return 0;
-			
+	}
 	const xpLoss = ~~Math.min(xp, xpMax * 0.05);
-
 	values.xp -= xpLoss;
 	syncer.setObject(true, 'stats', 'values', 'xp', values.xp);
-
 	return xpLoss;
 };
 

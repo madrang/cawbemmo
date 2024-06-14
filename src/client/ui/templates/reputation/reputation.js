@@ -75,12 +75,12 @@ define([
 				minWidth: percentage + '%'
 			});
 
-			let w = ~~(this.find('.front').width() / 5) * 5;
+			let w = Math.floor(this.find('.front').width() / 5) * 5;
 			this.find('.front').css({
 				width: w
 			});
 
-			percentage = ~~(percentage * 10) / 10;
+			percentage = Math.floor(percentage * 10) / 10;
 
 			this.find('.tier').html(tiers[tier].name.toLowerCase() + ' (' + percentage + '%)');
 		},

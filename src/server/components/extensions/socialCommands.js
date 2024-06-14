@@ -331,7 +331,7 @@ module.exports = {
 			return;
 		}
 
-		const roll = 1 + ~~(Math.random() * 100);
+		const roll = 1 + Math.floor(Math.random() * 100);
 		cons.emit('event', {
 			event: 'onGetMessages',
 			data: {

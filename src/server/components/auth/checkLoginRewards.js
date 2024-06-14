@@ -64,7 +64,7 @@ module.exports = async (cpnAuth, data, character, cbDone) => {
 	accountInfo.loginStreak = loginStreak;
 
 	const cappedLoginStreak = Math.max(1, Math.min(maxRewardedDays, loginStreak));
-	const itemCount = 1 + ~~(cappedLoginStreak / 2);
+	const itemCount = 1 + Math.floor(cappedLoginStreak / 2);
 	const rewards = rewardGenerator(itemCount);
 	if (!rewards) {
 		cbDone();

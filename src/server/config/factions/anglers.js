@@ -11,7 +11,7 @@ module.exports = {
 
 		generate: function (item) {
 			let chance = this.chance;
-			let chanceRoll = ~~(random.expNorm(chance.min, chance.max));
+			let chanceRoll = Math.floor(random.expNorm(chance.min, chance.max));
 
 			let result = null;
 			if (item.effects)
@@ -48,7 +48,7 @@ module.exports = {
 				if (roll >= effect.chance)
 					return;
 
-				let pick = items[~~(Math.random() * items.length)];
+				let pick = items[Math.floor(Math.random() * items.length)];
 				items.push(extend({}, pick));
 			}
 		}

@@ -239,7 +239,7 @@ module.exports = {
 
 	calcXpMax: function () {
 		let level = this.values.level;
-		this.values.xpMax = (level * 5) + ~~(level * 10 * Math.pow(level, 2.2)) - 5;
+		this.values.xpMax = (level * 5) + Math.floor(level * 10 * Math.pow(level, 2.2)) - 5;
 
 		this.obj.syncer.setObject(true, 'stats', 'values', 'xpMax', this.values.xpMax);
 	},
@@ -275,10 +275,9 @@ module.exports = {
 
 		obj.instance.eventEmitter.emit('onBeforeGetGlobalXpMultiplier', xpEvent);
 
-		amount = ~~(xpEvent.amount * (1 + (values.xpIncrease / 100)) * xpEvent.multiplier);
-
-		values.xpTotal = ~~(values.xpTotal + amount);
-		values.xp = ~~(values.xp + amount);
+		amount = Math.floor(xpEvent.amount * (1 + (values.xpIncrease / 100)) * xpEvent.multiplier);
+		values.xpTotal = Math.floor(values.xpTotal + amount);
+		values.xp = Math.floor(values.xp + amount);
 
 		obj.syncer.setObject(true, 'stats', 'values', 'xp', values.xp);
 
@@ -345,23 +344,23 @@ module.exports = {
 	},
 
 	kill: function (target) {
-		if (target.player)
+		if (target.player) {
 			return;
-
+		}
 		let level = target.stats.values.level;
 		let mobDiffMult = 1;
-		if (target.isRare)
+		if (target.isRare) {
 			mobDiffMult = 2;
-
+		}
 		//Who should get xp?
 		let aggroList = target.aggro.list;
 		let aLen = aggroList.length;
 		for (let i = 0; i < aLen; i++) {
 			let a = aggroList[i];
 			let dmg = a.damage;
-			if (dmg <= 0)
+			if (dmg <= 0) {
 				continue;
-
+			}
 			let mult = 1;
 			//How many party members contributed
 			// Remember, maybe one of the aggro-ees might be a mob too
@@ -382,16 +381,14 @@ module.exports = {
 				//We don't currently do this for quests/herb gathering
 				let sourceLevel = a.obj.stats.values.level;
 				let levelDelta = level - sourceLevel;
-
 				let amount = null;
-				if (Math.abs(levelDelta) <= 10)
-					amount = ~~(((sourceLevel + levelDelta) * 10) * Math.pow(1 - (Math.abs(levelDelta) / 10), 2) * mult * mobDiffMult);
-				else
+				if (Math.abs(levelDelta) <= 10) {
+					amount = Math.floor(((sourceLevel + levelDelta) * 10) * Math.pow(1 - (Math.abs(levelDelta) / 10), 2) * mult * mobDiffMult);
+				} else {
 					amount = 0;
-
+				}
 				a.obj.stats.getXp(amount, this.obj, target);
 			}
-
 			a.obj.fireEvent('afterKillMob', target);
 		}
 	},
@@ -594,7 +591,7 @@ module.exports = {
 
 	save: function () {
 		if (this.sessionDuration) {
-			this.stats.played = ~~(this.stats.played + this.sessionDuration);
+			this.stats.played = Math.floor(this.stats.played + this.sessionDuration);
 			delete this.sessionDuration;
 		}
 

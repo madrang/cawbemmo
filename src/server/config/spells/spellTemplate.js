@@ -55,19 +55,17 @@ module.exports = {
 				this.castTime = castEvent.castTimeMax;
 				this.obj.syncer.set(false, null, 'casting', 0);
 			}
-
 			return null;
 		}
-
 		return this.cast(action);
 	},
 
 	updateBase: function () {
 		//It's possible that we rezoned midway through casting (map regen)
 		// We'll have a hanging cast bar but at least we won't crash
-		if (this.castTime > 0 && !this.currentAction)
+		if (this.castTime > 0 && !this.currentAction) {
 			this.castTime = 0;
-
+		}
 		if (this.castTime > 0) {
 			let action = this.currentAction;
 
@@ -77,7 +75,6 @@ module.exports = {
 				this.obj.syncer.set(false, null, 'casting', 0);
 				return;
 			}
-
 			this.castTime--;
 			this.obj.syncer.set(false, null, 'casting', (action.castTimeMax - this.castTime) / action.castTimeMax);
 
@@ -100,24 +97,22 @@ module.exports = {
 				
 				this.sendBump(null, 0, -1);
 			}
-
 			return;
 		}
-
 		if (this.cd > 0) {
 			this.cd--;
-
-			if (this.cd === 0)
+			if (this.cd === 0) {
 				this.obj.syncer.setArray(true, 'spellbook', 'getSpells', this.simplify());
+			}
 		}
 	},
 
 	consumeMana: function () {
 		let stats = this.obj.stats.values;
 		stats.mana -= this.manaCost;
-
-		if (this.obj.player)
+		if (this.obj.player) {
 			this.obj.syncer.setObject(true, 'stats', 'values', 'mana', stats.mana);
+		}
 	},
 
 	setCd: function () {
@@ -126,7 +121,6 @@ module.exports = {
 		};
 
 		this.obj.fireEvent('beforeSetSpellCooldown', cd, this);
-
 		this.cd = cd.cd;
 
 		if (this.obj.player) {
@@ -139,7 +133,6 @@ module.exports = {
 
 	setAuto: function (autoConfig) {
 		this.autoActive = autoConfig;
-
 		if (this.obj.player) {
 			this.obj.instance.syncer.queue('onGetSpellActive', {
 				id: this.obj.id,
@@ -151,12 +144,12 @@ module.exports = {
 	},
 
 	calcDps: function (target, noSync) {
-		if ((!this.values) || (this.spellType === 'buff') || (this.spellType === 'aura'))
+		if ((!this.values) || (this.spellType === 'buff') || (this.spellType === 'aura')) {
 			return;
-
-		if ((!this.damage) && (!this.healing))
+		}
+		if ((!this.damage) && (!this.healing)) {
 			delete this.values.dps;
-		else {
+		} else {
 			let noMitigate = !target;
 
 			let dmg = combat.getDamage({
@@ -187,19 +180,19 @@ module.exports = {
 			critChance = Math.min(critChance, 100);
 			dmg = (((dmg / 100) * (100 - critChance)) + (((dmg / 100) * critChance) * (critMultiplier / 100)));
 			let duration = this.values.duration;
-			if (duration) 
+			if (duration) {
 				dmg *= duration;
-
+			}
 			const div = (this.cdMax + castTimeMax) || 1;
 			dmg /= div;
-
-			if (this.damage) 
-				this.values.dmg = ~~(dmg * 100) / 100 + '/tick';
-			else
-				this.values.heal = ~~(dmg * 100) / 100 + '/tick';
-
-			if (!noSync)
+			if (this.damage) {
+				this.values.dmg = Math.floor(dmg * 100) / 100 + '/tick';
+			} else {
+				this.values.heal = Math.floor(dmg * 100) / 100 + '/tick';
+			}
+			if (!noSync) {
 				this.obj.syncer.setArray(true, 'spellbook', 'getSpells', this.simplify());
+			}
 		}
 	},
 
@@ -215,15 +208,16 @@ module.exports = {
 			let tx = target.x;
 			let ty = target.y;
 
-			if (tx < x)
+			if (tx < x) {
 				deltaX = -1;
-			else if (tx > x)
+			} else if (tx > x) {
 				deltaX = 1;
-
-			if (ty < y)
+			}
+			if (ty < y) {
 				deltaY = -1;
-			else if (ty > y)
+			} else if (ty > y) {
 				deltaY = 1;
+			}
 		}
 
 		let components = [{
@@ -233,7 +227,7 @@ module.exports = {
 		}];
 
 		//During casting we only bump
-		if ((target) && (this.animation)) {
+		if (target && this.animation) {
 			components.push({
 				type: 'animation',
 				template: this.animation
@@ -251,7 +245,6 @@ module.exports = {
 		for (let p in this) {
 			let value = this[p];
 			let type = typeof(value);
-
 			if (
 				type === 'undefined' ||
 				type === 'function' || 
@@ -260,23 +253,23 @@ module.exports = {
 					isNaN(value)
 				) ||
 				['obj', 'currentAction', 'events'].includes(p)
-			)
+			) {
 				continue;
-
-			if (p === 'autoActive') 
+			}
+			if (p === 'autoActive') {
 				value = value !== null;
-
+			}
 			values[p] = value;
 		}
-
-		if (this.animation)
+		if (this.animation) {
 			values.animation = this.animation.name;
-		if (this.values)
+		}
+		if (this.values) {
 			values.values = this.values;
-
-		if (this.onAfterSimplify)
+		}
+		if (this.onAfterSimplify) {
 			this.onAfterSimplify(values);
-
+		}
 		return values;
 	},
 

@@ -119,16 +119,15 @@ define([
 
 			if (!keepOffset) {
 				this.offset = 0;
-
 				let foundIndex = this.records.list.findIndex(function (r) {
 					return (r.name === window.player.name);
 				}, this);
-				if (foundIndex !== -1)
-					this.offset = ~~(foundIndex / this.pageSize);
+				if (foundIndex !== -1) {
+					this.offset = Math.floor(foundIndex / this.pageSize);
+				}
 			}
 
 			let container = this.find('.list').empty();
-
 			this.maxOffset = Math.ceil(result.length / this.pageSize) - 1;
 
 			for (let i = 0; i < this.records.list.length; i++) {

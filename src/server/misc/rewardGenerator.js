@@ -37,12 +37,11 @@ const defaultConfig = [{
 
 const buildPool = config => {
 	const pool = [];
-
 	config.forEach(c => {
-		for (let i = 0; i < c.chance; i++) 
+		for (let i = 0; i < c.chance; i++) {
 			pool.push(c.name);
+		}
 	});
-
 	return pool;
 };
 
@@ -51,11 +50,9 @@ const defaultPool = buildPool(defaultConfig);
 module.exports = (itemCount, useConfig) => {
 	const config = useConfig || defaultConfig;
 	const pool = useConfig ? buildPool(useConfig) : defaultPool;
-
 	const items = [];
-		
 	for (let i = 0; i < itemCount; i++) {
-		let pickName = pool[~~(Math.random() * pool.length)];
+		let pickName = pool[Math.floor(Math.random() * pool.length)];
 		const pick = config.find(f => f.name === pickName);
 
 		let item = items.find(f => f.name === pickName);
@@ -67,10 +64,10 @@ module.exports = (itemCount, useConfig) => {
 				sprite: pick.sprite,
 				quantity: pick.quantity || 1
 			});
-		} else
+		} else {
 			item.quantity += (pick.quantity || 1);
+		}
 	}
-
 	return items;
 };
 

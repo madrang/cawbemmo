@@ -13,12 +13,11 @@ module.exports = {
 
 		generate: function (item) {
 			let chance = this.chance;
-			let chanceRoll = ~~(random.norm(chance.min, chance.max) * 10) / 10;
-
+			let chanceRoll = Math.floor(random.norm(chance.min, chance.max) * 10) / 10;
 			let result = null;
-			if (item.effects)
+			if (item.effects) {
 				result = item.effects.find(e => (e.factionId === 'gaekatla'));
-
+			}
 			if (!result) {
 				if (!item.effects)
 					item.effects = [];
@@ -36,13 +35,12 @@ module.exports = {
 				result.chance = chanceRoll;
 				result.text = chanceRoll + '% chance on kill to summon a critter to assist you in battle';
 			}
-
-			if (!result.events)
+			if (!result.events) {
 				result.events = {};
-
-			for (let e in this.events) 
+			}
+			for (let e in this.events) {
 				result.events[e] = this.events[e];
-
+			}
 			return result;
 		},
 
@@ -51,9 +49,9 @@ module.exports = {
 				let effect = item.effects.find(e => (e.factionId === 'gaekatla'));
 
 				let roll = Math.random() * 100;
-				if (roll >= effect.chance)
+				if (roll >= effect.chance) {
 					return;
-
+				}
 				//Spawn a mob
 				let spawnedMob = mob.instance.spawners.spawn({
 					amountLeft: 1,

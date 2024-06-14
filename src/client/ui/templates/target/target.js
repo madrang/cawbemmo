@@ -23,26 +23,22 @@ define([
 			this.onEvent('onSetTarget', this.onSetTarget.bind(this));
 			this.onEvent('onDeath', this.onSetTarget.bind(this, null));
 			this.onEvent('onGetTargetCasting', this.onGetTargetCasting.bind(this));
-
-			if (isMobile) 
+			if (isMobile) {
 				this.el.on('click', this.onContextMenu.bind(this));
+			}
 		},
 
 		onGetTargetCasting: function (objId, casting) {
-			if (!this.target || this.target.id !== objId)
+			if (!this.target || this.target.id !== objId) {
 				return;
-
-			let box = this.el.find('.statBox')
-				.eq(2);
-
+			}
+			let box = this.el.find('.statBox').eq(2);
 			if ((casting === 0) || (casting === 1)) {
 				box.hide();
 				return;
 			} 
-
 			box.show();
-
-			let w = ~~(casting * 100);
+			let w = Math.floor(casting * 100);
 			box.find('[class^="stat"]').css('width', w + '%');
 		},
 
@@ -171,7 +167,7 @@ define([
 		buildBar: function (barIndex, value, max) {
 			let box = this.el.find('.statBox').eq(barIndex);
 
-			let w = ~~((value / max) * 100);
+			let w = Math.floor((value / max) * 100);
 			box.find('[class^="stat"]').css('width', w + '%');
 
 			box.find('.text').html(Math.floor(value) + '/' + Math.floor(max));

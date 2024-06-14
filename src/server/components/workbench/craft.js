@@ -82,7 +82,7 @@ module.exports = (cpnWorkbench, msg) => {
 				
 			const quantity = item.quantity;
 			if (quantity && quantity.push)
-				item.quantity = quantity[0] + ~~(Math.random() * (quantity[1] - quantity[0]));
+				item.quantity = quantity[0] + Math.floor(Math.random() * (quantity[1] - quantity[0]));
 
 			crafter.inventory.getItem(item);
 		});

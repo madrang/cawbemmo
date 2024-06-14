@@ -104,7 +104,7 @@ define([
 
 			let manaCost = spell.manaCost;
 			if (spell.manaReserve)
-				manaCost = ~~(spell.manaReserve.percentage * 100) + '% reserved';
+				manaCost = Math.floor(spell.manaReserve.percentage * 100) + '% reserved';
 
 			let tooltip = templateTooltip
 				.replace('$NAME$', spell.name)

@@ -59,9 +59,9 @@ module.exports = {
 		let result = null;
 		if ((state + '').indexOf('.') > -1) {
 			let config = this.states[(state + '').split('.')[0]];
-			if (!config)
+			if (!config) {
 				return false;
-
+			}
 			let goto = (config.options[state] || {}).goto;
 			if (goto instanceof Array) {
 				let gotos = [];
@@ -70,21 +70,20 @@ module.exports = {
 					for (let i = 0; i < rolls; i++) 
 						gotos.push(g.number);
 				});
-
-				state = gotos[~~(Math.random() * gotos.length)];
-			} else
+				state = gotos[Math.floor(Math.random() * gotos.length)];
+			} else {
 				state = goto;
+			}
 		}
-
 		this.sourceStates[sourceObj.id] = state;
 
-		if (!this.states)
+		if (!this.states) {
 			return null;
-
+		}
 		let stateConfig = this.states[state];
-		if (!stateConfig)
+		if (!stateConfig) {
 			return null;
-
+		}
 		let useMsg = stateConfig.msg;
 		if (stateConfig.cpn) {
 			let cpn = sourceObj[stateConfig.cpn];
@@ -109,18 +108,16 @@ module.exports = {
 				useMsg = extend([], useMsg);
 				useMsg[0].msg = methodResult;
 			}
-
-			if (!useMsg)
+			if (!useMsg) {
 				return;
+			}
 		}
-
 		result = {
 			id: this.obj.id,
 			msg: null,
 			from: this.obj.name,
 			options: []
 		};
-
 		if (useMsg instanceof Array) {
 			let msgs = [];
 			useMsg.forEach(function (m, i) {
@@ -133,8 +130,7 @@ module.exports = {
 				}
 			});
 
-			let pick = msgs[~~(Math.random() * msgs.length)];
-
+			let pick = msgs[Math.floor(Math.random() * msgs.length)];
 			result.msg = pick.msg.msg;
 			result.options = useMsg[pick.index].options;
 		} else {
@@ -143,9 +139,9 @@ module.exports = {
 		}
 
 		if (!(result.options instanceof Array)) {
-			if (result.options[0] === '$')
+			if (result.options[0] === '$') {
 				result.options = this.states[result.options.replace('$', '')].options;
-
+			}
 			result.options = Object.keys(result.options);
 		}
 

@@ -197,19 +197,17 @@ define([
 		},
 
 		changeCostume: function (e) {
-			let delta = e ? ~~$(e.target).attr('delta') : 0;
-
+			let delta = (e ? Math.floor($(e.target).attr('delta')) : 0);
 			let spriteList = this.classSprites;
-			if (!spriteList)
+			if (!spriteList) {
 				return;
-
+			}
 			this.costume = (this.costume + delta) % spriteList.length;
-			if (this.costume < 0)
+			if (this.costume < 0) {
 				this.costume = spriteList.length - 1;
+			}
 			this.skinId = spriteList[this.costume].id;
-
 			$('.txtCostume').html(spriteList[this.costume].name);
-
 			this.setSprite();
 		},
 

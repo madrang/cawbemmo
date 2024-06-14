@@ -81,7 +81,7 @@ module.exports = {
 				if (remaining < 0)
 					return false;
 				
-				e.ttl = Math.max(~~(remaining / consts.tickTime), 1);
+				e.ttl = Math.max(Math.floor(remaining / consts.tickTime), 1);
 				return true;
 			});
 		}

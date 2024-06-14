@@ -19,11 +19,11 @@ module.exports = {
 		const { gathering, nodes, defaultTtlMax, obj } = this;
 		const { equipment, stats, instance: { eventEmitter } } = obj;
 
-		if (gathering)
+		if (gathering) {
 			return;
-		else if (!nodes.length)
+		} else if (!nodes.length) {
 			return;
-
+		}
 		const [ node ] = nodes;
 
 		if (!this.hasSpace(node)) {
@@ -46,24 +46,20 @@ module.exports = {
 			if (equipment.isSlotEmpty('tool')) {
 				this.sendAnnouncement('You need a fishing rod to fish');
 				this.gathering = null;
-
 				return;
 			}
-
 			let statCatchSpeed = Math.min(150, stats.values.catchSpeed);
 			ttlMax *= (1 - (statCatchSpeed / 200));
 		}
-
 		this.gatheringTtlMax = ttlMax;
 		this.gatheringTtl = ttlMax;
 	},
 
 	update: function () {
 		let gathering = this.gathering;
-
-		if (!gathering)
+		if (!gathering) {
 			return;
-
+		}
 		let isFish = (gathering.resourceNode.nodeType === 'fish');
 		let hasSpace = this.hasSpace(this.gathering);
 
@@ -85,17 +81,14 @@ module.exports = {
 					this.obj.syncer.set(false, 'gatherer', p, gathering[p]);
 				});
 			}
-
 			this.gatheringTtl--;
-
-			let progress = 100 - ~~((this.gatheringTtl / this.gatheringTtlMax) * 100);
+			let progress = 100 - Math.floor((this.gatheringTtl / this.gatheringTtlMax) * 100);
 			this.obj.syncer.set(true, 'gatherer', 'progress', progress);
-			if (isFish)
+			if (isFish) {
 				this.obj.syncer.set(true, 'gatherer', 'action', 'Fishing');
-
+			}
 			return;
 		}
-
 		this.completeGathering(gathering, isFish);
 	},
 
@@ -112,24 +105,20 @@ module.exports = {
 		});
 		this.obj.instance.eventEmitter.emit('beforeGatherResourceComplete', gatherResult);
 		this.obj.fireEvent('beforeGatherResourceComplete', gatherResult);
-
 		this.obj.syncer.set(false, 'gatherer', 'progress', 100);
 
 		if (isFish) {
 			const catchChance = gatherResult.blueprint.gatherChance + this.obj.stats.values.catchChance;
-			if (~~(Math.random() * 100) >= catchChance) {
+			if (Math.floor(Math.random() * 100) >= catchChance) {
 				this.sendAnnouncement('The fish got away');
 				this.gathering = null;
-
 				return;
 			}
-
 			gatherResult.items.forEach(g => {
-				if (g.slot)
+				if (g.slot) {
 					return;
-				
+				}
 				delete g.quantity;
-
 				qualityGenerator.generate(g, {
 					//100 x 2.86 = 2000 (chance for a common)
 					bonusMagicFind: this.obj.stats.values.fishRarity * 2.82
@@ -144,12 +133,12 @@ module.exports = {
 				}[g.quality] + g.name;
 
 				let statFishWeight = 1 + (this.obj.stats.values.fishWeight / 100);
-				let weight = ~~((gatherResult.blueprint.baseWeight + g.quality + (Math.random() * statFishWeight)) * 100) / 100;
+				let weight = Math.floor((gatherResult.blueprint.baseWeight + g.quality + (Math.random() * statFishWeight)) * 100) / 100;
 				g.stats = {
 					weight: weight
 				};
 
-				g.worth = ~~(weight * 10);
+				g.worth = Math.floor(weight * 10);
 			});
 		} else {
 			gatherResult.items.forEach(g => {
@@ -160,7 +149,7 @@ module.exports = {
 
 		if (isFish) {
 			let itemChance = 1 + this.obj.stats.values.fishItems;
-			if (~~(Math.random() * 500) < itemChance) {
+			if (Math.floor(Math.random() * 500) < itemChance) {
 				gatherResult.items = [{
 					name: 'Cerulean Pearl',
 					material: true,
@@ -171,45 +160,43 @@ module.exports = {
 			}
 		}
 
-		let blueprint = gatherResult.blueprint;
-
+		const blueprint = gatherResult.blueprint;
 		gatherResult.items.forEach((item, i) => {
 			delete item.pos;
-
 			if (i === 0) {
-				if (blueprint.itemName)
+				if (blueprint.itemName) {
 					item.name = blueprint.itemName;
-				if (blueprint.itemAmount)
-					item.quantity = ~~(Math.random() * blueprint.itemAmount[1]) + blueprint.itemAmount[0];
+				}
+				if (blueprint.itemAmount) {
+					item.quantity = Math.floor(Math.random() * blueprint.itemAmount[1]) + blueprint.itemAmount[0];
+				}
 			}
-
 			this.obj.inventory.getItem(item, false, false, true);
-
-			if (item.material)
+			if (item.material) {
 				this.obj.fireEvent('afterGatherResource', gatherResult);
+			}
 		});
 
-		if (!gatherResult.noChangeAmount)
+		if (!gatherResult.noChangeAmount) {
 			resourceNode.gather();
-
+		}
 		this.obj.stats.getXp(gatherResult.xp, this.obj, gatherResult.obj);
 
 		if (gathering.destroyed) {
-			if (isFish)
+			if (isFish) {
 				this.sendAnnouncement('The school has been depleted');
-
+			}
 			this.nodes.spliceWhere(n => (n === gathering));
 			this.updateServerActions(false);
 		}
-
 		this.gathering = null;
 	},
 
 	hasSpace: function (node) {
 		// By default, the player is allowed to gather "nothing"
-		if (!node.inventory || !node.inventory.items)
+		if (!node.inventory || !node.inventory.items) {
 			return true;
-		
+		}
 		return this.obj.inventory.hasSpaceList(node.inventory.items);
 	},
 

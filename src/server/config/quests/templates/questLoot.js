@@ -25,11 +25,11 @@ module.exports = {
 
 		if (!this.slot) {
 			if (Math.random() < 0.2) {
-				this.quality = 1 + ~~(Math.random() * 2);
+				this.quality = 1 + Math.floor(Math.random() * 2);
 				this.slotName = '';
 
 				if (this.quality === 1) {
-					let roll = ~~(Math.random() * 2);
+					let roll = Math.floor(Math.random() * 2);
 					if (roll === 0)
 						this.slotName = 'Magic Armor';
 					else
@@ -61,7 +61,7 @@ module.exports = {
 			} else {
 				this.name = 'Ramasseux d\'item Rare';
 				this.quality = 0;
-				this.slot = slotNames[~~(Math.random() * slotNames.length)];
+				this.slot = slotNames[Math.floor(Math.random() * slotNames.length)];
 				this.slotName = this.slot[0].toUpperCase() + this.slot.substr(1);
 				this.description = 'Loot 1x ' + this.slotName + ' slot item';
 			}

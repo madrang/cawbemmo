@@ -142,9 +142,9 @@ module.exports = {
 				let row = this.layers[i];
 				for (let j = 0; j < this.size.h; j++) {
 					let cell = row[j];
-					if (!cell)
+					if (!cell) {
 						continue;
-
+					}
 					cell = cell.split(',');
 					let cLen = cell.length;
 
@@ -161,31 +161,32 @@ module.exports = {
 							map: this.name
 						};
 						events.emit('onBeforeRandomizePosition', msgBeforeRandomizePosition);
-						if (msgBeforeRandomizePosition.success)
+						if (msgBeforeRandomizePosition.success) {
 							newC = this.randomMap.randomizeTile(c);
-
+						}
 						newCell += newC;
 
 						//Wall?
-						if ((c >= 160) && (c <= 352) && (newC === 0))
+						if ((c >= 160) && (c <= 352) && (newC === 0)) {
 							this.collisionMap[i][j] = 0;
-
-						if (k < cLen - 1)
+						}
+						if (k < cLen - 1) {
 							newCell += ',';
+						}
 					}
 
-					let fakeContents = [];
-					const hiddenWall = this.hiddenWalls[i][j];
+					const fakeContents = [];
 					const hiddenTile = this.hiddenTiles[i][j];
-
-					if (hiddenTile)
+					if (hiddenTile) {
 						fakeContents.push(-this.randomMap.randomizeTile(hiddenTile));
-					if (hiddenWall)
+					}
+					const hiddenWall = this.hiddenWalls[i][j];
+					if (hiddenWall) {
 						fakeContents.push(-this.randomMap.randomizeTile(hiddenWall));
-
-					if (fakeContents.length)
+					}
+					if (fakeContents.length) {
 						newCell += ',' + fakeContents.join(',');
-
+					}
 					row[j] = newCell;
 				}
 			}
@@ -203,15 +204,13 @@ module.exports = {
 				let y = m.y;
 				let w = m.width;
 				let h = m.height;
-
 				for (let i = x; i < x + w; i++) {
 					let row = this.layers[i];
-
-					for (let j = y; j < y + h; j++)
+					for (let j = y; j < y + h; j++) {
 						row[j] = '';
+					}
 				}
 			}, this);
-
 		physics.init(this.collisionMap);
 		padding = mapFile.properties.padding;
 		mapFile = null;

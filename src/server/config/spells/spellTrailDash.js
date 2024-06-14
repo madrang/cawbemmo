@@ -15,9 +15,9 @@ let cpnSpikePatch = {
 	},
 
 	collisionEnter: function (o) {
-		if ((o.mob) || (!o.stats))
+		if ((o.mob) || (!o.stats)) {
 			return;
-
+		}
 		this.contents.push(o);
 	},
 
@@ -33,9 +33,9 @@ let cpnSpikePatch = {
 	},
 
 	update: function () {
-		if (this.caster.destroyed)
+		if (this.caster.destroyed) {
 			return;
-
+		}
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -71,9 +71,9 @@ module.exports = {
 	duration: 6,
 
 	update: function () {
-		if (!this.casting)
+		if (!this.casting) {
 			return;
-
+		}
 		if (this.intCd > 0) {
 			this.intCd--;
 			return;
@@ -83,12 +83,12 @@ module.exports = {
 		this.currentX += this.dx;
 		this.currentY += this.dy;
 
-		let x = ~~this.currentX;
-		let y = ~~this.currentY;
+		let x = Math.floor(this.currentX);
+		let y = Math.floor(this.currentY);
 
-		if (this.obj.instance.physics.isTileBlocking(x, y)) 
+		if (this.obj.instance.physics.isTileBlocking(x, y)) {
 			this.distance = 7;
-		else if ((x !== this.obj.x) || (y !== this.obj.y)) {
+		} else if ((x !== this.obj.x) || (y !== this.obj.y)) {
 			//if ((x !== this.targetX) || (y !== this.targetY)) {
 			let particles = this.particles;
 
@@ -102,9 +102,9 @@ module.exports = {
 							return {
 								type: 'attackAnimation',
 								destroyObject: true,
-								row: [9, 9, 9, 9, 9, 9, 9, 9][~~(Math.random() * 8)],
+								row: [9, 9, 9, 9, 9, 9, 9, 9][Math.floor(Math.random() * 8)],
 								col: 4,
-								frameDelay: 6 + ~~(Math.random() * 7),
+								frameDelay: 6 + Math.floor(Math.random() * 7),
 								loop: -1
 							};
 						}
@@ -139,13 +139,11 @@ module.exports = {
 			this.intCd = 0;
 			this.update();
 		}
-
 		if (this.distance > 6) {
 			this.casting = false;
 			this.castingEffect.destroyed = true;
 			return true;
 		}
-
 		return true;
 	},
 
@@ -155,8 +153,8 @@ module.exports = {
 
 	cast: function (action) {
 		do {
-			this.targetX = action.target.x + ~~(Math.random() * 6) - 3;
-			this.targetY = action.target.y + ~~(Math.random() * 6) - 3;
+			this.targetX = action.target.x + Math.floor(Math.random() * 6) - 3;
+			this.targetY = action.target.y + Math.floor(Math.random() * 6) - 3;
 		} while (this.obj.instance.physics.isTileBlocking(this.targetX, this.targetY));
 
 		this.currentX = this.obj.x;
@@ -166,10 +164,9 @@ module.exports = {
 		this.dy = this.targetY - this.currentY;
 
 		let distance = Math.sqrt(Math.pow(this.dx, 2) + Math.pow(this.dy, 2));
-
-		if (distance <= 0)
+		if (distance <= 0) {
 			return false;
-
+		}
 		this.castingEffect = this.obj.effects.addEffect({
 			type: 'casting',
 			silent: true
