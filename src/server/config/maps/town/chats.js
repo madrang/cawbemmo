@@ -6,6 +6,16 @@ module.exports = {
 	}, {
 		msg: 'zZzZZzZZzZZz'
 	}],
+	igor: [{
+		msg: 'Quelle es la partie préférée d\'un astronaute sur un clavier? ..... L\'espace'
+	}, {
+		msg: 'La plage dit à l\'océan ... c\'est vague.'
+	}],
+	vlad: [{
+		msg: 'Arrête Igor'
+	}, {
+		msg: 'c\'est terrible'
+	}],
 	hermit: [{
 		msg: '*strokes his beard*'
 	}, {

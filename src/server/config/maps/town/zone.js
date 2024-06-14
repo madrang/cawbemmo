@@ -2,11 +2,11 @@ module.exports = {
 	name: 'town',
 	level: [1, 20],
 	resources: {
-		Skyblossom: {
+		champignon: {
 			type: 'herb',
 			max: 4
 		},
-		Emberleaf: {
+		weed: {
 			type: 'herb',
 			max: 1,
 			cdMax: 17100
@@ -93,7 +93,7 @@ module.exports = {
 				sprite: [0, 0]
 			}
 		},
-		bunny: {
+		vidange: {
 			level: 3,
 			regular: {
 				drops: {
@@ -105,11 +105,11 @@ module.exports = {
 				count: 0
 			},
 			questItem: {
-				name: "Rabbit's Foot",
+				name: "Hamburger usagée",
 				sprite: [0, 1]
 			}
 		},
-		thumper: {
+		'grosse vidange': {
 			level: 5,
 			cron: '0 * * * *',
 
@@ -127,7 +127,7 @@ module.exports = {
 				chance: 100
 			}
 		},
-		elk: {
+		sbire: {
 			level: 4,
 			regular: {
 				drops: {
@@ -139,16 +139,20 @@ module.exports = {
 				name: 'Ironhorn'
 			},
 			questItem: {
-				name: 'Elk Antler',
+				name: 'Cagoule',
 				sprite: [0, 2]
 			}
 		},
-		flamingo: {
+		"45 tours": {
 			level: 5,
 			regular: {
 				drops: {
 					rolls: 1
 				}
+
+			},
+			rare: {
+				name: 'Evan Joanes'
 			}
 		},
 		crab: {
@@ -162,13 +166,13 @@ module.exports = {
 				sprite: [0, 3]
 			}
 		},
-		'titan crab': {
+		kazou: {
 			level: 7,
 			rare: {
-				name: 'The Pincer King'
+				name: 'Le roi des homard'
 			}
 		},
-		eagle: {
+		'truite à panache': {
 			level: 10,
 			regular: {
 				drops: {
