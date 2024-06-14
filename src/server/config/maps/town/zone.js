@@ -111,7 +111,7 @@ module.exports = {
 		},
 		'grosse vidange': {
 			level: 5,
-			cron: '* * * * *',
+			cron: '0 * * * *',
 
 			regular: {
 				hpMult: 3,
@@ -166,13 +166,13 @@ module.exports = {
 				sprite: [0, 3]
 			}
 		},
-		'titan crab': {
+		kazou: {
 			level: 7,
 			rare: {
-				name: 'The Pincer King'
+				name: 'Le roi des homard'
 			}
 		},
-		eagle: {
+		'truite à panache': {
 			level: 10,
 			regular: {
 				drops: {
