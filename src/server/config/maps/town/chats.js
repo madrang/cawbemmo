@@ -14,7 +14,7 @@ module.exports = {
 	vlad: [{
 		msg: 'Arrête Igor'
 	}, {
-		msg: 'c\'est terrible''
+		msg: 'c\'est terrible'
 	}],
 	hermit: [{
 		msg: '*strokes his beard*'
