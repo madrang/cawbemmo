@@ -15,7 +15,7 @@ module.exports = {
 			this.gatherType = subType ?? ['herb', 'fish'][~~(Math.random() * 2)];
 
 			if (this.gatherType === 'fish') {
-				this.name = 'Lure of the Sea';
+				this.name = 'Une pause a la pêche';
 
 				let isQualityQ = (Math.random() < 0.3);
 				if (isQualityQ) {
@@ -49,8 +49,8 @@ module.exports = {
 			typeName = ['big', 'giant'][this.requiredQuality - 1] + ' ' + typeName;
 
 		let action = ({
-			herb: 'Gather',
-			fish: 'Catch'
+			herb: 'Ceuille',
+			fish: 'Attrape'
 		})[this.gatherType];
 
 		this.description = `${action} ${this.have}/${this.need} ${typeName}`;

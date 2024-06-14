@@ -49,7 +49,7 @@ module.exports = {
 			}
 		}
 
-		this.description = 'Kill ' + this.have + '/' + this.need + ' ' + this.mobName;
+		this.description = 'Tue ' + this.have + '/' + this.need + ' ' + this.mobName;
 
 		return true;
 	},
