@@ -69,7 +69,7 @@ module.exports = {
 				return;
 
 			this.have++;
-			this.description = 'Kill ' + this.have + '/' + this.need + ' ' + this.mobName;
+			this.description = 'Tue ' + this.have + '/' + this.need + ' ' + this.mobName;
 
 			if (this.have >= this.need)
 				this.ready();
