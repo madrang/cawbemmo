@@ -50,17 +50,15 @@ define([
 			if ((e.button !== null) && (e.button !== 0))
 				return;
 
-			let tileX = ~~(e.x / scale);
-			let tileY = ~~(e.y / scale);
-
-			if ((tileX === this.hoverTile.x) && (tileY === this.hoverTile.y))
+			const tileX = Math.floor(e.x / scale);
+			const tileY = Math.floor(e.y / scale);
+			if ((tileX === this.hoverTile.x) && (tileY === this.hoverTile.y)) {
 				return;
-
+			}
 			events.emit('onChangeHoverTile', tileX, tileY);
 
-			this.hoverTile.x = ~~(e.x / scale);
-			this.hoverTile.y = ~~(e.y / scale);
-
+			this.hoverTile.x = Math.floor(e.x / scale);
+			this.hoverTile.y = Math.floor(e.y / scale);
 			this.sprite.x = (this.hoverTile.x * scale);
 			this.sprite.y = (this.hoverTile.y * scale);
 		},

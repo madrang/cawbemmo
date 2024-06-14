@@ -51,8 +51,7 @@ module.exports = {
 		const hasEndRoom = this.templates.some(t => t.properties.end);
 		if (!hasEndRoom) {
 			/* eslint-disable-next-line no-console */
-			console.log(`Random map has no end room defined: ${map.name}`);
-
+			console.error(`Random map has no end room defined: ${map.name}`);
 			return;
 		}
 
@@ -61,9 +60,9 @@ module.exports = {
 
 		let startRoom = buildRoom(this, startTemplate);
 
-		if (!isValidDungeon(this))
+		if (!isValidDungeon(this)) {
 			return false;
-
+		}
 		this.offsetRooms(startRoom);
 		buildMap(this, instance, startRoom);
 
@@ -78,22 +77,23 @@ module.exports = {
 	},
 
 	loadMapProperties: function ({ leafConstraints, endConstraints }) {
-		if (leafConstraints)
+		if (leafConstraints) {
 			this.leafConstraints = JSON.parse(leafConstraints);
-
-		if (endConstraints)
+		}
+		if (endConstraints) {
 			this.endConstraints = JSON.parse(endConstraints);
+		}
 	},
 
 	randomizeTile: function (tile, floorTile) {
 		let mapping = this.tileMappings[tile];
-		if (!mapping)
+		if (!mapping) {
 			return tile;
-
+		}
 		tile = mapping[this.randInt(0, mapping.length)];
-		if (!tile)
+		if (!tile) {
 			return 0;
-
+		}
 		return tile;
 	},
 
@@ -110,7 +110,6 @@ module.exports = {
 	performOffset: function (room, dx, dy) {
 		room.x += dx;
 		room.y += dy;
-
 		room.connections.forEach(c => this.performOffset(c, dx, dy));
 	},
 

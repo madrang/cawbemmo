@@ -14,7 +14,6 @@ module.exports = {
 
 	init: async function (cbReady) {
 		await this.create();
-
 		cbReady();
 	},
 
@@ -22,28 +21,26 @@ module.exports = {
 		try {
 			await r.dbCreate(serverConfig.dbName).run();
 		} catch (e) {
-
+			_.error(e);
 		}
-
 		for (const table of tableNames) {
 			try {
 				await r.tableCreate(table).run();
 			} catch (e) {
-				if (!e.message.includes('already exists'))
-					_.log(e);
+				if (!e.message.includes('already exists')) {
+					_.error(e);
+				}
 			}
 		}
 
 		//Create indices used for case-insensitive checks
 		if (!(await r.table('login').indexList()).includes('idLowerCase')) {
 			await r.table('login').indexCreate('idLowerCase', r.row('id').downcase());
-
 			_.log('Created index: idLowerCase on table: login');
 		}
 
 		if (!(await r.table('character').indexList()).includes('idLowerCase')) {
 			await r.table('character').indexCreate('idLowerCase', r.row('id').downcase());
-
 			_.log('Created index: idLowerCase on table: character');
 		}
 	},
@@ -52,8 +49,9 @@ module.exports = {
 		try {
 			await r.tableCreate(tableName).run();
 		} catch (e) {
-			if (!e.message.includes('already exists'))
-				_.log(e);
+			if (!e.message.includes('already exists')) {
+				_.error(e);
+			}
 		}
 	},
 
@@ -61,7 +59,6 @@ module.exports = {
 		const res = await r.table(table)
 			.getAll(key.toLowerCase(), { index: 'idLowerCase' })
 			.run();
-
 		return res[0];
 	},
 
@@ -73,47 +70,42 @@ module.exports = {
 		ignoreCase
 	}) {
 		let res = null;
-
-		if (ignoreCase)
+		if (ignoreCase) {
 			res = await this.getAsyncIgnoreCase(table, key);
-		else {
-			res = await r.table(table)
-				.get(key)
-				.run();
+		} else {
+			res = await r.table(table).get(key).run();
 		}
-
-		if (res)
+		if (res) {
 			return res.value;
-		else if (isArray && !noDefault)
+		} else if (isArray && !noDefault) {
 			return [];
-
+		}
 		return res;
 	},
 
 	getFilterAsync: async function (
 		{ table, noDefault, filter, limit, offset, orderAsc, orderDesc }
 	) {
-		let res = r
-			.table(table)
-			.filter(filter);
-
-		if (orderAsc)
+		let res = r.table(table).filter(filter);
+		if (orderAsc) {
 			res = res.orderBy(orderAsc);
-		if (orderDesc)
+		}
+		if (orderDesc) {
 			res = res.orderBy(r.desc(orderDesc));
-		if (offset)
+		}
+		if (offset) {
 			res = res.skip(offset);
-		if (limit)
+		}
+		if (limit) {
 			res = res.limit(limit);
-
+		}
 		await res.run();
-
-		if (res)
+		if (res) {
 			return res;
-
-		if (!noDefault)
+		}
+		if (!noDefault) {
 			return [];
-
+		}
 		return null;
 	},
 
@@ -123,14 +115,13 @@ module.exports = {
 		isArray,
 		noDefault
 	}) {
-		let res = await r.table(table)
-			.run();
-
-		if (res)
+		const res = await r.table(table).run();
+		if (res) {
 			return res;
-		else if (isArray && !noDefault)
+		}
+		if (isArray && !noDefault) {
 			return [];
-
+		}
 		return res;
 	},
 
@@ -169,9 +160,7 @@ module.exports = {
 		conflict = 'update'
 	}) {
 		try {
-			await r.table(table)
-				.insert(value, { conflict })
-				.run();
+			await r.table(table).insert(value, { conflict }).run();
 		} catch (e) {
 			await this.logError({
 				sourceModule: 'ioRethink',
@@ -259,6 +248,7 @@ module.exports = {
 	},
 
 	logError: async function ({ sourceModule, sourceMethod, error, info }) {
+		_.error(error);
 		try {
 			await this.setAsync({
 				table: 'error',
@@ -271,15 +261,16 @@ module.exports = {
 					info
 				}
 			});
-		} catch (e) {}
-
+		} catch (e) {
+			_.error(e);
+		}
 		if (process.send) {
 			process.send({
 				event: 'onCrashed'
 			});
-		} else
+		} else {
 			process.exit();
-
-		throw new Error('Forcing crash');
+		}
+		throw error;
 	}
 };

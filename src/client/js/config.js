@@ -71,7 +71,7 @@ define([
 		config[key] = currentValue;
 	};
 
-	Object.keys(config).forEach(key => loadValue(key) );
+	Object.keys(config).forEach(key => loadValue(key));
 
 	return config;
 });

@@ -58,18 +58,15 @@ module.exports = {
 				});
 			}
 		}
-
 		if (player.name) {
 			eventEmitter.emit('playerObjRemoved', {
 				id: player.id
 			});
-
 			if (player.has('id')) {
 				this.modifyPlayerCount(-1);
-				console.info("Connections.js: Player %s disconnected after %s seconds", player.name, sessionDuration);
+				_.log("Connections.js: Player %s disconnected after %s seconds", player.name, sessionDuration);
 			}
 		}
-
 		this.players.spliceWhere(p => p.socket.id === socket.id);
 	},
 

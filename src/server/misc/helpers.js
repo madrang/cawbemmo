@@ -58,7 +58,7 @@ Object.defineProperty(Object.prototype, 'has', {
 		return (this.hasOwnProperty(prop) && this[prop] !== undefined && this[prop] !== null);
 	}
 });
-	
+
 module.exports = {
 	get2dArray: function (w, h, def) {
 		def = def || 0;
@@ -109,10 +109,22 @@ module.exports = {
 		});
 	},
 
+	safeRequire: function(path) {
+		try {
+			return require(path);
+		} catch (e) {
+			_.error(`Failed to import "${path}" Error:`, e);
+		}
+	},
+
 	//Only use this method for official logging. Temporary logs should use console.log
 	// so those instances can be reported by eslint
-	log: function (msg) {
+	log: function (...args) {
 		//eslint-disable-next-line no-console
-		console.log(msg);
+		console.log(...args);
+	},
+	error: function (...args) {
+		//eslint-disable-next-line no-console
+		console.error(...args);
 	}
 };

@@ -10,7 +10,7 @@ module.exports = {
 
 	init: function (blueprint) {
 		this.chats = extend([], blueprint.chats);
-		this.cd = ~~(Math.random() * this.cdMax);
+		this.cd = Math.floor(Math.random() * this.cdMax);
 
 		for (let p in blueprint) {
 			if (p === 'chats')
@@ -21,19 +21,18 @@ module.exports = {
 	},
 
 	update: function () {
-		if ((this.obj.aggro) && (this.obj.aggro.list.length > 0))
+		if ((this.obj.aggro) && (this.obj.aggro.list.length > 0)) {
 			return;
-		else if (this.chats.length === 0)
+		} else if (this.chats.length === 0) {
 			return;
-
+		}
 		if ((this.cd === 0) && (Math.random() < this.chance)) {
 			this.cd = this.cdMax;
 
-			let pick = this.chats[~~(Math.random() * this.chats.length)];
-
-			if (!this.global)
+			let pick = this.chats[Math.floor(Math.random() * this.chats.length)];
+			if (!this.global) {
 				this.obj.syncer.set(false, 'chatter', 'msg', pick.msg);
-			else {
+			} else {
 				//HACK
 				//This shouldn't always be pink, but only events use this atm so it's fine
 				this.obj.instance.syncer.queue('onGetMessages', {
@@ -43,7 +42,8 @@ module.exports = {
 					}
 				}, -1);
 			}
-		} else if (this.cd > 0)
+		} else if (this.cd > 0) {
 			this.cd--;
+		}
 	}
 };

@@ -51,22 +51,19 @@ module.exports = {
 			resourceSpawner,
 			zoneConfig: map.zoneConfig
 		};
-
 		this.instances.push(fakeInstance);
-
 		spawners.init(fakeInstance);
 		scheduler.init();
-
 		map.create();
 		if (map.mapFile.properties.isRandom) {
-			if (!map.oldCollisionMap)
+			if (!map.oldCollisionMap) {
 				map.oldCollisionMap = map.collisionMap;
-
+			}
 			map.randomMap.init(fakeInstance);
 			this.startRegen();
-		} else
-			_.log('(M ' + map.name + '): Ready');
-
+		} else {
+			_.log(`(M ${map.name}): Ready`);
+		}
 		map.clientMap.zoneId = this.zoneId;
 
 		[resourceSpawner, syncer, objects, questBuilder, events].forEach(i => i.init(fakeInstance));
@@ -164,7 +161,7 @@ module.exports = {
 
 		this.addQueue = [];
 
-		_.log('(M ' + map.name + '): Ready');
+		_.log(`(M ${map.name}): Ready`);
 	},
 
 	tick: function () {

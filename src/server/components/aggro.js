@@ -381,7 +381,7 @@ module.exports = {
 
 	getRandom: function () {
 		let useList = this.list.filter(l => (!this.ignoreList.some(o => (o === l.obj))));
-		return useList[~~(Math.random() * useList.length)];
+		return useList[Math.floor(Math.random() * useList.length)];
 	},
 
 	hasAggroOn: function (obj) {
