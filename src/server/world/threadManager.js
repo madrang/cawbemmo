@@ -133,27 +133,24 @@ const onMessage = (thread, message) => {
 			global[message.module][message.method](message);
 		} catch (e) {
 			/* eslint-disable-next-line no-console */
-			console.log('No global method found', message.module, message.method);
+			console.error('Global method error', message.module, message.method, e);
 			process.exit();
 		}
 	} else if (message.event === 'onCrashed') {
 		thread.worker.kill();
 		process.exit();
-	} else
+	} else {
 		messageHandlers[message.method](thread, message);
+	}
 };
 
 const spawnThread = async ({ name, path, instanced }) => {
 	let cbOnInitialized;
-
 	const promise = new Promise(resolveOnReady => {
 		cbOnInitialized = resolveOnReady;
 	});
-
 	const worker = childProcess.fork('./world/worker', [name]);
-
 	const id = instanced ? _.getGuid() : name;
-
 	const thread = {
 		id,
 		name,
@@ -164,30 +161,24 @@ const spawnThread = async ({ name, path, instanced }) => {
 		promise,
 		cbOnInitialized
 	};
-
 	worker.on('message', onMessage.bind(null, thread));
-
 	threads.push(thread);
-
 	return promise;
 };
 
 const doesThreadExist = ({ zoneName, zoneId }) => {
 	let map = mapList.find(m => m.name === zoneName);
-
-	if (!map)
+	if (!map) {
 		map = mapList.find(m => m.name === clientConfig.config.defaultZone);
-
+	}
 	const exists = threads.some(t => t.id === zoneId && t.name === zoneName);
-
-	if (exists)
+	if (exists) {
 		return true;
-
-	if (map.instanced)
+	}
+	if (map.instanced) {
 		return false;
-
+	}
 	const thread = getThreadFromName(map.name);
-
 	return Boolean(thread);
 };
 
@@ -196,23 +187,19 @@ const getThread = async ({ zoneName, zoneId }) => {
 		resetObjPosition: false,
 		thread: null
 	};
-
 	let map = mapList.find(m => m.name === zoneName);
-
-	if (!map) 
+	if (!map) {
 		map = mapList.find(m => m.name === clientConfig.config.defaultZone);
-
+	}
 	let thread = threads.find(t => t.id === zoneId && t.name === zoneName);
-
 	if (!thread) {
 		if (map.instanced) {
 			result.resetObjPosition = true;
-
 			thread = await spawnThread(map);
-		} else
+		} else {
 			thread = getThreadFromName(map.name);
+		}
 	}
-
 	if (!thread) {
 		io.logError({
 			sourceModule: 'threadManager',
@@ -224,15 +211,12 @@ const getThread = async ({ zoneName, zoneId }) => {
 				useMapName: map.name
 			}
 		});
-
 		process.exit();
 	}
-
-	if (!thread.isReady)
+	if (!thread.isReady) {
 		await thread.promise;
-
+	}
 	result.thread = thread;
-
 	return result;
 };
 
@@ -243,16 +227,15 @@ const killThread = thread => {
 
 const killThreadIfEmpty = async thread => {
 	const playerCount = await getPlayerCountInThread(thread);
-
-	if (playerCount === 0)
+	if (playerCount === 0) {
 		killThread(thread);
+	}
 };
 
 const spawnMapThreads = async () => {
 	const promises = mapList
 		.filter(m => !m.disabled && !m.instanced)
 		.map(m => spawnThread(m));
-
 	await Promise.all(promises);
 };
 
@@ -269,19 +252,15 @@ const messageAllThreads = message => {
 const returnWhenThreadsIdle = async () => {
 	return new Promise(res => {
 		let doneCount = 0;
-
 		const onZoneIdle = thread => {
 			doneCount++;
-
-			if (doneCount.length < threads.length)
+			if (doneCount.length < threads.length) {
 				return;
-
+			}
 			listenersOnZoneIdle.spliceWhere(l => l === onZoneIdle);
 			res();
 		};
-
 		listenersOnZoneIdle.push(onZoneIdle);
-
 		threads.forEach(t => {
 			t.worker.send({
 				method: 'notifyOnceIdle'

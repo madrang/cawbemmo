@@ -1,6 +1,5 @@
 module.exports = {
 	type: 'prophecies',
-
 	list: [],
 
 	init: function (blueprint) {
@@ -8,20 +7,19 @@ module.exports = {
 			let template = null;
 			try {
 				template = require('../config/prophecies/' + p);
-			} catch (e) {}
-
-			if (!template)
+			} catch (e) {
+				_.error(e);
+			}
+			if (!template) {
 				return;
-			else if (this.list.some(l => (l.type === p)))
+			} else if (this.list.some(l => (l.type === p))) {
 				return;
-
-			let prophecy = extend({}, template);
+			}
+			const prophecy = extend({}, template);
 			prophecy.obj = this.obj;
 			prophecy.init();
-
 			this.list.push(prophecy);
 		}, this);
-
 		delete blueprint.list;
 	},
 
@@ -39,32 +37,27 @@ module.exports = {
 	},
 
 	fireEvent: function (event, args) {
-		let list = this.list;
-		let lLen = list.length;
-		for (let i = 0; i < lLen; i++) {
-			let l = list[i];
-			let events = l.events;
-			if (!events)
+		for (let l of this.list) {
+			if (!l.events) {
 				continue;
-
-			let callback = events[event];
-			if (!callback)
+			}
+			const callback = l.events[event];
+			if (!callback) {
 				continue;
-
+			}
 			callback.apply(l, args);
 		}
 	},
 
 	simplify: function (self) {
-		let e = {
+		const e = {
 			type: 'prophecies'
 		};
-
-		if ((this.list.length > 0) && (this.list[0].simplify))
+		if ((this.list.length > 0) && (this.list[0].simplify)) {
 			e.list = this.list.map(p => p.simplify());
-		else
+		} else {
 			e.list = this.list;
-
+		}
 		return e;
 	}
 };

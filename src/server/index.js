@@ -53,27 +53,22 @@ let startup = {
 		factions.init();
 
 		await clientConfig.init();
-
 		await server.init();
-
 		await leaderboard.init();
 
 		await spawnMapThreads();
 	},
 
 	onError: async function (e) {
-		if (e.toString().indexOf('ERR_IPC_CHANNEL_CLOSED') > -1)
+		if (e.toString().indexOf('ERR_IPC_CHANNEL_CLOSED') >= 0) {
 			return;
-
-		_.log('Error Logged: ' + e.toString());
-		_.log(e.stack);
-
+		}
+		_.error(`Error Logged: ${e.toString()}\r\n`, e.stack);
 		await io.setAsync({
 			key: new Date(),
 			table: 'error',
 			value: e.toString() + ' | ' + e.stack.toString()
 		});
-
 		process.exit();
 	}
 };

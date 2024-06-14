@@ -92,8 +92,8 @@ define([
 		onMouseDown: function (e, target) {
 			if (isMobile && this.groundTargetSpell) {
 				this.groundTarget = {
-					x: ~~(e.worldX / scale),
-					y: ~~(e.worldY / scale)
+					x: Math.floor(e.worldX / scale),
+					y: Math.floor(e.worldY / scale)
 				};
 
 				this.onKeyDown(this.groundTargetSpell);

@@ -120,7 +120,6 @@ window._ = {
 
 define([], function () {
 	const urlParams = Object.fromEntries(window.location.search.substr(1).split('&').map(k => k.split('=')));
-
 	window.isMobile = (
 		urlParams.forceMobile === 'true' ||
 		/Mobi|Android/i.test(navigator.userAgent) ||
@@ -133,8 +132,9 @@ define([], function () {
 	window.scale = isMobile ? 32 : 40;
 	window.scaleMult = isMobile ? 4 : 5;
 
-	if (!window.navigator.vibrate)
+	if (!window.navigator.vibrate) {
 		window.navigator.vibrate = () => {};
+	}
 
 	return window._;
 });

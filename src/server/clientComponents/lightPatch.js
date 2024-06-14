@@ -12,50 +12,43 @@ define([
 
 		init: function (blueprint) {
 			this.blueprint = this.blueprint || {};
-
-			let obj = this.obj;
-
-			let x = obj.x;
-			let y = obj.y;
-
-			let maxDistance = Math.sqrt(Math.pow(obj.width / 3, 2) + Math.pow(obj.height / 3, 2));
+			const obj = this.obj;
+			const x = obj.x;
+			const y = obj.y;
+			const maxDistance = Math.sqrt(Math.pow(obj.width / 3, 2) + Math.pow(obj.height / 3, 2));
 			for (let i = 0; i < obj.width; i++) {
 				for (let j = 0; j < obj.height; j++) {
 					let distance = maxDistance - Math.sqrt(Math.pow((obj.width / 2) - i, 2) + Math.pow((obj.width / 2) - j, 2));
 					const maxAlpha = (distance / maxDistance) * 0.2;
-					if (maxAlpha <= 0.05)
+					if (maxAlpha <= 0.05) {
 						continue;
-
-					let sprite = renderer.buildObject({
+					}
+					const sprite = renderer.buildObject({
 						x: (x + i),
 						y: (y + j),
 						sheetName: 'white',
 						cell: 0,
 						layerName: 'lightPatches'
 					});
-					sprite.alpha = (maxAlpha * 0.3) + (Math.random() * (maxAlpha * 0.7));
-					sprite.tint = '0x' + this.color;
-
-					const size = (3 + ~~(Math.random() * 6)) * scaleMult;
-
+					const size = (3 + Math.floor(Math.random() * 6)) * scaleMult;
 					sprite.width = size;
 					sprite.height = size;
-					sprite.x += scaleMult * ~~(Math.random() * 4);
-					sprite.y += scaleMult * ~~(Math.random() * 4);
-
+					sprite.x += scaleMult * Math.floor(Math.random() * 4);
+					sprite.y += scaleMult * Math.floor(Math.random() * 4);
+					sprite.tint = '0x' + this.color;
+					sprite.alpha = (maxAlpha * 0.3) + (Math.random() * (maxAlpha * 0.7));
 					sprite.blendMode = PIXI.BLEND_MODES.ADD;
-
 					this.patches.push(sprite);
 				}
 			}
 
-			let rCount = ((obj.width * obj.height) / 10) + ~~(Math.random() + 2);
+			const rCount = ((obj.width * obj.height) / 10) + Math.floor(Math.random() + 2);
 			for (let i = 0; i < rCount; i++) {
-				let nx = x + 3 + ~~(Math.random() * (obj.width - 1));
-				let ny = y - 4 + ~~(Math.random() * (obj.height));
-				let w = 1 + ~~(Math.random() * 2);
-				let h = 6 + ~~(Math.random() * 13);
-				let hm = 2;
+				const nx = x + 3 + Math.floor(Math.random() * (obj.width - 1));
+				const ny = y - 4 + Math.floor(Math.random() * (obj.height));
+				const w = 1 + Math.floor(Math.random() * 2);
+				const h = 6 + Math.floor(Math.random() * 13);
+				const hm = 2;
 
 				let rContainer = renderer.buildContainer({
 					layerName: 'lightBeams'
@@ -63,37 +56,33 @@ define([
 				this.rays.push(rContainer);
 
 				for (let j = 0; j < h; j++) {
-					let ray = renderer.buildObject({
+					const ray = renderer.buildObject({
 						x: nx,
 						y: ny,
 						cell: 0,
 						sheetName: 'white',
 						parent: rContainer
 					});
-					ray.x = ~~((nx * scale) - (scaleMult * j));
+					ray.x = Math.floor((nx * scale) - (scaleMult * j));
 					ray.y = (ny * scale) + (scaleMult * j * hm);
-					ray.alpha = ((1.0 - (j / h)) * 0.4);
 					ray.width = w * scaleMult;
 					ray.height = scaleMult * hm;
 					ray.tint = 0xffeb38;
+					ray.alpha = ((1.0 - (j / h)) * 0.4);
 					ray.blendMode = PIXI.BLEND_MODES.ADD;
 				}
 			}
-
-			this.setVisible(this.obj.isVisible);
+			this.setVisible(obj.isVisible);
 		},
 
 		update: function () {
-			let rays = this.rays;
-			let rLen = rays.length;
-			for (let i = 0; i < rLen; i++) {
-				let r = rays[i];
-
+			for (let r of this.rays) {
 				r.alpha += (Math.random() * 0.03) - 0.015;
-				if (r.alpha < 0.3)
+				if (r.alpha < 0.3) {
 					r.alpha = 0.3;
-				else if (r.alpha > 1)
+				} else if (r.alpha > 1) {
 					r.alpha = 1;
+				}
 			}
 		},
 
