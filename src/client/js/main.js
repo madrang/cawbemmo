@@ -41,7 +41,7 @@ define([
 		hasFocus: true,
 
 		lastRender: 0,
-		msPerFrame: ~~(1000 / 60),
+		msPerFrame: Math.floor(1000 / 60),
 
 		init: async function () {
 			if (isMobile) {

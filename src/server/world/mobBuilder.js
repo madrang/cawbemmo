@@ -28,7 +28,6 @@ const syncStats = ['hp', 'hpMax', 'mana', 'manaMax', 'level'];
 //Component generators
 const buildCpnMob = (mob, blueprint, typeDefinition) => {
 	const { walkDistance, grantRep, deathRep, patrol, needLos } = blueprint;
-
 	const cpnMob = mob.addComponent('mob');
 	extend(cpnMob, {
 		walkDistance,
@@ -36,12 +35,12 @@ const buildCpnMob = (mob, blueprint, typeDefinition) => {
 		deathRep,
 		needLos
 	});
-
-	if (patrol !== undefined)
+	if (patrol !== undefined) {
 		cpnMob.patrol = blueprint.patrol;
-
-	if (cpnMob.patrol)
+	}
+	if (cpnMob.patrol) {
 		cpnMob.walkDistance = 1;
+	}
 };
 
 const buildCpnStats = (mob, blueprint, typeDefinition) => {
@@ -50,8 +49,7 @@ const buildCpnStats = (mob, blueprint, typeDefinition) => {
 		hpMult: baseHpMult = typeDefinition.hpMult
 	} = blueprint;
 
-	const hpMax = ~~(level * 40 * hpMults[level - 1] * baseHpMult);
-
+	const hpMax = Math.floor(level * 40 * hpMults[level - 1] * baseHpMult);
 	const cpnStats = mob.addComponent('stats', {
 		values: {
 			level,
@@ -61,8 +59,9 @@ const buildCpnStats = (mob, blueprint, typeDefinition) => {
 
 	//Hack to disallow low level mobs from having any lifeOnHit
 	// since that makes it very difficult (and confusing) for low level players
-	if (level <= 3)
+	if (level <= 3) {
 		cpnStats.values.lifeOnHit = 0;
+	}
 };
 
 const buildCpnInventory = (mob, blueprint, { drops, hasNoItems = false }, preferStat) => {
@@ -102,9 +101,9 @@ const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
 	mob.addComponent('spellbook', { spells });
 
 	let spellCount = 0;
-	if (mob.isRare)
+	if (mob.isRare) {
 		spellCount = 1;
-
+	}
 	for (let i = 0; i < spellCount; i++) {
 		const rune = itemGenerator.generate({ spell: true });
 		rune.eq = true;
@@ -135,24 +134,23 @@ const build = (mob, blueprint, type, zoneName) => {
 
 	const typeDefinition = blueprint[type] || blueprint;
 
-	if (blueprint.nonSelectable)
+	if (blueprint.nonSelectable) {
 		mob.nonSelectable = true;
-
+	}
 	mob.addComponent('effects');
 	if (type === 'rare') {
 		mob.effects.addEffect({	type: 'rare' });
 		mob.isRare = true;
-
 		mob.baseName = mob.name;
 		mob.name = typeDefinition.name ?? mob.name;
 	}
 
-	if (typeDefinition.sheetName)
+	if (typeDefinition.sheetName) {
 		mob.sheetName = typeDefinition.sheetName;
-
-	if (typeDefinition.has('cell'))
+	}
+	if (typeDefinition.has('cell')) {
 		mob.cell = typeDefinition.cell;
-
+	}
 	mob.addComponent('equipment');
 
 	const preferStat = statSelector[Math.floor(Math.random() * 3)];
@@ -161,22 +159,24 @@ const build = (mob, blueprint, type, zoneName) => {
 
 	if (blueprint.attackable !== false) {
 		mob.addComponent('aggro', { faction: blueprint.faction });
-
 		mob.aggro.calcThreatCeiling(type);
 	}
 
 	const zoneConfig = instancer.instances[0].map.zoneConfig;
 
 	const chats = zoneConfig?.chats?.[mob.name.toLowerCase()];
-	if (chats)
+	if (chats) {
 		mob.addComponent('chatter', { chats });
+	}
 
 	const dialogues = zoneConfig?.dialogues?.[mob.name.toLowerCase()];
-	if (dialogues)
+	if (dialogues) {
 		mob.addComponent('dialogue', { config: dialogues });
+	}
 
-	if (blueprint?.properties?.cpnTrade)
+	if (blueprint?.properties?.cpnTrade) {
 		mob.addComponent('trade', blueprint.properties.cpnTrade);
+	}
 
 	mob.instance.eventEmitter.emit('onAfterBuildMob', {
 		zoneName,

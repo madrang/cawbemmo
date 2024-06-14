@@ -7,7 +7,7 @@ const getDefaultRotationSpell = rotationSpells => {
 	if (spells.length === 1)
 		return spells[0];
 
-	const randomSpell = spells[~~(Math.random() * spells.length)];
+	const randomSpell = spells[Math.floor(Math.random() * spells.length)];
 
 	return randomSpell;
 };
@@ -50,7 +50,7 @@ const getRandomSpell = (source, target) => {
 	if (!valid.length)
 		return null;
 
-	return valid[~~(Math.random() * valid.length)];
+	return valid[Math.floor(Math.random() * valid.length)];
 };
 
 const getSpellToCast = (source, target) => {

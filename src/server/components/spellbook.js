@@ -202,8 +202,9 @@ module.exports = {
 			if (int) {
 				val = Math.round(val);
 				r = r.replace('i_', '');
-			} else
-				val = ~~(val * 100) / 100;
+			} else {
+				val = Math.floor(val * 100) / 100;
+			}
 
 			builtSpell[r] = val;
 			builtSpell.values[r] = val;

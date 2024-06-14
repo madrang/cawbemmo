@@ -71,7 +71,7 @@ module.exports = {
 		if (pool.length === 0)
 			return;
 
-		let pickName = pool[~~(Math.random() * pool.length)];
+		let pickName = pool[Math.floor(Math.random() * pool.length)];
 		let pick = configs[pickName];
 
 		let builtCard = {

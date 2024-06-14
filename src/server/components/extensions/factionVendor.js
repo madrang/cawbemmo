@@ -49,12 +49,13 @@ module.exports = {
 
 		let result = list.items.map(m => {
 			let item = requestedBy.inventory.simplifyItem(m);
-			if (item.stats)
+			if (item.stats) {
 				item.stats = { stats: '???' };
-			if (item.implicitStats)
+			}
+			if (item.implicitStats) {
 				item.implicitStats = [ { stat: 'stats', value: '???' } ];
+			}
 			delete item.effects;
-
 			return item;
 		});
 
@@ -70,11 +71,11 @@ module.exports = {
 		let faction = factions.getFaction(blueprint.faction.id);
 		let statGenerator = faction.uniqueStat;
 
-		let itemCount = blueprint.items.min + ~~(Math.random() * (blueprint.items.max - blueprint.items.min));
+		let itemCount = blueprint.items.min + Math.floor(Math.random() * (blueprint.items.max - blueprint.items.min));
 		for (let i = 0; i < itemCount; i++) {
 			let minLevel = blueprint.items.minLevel || Math.max(1, list.level * 0.75);
 			let maxLevel = blueprint.items.maxLevel || (list.level * 1.25);
-			let level = Math.min(20, ~~(minLevel + (Math.random() * (maxLevel - minLevel))));
+			let level = Math.min(20, Math.floor(minLevel + (Math.random() * (maxLevel - minLevel))));
 
 			let item = generator.generate({
 				noSpell: true,
@@ -83,7 +84,7 @@ module.exports = {
 				level: level
 			});
 
-			let randomQuality = ~~(Math.random() * 5);
+			let randomQuality = Math.floor(Math.random() * 5);
 			item.worth = Math.pow(item.level, 1.5) + (Math.pow((randomQuality + 1), 2) * 10);
 
 			let id = 0;

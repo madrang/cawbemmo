@@ -51,28 +51,27 @@ define([
 	};
 
 	const getText = ({ amount, text, heal }) => {
-		if (amount === undefined)
+		if (amount === undefined) {
 			return text;
-
-		const div = ((~~(amount * 10) / 10) > 0) ? 10 : 100;
-		let result = ~~(amount * div) / div;
-
-		if (heal)
+		}
+		const div = ((Math.floor(amount * 10) / 10) > 0) ? 10 : 100;
+		let result = Math.floor(amount * div) / div;
+		if (heal) {
 			result = `+${result}`;
-
+		}
 		return result;
 	};
 
 	const getPosition = ({ position, event: isEvent, heal }) => {
-		if (position)
+		if (position) {
 			return position;
-
+		}
 		//Events render under the target, centered
-		if (isEvent)
+		if (isEvent) {
 			return POSITION.BOTTOM_CENTER;
-		else if (heal)
+		} else if (heal) {
 			return POSITION.LEFT_BOTTOM;
-
+		}
 		return POSITION.RIGHT_BOTTOM;
 	};
 
@@ -93,26 +92,25 @@ define([
 			x = -sprite.width - PADDING;
 			y = scale - sprite.height + (scaleMult * 2);
 		}
-
 		return { x, y };
 	};
 
 	const getMovementDelta = ({ movementDelta }, position) => {
-		if (movementDelta)
+		if (movementDelta) {
 			return movementDelta;
-
-		if (position === POSITION.BOTTOM_CENTER)
+		}
+		if (position === POSITION.BOTTOM_CENTER) {
 			return [0, 1];
-
+		}
 		return [0, -1];
 	};
 
 	const getFontSize = ({ fontSize, crit }) => {
-		if (fontSize)
+		if (fontSize) {
 			return fontSize;
-		else if (crit)
+		} else if (crit) {
 			return FONT_SIZE_CRIT;
-
+		}
 		return FONT_SIZE;
 	};
 
@@ -120,13 +118,13 @@ define([
 	const onGetDamage = msg => {
 		const { ttl = TTL } = msg;
 
-		if (config.damageNumbers === 'off')
+		if (config.damageNumbers === 'off') {
 			return;
-
+		}
 		const target = objects.objects.find(o => o.id === msg.id);
-		if (!target || !target.isVisible)
+		if (!target || !target.isVisible) {
 			return;
-
+		}
 		const sprite = renderer.buildText({
 			fontSize: getFontSize(msg),
 			layerName: LAYER_NAME,
@@ -134,7 +132,6 @@ define([
 			color: getColor(msg),
 			visible: false
 		});
-
 		const position = getPosition(msg);
 		const movementDelta = getMovementDelta(msg, position);
 		const { x, y } = getXY(msg, position, sprite);
@@ -152,7 +149,6 @@ define([
 			movementDelta,
 			sprite
 		};
-
 		list.push(numberObj);
 	};
 
@@ -161,19 +157,19 @@ define([
 	/* eslint-disable-next-line no-unused-vars */
 	const test = () => {
 		objects.objects.forEach(o => {
-			if (!o.player)
+			if (!o.player) {
 				return;
-
-			const amount = Math.random() < 0.5 ? ~~(Math.random() * 100) : undefined;
+			}
+			const amount = Math.random() < 0.5 ? Math.floor(Math.random() * 100) : undefined;
 			const isEvent = amount ? false : Math.random() < 0.5;
 			const text = amount ? undefined : 'text';
 			const heal = Math.random() < 0.5;
 			let position;
-			if (!amount)
+			if (!amount) {
 				position = Math.random() < 0.5 ? POSITION.TOP_CENTER : POSITION.BOTTOM_CENTER;
-			const element = ['default', 'arcane', 'frost', 'fire', 'holy', 'poison'][~~(Math.random() * 6)];
+			}
+			const element = ['default', 'arcane', 'frost', 'fire', 'holy', 'poison'][Math.floor(Math.random() * 6)];
 			const crit = amount > 50;
-
 			onGetDamage({
 				id: o.id,
 				event: isEvent,
@@ -201,7 +197,6 @@ define([
 					layerName: 'effects',
 					sprite: l.sprite
 				});
-
 				continue;
 			}
 

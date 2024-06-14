@@ -10,16 +10,16 @@ module.exports = {
 		if (!this.need) {
 			const { quantity, subType } = this;
 
-			this.need = quantity[0] + ~~(Math.random() * (quantity[1] - quantity[0]));
+			this.need = quantity[0] + Math.floor(Math.random() * (quantity[1] - quantity[0]));
 
-			this.gatherType = subType ?? ['herb', 'fish'][~~(Math.random() * 2)];
+			this.gatherType = subType ?? ['herb', 'fish'][Math.floor(Math.random() * 2)];
 
 			if (this.gatherType === 'fish') {
 				this.name = 'Une pause a la pêche';
 
 				let isQualityQ = (Math.random() < 0.3);
 				if (isQualityQ) {
-					this.requiredQuality = 1 + ~~(Math.random() * 2);
+					this.requiredQuality = 1 + Math.floor(Math.random() * 2);
 					this.need = 1;
 				}
 			}

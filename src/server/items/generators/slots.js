@@ -17,6 +17,6 @@ module.exports = {
 		
 		//If the slot doesn't exist or the type doesn't exist in the slot, pick a random type
 		if (!item.slot || !configSlots.slots.includes(item.slot))
-			item.slot = chances[~~(Math.random() * chances.length)];
+			item.slot = chances[Math.floor(Math.random() * chances.length)];
 	}
 };

@@ -355,8 +355,8 @@ define([
 				let ttPos = null;
 				if (e) {
 					ttPos = {
-						x: ~~(e.clientX + 32),
-						y: ~~(e.clientY)
+						x: Math.floor(e.clientX + 32),
+						y: Math.floor(e.clientY)
 					};
 				}
 

@@ -94,7 +94,7 @@ module.exports = {
 			else if (!perfection)
 				return random.norm(1, 100) * (blueprint.statMult.elementResist || 1) * div;
 
-			return ~~((1 + (99 * perfection)) * (blueprint.statMult.elementResist || 1) * div);
+			return Math.floor((1 + (99 * perfection)) * (blueprint.statMult.elementResist || 1) * div);
 		},
 		regenHp: function (item, level, blueprint, perfection, calcPerfection) {
 			let div = 1 / 11;
@@ -111,13 +111,12 @@ module.exports = {
 			return max * perfection * (blueprint.statMult.regenHp || 1);
 		},
 		lvlRequire: function (item, level, blueprint, perfection, calcPerfection) {
-			let max = ~~(level / 2);
-
-			if (calcPerfection)
+			let max = Math.floor(level / 2);
+			if (calcPerfection) {
 				return (calcPerfection / max);
-			else if (!perfection)
+			} else if (!perfection) {
 				return random.norm(1, max) * (blueprint.statMult.lvlRequire || 1);
-
+			}
 			return max * perfection * (blueprint.statMult.lvlRequire || 1);
 		},
 		lifeOnHit: function (item, level, blueprint, perfection, calcPerfection, statBlueprint) {
@@ -529,7 +528,7 @@ module.exports = {
 			let useStats = extend([], blueprint.stats);
 			let addStats = Math.min(statCount, blueprint.stats.length);
 			for (let i = 0; i < addStats; i++) {
-				let choice = useStats[~~(Math.random() * useStats.length)];
+				let choice = useStats[Math.floor(Math.random() * useStats.length)];
 				useStats.spliceFirstWhere(s => s === choice);
 				this.buildStat(item, blueprint, choice, result);
 				statCount--;
@@ -583,7 +582,7 @@ module.exports = {
 				return true;
 			});
 
-			stat = options[~~(Math.random() * options.length)];
+			stat = options[Math.floor(Math.random() * options.length)];
 			statBlueprint = statOptions[stat];
 		} else
 			statBlueprint = statOptions[stat];

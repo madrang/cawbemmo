@@ -37,8 +37,8 @@ define([
 		let w = Math.ceil(width / scale) + 1;
 		let h = Math.ceil(height / scale) + 1;
 
-		const midX = ~~(w / 2);
-		const midY = ~~(h / 2);
+		const midX = Math.floor(w / 2);
+		const midY = Math.floor(h / 2);
 
 		const rGrass = 10;
 		const rBeach = 2;
@@ -46,25 +46,24 @@ define([
 
 		const noiseFactor = 3;
 
-		let container = layers.tileSprites;
-
+		const container = layers.tileSprites;
 		for (let i = 0; i < w; i++) {
 			for (let j = 0; j < h; j++) {
 				let tile = 5;
 
 				let distance = Math.sqrt(Math.pow(i - midX, 2) + Math.pow(j - midY, 2));
-				if (distance < rGrass + (Math.random() * noiseFactor))
+				if (distance < rGrass + (Math.random() * noiseFactor)) {
 					tile = 3;
-				else if (distance < rGrass + rBeach + (Math.random() * noiseFactor))
+				} else if (distance < rGrass + rBeach + (Math.random() * noiseFactor)) {
 					tile = 4;
-				else if (distance < rGrass + rBeach + rShallow + (Math.random() * noiseFactor))
+				} else if (distance < rGrass + rBeach + rShallow + (Math.random() * noiseFactor)) {
 					tile = 53;
-
+				}
 				let alpha = mRandom();
 
-				if ([5, 53].indexOf(tile) > -1)
+				if ([5, 53].indexOf(tile) > -1) {
 					alpha *= 2;
-
+				}
 				if (Math.random() < 0.3) {
 					tile = {
 						5: 6,

@@ -364,15 +364,14 @@ define([
 					h.discovered = true;
 				}
 			}
-
 			if (instant) {
 				this.moveTo = null;
 				this.pos = pos;
-				this.stage.x = -~~this.pos.x;
-				this.stage.y = -~~this.pos.y;
-			} else
+				this.stage.x = -Math.floor(this.pos.x);
+				this.stage.y = -Math.floor(this.pos.y);
+			} else {
 				this.moveTo = pos;
-
+			}
 			this.updateSprites();
 		},
 
@@ -454,8 +453,8 @@ define([
 
 			const { w, h, width, height, stage, map, sprites } = this;
 
-			const x = ~~((-stage.x / scale) + (width / (scale * 2)));
-			const y = ~~((-stage.y / scale) + (height / (scale * 2)));
+			const x = Math.floor((-stage.x / scale) + (width / (scale * 2)));
+			const y = Math.floor((-stage.y / scale) + (height / (scale * 2)));
 
 			this.lastUpdatePos.x = stage.x;
 			this.lastUpdatePos.y = stage.y;
@@ -628,9 +627,9 @@ define([
 				}
 			}
 			events.emit('onTilesVisible', { visible: newVisible, hidden: newHidden });
-
-			if (addedSprite)
+			if (addedSprite) {
 				container.children.sort((a, b) => a.z - b.z);
+			}
 		},
 
 		update: function () {
@@ -643,20 +642,18 @@ define([
 					let distance = Math.max(Math.abs(deltaX), Math.abs(deltaY));
 
 					let moveSpeedMax = this.moveSpeedMax;
-					if (this.moveSpeed < moveSpeedMax)
+					if (this.moveSpeed < moveSpeedMax) {
 						this.moveSpeed += this.moveSpeedInc;
-
+					}
 					let moveSpeed = this.moveSpeed;
-
-					if (moveSpeedMax < 1.6)
+					if (moveSpeedMax < 1.6) {
 						moveSpeed *= 1 + (distance / 200);
-
+					}
 					let elapsed = time - this.lastTick;
 					moveSpeed *= (elapsed / 15);
-
-					if (moveSpeed > distance)
+					if (moveSpeed > distance) {
 						moveSpeed = distance;
-
+					}
 					deltaX = (deltaX / distance) * moveSpeed;
 					deltaY = (deltaY / distance) * moveSpeed;
 
@@ -666,48 +663,44 @@ define([
 					this.moveSpeed = 0;
 					this.moveTo = null;
 				}
-
 				let stage = this.stage;
 				if (window.staticCamera !== true) {
-					stage.x = -~~this.pos.x;
-					stage.y = -~~this.pos.y;
+					stage.x = -Math.floor(this.pos.x);
+					stage.y = -Math.floor(this.pos.y);
 				}
-
 				let halfScale = scale / 2;
-				if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale)
+				if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale) {
 					this.updateSprites();
-
+				}
 				events.emit('onSceneMove');
 			}
-
 			this.lastTick = time;
 		},
 
 		buildContainer: function (obj) {
-			let container = new PIXI.Container();
+			const container = new PIXI.Container();
 			this.layers[obj.layerName || obj.sheetName].addChild(container);
-
 			return container;
 		},
 
 		buildRectangle: function (obj) {
-			let graphics = new PIXI.Graphics();
+			const graphics = new PIXI.Graphics();
 
 			let alpha = obj.alpha;
-			if (obj.has('alpha'))
+			if (obj.has('alpha')) {
 				graphics.alpha = alpha;
+			}
 
 			let fillAlpha = obj.fillAlpha;
-			if (obj.has('fillAlpha'))
+			if (obj.has('fillAlpha')) {
 				fillAlpha = 1;
-
+			}
 			graphics.beginFill(obj.color || '0x48edff', fillAlpha);
 
-			if (obj.strokeColor)
+			if (obj.strokeColor) {
 				graphics.lineStyle(scaleMult, obj.strokeColor);
-
+			}
 			graphics.drawRect(0, 0, obj.w, obj.h);
-
 			graphics.endFill();
 
 			(obj.parent || this.layers[obj.layerName || obj.sheetName]).addChild(graphics);

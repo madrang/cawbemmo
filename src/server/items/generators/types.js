@@ -18,7 +18,7 @@ module.exports = {
 				})
 				.filter((m, i) => i === typeArray.findIndex(t => t[1].material === m));
 
-			const material = materials[~~(Math.random() * materials.length)];
+			const material = materials[Math.floor(Math.random() * materials.length)];
 
 			const possibleTypes = {};
 

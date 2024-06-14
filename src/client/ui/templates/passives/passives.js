@@ -155,8 +155,8 @@ define([
 			this.pos.x = start.pos.x * constants.gridSize;
 			this.pos.y = start.pos.y * constants.gridSize;
 
-			this.pos.x -= ~~(this.canvas.width / 2);
-			this.pos.y -= ~~(this.canvas.height / 2);
+			this.pos.x -= Math.floor(this.canvas.width / 2);
+			this.pos.y -= Math.floor(this.canvas.height / 2);
 
 			this.onResize();
 			this.renderNodes();
@@ -292,8 +292,8 @@ define([
 				};
 
 				let cell = {
-					x: ~~((this.pos.x + this.mouse.x) / constants.gridSize),
-					y: ~~((this.pos.y + this.mouse.y) / constants.gridSize)
+					x: Math.floor((this.pos.x + this.mouse.x) / constants.gridSize),
+					y: Math.floor((this.pos.y + this.mouse.y) / constants.gridSize)
 				};
 
 				let node = this.hoverNode = this.data.nodes.find(function (n) {
@@ -363,8 +363,8 @@ define([
 			onPanStart: function (e) {
 				if (isMobile) {
 					let cell = {
-						x: ~~((this.pos.x + e.x) / constants.gridSize),
-						y: ~~((this.pos.y + e.y) / constants.gridSize)
+						x: Math.floor((this.pos.x + e.x) / constants.gridSize),
+						y: Math.floor((this.pos.y + e.y) / constants.gridSize)
 					};
 
 					let node = this.data.nodes.find(function (n) {

@@ -37,57 +37,52 @@ module.exports = {
 			currencyChance: this.currencyChance
 		};
 
-		if (!blueprint.slot && !blueprint.type && !blueprint.spell)
+		if (!blueprint.slot && !blueprint.type && !blueprint.spell) {
 			global.instancer.instances[0].eventEmitter.emit('onBeforeGetDropChances', dropChancesEvent);
-
+		}
 		let currencyChance = dropChancesEvent.currencyChance;
-
 		if (blueprint.level) {
 			//Idol droprate before level 5 is 0, after which it slowly increases and flattens out at level 15
-			if (blueprint.level < 5)
+			if (blueprint.level < 5) {
 				currencyChance = 0;
-			else if (blueprint.level < 14)
+			} else if (blueprint.level < 14) {
 				currencyChance *= (blueprint.level - 4) / 11;
-
+			}
 			//If you kill a mob that's too low of a level, idols are much more rare
-			if (
-				ownerLevel &&
-				ownerLevel - blueprint.level > 4
-			) {
+			if (ownerLevel && ownerLevel - blueprint.level > 4) {
 				const levelDelta = ownerLevel - blueprint.level;
 				currencyChance /= Math.pow(levelDelta - 3, 2);
 			}
 		}
-
-		if (blueprint.noCurrency)
+		if (blueprint.noCurrency) {
 			currencyChance = 0;
-
+		}
 		if (!blueprint.slot && !blueprint.noSpell && !blueprint.material && !blueprint.type) {
 			isSpell = blueprint.spell;
 			isCurrency = blueprint.currency;
 			if ((!isCurrency) && (!isSpell) && ((!hadBlueprint) || ((!blueprint.type) && (!blueprint.slot) && (!blueprint.stats)))) {
 				isSpell = Math.random() < dropChancesEvent.spellChance;
-				if (!isSpell)
+				if (!isSpell) {
 					isCurrency = Math.random() < currencyChance;
+				}
 			}
 		}
-
-		if (blueprint.isSpell)
+		if (blueprint.isSpell) {
 			isSpell = true;
-
+		}
 		const beforeGenerateItemEvent = {
 			blueprint,
 			item: null
 		};
 		global.instancer.instances[0].eventEmitter.emit('beforeGenerateItem', beforeGenerateItemEvent);
-		if (beforeGenerateItemEvent.item)
+		if (beforeGenerateItemEvent.item) {
 			return beforeGenerateItemEvent.item;
-
-		if (isSpell)
+		}
+		if (isSpell) {
 			spellGenerators.forEach(g => g.generate(item, blueprint));
-		else if (isCurrency) 
+		} else if (isCurrency) {
 			currencyGenerators.forEach(g => g.generate(item, blueprint));
-		else if (blueprint.material) {
+		} else if (blueprint.material) {
 			item.material = true;
 			item.sprite = blueprint.sprite || null;
 			item.noDrop = blueprint.noDrop || null;
@@ -99,39 +94,35 @@ module.exports = {
 			//TODO: MTXs have been moved to a mod so we shouldn't have this any more
 			item = extend({}, blueprint);
 			delete item.chance;
-		} else if (blueprint.type === 'recipe') 
+		} else if (blueprint.type === 'recipe') {
 			recipeGenerators.forEach(g => g.generate(item, blueprint));
-		else {
+		} else {
 			generators.forEach(g => g.generate(item, blueprint));
-			if (blueprint.spellName)
+			if (blueprint.spellName) {
 				g9.generate(item, blueprint);
+			}
 		}
-
-		if (blueprint.spritesheet)
+		if (blueprint.spritesheet) {
 			item.spritesheet = blueprint.spritesheet;
-
-		if (blueprint.noSalvage)
+		}
+		if (blueprint.noSalvage) {
 			item.noSalvage = true;
-
-		if (blueprint.uses)
+		}
+		if (blueprint.uses) {
 			item.uses = blueprint.uses;
-
-		if (blueprint.description)
+		}
+		if (blueprint.description) {
 			item.description = blueprint.description;
-
+		}
 		return item;
 	},
 
 	removeStat: function (item, stat) {
 		if (!stat) {
-			stat = Object.keys(item.stats)
-				.filter(s => (s !== 'armor'));
-
-			stat = stat[~~(Math.random() * stat.length)];
+			stat = Object.keys(item.stats).filter(s => (s !== 'armor'));
+			stat = stat[Math.floor(Math.random() * stat.length)];
 		}
-
 		delete item.stats[stat];
-
 		if (stat === 'lvlRequire') {
 			item.level = item.originalLevel;
 			delete item.originalLevel;
@@ -142,7 +133,6 @@ module.exports = {
 		let item = {};
 		let blueprint = {};
 		g3.generate(item, blueprint);
-
 		return item.slot;
 	}
 };

@@ -39,21 +39,18 @@ module.exports = {
 				}, this);
 
 				//No level appropriate mobs found
-				if (keys.length === 0)
+				if (keys.length === 0) {
 					return false;
-
-				this.mobType = keys[~~(Math.random() * keys.length)];
+				}
+				this.mobType = keys[Math.floor(Math.random() * keys.length)];
 				let needMax = 8;
 				this.mobName = this.mobType.replace(/\w\S*/g, function (txt) {
 					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 				});
-
-				this.need = Math.max(1, ~~((needMax * 0.2) + (Math.random() * needMax * 0.8)));
-
+				this.need = Math.max(1, Math.floor((needMax * 0.2) + (Math.random() * needMax * 0.8)));
 				this.item = mobTypes[this.mobType].questItem || mobTypes.default.questItem;
 			}
 		}
-
 		if (!this.item) {
 			this.setAsync({
 				key: new Date(),
@@ -61,10 +58,8 @@ module.exports = {
 				value: this.obj.name + ' ' + this.mobType
 			});
 		}
-
 		this.name = this.item.name + ' Gatherer';
 		this.description = 'Loot ' + this.have + '/' + this.need + ' ' + this.item.name + ' from ' + this.mobName;
-
 		return true;
 	},
 

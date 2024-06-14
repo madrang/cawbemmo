@@ -8,12 +8,12 @@ const getTargetPos = (physics, obj, m, pushback) => {
 	let dy = m.y - obj.y;
 
 	while ((dx === 0) && (dy === 0)) {
-		dx = ~~(Math.random() * 2) - 1;
-		dy = ~~(Math.random() * 2) - 1;
+		dx = Math.floor(Math.random() * 2) - 1;
+		dy = Math.floor(Math.random() * 2) - 1;
 	}
 
-	dx = ~~(dx / Math.abs(dx));
-	dy = ~~(dy / Math.abs(dy));
+	dx = Math.floor(dx / Math.abs(dx));
+	dy = Math.floor(dy / Math.abs(dy));
 	for (let l = 0; l < pushback; l++) {
 		if (physics.isTileBlocking(targetPos.x + dx, targetPos.y + dy)) {
 			if (physics.isTileBlocking(targetPos.x + dx, targetPos.y)) {

@@ -104,8 +104,8 @@ define([
 
 				let elOffset = el.offset();
 				ttPos = {
-					x: ~~(elOffset.left + 74),
-					y: ~~(elOffset.top + 4)
+					x: Math.floor(elOffset.left + 74),
+					y: Math.floor(elOffset.top + 4)
 				};
 			}
 		

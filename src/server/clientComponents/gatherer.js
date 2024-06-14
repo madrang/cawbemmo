@@ -23,8 +23,8 @@ define([
 				let x = 0;
 				let y = 0;
 				do {
-					x = msg.x + ~~(Math.random() * msg.width);
-					y = msg.y + ~~(Math.random() * msg.height);
+					x = msg.x + Math.floor(Math.random() * msg.width);
+					y = msg.y + Math.floor(Math.random() * msg.height);
 				} while (!physics.isTileBlocking(x, y) || Math.max(Math.abs(x - this.obj.x), Math.abs(y - this.obj.y)) <= 2);
 
 				this.obj.flipX = (x < this.obj.x);

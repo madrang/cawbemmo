@@ -55,9 +55,9 @@ module.exports = {
 			const [ x, y ] = pos;
 
 			let template = {};
-			if (summonTemplates)
-				template = summonTemplates[~~(Math.random() * summonTemplates.length)];
-
+			if (summonTemplates) {
+				template = summonTemplates[Math.floor(Math.random() * summonTemplates.length)];
+			}
 			const blueprint = {
 				x,
 				y,

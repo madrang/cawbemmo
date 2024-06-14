@@ -32,8 +32,8 @@ define([
 					sprites: []
 				};
 
-				let ntx = fx + (Math.cos(angle) * (divDistance * i)) + ~~(Math.random() * (maxDeviate * 2)) - maxDeviate;
-				let nty = fy + (Math.sin(angle) * (divDistance * i)) + ~~(Math.random() * (maxDeviate * 2)) - maxDeviate;
+				let ntx = fx + (Math.cos(angle) * (divDistance * i)) + Math.floor(Math.random() * (maxDeviate * 2)) - maxDeviate;
+				let nty = fy + (Math.sin(angle) * (divDistance * i)) + Math.floor(Math.random() * (maxDeviate * 2)) - maxDeviate;
 
 				if (i === divisions - 1) {
 					ntx = tx;
@@ -41,7 +41,7 @@ define([
 				}
 
 				let nAngle = Math.atan2(nty - y, ntx - x);
-				let steps = ~~(Math.sqrt(Math.pow(ntx - x, 2) + Math.pow(nty - y, 2)) / scaleMult);
+				let steps = Math.floor(Math.sqrt(Math.pow(ntx - x, 2) + Math.pow(nty - y, 2)) / scaleMult);
 
 				let patches = {};
 
@@ -50,10 +50,10 @@ define([
 					if ((config.colors) && (i === divisions - 1) && (j > (steps * 0.75)))
 						alpha = 1 - (j / steps);
 
-					let c = (config.colors || [0xffeb38, 0xfaac45, 0xfafcfc])[~~(Math.random() * (config.colors ? config.colors.length : 3))];
+					let c = (config.colors || [0xffeb38, 0xfaac45, 0xfafcfc])[Math.floor(Math.random() * (config.colors ? config.colors.length : 3))];
 					line.sprites.push(renderer.buildRectangle({
-						x: ~~(x / scaleMult) * scaleMult,
-						y: ~~(y / scaleMult) * scaleMult,
+						x: Math.floor(x / scaleMult) * scaleMult,
+						y: Math.floor(y / scaleMult) * scaleMult,
 						w: scaleMult,
 						h: scaleMult,
 						alpha: alpha,
@@ -63,35 +63,29 @@ define([
 
 					let xx = x;
 					let yy = y;
-					if ((!patches[xx + '-' + yy]) && (!config.colors)) {
-						patches[xx + '-' + yy] = 1;
-
-						let lightPatch = renderer.buildObject({
+					if ((!patches[`${xx}-${yy}`]) && (!config.colors)) {
+						patches[`${xx}-${yy}`] = 1;
+						const lightPatch = renderer.buildObject({
 							sheetName: 'white',
 							x: 0,
 							y: 0,
 							cell: 0,
 							layerName: 'lightPatches'
 						});
-						lightPatch.alpha = Math.random() * 0.5;
-						lightPatch.tint = '0xffffff';
-						lightPatch.x = ~~((xx - scaleMult) / scaleMult) * scaleMult;
-						lightPatch.y = ~~((yy - scaleMult) / scaleMult) * scaleMult;
+						lightPatch.x = Math.floor((xx - scaleMult) / scaleMult) * scaleMult;
+						lightPatch.y = Math.floor((yy - scaleMult) / scaleMult) * scaleMult;
 						lightPatch.width = scaleMult * linkSize;
 						lightPatch.height = scaleMult * linkSize;
-
+						lightPatch.alpha = Math.random() * 0.5;
+						lightPatch.tint = '0xffffff';
 						lightPatch.blendMode = PIXI.BLEND_MODES.ADD;
-
 						line.sprites.push(lightPatch);
 					}
-
 					x += Math.cos(nAngle) * scaleMult;
 					y += Math.sin(nAngle) * scaleMult;
 				}
-
 				obj.lines.push(line);
 			}
-
 			return obj;
 		},
 

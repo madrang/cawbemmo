@@ -54,7 +54,7 @@ define([
 							start: maxAlpha,
 							end: 0
 						},
-						frequency: 0.9 + (~~(Math.random() * 10) / 10),
+						frequency: 0.9 + (Math.floor(Math.random() * 10) / 10),
 						blendMode: 'screen',
 						lifetime: this.blueprint.lifetime || {
 							min: 1,

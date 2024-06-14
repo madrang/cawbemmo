@@ -10,7 +10,7 @@ module.exports = (obj, [item]) => {
 
 	const result = salvager.salvage(item, true);
 	result.forEach(r => {
-		r.quantity = Math.max(1, ~~(r.quantity * mult));
+		r.quantity = Math.max(1, Math.floor(r.quantity * mult));
 	});
 
 	return result;

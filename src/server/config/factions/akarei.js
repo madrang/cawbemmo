@@ -15,7 +15,7 @@ module.exports = {
 
 		generate: function (item) {
 			let chance = this.chance;
-			let chanceRoll = ~~(random.norm(chance.min, chance.max) * 10) / 10;
+			let chanceRoll = Math.floor(random.norm(chance.min, chance.max) * 10) / 10;
 
 			let result = null;
 			if (item.effects)

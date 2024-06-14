@@ -51,7 +51,7 @@ module.exports = {
 
 		if (!spellName) {
 			let spellList = Object.keys(spellsConfig.spells).filter(s => !spellsConfig.spells[s].auto && !spellsConfig.spells[s].noDrop);
-			spellName = spellList[~~(Math.random() * spellList.length)];
+			spellName = spellList[Math.floor(Math.random() * spellList.length)];
 		}
 
 		let spell = extend({}, spellsConfig.spells[spellName], blueprint.spellConfig);
@@ -123,17 +123,15 @@ module.exports = {
 			let useProperty = property;
 			const minRange = range[0];
 			const maxRange = range[1];
-
 			let val = minRange + ((maxRange - minRange) * roll);
 
 			if (isInt) {
 				useProperty = property.substr(2);
 				val = Math.round(val);
-			} else
-				val = ~~(val * 100) / 100;
-
+			} else {
+				val = Math.floor(val * 100) / 100;
+			}
 			val = Math.max(range[0], Math.min(range[1], val));
-
 			item.spell.values[useProperty] = val;
 		});
 

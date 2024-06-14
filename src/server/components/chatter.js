@@ -5,17 +5,15 @@ module.exports = {
 	cdMax: 50,
 	cd: 0,
 	chance: 0.035,
-
 	global: false,
 
 	init: function (blueprint) {
 		this.chats = extend([], blueprint.chats);
 		this.cd = Math.floor(Math.random() * this.cdMax);
-
 		for (let p in blueprint) {
-			if (p === 'chats')
+			if (p === 'chats') {
 				continue;
-
+			}
 			this[p] = blueprint[p];
 		}
 	},
@@ -28,7 +26,6 @@ module.exports = {
 		}
 		if ((this.cd === 0) && (Math.random() < this.chance)) {
 			this.cd = this.cdMax;
-
 			let pick = this.chats[Math.floor(Math.random() * this.chats.length)];
 			if (!this.global) {
 				this.obj.syncer.set(false, 'chatter', 'msg', pick.msg);
@@ -38,7 +35,7 @@ module.exports = {
 				this.obj.instance.syncer.queue('onGetMessages', {
 					messages: {
 						class: 'color-pinkA',
-						message: this.obj.name + ': ' + pick.msg
+						message: `${this.obj.name}: ${pick.msg}`
 					}
 				}, -1);
 			}

@@ -23,14 +23,12 @@ module.exports = {
 			this.components.push(cpn);
 			this[cpn.type] = cpn;
 		}
-
-		if (cpn.init && this.has('instance'))
+		if (cpn.init && this.has('instance')) {
 			cpn.init(blueprint || {}, isTransfer);
-		else {
+		} else {
 			for (let p in blueprint) 
 				cpn[p] = blueprint[p];
 		}
-
 		return cpn;
 	},
 
@@ -38,38 +36,33 @@ module.exports = {
 		this[cpn.type] = cpn;
 		cpn.obj = this;
 		this.components.push(cpn);
-
 		return cpn;
 	},
 
 	removeComponent: function (type) {
 		let cpn = this[type];
-		if (!cpn)
+		if (!cpn) {
 			return;
-
+		}
 		cpn.destroyed = true;
 	},
 
 	extendComponent: function (ext, type, blueprint) {
 		let template = require('../components/extensions/' + type);
 		let cpn = this[ext];
-
 		extend(cpn, template);
-
-		if (template.init)
+		if (template.init) {
 			cpn.init(blueprint);
-
+		}
 		return cpn;
 	},
 
 	update: function () {
 		let usedTurn = false;
-
 		let cpns = this.components;
 		let len = cpns.length;
 		for (let i = 0; i < len; i++) {
 			let c = cpns[i];
-
 			if (c.destroyed) {
 				this.syncer.setSelfArray(false, 'removeComponents', c.type);
 				cpns.spliceWhere(f => (f === c));
@@ -81,22 +74,21 @@ module.exports = {
 					usedTurn = true;
 			}
 		}
-
-		if (!usedTurn) 
+		if (!usedTurn) {
 			this.performQueue();
+		}
 	},
 
 	getSimple: function (self, isSave, isTransfer) {
 		let s = this.simplify(null, self, isSave, isTransfer);
-
 		if (self && !isSave && this.syncer) {
 			this.syncer.oSelf.components
 				.forEach(c => {
-					if (!this[c.type])
+					if (!this[c.type]) {
 						s.components.push(c);
+					}
 				});
 		}
-
 		return s;
 	},
 
@@ -106,24 +98,23 @@ module.exports = {
 			result.components = [];
 			o = this;
 		}
-
 		const syncTypes = ['portrait', 'area', 'filters'];
 		const ignoreKeysWhenNotSelf = ['account'];
-
 		for (let p in o) {
 			let value = o[p];
-			if (value === null)
+			if (value === null) {
 				continue;
-
+			}
 			let type = typeof (value);
-			if (type === 'function')
+			if (type === 'function') {
 				continue;
-			else if (type !== 'object') {
-				if (self || !ignoreKeysWhenNotSelf.includes(p))
+			} else if (type !== 'object') {
+				if (self || !ignoreKeysWhenNotSelf.includes(p)) {
 					result[p] = value;
-			} else if (type === 'undefined')
+				}
+			} else if (type === 'undefined') {
 				continue;
-			else {
+			} else {
 				if (value.type) {
 					if (!value.simplify) {
 						if (self) {
@@ -133,33 +124,31 @@ module.exports = {
 						}
 					} else {
 						let component = null;
-						if (isSave && value.save)
+						if (isSave && value.save) {
 							component = value.save();
-						else if (isTransfer && value.simplifyTransfer)
+						} else if (isTransfer && value.simplifyTransfer) {
 							component = value.simplifyTransfer();
-						else
+						} else {
 							component = value.simplify(self);
-
+						}
 						if (value.destroyed) {
 							if (!component) {
 								component = {
 									type: value.type
 								};
 							}
-
 							component.destroyed = true;
 						}
-
-						if (component)
+						if (component) {
 							result.components.push(component);
+						}
 					}
-				} else if (syncTypes.includes(p))
+				} else if (syncTypes.includes(p)) {
 					result[p] = value;
-
+				}
 				continue;
 			}
 		}
-
 		return result;
 	},
 
@@ -176,21 +165,18 @@ module.exports = {
 
 	queue: function (msg) {
 		const { action, auto, data: { priority } } = msg;
-
 		if (action === 'spell') {
 			let spellbook = this.spellbook;
 			const isCasting = spellbook.isCasting();
-
 			if (isCasting && (!priority || !spellbook.canCast(msg))) {
-				if (auto)
+				if (auto) {
 					spellbook.queueAuto(msg);
-
+				}
 				return;
 			}
-		
-			if (isCasting)
+			if (isCasting) {
 				spellbook.stopCasting();
-
+			}
 			this.actionQueue.spliceWhere(a => a.priority);
 			this.actionQueue.splice(0, 0, msg);
 		} else {
@@ -199,15 +185,14 @@ module.exports = {
 				this.actionQueue.splice(0, 0, msg);
 				return;
 			}
-
 			this.actionQueue.push(msg);
 		}
 	},
 
 	dequeue: function () {
-		if (this.actionQueue.length === 0)
+		if (this.actionQueue.length === 0) {
 			return null;
-
+		}
 		return this.actionQueue.splice(0, 1)[0];
 	},
 
@@ -217,28 +202,26 @@ module.exports = {
 				id: this.id
 			}, [this.serverId]);
 		}
-
 		this.actionQueue = [];
-
 		this.fireEvent('clearQueue');
 	},
 
 	performAction: function (action) {
-		if (action.instanceModule)
+		if (action.instanceModule) {
 			return;
-
+		}
 		let cpn = this[action.cpn];
-		if (!cpn)
+		if (!cpn) {
 			return;
-
+		}
 		cpn[action.method](action.data);
 	},
 
 	performQueue: function () {
 		let q = this.dequeue();
-		if (!q) 
+		if (!q) {
 			return;
-
+		}
 		if (q.action === 'move') {
 			let maxDistance = 1;
 			if ((this.actionQueue[0]) && (this.actionQueue[0].action === 'move')) {
@@ -248,9 +231,9 @@ module.exports = {
 				this.fireEvent('onBeforeTryMove', moveEvent);
 
 				let physics = this.instance.physics;
-				let sprintChance = moveEvent.sprintChance;				
+				let sprintChance = moveEvent.sprintChance;
 				do {
-					if ((~~(Math.random() * 100) < sprintChance) && (!physics.isTileBlocking(q.data.x, q.data.y))) {
+					if ((Math.floor(Math.random() * 100) < sprintChance) && (!physics.isTileBlocking(q.data.x, q.data.y))) {
 						q = this.dequeue();
 						maxDistance++;
 					}
@@ -259,12 +242,14 @@ module.exports = {
 			}
 			q.maxDistance = maxDistance;
 			let success = this.performMove(q);
-			if (!success) 
+			if (!success) {
 				this.clearQueue();
+			}
 		} else if (q.action === 'spell') {
 			let success = this.spellbook.cast(q.data);
-			if (!success)
+			if (!success) {
 				this.performQueue();
+			}
 		}
 	},
 

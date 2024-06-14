@@ -50,6 +50,6 @@ module.exports = {
 				chances.push(c);
 		}
 
-		return chances[~~(Math.random() * chances.length)];
+		return chances[Math.floor(Math.random() * chances.length)];
 	}
 };

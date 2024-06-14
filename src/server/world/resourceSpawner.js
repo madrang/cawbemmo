@@ -116,7 +116,7 @@ module.exports = {
 			if (position.length === 0)
 				return false;
 
-			position = position[~~(Math.random() * position.length)];
+			position = position[Math.floor(Math.random() * position.length)];
 		}
 
 		return position;
@@ -137,13 +137,14 @@ module.exports = {
 
 		const { position } = eBeforeSpawnResource;
 
-		if (!position)
+		if (!position) {
 			return false;
+		}
 
 		let quantity = 1;
-		if (blueprint.quantity)
-			quantity = blueprint.quantity[0] + ~~(Math.random() * (blueprint.quantity[1] - blueprint.quantity[0]));
-
+		if (blueprint.quantity) {
+			quantity = blueprint.quantity[0] + Math.floor(Math.random() * (blueprint.quantity[1] - blueprint.quantity[0]));
+		}
 		const nodeXp = this.zoneConfig.level[0] * 2;
 
 		let objBlueprint = extend({}, blueprint, position);

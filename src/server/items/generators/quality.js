@@ -40,7 +40,7 @@ module.exports = {
 		}
 
 		let max = qualities.reduce((p, n) => p + n);
-		let gen = ~~(Math.random() * max);
+		let gen = Math.floor(Math.random() * max);
 
 		let total = 0;
 		for (let i = 0; i < qualities.length; i++) {

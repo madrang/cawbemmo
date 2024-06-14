@@ -13,17 +13,15 @@ module.exports = {
 
 	cast: function (action) {
 		this.active = !this.active;
-
 		return true;
 	},
 
 	update: function () {
-		let active = this.active;
-
-		if (active)
+		if (this.active) {
 			this.updateActive();
-		else
+		} else {
 			this.updateInactive();
+		}
 	},
 
 	unlearn: function () {
@@ -42,45 +40,39 @@ module.exports = {
 	updateActive: function () {
 		let o = this.obj;
 		let amount = 0;
-		if (this.name === 'Innervation')
-			amount = ~~((o.stats.values.hpMax / 100) * this.values.regenPercentage);
-		else
+		if (this.name === 'Innervation') {
+			amount = Math.floor((o.stats.values.hpMax / 100) * this.values.regenPercentage);
+		} else {
 			amount = this.values.regenPercentage || this.values.chance;
-
+		}
 		let party = (o.social || {}).party || [];
 		let members = [o.serverId, ...party];
 		let effects = this.effects;
 		let objects = o.instance.objects.objects;
-
 		let range = this.auraRange;
-
 		members.forEach(m => {
 			let effect = effects[m];
-
 			let obj = objects.find(f => (f.serverId === m));
 			if (!obj) {
-				if (effect)
+				if (effect) {
 					delete effects[m];
-
+				}
 				return;
 			}
-
 			let distance = Math.max(Math.abs(o.x - obj.x), Math.abs(o.y - obj.y));
 			if (distance > range) {
 				if (effect) {
 					delete effects[m];
 					obj.effects.removeEffect(effect.id);
 				}
-
 				return;
 			}
-
-			if (effect)
+			if (effect) {
 				return;
-
-			if (!obj.effects)
+			}
+			if (!obj.effects) {
 				return;
-
+			}
 			effects[obj.serverId] = obj.effects.addEffect({
 				type: this.effect,
 				amount: amount,
@@ -94,8 +86,9 @@ module.exports = {
 			if (!members.find(m => ~~m === ~~serverId)) {
 				delete effects[serverId];
 				const obj = objects.find(f => ~~f.serverId === ~~serverId);
-				if (obj)
+				if (obj) {
 					obj.effects.removeEffect(effect.id);
+				}
 			}
 		});
 	},

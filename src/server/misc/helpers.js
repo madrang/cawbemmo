@@ -62,7 +62,6 @@ Object.defineProperty(Object.prototype, 'has', {
 module.exports = {
 	get2dArray: function (w, h, def) {
 		def = def || 0;
-
 		let result = [];
 		for (let i = 0; i < w; i++) {
 			let inner = [];
@@ -72,33 +71,26 @@ module.exports = {
 				else
 					inner.push(def);
 			}
-
 			result.push(inner);
 		}
-
 		return result;
 	},
 	randomKey: function (o) {
-		let keys = Object.keys(o);
-
-		let keyIndex = ~~(Math.random() * keys.length);
-		let key = keys[keyIndex];
-
-		return key;
+		const keys = Object.keys(o);
+		return keys[Math.floor(Math.random() * keys.length)];
 	},
 	getDeepProperty: function (obj, path) {
-		if (!path.push)
+		if (!path.push) {
 			path = path.split('.');
-
+		}
 		let o = obj;
 		let pLen = path.length;
-
 		for (let i = 0; i < pLen; i++) {
 			o = o[path[i]];
-			if (!o)
+			if (!o) {
 				return null;
+			}
 		}
-
 		return o;
 	},
 
