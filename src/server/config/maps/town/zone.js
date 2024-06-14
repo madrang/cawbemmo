@@ -2,11 +2,11 @@ module.exports = {
 	name: 'town',
 	level: [1, 20],
 	resources: {
-		Skyblossom: {
+		champignon: {
 			type: 'herb',
 			max: 4
 		},
-		Emberleaf: {
+		weed: {
 			type: 'herb',
 			max: 1,
 			cdMax: 17100

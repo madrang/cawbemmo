@@ -1,11 +1,11 @@
 module.exports = {
 	infini: [{
-		name: 'Purveyor of Artefacts',
+		name: 'Ramasseux de gogosse',
 		type: 'loot',
 		subType: 'slot',
 		quantity: 1
 	}, {
-		name: 'The Culling',
+		name: 'Un peu de ménage',
 		type: 'killX',
 		subType: 'mobType',
 		quantity: [5, 10]
