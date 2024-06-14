@@ -5,17 +5,17 @@ module.exports = {
 		events.emit('onBeforeGetHerbConfig', this);
 	},
 
-	Moonbell: {
+	coriande: {
 		sheetName: 'tiles',
 		cell: 50,
 		itemSprite: [1, 1]
 	},
-	Skyblossom: {
+	champignon: {
 		sheetName: 'tiles',
 		cell: 52,
 		itemSprite: [1, 2]
 	},
-	Emberleaf: {
+	weed: {
 		sheetName: 'tiles',
 		cell: 51,
 		itemSprite: [1, 0]
