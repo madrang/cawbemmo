@@ -111,7 +111,7 @@ module.exports = {
 		},
 		'grosse vidange': {
 			level: 5,
-			cron: '0 * * * *',
+			cron: '* * * * *',
 
 			regular: {
 				hpMult: 3,
