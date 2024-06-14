@@ -92,8 +92,8 @@ define([
 		onMouseDown: function (e, target) {
 			if (isMobile && this.groundTargetSpell) {
 				this.groundTarget = {
-					x: ~~(e.worldX / scale),
-					y: ~~(e.worldY / scale)
+					x: Math.floor(e.worldX / scale),
+					y: Math.floor(e.worldY / scale)
 				};
 
 				this.onKeyDown(this.groundTargetSpell);
@@ -131,7 +131,7 @@ define([
 			let closest = objects.getClosest(window.player.x, window.player.y, 10, input.isKeyDown('shift'), compareAgainst);
 
 			this.target = closest;
-			this.targetSprite.visible = !!this.target;
+			this.targetSprite.visible = Boolean(this.target);
 
 			events.emit('onSetTarget', this.target, null);
 		},

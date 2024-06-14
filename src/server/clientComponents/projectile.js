@@ -26,7 +26,7 @@ define([
 				return;
 			}
 
-			this.endTime = +new Date() + this.ttl;
+			this.endTime = Date.now() + this.ttl;
 
 			let source = this.source;
 			this.x = source.x;
@@ -84,18 +84,14 @@ define([
 		},
 
 		renderManual: function () {
-			let source = this.obj;
-			let target = this.target;
+			const source = this.obj;
+			const target = this.target;
 
 			//Cater for offset (which isn't tile based yet)
 			const tx = target.x + ((target.offsetX || 0) / scale);
 			const ty = target.y + ((target.offsetY || 0) / scale);
 
-			let dx = tx - this.x;
-			let dy = ty - this.y;
-
-			let ticksLeft = ~~((this.endTime - (+new Date())) / 16);
-
+			const ticksLeft = Math.floor((this.endTime - Date.now()) / 16);
 			if (ticksLeft <= 0) {
 				source.x = tx;
 				source.y = ty;
@@ -104,14 +100,11 @@ define([
 					source.explosion.explode();
 				source.destroyed = true;
 			} else {
-				dx /= ticksLeft;
-				dy /= ticksLeft;
+				this.x += (tx - this.x) / ticksLeft;
+				this.y += (ty - this.y) / ticksLeft;
 
-				this.x += dx;
-				this.y += dy;
-
-				source.x = (~~((this.x * scale) / 4) * 4) / scale;
-				source.y = (~~((this.y * scale) / 4) * 4) / scale;
+				source.x = (Math.floor((this.x * scale) / 4) * 4) / scale;
+				source.y = (Math.floor((this.y * scale) / 4) * 4) / scale;
 			}
 		},
 

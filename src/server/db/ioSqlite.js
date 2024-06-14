@@ -125,15 +125,14 @@ module.exports = {
 
 	process: async function () {
 		let next = this.buffer.splice(0, 1);
-		if (!next.length)
+		if (!next.length) {
 			return;
+		}
 		next = next[0];
 
 		let config = next.config;
 		let options = config.options;
-
 		let res = null;
-
 		try {
 			if (config.type === 'get')
 				res = await this.processGet(options);
@@ -144,16 +143,12 @@ module.exports = {
 			else if (config.type === 'delete')
 				await this.processDelete(options);
 		} catch (e) {
-			_.log(e);
-
+			_.error(e);
 			this.buffer.splice(0, 0, next);
-
 			setTimeout(this.process.bind(this), 10);
 			return;
 		}
-
 		next.resolve(res);
-
 		setTimeout(this.process.bind(this), 10);
 	},
 
@@ -161,22 +156,20 @@ module.exports = {
 		const collate = options.ignoreCase ? 'COLLATE NOCASE' : '';
 		const query = `SELECT * FROM ${options.table} WHERE key = '${options.key}' ${collate} LIMIT 1`;
 		let res = await util.promisify(this.db.get.bind(this.db))(query);
-
 		if (res) {
 			res = res.value;
-
 			if (options.clean) {
 				res = res
 					.split('`')
 					.join('\'')
 					.replace(/''+/g, '\'');
 			}
-			
-			if (!options.noParse)
+			if (!options.noParse) {
 				res = JSON.parse(res);
-		} else if (!options.noParse && !options.noDefault)
+			}
+		} else if (!options.noParse && !options.noDefault) {
 			res = options.isArray ? [] : {};
-
+		}
 		return res;
 	},
 

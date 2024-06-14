@@ -27,21 +27,24 @@ module.exports = {
 	},
 
 	onDisconnect: async function (socket) {
-		let player = this.players.find(p => p.socket.id === socket.id);
-
-		if (!player)
+		const player = this.players.find(p => p.socket.id === socket.id);
+		if (!player) {
 			return;
+		}
 
-		let sessionDuration = 0;
-
+		const sessionDuration = (typeof player?.player?.sessionStart === "number"
+			? Math.floor((Date.now() - player.player.sessionStart) / 1000)
+			: 0
+		);
 		if (player.has('id')) {
-			if (player.social)
+			if (player.social) {
 				player.social.dc();
-			sessionDuration = ~~(((+new Date()) - player.player.sessionStart) / 1000);
+			}
+
 			atlas.updateObject(player, {
 				components: [{
 					type: 'stats',
-					sessionDuration: sessionDuration
+					sessionDuration
 				}]
 			});
 
@@ -55,16 +58,15 @@ module.exports = {
 				});
 			}
 		}
-
 		if (player.name) {
 			eventEmitter.emit('playerObjRemoved', {
 				id: player.id
 			});
-
-			if (player.has('id'))
+			if (player.has('id')) {
 				this.modifyPlayerCount(-1);
+				_.log("Connections.js: Player %s disconnected after %s seconds", player.name, sessionDuration);
+			}
 		}
-
 		this.players.spliceWhere(p => p.socket.id === socket.id);
 	},
 

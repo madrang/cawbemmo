@@ -12,8 +12,8 @@ let cpnArcanePatch = {
 		if ((!o.aggro) || (!o.player))
 			return;
 
-		let isPlayer = !!this.caster.player;
-		let isTargetPlayer = !!o.player;
+		let isPlayer = Boolean(this.caster.player);
+		let isTargetPlayer = Boolean(o.player);
 
 		if ((this.caster.aggro.canAttack(o)) || (isPlayer !== isTargetPlayer))
 			return;

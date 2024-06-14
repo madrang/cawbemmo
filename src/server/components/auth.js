@@ -84,7 +84,7 @@ module.exports = {
 			serialize: true
 		});
 
-		this.obj.player.sessionStart = +new Date();
+		this.obj.player.sessionStart = Date.now();
 		this.obj.player.spawn(character, data.callback);
 
 		let prophecies = this.obj.prophecies ? this.obj.prophecies.simplify().list : [];
@@ -284,10 +284,10 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
-			console.info("User %s - Login denied! Invalid password.", username);
+			_.log("Auth.js: User %s - Login denied! Invalid password.", username);
 			return;
 		}
-		console.info("User %s - Connected!", username);
+		_.log("Auth.js: User %s - Connected!", username);
 
 		const emBeforeLogin = {
 			obj: this.obj,

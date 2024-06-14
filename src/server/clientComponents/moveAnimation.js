@@ -61,7 +61,7 @@ define([
 
 			this.particles = this.obj.addComponent('particles', { blueprint: particleBlueprint });
 
-			this.endTime = +new Date() + this.ttl;
+			this.endTime = Date.now() + this.ttl;
 
 			let obj = this.obj;
 			this.x = obj.x;
@@ -77,18 +77,12 @@ define([
 		},
 
 		update: function () {
-			let source = this.obj;
-			let target = this.target;
-
-			let dx = this.targetX - this.x;
-			let dy = this.targetY - this.y;
-
-			let ticksLeft = ~~((this.endTime - (+new Date())) / 16);
-
+			const source = this.obj;
+			const target = this.target;
+			const ticksLeft = Math.floor((this.endTime - Date.now()) / 16);
 			if (ticksLeft <= 0) {
 				source.x = this.targetX;
 				source.y = this.targetY;
-
 				source.setSpritePosition();
 
 				this.destroyed = true;
@@ -96,23 +90,17 @@ define([
 
 				//Sometimes we just move to a point without exploding
 				if (target) {
-					const particleExplosionBlueprint = this.particleExplosionBlueprint || {};
-
 					target.addComponent('explosion', {
 						new: true,
-						blueprint: particleExplosionBlueprint
+						blueprint: this.particleExplosionBlueprint || {}
 					}).explode();
 				}
 			} else {
-				dx /= ticksLeft;
-				dy /= ticksLeft;
+				this.x += (this.targetX - this.x) / ticksLeft;
+				this.y += (this.targetY - this.y) / ticksLeft;
 
-				this.x += dx;
-				this.y += dy;
-
-				source.x = (~~((this.x * 32) / 8) * 8) / 32;
-				source.y = (~~((this.y * 32) / 8) * 8) / 32;
-
+				source.x = (Math.floor((this.x * 32) / 8) * 8) / 32;
+				source.y = (Math.floor((this.y * 32) / 8) * 8) / 32;
 				source.setSpritePosition();
 			}
 

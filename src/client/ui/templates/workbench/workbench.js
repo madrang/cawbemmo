@@ -112,7 +112,7 @@ define([
 					visibility: 'visible'
 				});
 
-			let canCraft = !!materials.length;
+			let canCraft = Boolean(materials.length);
 
 			materials.forEach(m => {
 				const { needQuantity, nameLike, name: materialName, haveQuantity, noHaveEnough } = m;
@@ -207,7 +207,7 @@ define([
 			const { currentRecipe: { needItems } } = this;
 			this.buildNeedItemBoxes(needItems, true);
 
-			const allItemsSelected = this.selectedNeedItems.every(i => !!i);
+			const allItemsSelected = this.selectedNeedItems.every(i => Boolean(i));
 			if (allItemsSelected && this.currentRecipe.dynamicMaterials) {
 				const pickedItemIds = this.selectedNeedItems.map(i => i.id);
 

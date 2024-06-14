@@ -73,41 +73,33 @@ module.exports = {
 	init: function ({ zoneName, path }) {
 		this.name = zoneName;
 		this.path = path;
-		
-		try {
-			this.zoneConfig = require('../' + this.path + '/' + this.name + '/zone');
-		} catch (e) {
-			this.zoneConfig = globalZone;
-		}
+
+		this.zoneConfig = _.safeRequire(`../${this.path}/${this.name}/zone`) || globalZone;
 		events.emit('onAfterGetZone', this.name, this.zoneConfig);
 
-		let chats = null;
-		try {
-			chats = require('../' + this.path + '/' + this.name + '/chats');
-		} catch (e) {}
-
+		const chats = _.safeRequire(`../${this.path}/${this.name}/chats`);
 		if (chats) {
-			if (this.zoneConfig.chats)
+			if (this.zoneConfig.chats) {
 				extend(this.zoneConfig.chats, chats);
-			else
+			} else {
 				this.zoneConfig.chats = chats;
+			}
 		}
 
-		let dialogues = null;
-		try {
-			dialogues = require('../' + this.path + '/' + this.name + '/dialogues');
-		} catch (e) {}
+		const dialogues = _.safeRequire(`../${this.path}/${this.name}/dialogues`);
 		events.emit('onBeforeGetDialogue', this.name, dialogues);
-		if (dialogues)
+		if (dialogues) {
 			this.zoneConfig.dialogues = dialogues;
+		}
 
 		this.zoneConfig = extend({}, globalZone, this.zoneConfig);
 
-		let resources = this.zoneConfig.resources || {};
-		for (let r in resources)
+		const resources = this.zoneConfig.resources || {};
+		for (let r in resources) {
 			resourceSpawner.register(r, resources[r]);
+		}
 
-		mapFile = require('../' + this.path + '/' + this.name + '/map');
+		mapFile = require(`../${this.path}/${this.name}/map`);
 		this.mapFile = mapFile;
 		//Fix for newer versions of Tiled
 		this.mapFile.properties = objectifyProperties(this.mapFile.properties);
@@ -122,6 +114,7 @@ module.exports = {
 				this.spawn = [this.spawn];
 		}
 	},
+
 	create: function () {
 		this.getMapFile();
 
@@ -199,10 +192,9 @@ module.exports = {
 		}
 
 		//Fix for newer versions of Tiled
-		this.randomMap.templates
-			.forEach(r => {
-				r.properties = objectifyProperties(r.properties); 
-			});
+		this.randomMap.templates.forEach((r) => {
+			r.properties = objectifyProperties(r.properties);
+		});
 
 		this.randomMap.templates
 			.filter(r => r.properties.mapping)
@@ -221,9 +213,7 @@ module.exports = {
 			}, this);
 
 		physics.init(this.collisionMap);
-
 		padding = mapFile.properties.padding;
-
 		mapFile = null;
 	},
 
@@ -232,12 +222,10 @@ module.exports = {
 			w: mapFile.width,
 			h: mapFile.height
 		};
-
 		this.originalSize = {
 			w: mapFile.width,
 			h: mapFile.height
 		};
-
 		events.emit('onBeforeGetMapSize', this.name, mapSize);
 
 		this.size.w = mapSize.w;
@@ -268,57 +256,46 @@ module.exports = {
 		layerRooms.objects.sort((a, b) => {
 			const isExitA = a?.properties?.some(p => p.name === 'exit');
 			const isExitB = b?.properties?.some(p => p.name === 'exit');
-
-			if (isExitA && !isExitB)
+			if (isExitA && !isExitB) {
 				return 1;
-			else if (!isExitA && isExitB)
+			} else if (!isExitA && isExitB) {
 				return -1;
-
+			}
 			return 0;
 		});
 
-		for (let i = 0; i < layers.length; i++) {
-			let layer = layers[i];
-			let layerName = layer.name;
-			if (!layer.visible)
+		for (let layer of layers) {
+			const layerName = layer.name;
+			if (!layer.visible) {
 				continue;
-
-			let data = layer.data || layer.objects;
+			}
+			const data = layer.data || layer.objects;
 			if (layer.objects) {
-				let info = {
+				events.emit('onAfterGetLayerObjects', {
 					map: this.name,
 					layer: layerName,
 					objects: data,
 					mapScale,
 					size: this.size
-				};
-
-				events.emit('onAfterGetLayerObjects', info);
-			}
-
-			if (layer.objects) {
-				let len = data.length;
+				});
+				const len = data.length;
 				for (let j = 0; j < len; j++) {
-					let cell = data[j];
-
+					const cell = data[j];
 					builders.object(layerName, cell, j);
 				}
 			} else {
 				for (let x = 0; x < w; x++) {
 					for (let y = 0; y < h; y++) {
-						let index = (y * oldW) + x;
-
 						const msgBuild = {
 							map: this.name,
 							layer: layerName,
 							sheetName: null,
 							cell: 0,
-							x,
-							y
+							x, y
 						};
-						if (x < oldW && y < oldH)
-							msgBuild.cell = data[index];
-
+						if (x < oldW && y < oldH) {
+							msgBuild.cell = data[(y * oldW) + x];
+						}
 						events.emit('onBeforeBuildLayerTile', msgBuild);
 						builders.tile(msgBuild);
 						events.emit('onAfterBuildLayerTile', msgBuild);
@@ -353,17 +330,14 @@ module.exports = {
 		};
 		events.emit('onBeforeGetCellInfo', cellInfoMsg);
 
-		const tilesets = cellInfoMsg.tilesets;
-
 		let flipX = Boolean((gid & 0x80000000) != 0);
 		if (flipX) {
 			gid = gid ^ 0x80000000;
 		}
-
 		let sheetName = cellInfoMsg.sheetName;
 		if (!sheetName) {
 			let firstGid = 0;
-			for (let tileset of tilesets) {
+			for (let tileset of cellInfoMsg.tilesets) {
 				if (tileset.firstgid <= firstGid || tileset.firstgid > gid) {
 					continue;
 				}
@@ -372,7 +346,6 @@ module.exports = {
 			}
 			gid = gid - firstGid + 1;
 		}
-
 		return {
 			cell: gid,
 			sheetName,
@@ -383,36 +356,29 @@ module.exports = {
 	builders: {
 		tile: function (info) {
 			let { x, y, cell, layer: layerName, sheetName } = info;
-
 			if (cell === 0) {
-				if (layerName === 'tiles')
+				if (layerName === 'tiles') {
 					this.collisionMap[x][y] = 1;
-
+				}
 				return;
 			}
-
 			let cellInfo = this.getCellInfo(cell, x, y, layerName);
 			if (!sheetName) {
 				info.sheetName = cellInfo.sheetName;
 				sheetName = cellInfo.sheetName;
 			}
-
 			const offsetCell = this.getOffsetCellPos(sheetName, cellInfo.cell);
 			const isHiddenLayer = layerName.indexOf('hidden') === 0;
-			if (isHiddenLayer)
+			if (isHiddenLayer) {
 				this[layerName][x][y] = offsetCell;
-			else {
-				const layer = this.layers;
-
-				if (this.oldLayers[layerName])
+			} else {
+				if (this.oldLayers[layerName]) {
 					this.oldLayers[layerName][x][y] = offsetCell;
-
-				layer[x][y] = (layer[x][y] === null) ? offsetCell : layer[x][y] + ',' + offsetCell;
-
-				if (layerName.indexOf('walls') > -1)
+				}
+				this.layers[x][y] = ((this.layers[x][y] === null) ? offsetCell : `${this.layers[x][y]},${offsetCell}`);
+				if (layerName.indexOf('walls') > -1 || clientConfig.config.blockingTileIndices.includes(offsetCell)) {
 					this.collisionMap[x][y] = 1;
-				else if (clientConfig.config.blockingTileIndices.includes(offsetCell))
-					this.collisionMap[x][y] = 1;
+				}
 			}
 		},
 
@@ -421,8 +387,8 @@ module.exports = {
 			cell.properties = objectifyProperties(cell.properties);
 			cell.polyline = cell.polyline || cell.polygon;
 
-			const x = cell.x / mapScale;
-			const y = (cell.y / mapScale) - 1;
+			const x = Math.round(cell.x / mapScale);
+			const y = Math.round(cell.y / mapScale) - 1;
 
 			let clientObj = (layerName === 'clientObjects');
 			let cellInfo = this.getCellInfo(cell.gid, x, y, layerName);
@@ -434,41 +400,38 @@ module.exports = {
 				name = split[0];
 				objZoneName = split[1];
 			}
-
 			const blueprint = {
 				id: cell.properties.id,
 				clientObj: clientObj,
 				sheetName: cell.has('sheetName') ? cell.sheetName : cellInfo.sheetName,
 				cell: cell.has('cell') ? cell.cell : cellInfo.cell - 1,
-				x,
-				y,
+				x, y,
 				name: name,
 				properties: cell.properties || {},
 				layerName: layerName
 			};
-
-			if (objZoneName !== name)
+			if (objZoneName !== name) {
 				blueprint.objZoneName = objZoneName;
-
+			}
 			if (this.zoneConfig) {
 				if ((this.zoneConfig.objects) && (this.zoneConfig.objects[objZoneName.toLowerCase()]))
 					extend(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
 				else if ((this.zoneConfig.objects) && (this.zoneConfig.mobs[objZoneName.toLowerCase()]))
 					extend(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
 			}
-
-			if (blueprint.blocking)
+			if (blueprint.blocking) {
 				this.collisionMap[blueprint.x][blueprint.y] = 1;
-
+			}
 			if ((blueprint.properties.cpnNotice) || (blueprint.properties.cpnLightPatch) || (layerName === 'rooms') || (layerName === 'hiddenRooms')) {
 				blueprint.y++;
 				blueprint.width = cell.width / mapScale;
 				blueprint.height = cell.height / mapScale;
-			} else if (cell.width === 24)
+			} else if (cell.width === 24) {
 				blueprint.x++;
-
-			if (cell.polyline) 
+			}
+			if (cell.polyline) {
 				mapObjects.polyline(this.size, blueprint, cell, mapScale);
+			}
 
 			if (layerName === 'rooms') {
 				if (blueprint.properties.exit) {
@@ -480,40 +443,35 @@ module.exports = {
 								(blueprint.y >= r.y + r.height)
 						));
 					});
-
 					room.exits.push(blueprint);
-				} else if (blueprint.properties.resource) 
+				} else if (blueprint.properties.resource) {
 					resourceSpawner.register(blueprint.properties.resource, blueprint);
-				else {
+				} else {
 					blueprint.exits = [];
 					blueprint.objects = [];
 					this.rooms.push(blueprint);
 				}
 			} else if (layerName === 'hiddenRooms') {
-				blueprint.fog = (cell.properties || {}).fog;
-				blueprint.interior = (cell.properties || {}).interior;
-				blueprint.discoverable = (cell.properties || {}).discoverable;
-				blueprint.layer = ~~((cell.properties || {}).layer || 0);
-
-				if (!mapFile.properties.isRandom)
+				blueprint.fog = cell.properties?.fog;
+				blueprint.interior = cell.properties?.interior;
+				blueprint.discoverable = cell.properties?.discoverable;
+				blueprint.layer = Math.floor(cell.properties?.layer || 0);
+				if (!mapFile.properties.isRandom) {
 					this.hiddenRooms.push(blueprint);
-				else {
-					let room = this.rooms.find(r => {
+				} else {
+					const room = this.rooms.find(r => {
 						return !(
-							blueprint.x < r.x ||
-							blueprint.y < r.y ||
-							blueprint.x >= r.x + r.width ||
-							blueprint.y >= r.y + r.height
+							blueprint.x < r.x || blueprint.y < r.y ||
+							blueprint.x >= r.x + r.width || blueprint.y >= r.y + r.height
 						);
 					});
-
 					room.objects.push(blueprint);
 				}
 			} else if (!clientObj) {
-				if (!mapFile.properties.isRandom)
+				if (!mapFile.properties.isRandom) {
 					spawners.register(blueprint, blueprint.spawnCd || mapFile.properties.spawnCd);
-				else {
-					let room = this.rooms.find(r => {
+				} else {
+					const room = this.rooms.find((r) => {
 						return !(
 							blueprint.x < r.x ||
 							blueprint.y < r.y ||
@@ -521,16 +479,14 @@ module.exports = {
 							blueprint.y >= r.y + r.height
 						);
 					});
-
 					room.objects.push(blueprint);
 				}
 			} else {
-				if ((cell.width) && (!cell.polyline)) {
+				if (cell.width && !cell.polyline) {
 					blueprint.width = cell.width / mapScale;
 					blueprint.height = cell.height / mapScale;
 				}
-
-				let obj = objects.buildObjects([blueprint], true).getSimple(true);
+				const obj = objects.buildObjects([blueprint], true).getSimple(true);
 				this.objBlueprints.push(obj);
 			}
 		}

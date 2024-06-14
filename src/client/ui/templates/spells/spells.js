@@ -133,7 +133,7 @@ define([
 				return (s.id === options.spell);
 			});
 			spell.ttl = options.cd;
-			spell.ttlStart = +new Date();
+			spell.ttlStart = Date.now();
 		},
 
 		onGetSpellActive: function (options) {
@@ -168,8 +168,7 @@ define([
 			if (!spells)
 				return;
 
-			let time = +new Date();
-
+			const time = Date.now();
 			for (let i = 0; i < spells.length; i++) {
 				let spell = spells[i];
 

@@ -61,7 +61,7 @@ define([
 
 			let effect = $.extend(true, {}, effectBase, template, data);
 
-			effect.self = !!this.obj.self;
+			effect.self = Boolean(this.obj.self);
 			effect.obj = this.obj;
 
 			if (effect.init)

@@ -75,7 +75,7 @@ module.exports = {
 		let blueprintEffects = character.components.find(c => c.type === 'effects') || {};
 		if (blueprintEffects.effects) {
 			//Calculate ttl of effects
-			let time = +new Date();
+			const time = Date.now();
 			blueprintEffects.effects = blueprintEffects.effects.filter(e => {
 				let remaining = e.expire - time;
 				if (remaining < 0)

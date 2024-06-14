@@ -85,8 +85,8 @@ module.exports = {
 		let position = null;
 
 		if (blueprint.type === 'herb' && !blueprint.positions) {
-			x = ~~(Math.random() * w);
-			y = ~~(Math.random() * h);
+			x = Math.floor(Math.random() * w);
+			y = Math.floor(Math.random() * h);
 
 			if (this.physics.isTileBlocking(x, y))
 				return false;

@@ -406,20 +406,17 @@ module.exports = {
 										});
 									}
 								}
-
 								e.text = text;
-							} else if (effectModule.events.onGetText)
+							} else if (effectModule.events.onGetText) {
 								e.text = effectModule.events.onGetText(item, e);
+							}
 						} catch (error) {
-							_.log(`Effect not found: ${e.type}`);
-							_.log(error);
+							_.error(`Effect not found: ${e.type}`, error);
 						}
 					}
 				});
-
 				item.effects.spliceWhere(e => !e.events);
 			}
-
 			if (!item.has('pos') && !item.eq) {
 				let pos = i;
 				for (let j = 0; j < iLen; j++) {
@@ -559,7 +556,7 @@ module.exports = {
 		let iLen = items.length;
 		for (let i = 0; i < iLen; i++) {
 			let quality = items[i].quality;
-			items[i].fromMob = !!this.obj.mob;
+			items[i].fromMob = Boolean(this.obj.mob);
 			if (quality > topQuality)
 				topQuality = ~~quality;
 		}

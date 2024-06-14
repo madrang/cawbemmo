@@ -149,7 +149,7 @@ module.exports = {
 			return true;
 		else if (target.aggro.faction !== obj.aggro.faction)
 			return true;
-		else if (!!target.player !== !!obj.player)
+		else if (Boolean(target.player) !== Boolean(obj.player))
 			return true;
 	},
 
@@ -381,7 +381,7 @@ module.exports = {
 
 	getRandom: function () {
 		let useList = this.list.filter(l => (!this.ignoreList.some(o => (o === l.obj))));
-		return useList[~~(Math.random() * useList.length)];
+		return useList[Math.floor(Math.random() * useList.length)];
 	},
 
 	hasAggroOn: function (obj) {

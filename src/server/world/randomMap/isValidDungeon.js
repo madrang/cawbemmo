@@ -34,7 +34,7 @@ module.exports = generator => {
 
 	//Ensure that enough minOccur templates have been included
 	const minOccurOk = templates.every(t => {
-		const minOccur = ~~t.properties.minOccur || 0;
+		const minOccur = (t.properties.has("minOccur") ? Math.floor(t.properties.minOccur) : 0);
 		const occurs = rooms.filter(r => r.template.typeId === t.typeId).length;
 
 		return occurs >= minOccur;

@@ -7,21 +7,20 @@ const cache = {};
 
 //Method
 const getFactionBlueprint = factionId => {
-	if (cache[factionId])
+	if (cache[factionId]) {
 		return cache[factionId];
-
+	}
 	let res = null;
 	try {
 		res = factions.getFaction(factionId);
-	} catch (e) {}
-
-	if (!res)
+	} catch (e) {
+		_.error(e);
+	}
+	if (!res) {
 		return;
-
+	}
 	res = extend({}, factionBase, res);
-
 	cache[factionId] = res;
-
 	return res;
 };
 
