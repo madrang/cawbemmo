@@ -22,7 +22,7 @@ const itemTypes = require('../items/config/types');
 const salvager = require('../items/salvager');
 const mapManager = require('../world/mapManager');
 const itemEffects = require('../items/itemEffects');
-const profanities = require('../misc/profanities');
+const profanities = require('../language/profanities');
 const eventEmitter = require('../misc/events');
 
 //Worker
@@ -101,13 +101,15 @@ process.on('message', m => {
 					break;
 				}
 			}
-			if (found)
+			if (found) {
 				break;
+			}
 		}
-	} else if (m.threadModule)
+	} else if (m.threadModule) {
 		global[m.threadModule][m.method](m.data);
-	else if (m.method)
+	} else if (m.method) {
 		instancer[m.method](m.args);
-	else if (m.event)
+	} else if (m.event) {
 		eventEmitter.emit(m.event, m.data);
+	}
 });

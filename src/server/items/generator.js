@@ -1,45 +1,74 @@
-let g1 = require('./generators/level'); 
-let g2 = require('./generators/quality'); 
-let g3 = require('./generators/slots'); 
-let g4 = require('./generators/types'); 
-let g5 = require('./generators/stats'); 
-let g6 = require('./generators/names'); 
-let g7 = require('./generators/worth'); 
-let g8 = require('./generators/quantity'); 
-let g9 = require('./generators/spellbook'); 
-let g10 = require('./generators/currency'); 
-let g11 = require('./generators/effects'); 
-let g12 = require('./generators/attrRequire');
-let g13 = require('./generators/recipeBook');
-
-let generators = [g1, g2, g3, g4, g5, g6, g11, g12, g7];
-let materialGenerators = [g6, g8];
-let spellGenerators = [g1, g2, g9, g7];
-let currencyGenerators = [g10, g8];
-let recipeGenerators = [g6, g13];
-
+const GENERATORS = {
+	level: require('./generators/level')
+	, quality: require('./generators/quality')
+	, slots: require('./generators/slots')
+	, types: require('./generators/types')
+	, stats: require('./generators/stats')
+	, names: require('./generators/names')
+	, worth: require('./generators/worth')
+	, quantity: require('./generators/quantity')
+	, spellbook: require('./generators/spellbook')
+	, currency: require('./generators/currency')
+	, effects: require('./generators/effects')
+	, attrRequire: require('./generators/attrRequire')
+	, recipeBook: require('./generators/recipeBook')
+}
+const itemGenerators = [
+	GENERATORS.level
+	, GENERATORS.quality
+	, GENERATORS.slots
+	, GENERATORS.types
+	, GENERATORS.stats
+	, GENERATORS.names
+	, GENERATORS.effects
+	, GENERATORS.attrRequire
+	, GENERATORS.worth
+];
+const materialGenerators = [
+	GENERATORS.names
+	, GENERATORS.quantity
+];
+const spellGenerators = [
+	GENERATORS.level
+	, GENERATORS.quality
+	, GENERATORS.spellbook
+	, GENERATORS.worth
+];
+const currencyGenerators = [
+	GENERATORS.currency
+	, GENERATORS.quantity
+];
+const recipeGenerators = [
+	GENERATORS.names
+	, GENERATORS.recipeBook
+];
 module.exports = {
 	spellChance: 0.035,
 	currencyChance: 0.035,
 
 	generate: function (blueprint, ownerLevel) {
-		let isSpell = false;
-		let isCurrency = false;
-
-		let hadBlueprint = Boolean(blueprint);
+		const hadBlueprint = Boolean(blueprint);
 		blueprint = blueprint || {};
-
-		let item = {};
 
 		const dropChancesEvent = {
 			blueprint,
 			spellChance: this.spellChance,
 			currencyChance: this.currencyChance
 		};
-
 		if (!blueprint.slot && !blueprint.type && !blueprint.spell) {
 			global.instancer.instances[0].eventEmitter.emit('onBeforeGetDropChances', dropChancesEvent);
 		}
+		delete dropChancesEvent.blueprint;
+		const beforeGenerateItemEvent = {
+			blueprint,
+			item: null,
+			dropChances: dropChancesEvent
+		};
+		global.instancer.instances[0].eventEmitter.emit('beforeGenerateItem', beforeGenerateItemEvent);
+		if (beforeGenerateItemEvent.item) {
+			return beforeGenerateItemEvent.item;
+		}
+
 		let currencyChance = dropChancesEvent.currencyChance;
 		if (blueprint.level) {
 			//Idol droprate before level 5 is 0, after which it slowly increases and flattens out at level 15
@@ -57,10 +86,13 @@ module.exports = {
 		if (blueprint.noCurrency) {
 			currencyChance = 0;
 		}
+
+		let isSpell = false;
+		let isCurrency = false;
 		if (!blueprint.slot && !blueprint.noSpell && !blueprint.material && !blueprint.type) {
 			isSpell = blueprint.spell;
 			isCurrency = blueprint.currency;
-			if ((!isCurrency) && (!isSpell) && ((!hadBlueprint) || ((!blueprint.type) && (!blueprint.slot) && (!blueprint.stats)))) {
+			if (!isCurrency && !isSpell && (!hadBlueprint || (!blueprint.type && !blueprint.slot && !blueprint.stats))) {
 				isSpell = Math.random() < dropChancesEvent.spellChance;
 				if (!isSpell) {
 					isCurrency = Math.random() < currencyChance;
@@ -70,14 +102,8 @@ module.exports = {
 		if (blueprint.isSpell) {
 			isSpell = true;
 		}
-		const beforeGenerateItemEvent = {
-			blueprint,
-			item: null
-		};
-		global.instancer.instances[0].eventEmitter.emit('beforeGenerateItem', beforeGenerateItemEvent);
-		if (beforeGenerateItemEvent.item) {
-			return beforeGenerateItemEvent.item;
-		}
+
+		const item = {};
 		if (isSpell) {
 			spellGenerators.forEach(g => g.generate(item, blueprint));
 		} else if (isCurrency) {
@@ -97,9 +123,9 @@ module.exports = {
 		} else if (blueprint.type === 'recipe') {
 			recipeGenerators.forEach(g => g.generate(item, blueprint));
 		} else {
-			generators.forEach(g => g.generate(item, blueprint));
+			itemGenerators.forEach(g => g.generate(item, blueprint));
 			if (blueprint.spellName) {
-				g9.generate(item, blueprint);
+				GENERATORS.spellbook.generate(item, blueprint);
 			}
 		}
 		if (blueprint.spritesheet) {
@@ -132,7 +158,7 @@ module.exports = {
 	pickRandomSlot: function () {
 		let item = {};
 		let blueprint = {};
-		g3.generate(item, blueprint);
+		GENERATORS.slots.generate(item, blueprint);
 		return item.slot;
 	}
 };

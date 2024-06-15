@@ -1,5 +1,5 @@
 const events = require('../../misc/events');
-const profanities = require('../../misc/profanities');
+const profanities = require('../../language/profanities');
 const canChat = require('./canChat');
 
 const sendRegularMessage = async ({ obj }, msg) => {

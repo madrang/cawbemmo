@@ -26,9 +26,9 @@ define([
 			} else if (this.kbUpper === 1) {
 				keyboard.splice(keyboard.indexOf('Z'), 0, 'caps');
 				keyboard.splice(keyboard.indexOf('M') + 1, 0, '<<');
-			} else if (this.kbUpper === 2) 
+			} else if (this.kbUpper === 2) {
 				keyboard.splice(keyboard.indexOf('/') + 1, 0, '<<');
-
+			}
 			keyboard.push(...['|', '123', ',', 'space', '.', 'send']);
 
 			let row = 0;
@@ -37,31 +37,28 @@ define([
 					row++;
 
 					const postGapCount = row === 4 ? 0 : row - 1;
-					for (let i = 0; i < postGapCount; i++) 
+					for (let i = 0; i < postGapCount; i++) {
 						$('<div class="gap" />').appendTo(container);
-					
+					}
 					$('<div class="newline" />').appendTo(container);
-					
+
 					const preGapCount = row === 3 ? 0 : row;
-					for (let i = 0; i < preGapCount; i++) 
+					for (let i = 0; i < preGapCount; i++) {
 						$('<div class="gap" />').appendTo(container);
-
-					return;	
+					}
+					return;
 				}
-
 				let className = (k.length === 1) ? 'key' : 'key special';
 				if (k === ' ') {
 					k = '.';
 					className = 'key hidden';
 				}
-
 				className += ' ' + k;
 
-				let elKey = $(`<div class="${className}">${k}</div>`)
-					.appendTo(container);
-
-				if (!className.includes('hidden')) 	
+				let elKey = $(`<div class="${className}">${k}</div>`).appendTo(container);
+				if (!className.includes('hidden')) {
 					elKey.on('click', this.clickKey.bind(this, k));
+				}
 			});
 		},
 

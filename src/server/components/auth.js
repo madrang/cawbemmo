@@ -1,8 +1,8 @@
 //Imports
 const bcrypt = require('bcrypt-nodejs');
-const messages = require('../misc/messages');
+const messages = require('../language/messages');
 const skins = require('../config/skins');
-const profanities = require('../misc/profanities');
+const profanities = require('../language/profanities');
 const fixes = require('../fixes/fixes');
 const spirits = require('../config/spirits');
 const ga = require('../security/ga');
@@ -18,10 +18,9 @@ const getCreateLock = async () => {
 		createLockBuffer.spliceWhere(c => c === lockEntry);
 
 		const nextEntry = createLockBuffer[0];
-
-		if (!nextEntry)
+		if (!nextEntry) {
 			return;
-
+		}
 		nextEntry.takeLock();
 	};
 
@@ -31,15 +30,11 @@ const getCreateLock = async () => {
 
 		if (!createLockBuffer.length) {
 			createLockBuffer.push(lockEntry);
-
 			lockEntry.takeLock();
-
 			return;
 		}
-
 		createLockBuffer.push(lockEntry);
 	});
-
 	return promise;
 };
 
@@ -57,15 +52,15 @@ module.exports = {
 	customChannels: [],
 
 	play: async function (data) {
-		if (!this.username || this.charname)
+		if (!this.username || this.charname) {
 			return;
-
+		}
 		let character = this.characters[data.data.name];
-		if (!character)
+		if (!character) {
 			return;
-		else if (character.permadead)
+		} else if (character.permadead) {
 			return;
-
+		}
 		character.stash = this.stash;
 		character.account = this.username;
 

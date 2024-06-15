@@ -11,7 +11,7 @@ define([
 		color: 0xffffff,
 
 		init: function (blueprint) {
-			if ((blueprint) && (blueprint.msg)) {
+			if (blueprint && blueprint.msg) {
 				this.extend(blueprint);
 			}
 		},

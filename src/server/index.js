@@ -14,7 +14,7 @@ const salvager = require('./items/salvager');
 const recipes = require('./config/recipes/recipes');
 const mapManager = require('./world/mapManager');
 const fixes = require('./fixes/fixes');
-const profanities = require('./misc/profanities');
+const profanities = require('./language/profanities');
 const routerConfig = require('./security/routerConfig');
 const { spawnMapThreads } = require('./world/threadManager');
 
