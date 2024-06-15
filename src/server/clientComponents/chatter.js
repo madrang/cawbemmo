@@ -32,7 +32,11 @@ define([
 		},
 
 		extend: function (serverMsg) {
-			let msg = serverMsg.msg + '\n\'';
+			if (typeof serverMsg?.msg !== "string") {
+				console.error("Chatter.js: 'serverMsg.msg' is not a string.");
+				return;
+			}
+			const msg = (serverMsg.msg.endsWith('\n') ? serverMsg.msg : serverMsg.msg + '\n');
 			this.msg = msg;
 			const obj = this.obj;
 
