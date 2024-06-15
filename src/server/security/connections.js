@@ -64,7 +64,7 @@ module.exports = {
 			});
 			if (player.has('id')) {
 				this.modifyPlayerCount(-1);
-				_.log("Connections.js: Player %s disconnected after %s seconds", player.name, sessionDuration);
+				_.log.connections.info("Player %s disconnected after %s seconds", player.name, sessionDuration);
 			}
 		}
 		this.players.spliceWhere(p => p.socket.id === socket.id);

@@ -62,7 +62,7 @@ module.exports = {
 			map.randomMap.init(fakeInstance);
 			this.startRegen();
 		} else {
-			_.log(`(M ${map.name}): Ready`);
+			_.log.World.notice(`(M ${map.name}): Ready`);
 		}
 		map.clientMap.zoneId = this.zoneId;
 
@@ -103,9 +103,9 @@ module.exports = {
 		//Ensure that all players are gone
 		const players = objects.objects.filter(o => o.player);
 		players.forEach(p => {
-			if (p.destroyed)
+			if (p.destroyed) {
 				return;
-
+			}
 			p.fireEvent('beforeRezone');
 			p.destroyed = true;
 
@@ -132,7 +132,6 @@ module.exports = {
 		if (players.length) {
 			objects.update();
 			syncer.update();
-
 			return;
 		}
 
@@ -147,9 +146,9 @@ module.exports = {
 		//Try a generation
 		const isValid = map.randomMap.generate();
 
-		if (!isValid)
+		if (!isValid) {
 			return;
-
+		}
 		map.seed = _.getGuid();
 
 		//If it succeeds, set regenBusy to false and reset vars
@@ -158,21 +157,17 @@ module.exports = {
 		this.respawnMap = null;
 
 		this.addQueue.forEach(q => this.addObject(q));
-
 		this.addQueue = [];
 
-		_.log(`(M ${map.name}): Ready`);
+		_.log.World.notice(`(M ${map.name}): Ready`);
 	},
 
 	tick: function () {
 		if (this.regenBusy) {
 			this.tickRegen();
-
 			setTimeout(this.tick.bind(this), this.speed);
-
 			return;
 		}
-
 		events.update();
 		objects.update();
 		resourceSpawner.update();
@@ -187,7 +182,6 @@ module.exports = {
 	addObject: function (msg) {
 		if (this.regenBusy) {
 			this.queueMessage(msg);
-
 			return;
 		}
 
@@ -207,22 +201,21 @@ module.exports = {
 			o.destroyed = true;
 		});
 
-		if (spawnEvent.changed)
+		if (spawnEvent.changed) {
 			msg.keepPos = false;
-
-		if (msg.keepPos && (!physics.isValid(obj.x, obj.y) || !map.canPathFromPos(obj)))
+		}
+		if (msg.keepPos && (!physics.isValid(obj.x, obj.y) || !map.canPathFromPos(obj))) {
 			msg.keepPos = false;
-
+		}
 		if (!msg.keepPos || !obj.has('x') || (map.mapFile.properties.isRandom && obj.zoneMapSeed !== map.seed)) {
 			obj.x = spawnPos.x;
 			obj.y = spawnPos.y;
 		}
-
-		if (map.seed)
+		if (map.seed) {
 			obj.zoneMapSeed = map.seed;
-		else
+		} else {
 			delete obj.zoneMapSeed;
-
+		}
 		obj.spawn = map.spawn;
 
 		stageZoneIn(msg);
@@ -244,10 +237,8 @@ module.exports = {
 			obj.stats.onLogin();
 			eventEmitter.emit('onAfterPlayerEnterZone', obj, { isTransfer: false });
 		}
-
 		questBuilder.obtain(obj);
 		obj.fireEvent('afterMove');
-
 		if (obj.dead) {
 			obj.instance.syncer.queue('onDeath', {
 				x: obj.x,
@@ -258,17 +249,15 @@ module.exports = {
 
 	updateObject: function (msg) {
 		let obj = objects.find(o => o.serverId === msg.id);
-		if (!obj)
+		if (!obj) {
 			return;
-
+		}
 		let msgObj = msg.obj;
-
 		let components = msgObj.components || [];
 		delete msgObj.components;
-
-		for (let p in msgObj) 
+		for (let p in msgObj) {
 			obj[p] = msgObj[p];
-
+		}
 		let cLen = components.length;
 		for (let i = 0; i < cLen; i++) {
 			let c = components[i];
@@ -279,24 +268,24 @@ module.exports = {
 	},
 
 	queueAction: function (msg) {
-		let obj = objects.find(o => o.serverId === msg.id);
-		if (!obj)
+		const obj = objects.find(o => o.serverId === msg.id);
+		if (!obj) {
 			return;
-		else if (msg.action.action === 'move') {
+		} else if (msg.action.action === 'move') {
 			let moveEntries = obj.actionQueue.filter(q => (q.action === 'move')).length;
-			if (moveEntries >= 50)
+			if (moveEntries >= 50) {
 				return;
+			}
 		}
-
 		obj.queue(msg.action);
 	},
 
 	performAction: function (msg) {
 		let obj = null;
 		let targetId = msg.action.data.targetId;
-		if (!targetId)
+		if (!targetId) {
 			obj = objects.find(o => o.serverId === msg.id);
-		else {
+		} else {
 			obj = objects.find(o => o.id === targetId);
 			if (obj) {
 				let action = msg.action;
@@ -305,19 +294,16 @@ module.exports = {
 				action.data.sourceId = msg.id;
 			}
 		}
-
-		if (!obj)
+		if (!obj) {
 			return;
-
+		}
 		obj.performAction(msg.action);
 	},
 
 	removeObject: async function (msg) {
 		if (this.regenBusy) {
 			this.unqueueMessage(msg);
-
 			this.resolveCallback(msg);
-
 			return;
 		}
 
@@ -330,21 +316,17 @@ module.exports = {
 		if (!obj) {
 			//We could reach this if a player dc's while zoning in
 			this.resolveCallback(msg);
-
 			return;
 		}
-
-		if (obj.auth)
+		if (obj.auth) {
 			await obj.auth.doSave();
-
+		}
 		if (obj.player) {
 			obj.fireEvent('beforeRezone');
 
 			eventEmitter.emit('onAfterPlayerLeaveZone', obj);
 		}
-
 		obj.destroyed = true;
-
 		this.resolveCallback(msg);
 	},
 
@@ -366,10 +348,8 @@ module.exports = {
 				table: 'error',
 				value: 'no auth found for forcesave ' + player?.name
 			});
-
 			return;
 		}
-
 		await player.auth.doSave();
 
 		this.resolveCallback(msg);
@@ -384,9 +364,9 @@ module.exports = {
 	},
 
 	resolveCallback: function ({ callbackId }, data) {
-		if (!callbackId)
+		if (!callbackId) {
 			return;
-
+		}
 		const payload = {
 			module: 'atlas',
 			method: 'resolveCallback',
@@ -394,10 +374,9 @@ module.exports = {
 				id: callbackId
 			}
 		};
-
-		if (data)
+		if (data) {
 			Object.assign(payload.msg, data);
-
+		}
 		process.send(payload);
 	}
 };

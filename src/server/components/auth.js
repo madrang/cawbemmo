@@ -279,10 +279,10 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
-			_.log("Auth.js: User %s - Login denied! Invalid password.", username);
+			_.log.auth.notice("User %s - Login denied! Invalid password.", username);
 			return;
 		}
-		_.log("Auth.js: User %s - Connected!", username);
+		_.log.auth.info("User %s - Connected!", username);
 
 		const emBeforeLogin = {
 			obj: this.obj,

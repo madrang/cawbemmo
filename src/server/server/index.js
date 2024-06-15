@@ -54,7 +54,7 @@ const init = async () => {
 
 	socketServer.on('connection', onConnection);
 	await new Promise(resolve => server.listen(port, resolve));
-	_.log(startupMessage);
+	_.log.Server.info(startupMessage);
 };
 
 //Exports

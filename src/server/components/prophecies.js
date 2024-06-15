@@ -8,7 +8,7 @@ module.exports = {
 			try {
 				template = require('../config/prophecies/' + p);
 			} catch (e) {
-				_.error(e);
+				_.log.prophecies.error(e);
 			}
 			if (!template) {
 				return;

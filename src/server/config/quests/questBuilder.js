@@ -26,7 +26,7 @@ module.exports = {
 			zoneTemplate = require(`../../${zone.path}/${zoneName}/quests.js`);
 		} catch (e) {
 			zoneTemplate = globalQuests;
-			_.error(e);
+			_.log.questBuilder.error(e);
 		}
 
 		if (!zoneTemplate) {

@@ -21,14 +21,14 @@ module.exports = {
 		try {
 			await r.dbCreate(serverConfig.dbName).run();
 		} catch (e) {
-			_.error(e);
+			_.log.ioDB.error(e);
 		}
 		for (const table of tableNames) {
 			try {
 				await r.tableCreate(table).run();
 			} catch (e) {
 				if (!e.message.includes('already exists')) {
-					_.error(e);
+					_.log.ioDB.error(e);
 				}
 			}
 		}
@@ -36,12 +36,12 @@ module.exports = {
 		//Create indices used for case-insensitive checks
 		if (!(await r.table('login').indexList()).includes('idLowerCase')) {
 			await r.table('login').indexCreate('idLowerCase', r.row('id').downcase());
-			_.log('Created index: idLowerCase on table: login');
+			_.log.ioDB.debug('Created index: idLowerCase on table: login');
 		}
 
 		if (!(await r.table('character').indexList()).includes('idLowerCase')) {
 			await r.table('character').indexCreate('idLowerCase', r.row('id').downcase());
-			_.log('Created index: idLowerCase on table: character');
+			_.log.ioDB.debug('Created index: idLowerCase on table: character');
 		}
 	},
 
@@ -50,7 +50,7 @@ module.exports = {
 			await r.tableCreate(tableName).run();
 		} catch (e) {
 			if (!e.message.includes('already exists')) {
-				_.error(e);
+				_.log.ioDB.error(e);
 			}
 		}
 	},
@@ -248,7 +248,7 @@ module.exports = {
 	},
 
 	logError: async function ({ sourceModule, sourceMethod, error, info }) {
-		_.error(error);
+		_.log.ioDB.error(error);
 		try {
 			await this.setAsync({
 				table: 'error',
@@ -262,7 +262,7 @@ module.exports = {
 				}
 			});
 		} catch (e) {
-			_.error(e);
+			_.log.ioDB.error(e);
 		}
 		if (process.send) {
 			process.send({

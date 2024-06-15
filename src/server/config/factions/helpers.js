@@ -14,7 +14,7 @@ const getFactionBlueprint = factionId => {
 	try {
 		res = factions.getFaction(factionId);
 	} catch (e) {
-		_.error(e);
+		_.log.getFactionBlueprint.error(e);
 	}
 	if (!res) {
 		return;

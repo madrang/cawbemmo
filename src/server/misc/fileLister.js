@@ -10,7 +10,7 @@ module.exports = {
 		try {
 			return fs.readdirSync(path).filter((file) => fs.statSync(fsPath.join(path, file)).isDirectory());
 		} catch (e) {
-			_.error(e);
+			_.log.getFolderList.error(e);
 		}
 		return [];
 	}

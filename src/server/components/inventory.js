@@ -411,7 +411,7 @@ module.exports = {
 								e.text = effectModule.events.onGetText(item, e);
 							}
 						} catch (error) {
-							_.error(`Effect not found: ${e.type}`, error);
+							_.log.inventory.error(`Effect not found: ${e.type}`, error);
 						}
 					}
 				});
