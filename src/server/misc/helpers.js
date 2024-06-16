@@ -126,7 +126,7 @@ _eventLevel.STANDARD = _eventLevel.MINIMUM | _eventLevel.NOTICE | _eventLevel.IN
 _eventLevel.VERBOSE = _eventLevel.STANDARD | _eventLevel.DEBUG;
 
 let _consoleLogLevel = _eventLevel.STANDARD;
-let _consoleLogFilter = function(logger, logLvl, ...args) {
+let _consoleLogFilter = function(logger, logLvl, args) {
 	return true;
 };
 
