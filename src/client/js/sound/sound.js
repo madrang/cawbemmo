@@ -102,20 +102,16 @@ define([
 
 			if (!sound) {
 				const { file, loop } = soundEntry;
-
 				soundEntry.sound = this.loadSound(file, loop, true, volume);
-
 				return;
 			}
-
 			soundEntry.volume = volume;
-
 			volume *= (soundVolume / 100);
 
 			if (sound.playing()) {
-				if (sound.volume() === volume)
+				if (sound.volume() === volume) {
 					return;
-
+				}
 				sound.volume(volume);
 			} else {
 				sound.volume(volume);
@@ -125,39 +121,32 @@ define([
 
 		playMusicHelper: function (soundEntry) {
 			const { sound } = soundEntry;
-
 			if (!sound) {
 				const { file, loop } = soundEntry;
-
 				soundEntry.volume = musicVolume;
 				soundEntry.sound = this.loadSound(file, loop, true, musicVolume / 100);
-
 				return;
 			}
-
 			if (!sound.playing()) {
 				soundEntry.volume = 0;
 				sound.volume(0);
 				sound.play();
 			}
-
-			if (this.currentMusic === soundEntry && sound.volume() === musicVolume / 100)
+			if (this.currentMusic === soundEntry && sound.volume() === musicVolume / 100) {
 				return;
-
+			}
 			this.currentMusic = soundEntry;
-
 			sound.fade(sound.volume(), (musicVolume / 100), fadeDuration);
 		},
 
 		stopSoundHelper: function (soundEntry) {
 			const { sound, music } = soundEntry;
-
-			if (!sound || !sound.playing())
+			if (!sound || !sound.playing()) {
 				return;
-
-			if (music)
+			}
+			if (music) {
 				sound.fade(sound.volume(), 0, fadeDuration);
-			else {
+			} else {
 				sound.stop();
 				sound.volume(0);
 			}
@@ -166,25 +155,21 @@ define([
 		updateSounds: function (playerX, playerY) {
 			this.sounds.forEach(s => {
 				const { x, y, area, music, scope } = s;
-
-				if (music || scope === 'ui')
+				if (music || scope === 'ui') {
 					return;
-
+				}
 				let distance = 0;
-
 				if (!area) {
 					let dx = Math.abs(x - playerX);
 					let dy = Math.abs(y - playerY);
 					distance = Math.max(dx, dy);
-				} else if (!physics.isInPolygon(playerX, playerY, area))
+				} else if (!physics.isInPolygon(playerX, playerY, area)) {
 					distance = physics.distanceToPolygon([playerX, playerY], area);
-				
+				}
 				if (distance > minDistance) {
 					this.stopSoundHelper(s);
-
 					return;
 				}
-
 				//Exponential fall-off
 				const volume = s.maxVolume * (1 - (Math.pow(distance, 2) / Math.pow(minDistance, 2)));
 				this.playSoundHelper(s, volume);
@@ -205,10 +190,11 @@ define([
 			//Stop or start defaultMusic, depending on whether anything else was found
 			const defaultMusic = sounds.filter(a => a.defaultMusic);
 			if (defaultMusic) {
-				if (!playMusic.length)
+				if (!playMusic.length) {
 					defaultMusic.forEach(m => this.playMusicHelper(m));
-				else
+				} else {
 					defaultMusic.forEach(m => this.stopSoundHelper(m));
+				}
 			}
 
 			//If there's a music entry in both 'play' and 'stop' that shares a fileName, we'll just ignore it. This happens when you
@@ -231,12 +217,11 @@ define([
 			{ name: soundName, scope, file, volume = 1, x, y, w, h, area, music, defaultMusic, autoLoad, loop }
 		) {
 			if (this.sounds.some(s => s.file === file)) {
-				if (window.player?.x !== undefined)
+				if (window.player?.x !== undefined) {
 					this.update(window.player.x, window.player.y);
-
+				}
 				return;
 			}
-
 			if (!area && w) {
 				area = [
 					[x, y],
@@ -245,14 +230,13 @@ define([
 					[x, y + h]
 				];
 			}
-
 			let sound = null;
-			if (autoLoad)
+			if (autoLoad) {
 				sound = this.loadSound(file, loop);
-
-			if (music)
+			}
+			if (music) {
 				volume = 0;
-
+			}
 			const soundEntry = {
 				name: soundName,
 				sound,
@@ -267,12 +251,11 @@ define([
 				music,
 				defaultMusic
 			};
-
 			this.sounds.push(soundEntry);
 
-			if (window.player?.x !== undefined)
+			if (window.player?.x !== undefined) {
 				this.update(window.player.x, window.player.y);
-
+			}
 			return soundEntry;
 		},
 
@@ -291,27 +274,25 @@ define([
 
 		onToggleAudio: function (isAudioOn) {
 			this.muted = !isAudioOn;
-
 			this.sounds.forEach(s => {
-				if (!s.sound)
+				if (!s.sound) {
 					return;
-
+				}
 				s.sound.mute(this.muted);
 			});
-
-			if (!window.player)
+			if (!window.player) {
 				return;
-			
+			}
 			const { player: { x, y } } = window;
 			this.update(x, y);
 		},
 
 		onManipulateVolume: function ({ soundType, delta }) {
-			if (soundType === 'sound')
+			if (soundType === 'sound') {
 				soundVolume = Math.max(0, Math.min(100, soundVolume + delta));
-			else if (soundType === 'music')
+			} else if (soundType === 'music') {
 				musicVolume = Math.max(0, Math.min(100, musicVolume + delta));
-
+			}
 			const volume = soundType === 'sound' ? soundVolume : musicVolume;
 
 			events.emit('onVolumeChange', {

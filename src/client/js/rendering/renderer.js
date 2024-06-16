@@ -301,7 +301,7 @@ define([
 			this.clean();
 			spritePool.clean();
 
-			this.stage.filters = [new PIXI.filters.AlphaFilter()];
+			this.stage.filters = [new PIXI.AlphaFilter()];
 			this.stage.filterArea = new PIXI.Rectangle(0, 0, Math.max(w * scale, this.width), Math.max(h * scale, this.height));
 
 			this.hiddenRooms = msg.hiddenRooms;
@@ -894,13 +894,11 @@ define([
 		},
 
 		render: function () {
-			if (!this.stage)
+			if (!this.stage) {
 				return;
-
+			}
 			effects.render();
-
 			particleLayers.forEach(p => particleEngines[p].update());
-
 			this.renderer.render(this.stage);
 		}
 	};

@@ -1,7 +1,5 @@
 define(['text'], function(textPlugin) {
-
-	var buildText = {};
-
+	const buildText = {};
 	return {
 
 		load: function(name, req, onLoad, config) {
@@ -117,7 +115,5 @@ define(['text'], function(textPlugin) {
 			}
 
 		}
-
 	};
-
 });

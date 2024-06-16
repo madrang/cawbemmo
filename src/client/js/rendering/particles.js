@@ -23,18 +23,15 @@ define([
 		},
 
 		buildEmitter: function (config) {
-			let obj = config.obj;
+			const obj = config.obj;
 			delete config.obj;
-
-			let options = $.extend(true, {}, particleDefaults, config);
-
-			let emitter = new PIXI.particles.Emitter(this.stage, ['images/particles.png'], options);
+			const options = $.extend(true, {}, particleDefaults, config);
+			const newCfg = PIXI.particles.upgradeConfig(options, ['images/particles.png']);
+			const emitter = new PIXI.particles.Emitter(this.stage, newCfg);
 			emitter.obj = obj;
 			emitter.emit = true;
 			emitter.particleEngine = this;
-
 			this.emitters.push(emitter);
-
 			return emitter;
 		},
 
@@ -43,50 +40,45 @@ define([
 		},
 
 		update: function () {
-			let renderer = this.r;
-			let now = Date.now();
-
-			let emitters = this.emitters;
+			const renderer = this.r;
+			const now = Date.now();
+			const emitters = this.emitters;
 			let eLen = emitters.length;
 			for (let i = 0; i < eLen; i++) {
-				let e = emitters[i];
-
+				const e = emitters[i];
 				let visible = null;
-				let destroy = (
-					(!e.emit) &&
-					(e.obj.destroyed)
-				);
-
+				let destroy = ((!e.emit) && (e.obj.destroyed));
 				if (destroy) {
 					if (e.particleCount > 0) {
 						visible = renderer.isVisible(e.spawnPos.x, e.spawnPos.y);
-						if (visible) 
+						if (visible)  {
 							destroy = false;
+						}
 					}
 				}
-
 				if (destroy) {
 					emitters.splice(i, 1);
 					e.destroy();
-					e = null;
-
 					i--;
 					eLen--;
 					continue;
-				} 
-
-				if (visible === null)
+				}
+				if (visible === null) {
 					visible = renderer.isVisible(e.spawnPos.x, e.spawnPos.y);
-				if (!visible)
+				}
+				if (!visible) {
 					continue;
-
+				}
 				let r = e.update((now - this.lastTick) * 0.001);
-				r.forEach(function (rr) {
-					if (e.blendMode === 'overlay')
-						rr.pluginName = 'picture';
-				}, this);
+				if (r) {
+					console.log("Particles", r);
+					r.forEach(function (rr) {
+						if (e.blendMode === 'overlay') {
+							rr.pluginName = 'picture';
+						}
+					}, this);
+				}
 			}
-
 			this.lastTick = now;
 		}
 	};
