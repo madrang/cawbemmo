@@ -1,7 +1,7 @@
 {
-  "name": "isleward_server",
-  "version": "0.14.0",
-  "description": "isleward",
+  "name": "cawbemmo_server",
+  "version": "0.0.1",
+  "description": "NodeJS Server for CawbeMMO.",
   "dependencies": {
     "axios": "^0.22.0",
     "bcrypt-nodejs": "0.0.3",

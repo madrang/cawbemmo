@@ -1,7 +1,7 @@
 {
-  "name": "isleward",
-  "version": "0.14.0",
-  "description": "isleward",
+  "name": "cawbemmo",
+  "version": "0.0.1",
+  "description": "CawbeMMO is an opensource MMO in javascript originaly forked from Isleward.",
   "dependencies": {
    
   },
