@@ -5,15 +5,11 @@ Object.defineProperty(Array.prototype, 'spliceWhere', {
 		let T = thisArg;
 		let O = Object(this);
 		let len = O.length >>> 0;
-
 		let k = 0;
-
 		while (k < len) {
 			let kValue;
-
 			if (k in O) {
 				kValue = O[k];
-
 				if (callback.call(T, kValue, k, O)) {
 					O.splice(k, 1);
 					k--;
@@ -326,8 +322,7 @@ _logHandler.get = function(target, propertyKey) {
 			return newLog;
 		}
 	} else {
-		const newLog = _createLogger(target, propertyKey);
-		return newLog;
+		return _createLogger(target, propertyKey);
 	}
 };
 Object.freeze(_logHandler);

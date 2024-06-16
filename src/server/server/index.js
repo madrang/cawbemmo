@@ -30,6 +30,16 @@ const init = async () => {
 	});
 	global.cons.sockets = socketServer.sockets;
 
+	app.use(express.json());
+	app.post('/log', (req, res) => {
+		if (typeof req.body === "string") {
+			_.log.UserLog.info(`${req.ip} -> ${req.body}`);
+		} else {
+			_.log.UserLog.info(`${req.ip} -> ${JSON.stringify(req.body, undefined, 4)}`);
+		}
+		res.send({ response: "ok" });
+	});
+
 	app.use(compression());
 	app.use(minify());
 	app.use((req, res, next) => {
