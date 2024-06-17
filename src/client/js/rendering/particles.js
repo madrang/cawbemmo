@@ -26,6 +26,7 @@ define([
 			const obj = config.obj;
 			delete config.obj;
 			const options = $.extend(true, {}, particleDefaults, config);
+			//FIXME remove upgradeConfig after updating the particle configuration.
 			const newCfg = PIXI.particles.upgradeConfig(options, ['images/particles.png']);
 			console.warn("Legacy Emitter config updated from %o to %o", options, newCfg);
 			const emitter = new PIXI.particles.Emitter(this.stage, newCfg);
@@ -70,7 +71,12 @@ define([
 				if (!visible) {
 					continue;
 				}
-				let r = e.update((now - this.lastTick) * 0.001);
+				let r;
+				try { //FIXME, Negative color crash in pixi.particles.js when tab is hidden for too long.
+					r = e.update((now - this.lastTick) * 0.001);
+				} catch (error) {
+					console.error(error);
+				}
 				if (r) {
 					console.log("Particles", r);
 					r.forEach(function (rr) {
