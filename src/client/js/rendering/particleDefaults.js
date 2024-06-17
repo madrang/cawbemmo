@@ -32,7 +32,7 @@ define([
 			min: 2
 			, max: 5
 		}
-		, frequency: 0.1
+		, frequency: 1
 		, emitterLifetime: -1
 		, pos: {
 			x: 0
