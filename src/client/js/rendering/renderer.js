@@ -55,10 +55,7 @@ define([
 		showTilesW: 0,
 		showTilesH: 0,
 
-		pos: {
-			x: 0,
-			y: 0
-		},
+		pos: { x: 0, y: 0 },
 		moveTo: null,
 		moveSpeed: 0,
 		moveSpeedMax: 1.50,
@@ -113,14 +110,12 @@ define([
 
 			this.stage = new PIXI.Container();
 
-			let layers = this.layers;
+			const layers = this.layers;
 			Object.keys(layers).forEach(l => {
 				layers[l] = new PIXI.Container();
 				layers[l].layer = (l === 'tileSprites') ? 'tiles' : l;
-
 				this.stage.addChild(layers[l]);
 			});
-
 			particleLayers.forEach(p => {
 				const engine = $.extend({}, particles);
 				engine.init({
@@ -128,10 +123,8 @@ define([
 					renderer: this.renderer,
 					stage: this.layers[p]
 				});
-
 				particleEngines[p] = engine;
 			});
-
 			this.buildSpritesTexture();
 		},
 
@@ -153,29 +146,27 @@ define([
 		},
 
 		toggleScreen: function () {
-			let isFullscreen = (window.innerHeight === screen.height);
-
-			if (isFullscreen) {
-				let doc = document;
+			if (window.innerHeight === screen.height) { // isFullscreen
+				// Change to windowed mode.
+				const doc = document;
 				(doc.cancelFullscreen || doc.msCancelFullscreen || doc.mozCancelFullscreen || doc.webkitCancelFullScreen).call(doc);
 				return 'Windowed';
-			} 
-
-			let el = $('body')[0];
+			}
+			// Enable fullscreen mode.
+			const el = $('body')[0];
 			(el.requestFullscreen || el.msRequestFullscreen || el.mozRequestFullscreen || el.webkitRequestFullscreen).call(el);
 			return 'Fullscreen';
 		},
 
 		buildTitleScreen: function () {
 			this.titleScreen = true;
-
 			renderLoginBackground(this);
 		},
 
 		onResize: function () {
-			if (isMobile)
+			if (isMobile) {
 				return;
-
+			}
 			this.width = $('body').width();
 			this.height = $('body').height();
 
@@ -189,12 +180,10 @@ define([
 					y: (window.player.y - (this.height / (scale * 2))) * scale
 				}, true);
 			}
-
 			if (this.titleScreen) {
 				this.clean();
 				this.buildTitleScreen();
 			}
-
 			events.emit('onResize');
 		},
 
@@ -248,35 +237,30 @@ define([
 			this.stage.addChild(container);
 
 			this.stage.children.sort((a, b) => {
-				if (a.layer === 'hiders')
+				if (a.layer === 'hiders') {
 					return 1;
-				else if (b.layer === 'hiders')
+				} else if (b.layer === 'hiders') {
 					return -1;
-				else if (a.layer === 'tiles')
+				} else if (a.layer === 'tiles') {
 					return -1;
-				else if (b.layer === 'tiles')
+				} else if (b.layer === 'tiles') {
 					return 1;
+				}
 				return 0;
 			});
 		},
 
 		buildTile: function (c, i, j) {
-			let alpha = tileOpacity.map(c);
-			let canFlip = tileOpacity.canFlip(c);
-
-			let tile = new PIXI.Sprite(this.getTexture('sprites', c));
-
-			tile.alpha = alpha;
+			const tile = new PIXI.Sprite(this.getTexture('sprites', c));
+			tile.alpha = tileOpacity.map(c);
 			tile.position.x = i * scale;
 			tile.position.y = j * scale;
 			tile.width = scale;
 			tile.height = scale;
-
-			if (canFlip && mRandom() < 0.5) {
+			if (tileOpacity.canFlip(c) && mRandom() < 0.5) {
 				tile.position.x += scale;
 				tile.scale.x = -scaleMult;
 			}
-
 			return tile;
 		},
 
@@ -291,9 +275,9 @@ define([
 			for (let i = 0; i < w; i++) {
 				let row = map[i];
 				for (let j = 0; j < h; j++) {
-					if (!row[j].split)
+					if (!row[j].split) {
 						row[j] += '';
-
+					}
 					row[j] = row[j].split(',');
 				}
 			}
@@ -309,10 +293,11 @@ define([
 			this.sprites = _.get2dArray(w, h, 'array');
 
 			this.stage.children.sort((a, b) => {
-				if (a.layer === 'tiles')
+				if (a.layer === 'tiles') {
 					return -1;
-				else if (b.layer === 'tiles')
+				} else if (b.layer === 'tiles') {
 					return 1;
+				}
 				return 0;
 			});
 

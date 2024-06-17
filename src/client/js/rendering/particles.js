@@ -27,6 +27,7 @@ define([
 			delete config.obj;
 			const options = $.extend(true, {}, particleDefaults, config);
 			const newCfg = PIXI.particles.upgradeConfig(options, ['images/particles.png']);
+			console.warn("Legacy Emitter config updated from %o to %o", options, newCfg);
 			const emitter = new PIXI.particles.Emitter(this.stage, newCfg);
 			emitter.obj = obj;
 			emitter.emit = true;
