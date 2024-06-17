@@ -1,4 +1,4 @@
-const buildPickedItems = require('./buildPickedItems');
+const buildPickedItems = require("./buildPickedItems");
 
 module.exports = (crafter, recipe, msg) => {
 	const { inventory: { items } } = crafter;
@@ -8,21 +8,23 @@ module.exports = (crafter, recipe, msg) => {
 	const pickedItems = buildPickedItems(crafter, recipe, msg);
 	const allPickedItemsSet = (
 		pickedItemIds.length === needItems.length &&
-		!pickedItems.some(i => !i)
+		!pickedItems.some((i) => !i)
 	);
 
-	if (!allPickedItemsSet)
+	if (!allPickedItemsSet) {
 		return [];
+	}
 
 	let useMaterials = materials;
 
-	if (materialGenerator)
+	if (materialGenerator) {
 		useMaterials = materialGenerator(crafter, pickedItems);
+	}
 
-	const result = useMaterials.map(m => {
+	const result = useMaterials.map((m) => {
 		const { name, nameLike, quantity } = m;
 
-		const haveMaterial = items.find(i => (
+		const haveMaterial = items.find((i) => (
 			i.name === name ||
 			i.name.includes(nameLike)
 		));
@@ -34,12 +36,12 @@ module.exports = (crafter, recipe, msg) => {
 		const noHaveEnough = haveQuantity < needQuantity;
 
 		const material = {
-			id,
-			name,
-			nameLike,
-			haveQuantity,
-			needQuantity,
-			noHaveEnough
+			id
+			, name
+			, nameLike
+			, haveQuantity
+			, needQuantity
+			, noHaveEnough
 		};
 
 		return material;

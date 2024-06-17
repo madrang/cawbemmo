@@ -1,14 +1,14 @@
 module.exports = {
-	type: 'particles',
+	type: "particles"
 
-	blueprint: null,
+	, blueprint: null
 
-	simplify: function (self) {
+	, simplify: function (self) {
 		const { blueprint } = this;
 
 		const result = {
-			type: 'particles',
-			blueprint
+			type: "particles"
+			, blueprint
 		};
 
 		return result;

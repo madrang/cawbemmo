@@ -1,6 +1,6 @@
 define([
-	'js/misc/statTranslations',
-	'ui/templates/tooltipItem/buildTooltip/stringifyStatValue'
+	"js/misc/statTranslations"
+	, "ui/templates/tooltipItem/buildTooltip/stringifyStatValue"
 ], function (
 	statTranslations,
 	stringifyStatValue
@@ -23,46 +23,46 @@ define([
 				return null;
 			}
 			if (children.join) {
-				children = children.join('');
+				children = children.join("");
 			}
 			if (!children.length) {
 				return null;
 			}
 			return `<div class="${className}">${children}</div>`;
-		},
+		}
 
-		name: () => {
+		, name: () => {
 			let itemName = item.name;
 			if (item.quantity > 1) {
-				itemName += ' x' + item.quantity;
+				itemName += " x" + item.quantity;
 			}
-			return itemName; 
-		},
+			return itemName;
+		}
 
-		type: () => {
+		, type: () => {
 			if (!item.type || item.type === item.name) {
 				return null;
 			}
 			return item.type;
-		},
+		}
 
-		power: () => {
+		, power: () => {
 			if (!item.power) {
 				return null;
 			}
-			return (new Array(item.power + 1)).join('+');
-		},
+			return (new Array(item.power + 1)).join("+");
+		}
 
-		implicitStats: () => {
+		, implicitStats: () => {
 			if (!item.implicitStats) {
 				return null;
 			}
 			const tempImplicitStats = $.extend(true, [], item.implicitStats);
 			if (compare && shiftDown && !item.eq) {
 				const compareImplicitStats = (compare.implicitStats || []);
-				tempImplicitStats.forEach(s => {
+				tempImplicitStats.forEach((s) => {
 					const { stat, value } = s;
-					const f = compareImplicitStats.find(c => c.stat === stat);
+					const f = compareImplicitStats.find((c) => c.stat === stat);
 					if (!f) {
 						s.value = `+${value}`;
 						return;
@@ -74,13 +74,13 @@ define([
 						s.value = delta;
 					}
 				});
-				compareImplicitStats.forEach(s => {
-					if (tempImplicitStats.some(f => f.stat === s.stat)) {
+				compareImplicitStats.forEach((s) => {
+					if (tempImplicitStats.some((f) => f.stat === s.stat)) {
 						return;
 					}
 					tempImplicitStats.push({
-						stat: s.stat,
-						value: -s.value
+						stat: s.stat
+						, value: -s.value
 					});
 				});
 			}
@@ -89,27 +89,27 @@ define([
 				.map(({ stat, value }) => {
 					let statName = statTranslations.translate(stat);
 					const prettyValue = stringifyStatValue(stat, value);
-					let rowClass = '';
+					let rowClass = "";
 					if (compare) {
-						if (prettyValue.indexOf('-') > -1) {
-							rowClass = 'loseStat';
-						} else if (prettyValue.indexOf('+') > -1) {
-							rowClass = 'gainStat';
+						if (prettyValue.indexOf("-") > -1) {
+							rowClass = "loseStat";
+						} else if (prettyValue.indexOf("+") > -1) {
+							rowClass = "gainStat";
 						}
 					}
 					return `<div class="${rowClass}">${prettyValue} ${statName}</div>`;
 				})
-				.join('');
+				.join("");
 
 			const result = (
-				lineBuilders.div('space', ' ') +
+				lineBuilders.div("space", " ") +
 				html
 			);
 
 			return result;
-		},
+		}
 
-		stats: () => {
+		, stats: () => {
 			const tempStats = $.extend(true, {}, item.stats);
 			const enchantedStats = item.enchantedStats || {};
 			if (compare && shiftDown) {
@@ -119,12 +119,12 @@ define([
 						if (compareStats[s]) {
 							const delta = tempStats[s] - compareStats[s];
 							if (delta > 0) {
-								tempStats[s] = '+' + delta;
+								tempStats[s] = "+" + delta;
 							} else if (delta < 0) {
 								tempStats[s] = delta;
 							}
 						} else {
-							tempStats[s] = '+' + tempStats[s];
+							tempStats[s] = "+" + tempStats[s];
 						}
 					}
 					for (let s in compareStats) {
@@ -134,106 +134,110 @@ define([
 					}
 				}
 			} else {
-				Object.keys(tempStats).forEach(s => {
+				Object.keys(tempStats).forEach((s) => {
 					if (enchantedStats[s]) {
 						tempStats[s] -= enchantedStats[s];
 						if (tempStats[s] <= 0) {
 							delete tempStats[s];
 						}
-						tempStats['_' + s] = enchantedStats[s];
+						tempStats["_" + s] = enchantedStats[s];
 					}
 				});
 			}
 			const html = Object.keys(tempStats)
-				.map(s => {
-					const isEnchanted = (s[0] === '_');
+				.map((s) => {
+					const isEnchanted = (s[0] === "_");
 					let statName = s;
-					if (isEnchanted)
+					if (isEnchanted) {
 						statName = statName.substr(1);
+					}
 
 					const prettyValue = stringifyStatValue(statName, tempStats[s]);
 					statName = statTranslations.translate(statName);
 
-					let rowClass = '';
+					let rowClass = "";
 
 					if (compare) {
-						if (prettyValue.indexOf('-') > -1)
-							rowClass = 'loseStat';
-						else if (prettyValue.indexOf('+') > -1)
-							rowClass = 'gainStat';
+						if (prettyValue.indexOf("-") > -1) {
+							rowClass = "loseStat";
+						} else if (prettyValue.indexOf("+") > -1) {
+							rowClass = "gainStat";
+						}
 					}
-					if (isEnchanted)
-						rowClass += ' enchanted';
+					if (isEnchanted) {
+						rowClass += " enchanted";
+					}
 
 					return `<div class="${rowClass}">${prettyValue} ${statName}</div>`;
 				})
 				.sort((a, b) => {
-					return (a.replace(' enchanted', '').length - b.replace(' enchanted', '').length);
+					return (a.replace(" enchanted", "").length - b.replace(" enchanted", "").length);
 				})
 				.sort((a, b) => {
-					if (a.indexOf('enchanted') > -1 && b.indexOf('enchanted') === -1)
+					if (a.indexOf("enchanted") > -1 && b.indexOf("enchanted") === -1) {
 						return 1;
-					else if (a.indexOf('enchanted') === -1 && b.indexOf('enchanted') > -1)
+					} else if (a.indexOf("enchanted") === -1 && b.indexOf("enchanted") > -1) {
 						return -1;
+					}
 
 					return 0;
 				})
-				.join('');
+				.join("");
 			if (!html) {
 				return null;
 			}
 			const result = (
-				lineBuilders.div('space', ' ') +
-				lineBuilders.div('line', ' ') +
-				lineBuilders.div('smallSpace', ' ') +
-				html + 
-				lineBuilders.div('smallSpace', ' ') +
-				lineBuilders.div('line', ' ')
+				lineBuilders.div("space", " ") +
+				lineBuilders.div("line", " ") +
+				lineBuilders.div("smallSpace", " ") +
+				html +
+				lineBuilders.div("smallSpace", " ") +
+				lineBuilders.div("line", " ")
 			);
 			return result;
-		},
+		}
 
-		effects: () => {
-			if (!item.effects || !item.effects.length || !item.effects[0].text || item.type === 'mtx') {
+		, effects: () => {
+			if (!item.effects || !item.effects.length || !item.effects[0].text || item.type === "mtx") {
 				return null;
 			}
-			let html = '';
+			let html = "";
 			item.effects.forEach((e, i) => {
 				html += e.text;
 				if (i < item.effects.length - 1) {
-					html += '<br />';
+					html += "<br />";
 				}
 			});
 			const result = (
-				lineBuilders.div('space', ' ') +
-				(item.spell?.values ? lineBuilders.div('line', ' ') + lineBuilders.div('space', ' ') : '') +
+				lineBuilders.div("space", " ") +
+				(item.spell?.values ? lineBuilders.div("line", " ") + lineBuilders.div("space", " ") : "") +
 				html +
-				lineBuilders.div('space', ' ') +
-				lineBuilders.div('line', ' ')
+				lineBuilders.div("space", " ") +
+				lineBuilders.div("line", " ")
 			);
 			return result;
-		},
+		}
 
-		material: () => {
+		, material: () => {
 			if (item.material) {
-				return 'crafting material';
+				return "crafting material";
 			}
-		},
+		}
 
-		quest: () => {
+		, quest: () => {
 			if (item.quest) {
-				return 'quest item';
+				return "quest item";
 			}
-		},
+		}
 
-		spellName: () => {
+		, spellName: () => {
 			if (!item.spell || item.ability) {
 				return null;
 			}
-			return (lineBuilders.div('space', ' ') + lineBuilders.div(`spellName q${item.spell.quality}`, item.spell.name));
-		},
+			return (lineBuilders.div("space", " ") + lineBuilders.div(`spellName q${item.spell.quality}`, item.spell.name));
+		}
 
-		damage: () => {
+		, damage: () => {
 			if (!item.spell || !item.spell.values) {
 				return null;
 			}
@@ -251,113 +255,113 @@ define([
 						delta -= Number.EPSILON;
 					}
 					delta = Math.floor((delta) * 100) / 100;
-					let rowClass = '';
+					let rowClass = "";
 					if (delta > 0) {
-						rowClass = 'gainDamage';
-						delta = '+' + delta;
+						rowClass = "gainDamage";
+						delta = "+" + delta;
 					} else if (delta < 0) {
-						rowClass = 'loseDamage';
+						rowClass = "loseDamage";
 					}
 					return `<div class="${rowClass}">${k}: ${delta}</div>`;
 				})
-				.join('');
+				.join("");
 			return abilityValues;
-		},
+		}
 
-		requires: (className, children) => {
+		, requires: (className, children) => {
 			if (!item.requires && !item.level && (!item.factions || !item.factions.length)) {
 				return null;
 			}
 			if (equipErrors.length) {
-				className += ' high-level';
+				className += " high-level";
 			}
-			return (lineBuilders.div('space', ' ') + lineBuilders.div(className, 'requires'));
-		},
+			return (lineBuilders.div("space", " ") + lineBuilders.div(className, "requires"));
+		}
 
-		requireLevel: className => {
+		, requireLevel: (className) => {
 			if (!item.level) {
 				return null;
 			}
-			if (equipErrors.includes('level')) {
-				className += ' high-level';
+			if (equipErrors.includes("level")) {
+				className += " high-level";
 			}
 			const level = item.level.push ? `${item.level[0]} - ${item.level[1]}` : item.level;
 			return lineBuilders.div(className, `level: ${level}`);
-		},
+		}
 
-		requireStats: className => {
+		, requireStats: (className) => {
 			if (!item.requires || !item.requires[0]) {
 				return null;
 			}
-			if (equipErrors.includes('stats')) {
-				className += ' high-level';
+			if (equipErrors.includes("stats")) {
+				className += " high-level";
 			}
 			let html = `${item.requires[0].stat}: ${item.requires[0].value}`;
 			return lineBuilders.div(className, html);
-		},
+		}
 
-		requireFaction: () => {
+		, requireFaction: () => {
 			if (!item.factions) {
 				return null;
 			}
-			let htmlFactions = '';
+			let htmlFactions = "";
 			item.factions.forEach((f, i) => {
-				let htmlF = f.name + ': ' + f.tierName;
+				let htmlF = f.name + ": " + f.tierName;
 				if (f.tier > window.player.reputation.getTier(f.id)) {
 					htmlF = `<font class="color-red">${htmlF}</font>`;
 				}
 				htmlFactions += htmlF;
 				if (i < item.factions.length - 1) {
-					htmlFactions += '<br />';
+					htmlFactions += "<br />";
 				}
 			});
 			return htmlFactions;
-		},
+		}
 
-		worth: () => {
+		, worth: () => {
 			if (!item.worthText) {
 				return null;
 			}
-			return `${lineBuilders.div('space', ' ')}value: ${item.worthText}`;
-		},
+			return `${lineBuilders.div("space", " ")}value: ${item.worthText}`;
+		}
 
-		info: () => {
+		, info: () => {
 			if (!item.slot) {
 				return null;
 			}
 			let text = null;
 			if (isMobile && compare && !shiftDown) {
-				text = 'tap again to compare';
+				text = "tap again to compare";
 			} else if (!shiftDown && compare) {
-				text = '[shift] to compare';
+				text = "[shift] to compare";
 			}
 			if (!text) {
 				return null;
 			}
 			return (
-				lineBuilders.div('space', ' ') +
+				lineBuilders.div("space", " ") +
 				text
 			);
-		},
+		}
 
-		description: () => {
+		, description: () => {
 			if (!item.description) {
 				return null;
 			}
 			return (
-				lineBuilders.div('space', ' ') +
+				lineBuilders.div("space", " ") +
 				item.description
 			);
-		},
+		}
 
-		cd: () => {
+		, cd: () => {
 			if (!item.cd) {
 				return null;
 			}
 			return `cooldown: ${item.cd}`;
-		},
+		}
 
-		uses: () => {
+		, uses: () => {
 			if (!item.uses) {
 				return null;
 			}
@@ -366,7 +370,7 @@ define([
 	};
 
 	return {
-		init,
-		lineBuilders
+		init
+		, lineBuilders
 	};
 });

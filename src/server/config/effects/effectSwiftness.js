@@ -1,21 +1,21 @@
 module.exports = {
-	type: 'swiftness',
+	type: "swiftness"
 
-	amount: 1,
+	, amount: 1
 
-	init: function () {
-		this.obj.stats.addStat('sprintChance', this.amount);
-	},
+	, init: function () {
+		this.obj.stats.addStat("sprintChance", this.amount);
+	}
 
-	destroy: function () {
-		this.obj.stats.addStat('sprintChance', -this.amount);
-	},
+	, destroy: function () {
+		this.obj.stats.addStat("sprintChance", -this.amount);
+	}
 
-	update: function () {
+	, update: function () {
 
-	},
+	}
 
-	events: {
+	, events: {
 
 	}
 };

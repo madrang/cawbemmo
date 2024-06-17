@@ -1,16 +1,16 @@
-const setupConnection = require('./setupConnection');
-const doesCollide = require('./doesCollide');
+const setupConnection = require("./setupConnection");
+const doesCollide = require("./doesCollide");
 
 const buildRoom = (scope, template, connectTo, templateExit, connectToExit, isHallway) => {
 	const { rooms, leafConstraints, randInt } = scope;
 
 	let room = {
-		x: 0,
-		y: 0,
-		distance: 0,
-		isHallway: isHallway,
-		template: extend({}, template),
-		connections: []
+		x: 0
+		, y: 0
+		, distance: 0
+		, isHallway: isHallway
+		, template: extend({}, template)
+		, connections: []
 	};
 
 	if (connectTo) {
@@ -20,11 +20,13 @@ const buildRoom = (scope, template, connectTo, templateExit, connectToExit, isHa
 		room.parent = connectTo;
 	}
 
-	if (doesCollide(scope, room, connectTo))
+	if (doesCollide(scope, room, connectTo)) {
 		return false;
+	}
 
-	if (connectTo)
+	if (connectTo) {
 		connectTo.connections.push(room);
+	}
 
 	rooms.push(room);
 
@@ -36,13 +38,14 @@ const buildRoom = (scope, template, connectTo, templateExit, connectToExit, isHa
 
 		const count = randInt(minExits, maxExits + 1);
 
-		for (let i = 0; i < count; i++) 
+		for (let i = 0; i < count; i++) {
 			setupConnection(scope, room, !isHallway, buildRoom);
+		}
 	}
 
 	if ((isHallway) && (room.connections.length === 0)) {
-		rooms.spliceWhere(r => r === room);
-		room.parent.connections.spliceWhere(c => c === room);
+		rooms.spliceWhere((r) => r === room);
+		room.parent.connections.spliceWhere((c) => c === room);
 		return false;
 	}
 

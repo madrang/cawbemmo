@@ -1,35 +1,37 @@
 module.exports = {
-	cd: 1000,
+	cd: 1000
 
-	lastTime: null,
+	, lastTime: null
 
-	init: function () {
+	, init: function () {
 		this.lastTime = this.getTime();
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		this.lastTime = this.getTime();
-	},
+	}
 
-	isActive: function (c) {
-		let cron = c.cron.split(' ');
-		if (cron.length !== 5)
+	, isActive: function (c) {
+		let cron = c.cron.split(" ");
+		if (cron.length !== 5) {
 			return false;
+		}
 
 		let time = this.getTime();
 
-		return ['minute', 'hour', 'day', 'month', 'weekday'].every((t, i) => {
-			let f = cron[i].split('-');
-			if (f[0] === '*')
+		return ["minute", "hour", "day", "month", "weekday"].every((t, i) => {
+			let f = cron[i].split("-");
+			if (f[0] === "*") {
 				return true;
+			}
 
 			let useTime = time[t];
 
 			if (f.length === 1) {
-				f = f[0].split('/');
+				f = f[0].split("/");
 				if (f.length === 1) {
-					const options = f[0].split(',');
-					const isOk = options.some(o => {
+					const options = f[0].split(",");
+					const isOk = options.some((o) => {
 						return ~~o === useTime;
 					});
 					return isOk;
@@ -38,39 +40,43 @@ module.exports = {
 			}
 			return ((useTime >= f[0]) && (useTime <= f[1]));
 		});
-	},
+	}
 
-	shouldRun: function (c) {
-		let cron = c.cron.split(' ');
-		if (cron.length !== 5)
+	, shouldRun: function (c) {
+		let cron = c.cron.split(" ");
+		if (cron.length !== 5) {
 			return false;
+		}
 
 		let lastTime = this.lastTime;
 		let time = this.getTime();
 
 		let lastRun = c.lastRun;
 		if (lastRun) {
-			if (Object.keys(lastRun).every(e => (lastRun[e] === time[e])))
+			if (Object.keys(lastRun).every((e) => (lastRun[e] === time[e]))) {
 				return false;
+			}
 		}
 
 		let timeOverflows = [60, 24, 32, 12, 7];
 
-		let run = ['minute', 'hour', 'day', 'month', 'weekday'].every(function (t, i) {
+		let run = ["minute", "hour", "day", "month", "weekday"].every(function (t, i) {
 			let tCheck = cron[i];
 
-			if (tCheck === '*')
+			if (tCheck === "*") {
 				return true;
-			
+			}
+
 			let overflow = timeOverflows[i];
 			let timeT = time[t];
 			let lastTimeT = lastTime[t];
-			if (timeT < lastTimeT)
+			if (timeT < lastTimeT) {
 				timeT += overflow;
-			else if (timeT > lastTimeT)
+			} else if (timeT > lastTimeT) {
 				lastTimeT++;
+			}
 
-			tCheck = tCheck.split(',');
+			tCheck = tCheck.split(",");
 
 			return Array
 				.apply(null, Array(1 + timeT - lastTimeT))
@@ -79,11 +85,12 @@ module.exports = {
 					let useTime = (s >= overflow) ? (s - overflow) : s;
 
 					return tCheck.some(function (f) {
-						f = f.split('-');
+						f = f.split("-");
 						if (f.length === 1) {
-							f = f[0].split('/');
-							if (f.length === 1)
+							f = f[0].split("/");
+							if (f.length === 1) {
 								return (useTime === ~~f[0]);
+							}
 							return ((useTime % f[1]) === 0);
 						}
 						return ((useTime >= f[0]) && (useTime <= f[1]));
@@ -91,26 +98,27 @@ module.exports = {
 				});
 		});
 
-		if (run)
+		if (run) {
 			c.lastRun = time;
+		}
 
 		return run;
-	},
+	}
 
-	getTime: function () {
+	, getTime: function () {
 		let time = new Date();
 
 		return {
-			minute: time.getMinutes(),
-			hour: time.getHours(),
-			day: time.getDate(),
-			month: time.getMonth() + 1,
-			year: time.getUTCFullYear(),
-			weekday: time.getDay()
+			minute: time.getMinutes()
+			, hour: time.getHours()
+			, day: time.getDate()
+			, month: time.getMonth() + 1
+			, year: time.getUTCFullYear()
+			, weekday: time.getDay()
 		};
-	},
+	}
 
-	daysInMonth: function (month) {
+	, daysInMonth: function (month) {
 		let year = (new Date()).getYear();
 
 		return new Date(year, month, 0).getDate();

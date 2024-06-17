@@ -1,8 +1,8 @@
 module.exports = {
-	gotoPhaseIndex: null,
-	repeats: 0,
+	gotoPhaseIndex: null
+	, repeats: 0
 
-	init: function () {
+	, init: function () {
 		if (!this.repeats) {
 			this.end = true;
 			return;
@@ -10,7 +10,7 @@ module.exports = {
 
 		const event = this.event;
 
-		const currentPhaseIndex = event.phases.findIndex(p => p === this);
+		const currentPhaseIndex = event.phases.findIndex((p) => p === this);
 		for (let i = this.gotoPhaseIndex; i < currentPhaseIndex; i++) {
 			const phase = event.phases[i];
 

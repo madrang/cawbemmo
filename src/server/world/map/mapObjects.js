@@ -9,15 +9,19 @@ module.exports = {
 			let x = Math.floor((v.x + cell.x) / mapScale);
 			let y = Math.floor((v.y + cell.y) / mapScale);
 
-			if (x < lowX)
+			if (x < lowX) {
 				lowX = x;
-			if (x > highX)
+			}
+			if (x > highX) {
 				highX = x;
+			}
 
-			if (y < lowY)
+			if (y < lowY) {
 				lowY = y;
-			if (y > highY)
+			}
+			if (y > highY) {
 				highY = y;
+			}
 
 			return [x, y];
 		});

@@ -1,8 +1,8 @@
 let lastId = 0;
 const list = [];
 
-const complete = id => {
-	list.spliceWhere(l => l === id);
+const complete = (id) => {
+	list.spliceWhere((l) => l === id);
 };
 
 const register = () => {
@@ -13,10 +13,11 @@ const register = () => {
 };
 
 const returnWhenDone = async () => {
-	if (!list.length)
+	if (!list.length) {
 		return;
+	}
 
-	return new Promise(res => {
+	return new Promise((res) => {
 		const checker = () => {
 			if (!list.length) {
 				res();
@@ -32,6 +33,6 @@ const returnWhenDone = async () => {
 };
 
 module.exports = {
-	register,
-	returnWhenDone	
+	register
+	, returnWhenDone
 };

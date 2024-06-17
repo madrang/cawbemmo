@@ -3,8 +3,9 @@ module.exports = (scope, map) => {
 	const { templates } = scope;
 
 	templates.forEach((r, typeId) => {
-		if (r.properties.mapping)
+		if (r.properties.mapping) {
 			return;
+		}
 
 		r.typeId = typeId;
 
@@ -19,11 +20,12 @@ module.exports = (scope, map) => {
 		}
 
 		//Fix Polygons
-		r.objects.forEach(o => {
-			if (!o.fog)
+		r.objects.forEach((o) => {
+			if (!o.fog) {
 				return;
+			}
 
-			const newArea = o.area.map(p => {
+			const newArea = o.area.map((p) => {
 				const [ px, py ] = p;
 
 				const hpx = px - r.x;
@@ -33,29 +35,33 @@ module.exports = (scope, map) => {
 			});
 
 			Object.assign(o, {
-				x: o.x - r.x,
-				y: o.y - r.y,
-				area: newArea
+				x: o.x - r.x
+				, y: o.y - r.y
+				, area: newArea
 			});
 		});
 
 		//FlipX Loop
 		for (let i = 0; i < 2; i++) {
-			if (i && !canFlipX)
+			if (i && !canFlipX) {
 				continue;
+			}
 
 			//FlipY Loop
 			for (let j = 0; j < 2; j++) {
-				if (j && !canFlipY)
+				if (j && !canFlipY) {
 					continue;
+				}
 
 				//Rotate Loop
 				for (let k = 0; k < 2; k++) {
-					if (k && noRotate)
+					if (k && noRotate) {
 						continue;
+					}
 
-					if (i + j + k === 0)
+					if (i + j + k === 0) {
 						continue;
+					}
 
 					let flipped = extend({
 						flipX: Boolean(i)
@@ -63,7 +69,7 @@ module.exports = (scope, map) => {
 						, rotate: Boolean(k)
 					}, r);
 
-					flipped.exits.forEach(e => {
+					flipped.exits.forEach((e) => {
 						let direction = JSON.parse(e.properties.exit);
 
 						if (flipped.flipX) {
@@ -87,12 +93,14 @@ module.exports = (scope, map) => {
 						e.properties.exit = JSON.stringify(direction);
 					});
 
-					flipped.objects.forEach(o => {
+					flipped.objects.forEach((o) => {
 						if (!o.fog) {
-							if (flipped.flipX)
+							if (flipped.flipX) {
 								o.x = r.x + r.width - (o.x - r.x + (o.width || 0)) - 1;
-							if (flipped.flipY)
+							}
+							if (flipped.flipY) {
 								o.y = r.y + r.height - (o.y - r.y + (o.height || 0)) - 1;
+							}
 							if (flipped.rotate) {
 								let t = o.x;
 								o.x = r.x + (o.y - r.y);
@@ -100,7 +108,7 @@ module.exports = (scope, map) => {
 							}
 						} else {
 							if (flipped.flipX) {
-								const newArea = o.area.map(p => {
+								const newArea = o.area.map((p) => {
 									const [ px, py ] = p;
 
 									const hpx = r.width - px;
@@ -113,7 +121,7 @@ module.exports = (scope, map) => {
 								});
 							}
 							if (flipped.flipY) {
-								const newArea = o.area.map(p => {
+								const newArea = o.area.map((p) => {
 									const [ px, py ] = p;
 
 									const hpy = r.height - py;
@@ -126,7 +134,7 @@ module.exports = (scope, map) => {
 								});
 							}
 							if (flipped.rotate) {
-								const newArea = o.area.map(p => {
+								const newArea = o.area.map((p) => {
 									const [ px, py ] = p;
 
 									const t = px;
@@ -147,18 +155,22 @@ module.exports = (scope, map) => {
 							let highX = 0;
 							let highY = 0;
 
-							o.area.forEach(p => {
+							o.area.forEach((p) => {
 								const [ px, py ] = p;
 
-								if (px < lowX)
+								if (px < lowX) {
 									lowX = px;
-								if (px > highX)
+								}
+								if (px > highX) {
 									highX = px;
+								}
 
-								if (py < lowY)
+								if (py < lowY) {
 									lowY = py;
-								if (py > highY)
+								}
+								if (py > highY) {
 									highY = py;
+								}
 							});
 
 							o.x = lowX;
@@ -180,7 +192,7 @@ module.exports = (scope, map) => {
 		}
 	});
 
-	templates.forEach(r => {
+	templates.forEach((r) => {
 		let rotate = r.rotate;
 		let w = rotate ? r.height : r.width;
 		let h = rotate ? r.width : r.height;

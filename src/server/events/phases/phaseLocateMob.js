@@ -1,9 +1,10 @@
 module.exports = {
-	mobs: null,
+	mobs: null
 
-	init: function () {
-		if (!this.mobs.push)
+	, init: function () {
+		if (!this.mobs.push) {
 			this.mobs = [ this.mobs ];
+		}
 
 		let mobs = this.mobs;
 
@@ -12,14 +13,15 @@ module.exports = {
 		for (let i = 0; i < oLen; i++) {
 			let o = objects[i];
 			let index = mobs.indexOf(o.id);
-			if (index === -1)
+			if (index === -1) {
 				continue;
+			}
 
 			mobs.splice(index, 1, o);
 		}
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let players = this.instance.objects.objects.filter(function (o) {
 			return o.player;
 		});
@@ -44,7 +46,8 @@ module.exports = {
 			}
 		}
 
-		if (mobs.length === 0)
+		if (mobs.length === 0) {
 			this.end = true;
-	}	
+		}
+	}
 };

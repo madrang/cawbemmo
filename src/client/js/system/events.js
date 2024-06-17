@@ -4,16 +4,17 @@ define([
 
 ) {
 	let events = {
-		events: {},
-		queue: [],
-		on: function (eventName, callback) {
+		events: {}
+		, queue: []
+		, on: function (eventName, callback) {
 			let list = this.events[eventName] || (this.events[eventName] = []);
 			list.push(callback);
 
 			for (let i = 0; i < this.queue.length; i++) {
 				let q = this.queue[i];
-				if (q.event !== eventName)
+				if (q.event !== eventName) {
 					continue;
+				}
 
 				this.queue.splice(i, 1);
 				i--;
@@ -24,11 +25,11 @@ define([
 			}
 
 			return callback;
-		},
-		clearQueue: function () {
+		}
+		, clearQueue: function () {
 			this.queue.length = 0;
-		},
-		off: function (eventName, callback) {
+		}
+		, off: function (eventName, callback) {
 			let list = this.events[eventName] || [];
 			let lLen = list.length;
 			for (let i = 0; i < lLen; i++) {
@@ -39,28 +40,30 @@ define([
 				}
 			}
 
-			if (lLen === 0)
+			if (lLen === 0) {
 				delete this.events[eventName];
-		},
-		emit: function (eventName) {
+			}
+		}
+		, emit: function (eventName) {
 			let args = [].slice.call(arguments, 1);
 
 			let list = this.events[eventName];
 			if (!list) {
 				this.queue.push({
-					event: eventName,
-					args: args
+					event: eventName
+					, args: args
 				});
 
 				return;
 			}
 
-			list.forEach(l => l.apply(null, args));
+			list.forEach((l) => l.apply(null, args));
 		}
 	};
 
-	if (window.addons)
+	if (window.addons) {
 		window.addons.init(events);
+	}
 
 	return events;
 });

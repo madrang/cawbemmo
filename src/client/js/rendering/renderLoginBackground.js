@@ -1,5 +1,5 @@
 define([
-	'js/system/globals'
+	"js/system/globals"
 ], function (
 	globals
 ) {
@@ -9,8 +9,8 @@ define([
 
 	const renderCustomLoginBg = async (renderer, path) => {
 		if (!customRenderer) {
-			await (new Promise(res => {
-				require([path], loadedModule => {
+			await (new Promise((res) => {
+				require([path], (loadedModule) => {
 					customRenderer = loadedModule;
 					res();
 				});
@@ -20,7 +20,7 @@ define([
 		customRenderer(renderer);
 	};
 
-	const renderLoginBackground = renderer => {
+	const renderLoginBackground = (renderer) => {
 		const { loginBgGeneratorPath } = globals.clientConfig;
 		if (loginBgGeneratorPath) {
 			renderCustomLoginBg(renderer, loginBgGeneratorPath);
@@ -30,8 +30,8 @@ define([
 		const { width, height, layers } = renderer;
 
 		renderer.setPosition({
-			x: 0,
-			y: 0
+			x: 0
+			, y: 0
 		}, true);
 
 		let w = Math.ceil(width / scale) + 1;
@@ -66,14 +66,14 @@ define([
 				}
 				if (Math.random() < 0.3) {
 					tile = {
-						5: 6,
-						3: 0,
-						4: 1,
-						53: 54
+						5: 6
+						, 3: 0
+						, 4: 1
+						, 53: 54
 					}[tile];
 				}
-				tile = 3
-				let sprite = new PIXI.Sprite(renderer.getTexture('sprites', tile));
+				tile = 3;
+				let sprite = new PIXI.Sprite(renderer.getTexture("sprites", tile));
 
 				alpha = Math.min(Math.max(0.15, alpha), 0.65);
 

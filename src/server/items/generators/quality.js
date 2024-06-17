@@ -1,16 +1,16 @@
 module.exports = {
 	qualities: [
-		2000,
-		350,
-		80,
-		17,
-		1
-	],
+		2000
+		, 350
+		, 80
+		, 17
+		, 1
+	]
 
-	magicFindMult: 7,
+	, magicFindMult: 7
 
-	generate: function (item, blueprint) {
-		if (blueprint.has('quality')) {
+	, generate: function (item, blueprint) {
+		if (blueprint.has("quality")) {
 			item.quality = ~~blueprint.quality;
 			return;
 		}
@@ -18,10 +18,11 @@ module.exports = {
 		let qualities = extend([], this.qualities);
 
 		let magicFind = (blueprint.magicFind || 0);
-		if (!(magicFind instanceof Array))
+		if (!(magicFind instanceof Array)) {
 			magicFind = [magicFind];
-		else
+		} else {
 			magicFind = extend([], magicFind);
+		}
 
 		let bonusMagicFind = blueprint.bonusMagicFind || 0;
 
@@ -31,8 +32,9 @@ module.exports = {
 			if (qualities[i] > 0) {
 				if (i === 0) {
 					qualities[i] -= (bonusMagicFind * this.magicFindMult);
-					if (qualities[i] < 0)
+					if (qualities[i] < 0) {
 						qualities[i] = 0;
+					}
 				}
 
 				break;

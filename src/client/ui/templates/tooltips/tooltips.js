@@ -1,8 +1,8 @@
 define([
-	'js/system/events',
-	'css!ui/templates/tooltips/styles',
-	'html!ui/templates/tooltips/template',
-	'html!ui/templates/tooltips/templateTooltip'
+	"js/system/events"
+	, "css!ui/templates/tooltips/styles"
+	, "html!ui/templates/tooltips/template"
+	, "html!ui/templates/tooltips/templateTooltip"
 ], function (
 	events,
 	styles,
@@ -10,58 +10,63 @@ define([
 	tplTooltip
 ) {
 	return {
-		tpl: template,
-		type: 'tooltips',
+		tpl: template
+		, type: "tooltips"
 
-		tooltip: null,
-		el: null,
+		, tooltip: null
+		, el: null
 
-		hoverEl: null,
+		, hoverEl: null
 
-		postRender: function () {
-			this.tooltip = this.el.find('.tooltip');
+		, postRender: function () {
+			this.tooltip = this.el.find(".tooltip");
 
-			this.onEvent('onShowTooltip', this.onShowTooltip.bind(this));
-			this.onEvent('onHideTooltip', this.onHideTooltip.bind(this));
-		},
+			this.onEvent("onShowTooltip", this.onShowTooltip.bind(this));
+			this.onEvent("onHideTooltip", this.onHideTooltip.bind(this));
+		}
 
-		onHideTooltip: function (el) {
-			if (this.hoverEl !== el)
+		, onHideTooltip: function (el) {
+			if (this.hoverEl !== el) {
 				return;
+			}
 
 			this.hoverEl = null;
 			this.tooltip.hide();
-		},
+		}
 
-		onShowTooltip: function (text, el, pos, width, bottomAlign, rightAlign, zIndex) {
+		, onShowTooltip: function (text, el, pos, width, bottomAlign, rightAlign, zIndex) {
 			this.hoverEl = el;
 
 			this.tooltip
 				.html(text)
-				.attr('class', 'tooltip hasBorderShadow');
+				.attr("class", "tooltip hasBorderShadow");
 
 			this.tooltip
 				.show();
 
-			if (width)
+			if (width) {
 				this.tooltip.width(width);
+			}
 
 			if (pos) {
-				if (bottomAlign)
+				if (bottomAlign) {
 					pos.y -= this.tooltip.height();
-				if (rightAlign)
+				}
+				if (rightAlign) {
 					pos.x -= this.tooltip.width();
+				}
 
 				this.tooltip.css({
-					left: pos.x,
-					top: pos.y
+					left: pos.x
+					, top: pos.y
 				});
 			}
 
-			if ((zIndex) && (zIndex !== 'auto'))
-				this.tooltip.css('z-index', zIndex);
-			else
-				this.tooltip.css('z-index', '');
+			if ((zIndex) && (zIndex !== "auto")) {
+				this.tooltip.css("z-index", zIndex);
+			} else {
+				this.tooltip.css("z-index", "");
+			}
 		}
 	};
 });

@@ -1,26 +1,26 @@
 define([
-	'js/rendering/effects'
+	"js/rendering/effects"
 ], function (
 	effects
 ) {
 	return {
-		type: 'projectile',
+		type: "projectile"
 
-		source: null,
-		target: null,
+		, source: null
+		, target: null
 
-		row: null,
-		col: null,
+		, row: null
+		, col: null
 
-		x: 0,
-		y: 0,
+		, x: 0
+		, y: 0
 
-		ttl: 50,
-		endTime: 0,
+		, ttl: 50
+		, endTime: 0
 
-		particles: null,
+		, particles: null
 
-		init: function (blueprint) {
+		, init: function (blueprint) {
 			if ((!this.source) || (!this.target)) {
 				this.obj.destroyed = true;
 				return;
@@ -33,8 +33,9 @@ define([
 			this.y = source.y;
 
 			if (blueprint.projectileOffset) {
-				if ((source.sprite) && (source.sprite.scale.x < 0))
+				if ((source.sprite) && (source.sprite.scale.x < 0)) {
 					blueprint.projectileOffset.x *= -1;
+				}
 
 				this.x += (blueprint.projectileOffset.x || 0);
 				this.y += (blueprint.projectileOffset.y || 0);
@@ -48,42 +49,42 @@ define([
 			} : {
 				blueprint: {
 					color: {
-						start: ['7a3ad3', '3fa7dd'],
-						end: ['3fa7dd', '7a3ad3']
-					},
-					scale: {
+						start: ["7a3ad3", "3fa7dd"]
+						, end: ["3fa7dd", "7a3ad3"]
+					}
+					, scale: {
 						start: {
-							min: 2,
-							max: 14
-						},
-						end: {
-							min: 0,
-							max: 8
+							min: 2
+							, max: 14
 						}
-					},
-					lifetime: {
-						min: 1,
-						max: 3
-					},
-					alpha: {
-						start: 0.7,
-						end: 0
-					},
-					randomScale: true,
-					randomColor: true,
-					chance: 0.6
+						, end: {
+							min: 0
+							, max: 8
+						}
+					}
+					, lifetime: {
+						min: 1
+						, max: 3
+					}
+					, alpha: {
+						start: 0.7
+						, end: 0
+					}
+					, randomScale: true
+					, randomColor: true
+					, chance: 0.6
 				}
 			};
 
 			particlesBlueprint.new = this.new;
 
-			this.particles = this.obj.addComponent('particles', particlesBlueprint);
-			this.obj.addComponent('explosion', particlesBlueprint);
+			this.particles = this.obj.addComponent("particles", particlesBlueprint);
+			this.obj.addComponent("explosion", particlesBlueprint);
 
 			effects.register(this);
-		},
+		}
 
-		renderManual: function () {
+		, renderManual: function () {
 			const source = this.obj;
 			const target = this.target;
 
@@ -96,8 +97,9 @@ define([
 				source.x = tx;
 				source.y = ty;
 				this.particles.emitter.emit = false;
-				if (!this.noExplosion)
+				if (!this.noExplosion) {
 					source.explosion.explode();
+				}
 				source.destroyed = true;
 			} else {
 				this.x += (tx - this.x) / ticksLeft;
@@ -106,9 +108,9 @@ define([
 				source.x = (Math.floor((this.x * scale) / 4) * 4) / scale;
 				source.y = (Math.floor((this.y * scale) / 4) * 4) / scale;
 			}
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			effects.unregister(this);
 		}
 	};

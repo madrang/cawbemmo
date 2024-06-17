@@ -1,20 +1,20 @@
-let mobBuilder = require('../../world/mobBuilder');
+let mobBuilder = require("../../world/mobBuilder");
 
 const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 	const { id, sheetName, cell, name, properties, originX, originY, maxChaseDistance, dialogue, trade, chats, events } = mobConfig;
 
 	const mob = objects.buildObjects([{
-		x: x,
-		y: y,
-		sheetName: sheetName || 'mobs',
-		cell: cell,
-		name: name,
-		properties: properties
+		x: x
+		, y: y
+		, sheetName: sheetName || "mobs"
+		, cell: cell
+		, name: name
+		, properties: properties
 	}]);
 	mobBuilder.build(mob, mobConfig);
 
 	if (id) {
-		mob.id = id.split('$').join(mobIndex);
+		mob.id = id.split("$").join(mobIndex);
 	}
 	if (originX) {
 		mob.mob.originX = originX;
@@ -25,28 +25,28 @@ const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 		delete mob.mob.events.beforeTakeDamage;
 	}
 	if (dialogue) {
-		mob.addComponent('dialogue', {
+		mob.addComponent("dialogue", {
 			config: dialogue.config
 		});
 		if (dialogue.auto) {
 			mob.dialogue.trigger = objects.buildObjects([{
 				properties: {
-					x: mob.x - 1,
-					y: mob.y - 1,
-					width: 3,
-					height: 3,
-					cpnNotice: {
+					x: mob.x - 1
+					, y: mob.y - 1
+					, width: 3
+					, height: 3
+					, cpnNotice: {
 						actions: {
 							enter: {
-								cpn: 'dialogue',
-								method: 'talk',
-								args: [{
+								cpn: "dialogue"
+								, method: "talk"
+								, args: [{
 									targetName: mob.name.toLowerCase()
 								}]
-							},
-							exit: {
-								cpn: 'dialogue',
-								method: 'stopTalk'
+							}
+							, exit: {
+								cpn: "dialogue"
+								, method: "stopTalk"
 							}
 						}
 					}
@@ -55,15 +55,15 @@ const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 		}
 	}
 	if (trade) {
-		mob.addComponent('trade', trade);
+		mob.addComponent("trade", trade);
 	}
 	if (chats) {
-		mob.addComponent('chatter', chats);
+		mob.addComponent("chatter", chats);
 	}
 	if (events) {
 		mob.addBuiltComponent({
-			type: 'eventComponent',
-			events: events
+			type: "eventComponent"
+			, events: events
 		});
 	}
 	if (mobConfig.needLos !== undefined) {
@@ -76,27 +76,27 @@ const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 };
 
 const spawnAnimation = (syncer, { x, y }) => {
-	syncer.queue('onGetObject', {
-		x: x,
-		y: y,
-		components: [{
-			type: 'attackAnimation',
-			row: 0,
-			col: 4
+	syncer.queue("onGetObject", {
+		x: x
+		, y: y
+		, components: [{
+			type: "attackAnimation"
+			, row: 0
+			, col: 4
 		}]
 	}, -1);
 };
 
 module.exports = {
-	spawnRect: null,
-	mobs: null,
+	spawnRect: null
+	, mobs: null
 
-	init: function () {
+	, init: function () {
 		const { spawnRect, instance: { objects, syncer } } = this;
 		if (!this.mobs.push) {
 			this.mobs = [this.mobs];
 		}
-		let usedSpots = ['-1,-1'];
+		let usedSpots = ["-1,-1"];
 		this.mobs.forEach(function (l) {
 			let amount = l.amount || 1;
 			delete l.amount;
@@ -106,7 +106,7 @@ module.exports = {
 				let y = -1;
 				let pos = l.pos;
 				if (pos) {
-					if (typeof(pos) === 'function') {
+					if (typeof(pos) === "function") {
 						pos = pos(i);
 					}
 					if (pos instanceof Array) {
@@ -128,14 +128,14 @@ module.exports = {
 					usedSpots.push(`${x},${y}`);
 				}
 				if (l.exists) {
-					const mob = objects.objects.find(o => (o.name === l.name));
+					const mob = objects.objects.find((o) => (o.name === l.name));
 					mob.mob.walkDistance = 0;
 					spawnAnimation(syncer, mob);
 					mob.performMove({
-						force: true,
-						data: {
-							x: x,
-							y: y
+						force: true
+						, data: {
+							x: x
+							, y: y
 						}
 					});
 					spawnAnimation(syncer, mob);

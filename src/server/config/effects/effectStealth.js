@@ -1,11 +1,11 @@
 module.exports = {
-	type: 'stealth',
+	type: "stealth"
 
-	events: {
+	, events: {
 		beforeDealDamage: function () {
 			this.endCallback.time = 0;
-		},
-		beforeAggro: function (result) {
+		}
+		, beforeAggro: function (result) {
 			result.success = false;
 		}
 	}

@@ -1,18 +1,18 @@
 define([
-	'js/misc/distanceToPolygon',
-	'js/system/events'
+	"js/misc/distanceToPolygon"
+	, "js/system/events"
 ], function (
 	distanceToPolygon,
 	events
 ) {
 	return {
-		grid: null,
+		grid: null
 
-		width: 0,
-		height: 0,
+		, width: 0
+		, height: 0
 
-		init: function (collisionMap) {
-			events.on('resetPhysics', this.reset.bind(this));
+		, init: function (collisionMap) {
+			events.on("resetPhysics", this.reset.bind(this));
 
 			this.width = collisionMap.length;
 			this.height = collisionMap[0].length;
@@ -21,34 +21,35 @@ define([
 			for (let i = 0; i < this.width; i++) {
 				let row = grid[i];
 				let collisionRow = collisionMap[i];
-				for (let j = 0; j < this.height; j++)
+				for (let j = 0; j < this.height; j++) {
 					row[j] = collisionRow[j];
+				}
 			}
-		},
+		}
 
-		reset: function () {
+		, reset: function () {
 			this.width = 0;
 			this.height = 0;
 
 			this.grid = [];
-		},
+		}
 
-		isTileBlocking: function (x, y, mob, obj) {
+		, isTileBlocking: function (x, y, mob, obj) {
 			if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height)) {
 				return true;
 			}
 			return this.grid[Math.floor(x)][Math.floor(y)];
-		},
+		}
 
-		setCollision: function (config) {
+		, setCollision: function (config) {
 			const x = config.x;
 			const y = config.y;
 			const collides = config.collides;
 
 			this.grid[x][y] = collides;
-		},
+		}
 
-		isInPolygon: function (x, y, verts) {
+		, isInPolygon: function (x, y, verts) {
 			let inside = false;
 
 			let vLen = verts.length;
@@ -66,30 +67,32 @@ define([
 					(x < ((((xj - xi) * (y - yi)) / (yj - yi)) + xi))
 				);
 
-				if (doesIntersect)
+				if (doesIntersect) {
 					inside = !inside;
+				}
 			}
 
 			return inside;
-		},
+		}
 
 		//Helper function to check if a point is inside an area
 		// This function is optimized to check if the point is outside the rect first
 		// and if it is not, we do the more expensive isInPolygon check
-		isInArea: function (x, y, { x: ax, y: ay, width, height, area }) {
+		, isInArea: function (x, y, { x: ax, y: ay, width, height, area }) {
 			//Outside rect
 			if (
 				x < ax ||
 				x >= ax + width ||
 				y < ay ||
 				y >= ay + height
-			)
+			) {
 				return false;
+			}
 
 			return this.isInPolygon(x, y, area);
-		},
+		}
 
-		distanceToPolygon: function (p, verts) {
+		, distanceToPolygon: function (p, verts) {
 			return distanceToPolygon.calculate(p, verts);
 		}
 	};

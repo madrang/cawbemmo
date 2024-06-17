@@ -1,76 +1,82 @@
 const configThreatCeiling = {
-	regular: 1,
-	rare: 0.5
+	regular: 1
+	, rare: 0.5
 };
 
 module.exports = {
-	type: 'aggro',
+	type: "aggro"
 
-	range: 7,
-	cascadeRange: 5,
-	faction: null,
+	, range: 7
+	, cascadeRange: 5
+	, faction: null
 
-	physics: null,
+	, physics: null
 
-	list: [],
-	ignoreList: [],
+	, list: []
+	, ignoreList: []
 
-	threatDecay: 0.9,
-	threatCeiling: 1,
+	, threatDecay: 0.9
+	, threatCeiling: 1
 
 	//Certain summoned minions need to despawn when they lose their last target
-	dieOnAggroClear: false,
+	, dieOnAggroClear: false
 
-	init: function (blueprint) {
+	, init: function (blueprint) {
 		this.physics = this.obj.instance.physics;
 
 		blueprint = blueprint || {};
 
-		if (blueprint.faction) 
+		if (blueprint.faction) {
 			this.faction = blueprint.faction;
+		}
 
-		if (blueprint.range)
+		if (blueprint.range) {
 			this.range = blueprint.range;
+		}
 
 		//TODO: Why don't we move if faction is null?
-		if (!this.has('faction'))
+		if (!this.has("faction")) {
 			return;
+		}
 
-		if (this.physics.width > 0)
+		if (this.physics.width > 0) {
 			this.move();
-	},
+		}
+	}
 
-	calcThreatCeiling: function (mobType) {
+	, calcThreatCeiling: function (mobType) {
 		this.threatCeiling = configThreatCeiling[mobType];
-	},
+	}
 
-	events: {
+	, events: {
 		beforeRezone: function () {
 			this.die();
 		}
-	},
+	}
 
-	simplify: function (self) {
+	, simplify: function (self) {
 		return {
-			type: 'aggro',
-			faction: this.faction
+			type: "aggro"
+			, faction: this.faction
 		};
-	},
+	}
 
 	//If we send through a proxy, we know it's for cascading threat
-	move: function (proxy) {
+	, move: function (proxy) {
 		let obj = proxy || this.obj;
 		let aggro = obj.aggro;
 
-		if (obj.dead)
+		if (obj.dead) {
 			return;
+		}
 
 		let result = {
 			success: true
 		};
-		obj.fireEvent('beforeAggro', result);
-		if (!result.success)
+		obj.fireEvent("beforeAggro", result);
+		if (!result.success) {
 			return;
+		}
 
 		//If we're attacking something, don't try and look for more trouble. SAVE THE CPU!
 		// this only counts for mobs, players can have multiple attackers
@@ -88,16 +94,18 @@ module.exports = {
 				}
 
 				l.obj.aggro.unIgnore(obj);
-				if (l.threat > 0)
+				if (l.threat > 0) {
 					return;
+				}
 			}
 		} else {
 			let lLen = list.length;
 			for (let i = 0; i < lLen; i++) {
 				let targetAggro = list[i].obj.aggro;
 				//Maybe the aggro component has been removed?
-				if (targetAggro)
+				if (targetAggro) {
 					targetAggro.unIgnore(obj);
+				}
 			}
 		}
 
@@ -106,141 +114,154 @@ module.exports = {
 
 		//Find mobs in range
 		let range = proxy ? aggro.cascadeRange : aggro.range;
-		let inRange = this.physics.getArea(x - range, y - range, x + range, y + range, c => (
-			c.aggro && 
-			!c.dead && 
+		let inRange = this.physics.getArea(x - range, y - range, x + range, y + range, (c) => (
+			c.aggro &&
+			!c.dead &&
 			(
-				!c.player || 
+				!c.player ||
 				!obj.player
-			) && 
+			) &&
 			c.aggro.willAutoAttack(obj) &&
-			!list.some(l => l.obj === c)
+			!list.some((l) => l.obj === c)
 		));
 
-		if (!inRange.length)
+		if (!inRange.length) {
 			return;
+		}
 
 		let iLen = inRange.length;
 		for (let i = 0; i < iLen; i++) {
 			let enemy = inRange[i];
 
-			if (!this.physics.hasLos(x, y, enemy.x, enemy.y))
+			if (!this.physics.hasLos(x, y, enemy.x, enemy.y)) {
 				continue;
-			else if (enemy.aggro.tryEngage(obj))
+			} else if (enemy.aggro.tryEngage(obj)) {
 				aggro.tryEngage(enemy, 0);
+			}
 		}
-	},
+	}
 
-	canAttack: function (target) {
+	, canAttack: function (target) {
 		let obj = this.obj;
-		if (target === obj)
+		if (target === obj) {
 			return false;
-		else if ((target.player) && (obj.player)) {
-			let hasButcher = (obj.prophecies.hasProphecy('butcher')) && (target.prophecies.hasProphecy('butcher'));
+		} else if ((target.player) && (obj.player)) {
+			let hasButcher = (obj.prophecies.hasProphecy("butcher")) && (target.prophecies.hasProphecy("butcher"));
 
-			if ((!target.social.party) || (!obj.social.party))
+			if ((!target.social.party) || (!obj.social.party)) {
 				return hasButcher;
-			else if (target.social.partyLeaderId !== obj.social.partyLeaderId)
+			} else if (target.social.partyLeaderId !== obj.social.partyLeaderId) {
 				return hasButcher;
+			}
 			return false;
-		} else if ((target.follower) && (target.follower.master.player) && (obj.player))
+		} else if ((target.follower) && (target.follower.master.player) && (obj.player)) {
 			return false;
-		else if (obj.player)
+		} else if (obj.player) {
 			return true;
-		else if (target.aggro.faction !== obj.aggro.faction)
+		} else if (target.aggro.faction !== obj.aggro.faction) {
 			return true;
-		else if (Boolean(target.player) !== Boolean(obj.player))
+		} else if (Boolean(target.player) !== Boolean(obj.player)) {
 			return true;
-	},
+		}
+	}
 
-	willAutoAttack: function (target) {
-		if (this.obj === target)
+	, willAutoAttack: function (target) {
+		if (this.obj === target) {
 			return false;
+		}
 
 		let faction = target.aggro.faction;
-		if (!faction || !this.faction)
+		if (!faction || !this.faction) {
 			return false;
+		}
 
 		let rep = this.obj.reputation;
 		if (!rep) {
 			let targetRep = target.reputation;
-			if (!targetRep)
+			if (!targetRep) {
 				return false;
+			}
 			return (targetRep.getTier(this.faction) < 3);
 		}
 
 		return (rep.getTier(faction) < 3);
-	},
+	}
 
-	ignore: function (obj) {
-		this.ignoreList.spliceWhere(o => o === obj);
+	, ignore: function (obj) {
+		this.ignoreList.spliceWhere((o) => o === obj);
 		this.ignoreList.push(obj);
-	},
+	}
 
-	unIgnore: function (obj) {
-		this.ignoreList.spliceWhere(o => o === obj);
-	},
+	, unIgnore: function (obj) {
+		this.ignoreList.spliceWhere((o) => o === obj);
+	}
 
-	tryEngage: function (source, amount, threatMult = 1) {
+	, tryEngage: function (source, amount, threatMult = 1) {
 		let obj = this.obj;
 
 		//Don't aggro yourself, stupid
-		if (source === obj)
+		if (source === obj) {
 			return;
+		}
 
 		let result = {
 			success: true
 		};
-		obj.fireEvent('beforeAggro', result);
-		if (!result.success)
+		obj.fireEvent("beforeAggro", result);
+		if (!result.success) {
 			return false;
+		}
 
 		//Mobs shouldn't aggro players that are too far from their home
 		let mob = obj.mob || source.mob;
 		if (mob) {
 			let notMob = source.mob ? obj : source;
-			if (!mob.canChase(notMob))
+			if (!mob.canChase(notMob)) {
 				return false;
+			}
 		}
 
 		let oId = source.id;
 		let list = this.list;
 
-		amount = (amount || 0);	
+		amount = (amount || 0);
 		let threat = (amount / obj.stats.values.hpMax) * threatMult;
 
-		let exists = list.find(l => l.obj.id === oId);
+		let exists = list.find((l) => l.obj.id === oId);
 		if (!exists) {
 			exists = {
-				obj: source,
-				damage: 0,
-				threat: 0
+				obj: source
+				, damage: 0
+				, threat: 0
 			};
 
 			list.push(exists);
 
 			//Cascade threat
-			if (obj.mob)
+			if (obj.mob) {
 				this.move(source);
+			}
 		}
 
 		exists.damage += amount;
 		exists.threat += threat;
 
-		if (exists.threat > this.threatCeiling)
+		if (exists.threat > this.threatCeiling) {
 			exists.threat = this.threatCeiling;
+		}
 
 		return true;
-	},
+	}
 
-	getFirstAttacker: function () {
-		let first = this.list.find(l => ((l.obj.player) && (l.damage > 0)));
-		if (first)
+	, getFirstAttacker: function () {
+		let first = this.list.find((l) => ((l.obj.player) && (l.damage > 0)));
+		if (first) {
 			return first.obj;
+		}
 		return null;
-	},
+	}
 
-	reset: function () {
+	, reset: function () {
 		let list = this.list;
 		let lLen = list.length;
 
@@ -260,21 +281,22 @@ module.exports = {
 		}
 
 		this.list = [];
-	},
+	}
 
-	die: function () {
+	, die: function () {
 		this.reset();
-	},
+	}
 
-	unAggro: function (obj, amount) {
+	, unAggro: function (obj, amount) {
 		let list = this.list;
 		let lLen = list.length;
 
 		for (let i = 0; i < lLen; i++) {
 			let l = list[i];
 
-			if (l.obj !== obj)
+			if (l.obj !== obj) {
 				continue;
+			}
 
 			if (!amount) {
 				list.splice(i, 1);
@@ -290,28 +312,32 @@ module.exports = {
 			}
 		}
 
-		if (list.length !== lLen && this.dieOnAggroClear)
+		if (list.length !== lLen && this.dieOnAggroClear) {
 			this.obj.destroyed = true;
+		}
 
-		this.ignoreList.spliceWhere(o => o === obj);
+		this.ignoreList.spliceWhere((o) => o === obj);
 
 		//Stuff like cocoons don't have spellbooks
-		if (this.obj.spellbook)
+		if (this.obj.spellbook) {
 			this.obj.spellbook.unregisterCallback(obj.id, true);
+		}
 
-		if ((this.list.length === 0) && (this.obj.mob) && (!this.obj.follower))
+		if ((this.list.length === 0) && (this.obj.mob) && (!this.obj.follower)) {
 			this.obj.stats.resetHp();
-	},
+		}
+	}
 
-	sortThreat: function () {
+	, sortThreat: function () {
 		this.list.sort(function (a, b) {
 			return (b.threat - a.threat);
 		});
-	},
+	}
 
-	getHighest: function () {
-		if (this.list.length === 0)
+	, getHighest: function () {
+		if (this.list.length === 0) {
 			return null;
+		}
 
 		let list = this.list;
 		let lLen = list.length;
@@ -327,8 +353,9 @@ module.exports = {
 			let l = list[i];
 			let obj = l.obj;
 
-			if (this.ignoreList.some(o => o === obj))
+			if (this.ignoreList.some((o) => o === obj)) {
 				continue;
+			}
 
 			if (!highest || l.threat > highest.threat) {
 				highest = l;
@@ -345,13 +372,14 @@ module.exports = {
 			}
 		}
 
-		if (highest)
+		if (highest) {
 			return highest.obj;
-			
-		return null;
-	},
+		}
 
-	getFurthest: function () {
+		return null;
+	}
+
+	, getFurthest: function () {
 		let furthest = null;
 		let distance = 0;
 
@@ -366,8 +394,9 @@ module.exports = {
 			let l = list[i];
 			let obj = l.obj;
 
-			if (this.ignoreList.some(o => o === obj))
+			if (this.ignoreList.some((o) => o === obj)) {
 				continue;
+			}
 
 			let oDistance = Math.max(Math.abs(x - obj.x), Math.abs(y - obj.y));
 			if (oDistance > distance) {
@@ -377,21 +406,21 @@ module.exports = {
 		}
 
 		return furthest.obj;
-	},
+	}
 
-	getRandom: function () {
-		let useList = this.list.filter(l => (!this.ignoreList.some(o => (o === l.obj))));
+	, getRandom: function () {
+		let useList = this.list.filter((l) => (!this.ignoreList.some((o) => (o === l.obj))));
 		return useList[Math.floor(Math.random() * useList.length)];
-	},
+	}
 
-	hasAggroOn: function (obj) {
+	, hasAggroOn: function (obj) {
 		return (
-			this.list.find(l => l.obj === obj) &&
-			!this.ignoreList.find(l => l === obj)
+			this.list.find((l) => l.obj === obj) &&
+			!this.ignoreList.find((l) => l === obj)
 		);
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let list = this.list;
 		let lLen = list.length;
 
@@ -402,21 +431,22 @@ module.exports = {
 				this.unAggro(l.obj);
 				i--;
 				lLen--;
-			} else if (l.threat > 0)
+			} else if (l.threat > 0) {
 				l.threat *= this.threatDecay;
+			}
 		}
-	},
+	}
 
-	clearIgnoreList: function () {
+	, clearIgnoreList: function () {
 		this.ignoreList = [];
-	},
+	}
 
-	isInCombat: function () {
+	, isInCombat: function () {
 		return this.list.length > 0;
-	},
+	}
 
-	setAllAmounts: function (amount) {
-		this.list.forEach(l => {
+	, setAllAmounts: function (amount) {
+		this.list.forEach((l) => {
 			l.threat = amount;
 		});
 	}

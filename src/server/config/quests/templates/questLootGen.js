@@ -1,20 +1,20 @@
-const resetQuest = q => {
+const resetQuest = (q) => {
 	q.mobName = null;
 	q.mobType = null;
 	q.item = null;
 };
 
 module.exports = {
-	type: 'lootGen',
+	type: "lootGen"
 
-	need: 10,
-	have: 0,
+	, need: 10
+	, have: 0
 
-	mobType: null,
-	mobName: null,
-	item: null,
+	, mobType: null
+	, mobName: null
+	, item: null
 
-	build: function () {
+	, build: function () {
 		//If we're not in the correct zone, don't do this check, it'll just crash the server
 		// since the mob won't be available (most likely) in the zoneFile
 		if (this.obj.zoneName === this.zoneName) {
@@ -23,8 +23,9 @@ module.exports = {
 			if (this.mobType && this.item) {
 				//Check if the zoneFile changed
 				const mobBlueprint = mobTypes[this.mobType];
-				if (!mobBlueprint || !mobBlueprint.questItem || mobBlueprint.questItem.name !== this.item.name)
+				if (!mobBlueprint || !mobBlueprint.questItem || mobBlueprint.questItem.name !== this.item.name) {
 					resetQuest(this);
+				}
 			}
 
 			if (!this.mobName || !this.item) {
@@ -32,7 +33,7 @@ module.exports = {
 					let mobBlueprint = mobTypes[m];
 
 					return (
-						(m !== 'default') &&
+						(m !== "default") &&
 					(mobBlueprint.questItem) &&
 					(mobBlueprint.level <= (this.obj.stats.values.level * 1.35))
 					);
@@ -53,68 +54,75 @@ module.exports = {
 		}
 		if (!this.item) {
 			this.setAsync({
-				key: new Date(),
-				table: 'error',
-				value: this.obj.name + ' ' + this.mobType
+				key: new Date()
+				, table: "error"
+				, value: this.obj.name + " " + this.mobType
 			});
 		}
-		this.name = this.item.name + ' Gatherer';
-		this.description = 'Loot ' + this.have + '/' + this.need + ' ' + this.item.name + ' from ' + this.mobName;
+		this.name = this.item.name + " Gatherer";
+		this.description = "Loot " + this.have + "/" + this.need + " " + this.item.name + " from " + this.mobName;
 		return true;
-	},
+	}
 
-	getXpMultiplier: function () {
+	, getXpMultiplier: function () {
 		return (this.need * 1.5);
-	},
+	}
 
-	oComplete: function () {
+	, oComplete: function () {
 		let inventory = this.obj.inventory;
-		let item = inventory.items.find((i => i.name === this.item.name).bind(this));
-		if (item)
+		let item = inventory.items.find(((i) => i.name === this.item.name).bind(this));
+		if (item) {
 			this.obj.inventory.destroyItem({ itemId: item.id }, this.need);
-	},
+		}
+	}
 
-	events: {
+	, events: {
 		beforeTargetDeath: function (target, dropItems) {
-			if ((this.obj.zoneName !== this.zoneName) || (target.name.toLowerCase() !== this.mobType) || (this.have >= this.need))
+			if ((this.obj.zoneName !== this.zoneName) || (target.name.toLowerCase() !== this.mobType) || (this.have >= this.need)) {
 				return;
+			}
 
 			let roll = Math.random();
-			if (roll < 0.5)
+			if (roll < 0.5) {
 				return;
+			}
 
 			dropItems.push({
-				name: this.item.name,
-				quality: 0,
-				quantity: 1,
-				quest: true,
-				sprite: this.item.sprite,
-				ownerName: this.obj.name
+				name: this.item.name
+				, quality: 0
+				, quantity: 1
+				, quest: true
+				, sprite: this.item.sprite
+				, ownerName: this.obj.name
 			});
-		},
+		}
 
-		afterLootMobItem: function (item) {
-			if ((this.obj.zoneName !== this.zoneName) || (item.name.toLowerCase() !== this.item.name.toLowerCase()))
+		, afterLootMobItem: function (item) {
+			if ((this.obj.zoneName !== this.zoneName) || (item.name.toLowerCase() !== this.item.name.toLowerCase())) {
 				return;
+			}
 
 			this.have++;
-			if (this.have === this.need)
+			if (this.have === this.need) {
 				this.ready();
+			}
 
-			this.description = 'Loot ' + this.have + '/' + this.need + ' ' + this.item.name + ' from ' + this.mobName;
-			this.obj.syncer.setArray(true, 'quests', 'updateQuests', this.simplify(true));
-		},
+			this.description = "Loot " + this.have + "/" + this.need + " " + this.item.name + " from " + this.mobName;
+			this.obj.syncer.setArray(true, "quests", "updateQuests", this.simplify(true));
+		}
 
-		afterDestroyItem: function (item, quantity) {
-			if (item.name.toLowerCase() !== this.item.name.toLowerCase())
+		, afterDestroyItem: function (item, quantity) {
+			if (item.name.toLowerCase() !== this.item.name.toLowerCase()) {
 				return;
+			}
 
 			this.have -= quantity;
-			if (this.have < 0)
+			if (this.have < 0) {
 				this.have = 0;
+			}
 
-			this.description = 'Loot ' + this.have + '/' + this.need + ' ' + this.item.name + ' from ' + this.mobName;
-			this.obj.syncer.setArray(true, 'quests', 'updateQuests', this.simplify(true));
+			this.description = "Loot " + this.have + "/" + this.need + " " + this.item.name + " from " + this.mobName;
+			this.obj.syncer.setArray(true, "quests", "updateQuests", this.simplify(true));
 		}
 	}
 };

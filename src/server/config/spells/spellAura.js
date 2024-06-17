@@ -1,46 +1,47 @@
 module.exports = {
-	type: 'aura',
+	type: "aura"
 
-	cdMax: 0,
-	manaCost: 0,
+	, cdMax: 0
+	, manaCost: 0
 
-	duration: 10,
+	, duration: 10
 
-	aura: true,
-	active: false,
+	, aura: true
+	, active: false
 
-	effects: {},
+	, effects: {}
 
-	cast: function (action) {
+	, cast: function (action) {
 		this.active = !this.active;
 		return true;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		if (this.active) {
 			this.updateActive();
 		} else {
 			this.updateInactive();
 		}
-	},
+	}
 
-	unlearn: function () {
+	, unlearn: function () {
 		this.updateInactive();
-	},
+	}
 
-	onAfterSimplify: function (values) {
+	, onAfterSimplify: function (values) {
 		delete values.effects;
-	},
+	}
 
-	die: function () {
-		if (this.active)
+	, die: function () {
+		if (this.active) {
 			this.cast();
-	},
+		}
+	}
 
-	updateActive: function () {
+	, updateActive: function () {
 		let o = this.obj;
 		let amount = 0;
-		if (this.name === 'Innervation') {
+		if (this.name === "Innervation") {
 			amount = Math.floor((o.stats.values.hpMax / 100) * this.values.regenPercentage);
 		} else {
 			amount = this.values.regenPercentage || this.values.chance;
@@ -50,9 +51,9 @@ module.exports = {
 		let effects = this.effects;
 		let objects = o.instance.objects.objects;
 		let range = this.auraRange;
-		members.forEach(m => {
+		members.forEach((m) => {
 			let effect = effects[m];
-			let obj = objects.find(f => (f.serverId === m));
+			let obj = objects.find((f) => (f.serverId === m));
 			if (!obj) {
 				if (effect) {
 					delete effects[m];
@@ -74,36 +75,37 @@ module.exports = {
 				return;
 			}
 			effects[obj.serverId] = obj.effects.addEffect({
-				type: this.effect,
-				amount: amount,
-				caster: this.obj,
-				ttl: -1
+				type: this.effect
+				, amount: amount
+				, caster: this.obj
+				, ttl: -1
 			});
 		});
 
 		//Remove effects from players who are no longer in the party
 		Object.entries(effects).forEach(([serverId, effect]) => {
-			if (!members.find(m => ~~m === ~~serverId)) {
+			if (!members.find((m) => ~~m === ~~serverId)) {
 				delete effects[serverId];
-				const obj = objects.find(f => ~~f.serverId === ~~serverId);
+				const obj = objects.find((f) => ~~f.serverId === ~~serverId);
 				if (obj) {
 					obj.effects.removeEffect(effect.id);
 				}
 			}
 		});
-	},
+	}
 
-	updateInactive: function () {
+	, updateInactive: function () {
 		let o = this.obj;
 		let effects = this.effects;
 		let objects = o.instance.objects.objects;
 
 		Object.keys(effects).forEach(function (m) {
 			let effect = effects[m];
-			if (!effect)
+			if (!effect) {
 				return;
+			}
 
-			let obj = objects.find(f => (f.serverId === ~~m));
+			let obj = objects.find((f) => (f.serverId === ~~m));
 			if (!obj) {
 				delete effects[m];
 				return;

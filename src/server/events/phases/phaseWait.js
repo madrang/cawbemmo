@@ -1,9 +1,10 @@
 module.exports = {
-	oldTtl: null,
+	oldTtl: null
 
-	init: function () {
-		if (!this.oldTtl)
+	, init: function () {
+		if (!this.oldTtl) {
 			this.oldTtl = this.ttl;
+		}
 
 		this.ttl = this.oldTtl;
 	}

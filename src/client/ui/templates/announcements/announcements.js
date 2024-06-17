@@ -1,8 +1,8 @@
 define([
-	'js/system/events',
-	'html!ui/templates/announcements/template',
-	'css!ui/templates/announcements/styles',
-	'html!ui/templates/announcements/templateLine'
+	"js/system/events"
+	, "html!ui/templates/announcements/template"
+	, "css!ui/templates/announcements/styles"
+	, "html!ui/templates/announcements/templateLine"
 ], function (
 	events,
 	template,
@@ -10,59 +10,66 @@ define([
 	templateLine
 ) {
 	return {
-		tpl: template,
+		tpl: template
 
-		message: null,
-		maxTtl: 160,
+		, message: null
+		, maxTtl: 160
 
-		postRender: function () {
-			this.onEvent('onGetAnnouncement', this.onGetAnnouncement.bind(this));
-		},
+		, postRender: function () {
+			this.onEvent("onGetAnnouncement", this.onGetAnnouncement.bind(this));
+		}
 
-		onGetAnnouncement: function (e) {
+		, onGetAnnouncement: function (e) {
 			if (isMobile) {
-				if (['press g to', 'press u to'].some(f => e.msg.toLowerCase().indexOf(f) > -1))
+				if (["press g to", "press u to"].some((f) => e.msg.toLowerCase().indexOf(f) > -1)) {
 					return;
+				}
 			}
 
 			this.clearMessage();
 
-			let container = this.find('.list');
+			let container = this.find(".list");
 
 			let html = templateLine
-				.replace('$MSG$', e.msg);
+				.replace("$MSG$", e.msg);
 
 			let el = $(html)
 				.appendTo(container);
 
-			if (e.type)
+			if (e.type) {
 				el.addClass(e.type);
-			if (e.zIndex)
-				el.css('z-index', e.zIndex);
-			if (e.top)
-				el.css('margin-top', e.top);
+			}
+			if (e.zIndex) {
+				el.css("z-index", e.zIndex);
+			}
+			if (e.top) {
+				el.css("margin-top", e.top);
+			}
 
 			this.message = {
-				ttl: e.ttl ?? this.maxTtl,
-				el: el
+				ttl: e.ttl ?? this.maxTtl
+				, el: el
 			};
-		},
+		}
 
-		update: function () {
+		, update: function () {
 			let message = this.message;
-			if (!message)
+			if (!message) {
 				return;
+			}
 
 			message.ttl--;
 
-			if (message.ttl <= 0)
+			if (message.ttl <= 0) {
 				this.clearMessage();
-		},
+			}
+		}
 
-		clearMessage: function () {
+		, clearMessage: function () {
 			let message = this.message;
-			if (!message)
+			if (!message) {
 				return;
+			}
 
 			this.message = null;
 			message.el.remove();

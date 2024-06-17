@@ -1,4 +1,4 @@
-let generator = require('../../items/generator');
+let generator = require("../../items/generator");
 
 module.exports = (cpnInv, ownerName, killSource) => {
 	const { obj, blueprint } = cpnInv;
@@ -10,7 +10,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 	const { stats, instance: { objects, eventEmitter } } = obj;
 
 	//Only drop loot if this player is in the zone
-	let playerObject = objects.find(o => o.player && o.name === ownerName);
+	let playerObject = objects.find((o) => o.player && o.name === ownerName);
 	if (!playerObject) {
 		return;
 	}
@@ -27,10 +27,10 @@ module.exports = (cpnInv, ownerName, killSource) => {
 	cpnInv.items = [];
 
 	let dropEvent = {
-		chanceMultiplier: 1,
-		source: obj
+		chanceMultiplier: 1
+		, source: obj
 	};
-	playerObject.fireEvent('beforeGenerateLoot', dropEvent);
+	playerObject.fireEvent("beforeGenerateLoot", dropEvent);
 
 	if ((!blueprint.noRandom) || (blueprint.alsoRandom)) {
 		let bonusMagicFind = killSource.stats.values.magicFind;
@@ -46,10 +46,10 @@ module.exports = (cpnInv, ownerName, killSource) => {
 				continue;
 			}
 			let itemBlueprint = {
-				level: stats.values.level,
-				magicFind: magicFind,
-				bonusMagicFind: bonusMagicFind,
-				noCurrency: i > 0
+				level: stats.values.level
+				, magicFind: magicFind
+				, bonusMagicFind: bonusMagicFind
+				, noCurrency: i > 0
 			};
 			const useItem = generator.generate(itemBlueprint, playerObject.stats.values.level);
 			cpnInv.getItem(useItem);
@@ -69,7 +69,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 			drop.magicFind = magicFind;
 
 			let item = drop;
-			if ((!item.quest) && (item.type !== 'key')) {
+			if ((!item.quest) && (item.type !== "key")) {
 				item = generator.generate(extend({}, drop));
 			}
 			if (!item.slot) {
@@ -78,19 +78,19 @@ module.exports = (cpnInv, ownerName, killSource) => {
 			cpnInv.getItem(item, true);
 		}
 	}
-	playerObject.fireEvent('beforeTargetDeath', obj, cpnInv.items);
+	playerObject.fireEvent("beforeTargetDeath", obj, cpnInv.items);
 
 	// Deprecated
-	eventEmitter.emit('onBeforeDropBag', obj, cpnInv.items, killSource);
-	obj.fireEvent('onBeforeDropBag', cpnInv.items, killSource);
+	eventEmitter.emit("onBeforeDropBag", obj, cpnInv.items, killSource);
+	obj.fireEvent("onBeforeDropBag", cpnInv.items, killSource);
 	// New
 	const eventMsg = {
-		objDropper: obj,
-		objLooter: playerObject,
-		objKillSource: killSource,
-		items: cpnInv.items
+		objDropper: obj
+		, objLooter: playerObject
+		, objKillSource: killSource
+		, items: cpnInv.items
 	};
-	eventEmitter.emit('beforeDropBag', eventMsg);
+	eventEmitter.emit("beforeDropBag", eventMsg);
 
 	if (cpnInv.items.length > 0) {
 		cpnInv.createBag(obj.x, obj.y, cpnInv.items, ownerName);

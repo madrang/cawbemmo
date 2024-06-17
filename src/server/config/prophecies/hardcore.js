@@ -1,15 +1,15 @@
 module.exports = {
-	type: 'hardcore',
+	type: "hardcore"
 
-	init: function () {
-		
-	},
+	, init: function () {
 
-	simplify: function () {
+	}
+
+	, simplify: function () {
 		return this.type;
-	},
+	}
 
-	events: {
+	, events: {
 		afterDeath: function (event) {
 			event.permadeath = true;
 		}

@@ -1,15 +1,15 @@
 module.exports = {
-	type: 'crushable',
+	type: "crushable"
 
-	init: function () {
+	, init: function () {
 
-	},
+	}
 
-	simplify: function () {
+	, simplify: function () {
 		return this.type;
-	},
+	}
 
-	events: {
+	, events: {
 		beforeTakeDamage: function ({ damage }) {
 			damage.amount *= 4;
 		}

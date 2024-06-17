@@ -1,7 +1,7 @@
 module.exports = {
-	id: 'hostile',
+	id: "hostile"
 
-	initialRep: -10000,
+	, initialRep: -10000
 
-	noGainRep: true
+	, noGainRep: true
 };

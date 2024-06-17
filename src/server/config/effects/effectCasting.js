@@ -1,15 +1,15 @@
 module.exports = {
-	type: 'casting',
+	type: "casting"
 
-	events: {
+	, events: {
 		beforeMove: function (targetPos) {
 			let obj = this.obj;
 
 			targetPos.x = obj.x;
 			targetPos.y = obj.y;
-		},
+		}
 
-		beforeCastSpell: function (successObj) {		
+		, beforeCastSpell: function (successObj) {
 			successObj.success = false;
 		}
 	}

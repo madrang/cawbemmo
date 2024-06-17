@@ -1,39 +1,43 @@
 //Imports
-const { sendMessageToThread } = require('../../world/threadManager');
+const { sendMessageToThread } = require("../../world/threadManager");
 
 //Helpers
 const route = function (socket, msg) {
-	const source = this.players.find(p => p.socket.id === socket.id);
-	if (!source)
+	const source = this.players.find((p) => p.socket.id === socket.id);
+	if (!source) {
 		return;
+	}
 
-	if (!msg.data)
+	if (!msg.data) {
 		msg.data = {};
+	}
 
 	msg.data.sourceId = source.id;
 
 	if (
 		(
 			(source.permadead) &&
-			(['getCharacterList', 'getCharacter', 'deleteCharacter'].indexOf(msg.method) === -1)
+			(["getCharacterList", "getCharacter", "deleteCharacter"].indexOf(msg.method) === -1)
 		) ||
 		(
 			source.dead &&
 			!(
-				(msg.method === 'performAction' && ['respawn'].includes(msg.data.method)) ||
-				(msg.method === 'clientAck')
+				(msg.method === "performAction" && ["respawn"].includes(msg.data.method)) ||
+				(msg.method === "clientAck")
 			)
 		)
-	)
+	) {
 		return;
+	}
 
 	if (msg.threadModule) {
-		if (msg.callback)
+		if (msg.callback) {
 			msg.data.callbackId = atlas.registerCallback(msg.callback);
+		}
 
 		sendMessageToThread({
-			threadId: source.zoneId,
-			msg
+			threadId: source.zoneId
+			, msg
 		});
 
 		return;
@@ -41,18 +45,21 @@ const route = function (socket, msg) {
 
 	let target = source;
 	if (msg.data.targetId !== undefined && msg.data.cpn === undefined) {
-		target = this.players.find(p => p.id === msg.data.targetId);
-		if (!target)
+		target = this.players.find((p) => p.id === msg.data.targetId);
+		if (!target) {
 			return;
+		}
 	}
 
 	let cpn = target[msg.cpn];
-	if (!cpn)
+	if (!cpn) {
 		return;
+	}
 
 	let method = msg.method;
-	if (cpn[method])
+	if (cpn[method]) {
 		cpn[method](msg);
+	}
 };
 
 const routeGlobal = function (msg) {
@@ -61,6 +68,6 @@ const routeGlobal = function (msg) {
 
 //Exports
 module.exports = {
-	route,
-	routeGlobal
+	route
+	, routeGlobal
 };

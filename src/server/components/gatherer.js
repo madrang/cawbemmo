@@ -1,21 +1,21 @@
-let qualityGenerator = require('../items/generators/quality');
+let qualityGenerator = require("../items/generators/quality");
 
 module.exports = {
-	type: 'gatherer',
+	type: "gatherer"
 
-	nodes: [],
-	gathering: null,
-	gatheringTtl: 0,
-	gatheringTtlMax: 7,
-	defaultTtlMax: 7,
+	, nodes: []
+	, gathering: null
+	, gatheringTtl: 0
+	, gatheringTtlMax: 7
+	, defaultTtlMax: 7
 
-	simplify: function () {
+	, simplify: function () {
 		return {
-			type: 'gatherer'
+			type: "gatherer"
 		};
-	},
+	}
 
-	gather: function () {
+	, gather: function () {
 		const { gathering, nodes, defaultTtlMax, obj } = this;
 		const { equipment, stats, instance: { eventEmitter } } = obj;
 
@@ -27,24 +27,24 @@ module.exports = {
 		const [ node ] = nodes;
 
 		if (!this.hasSpace(node)) {
-			this.sendAnnouncement('Your bags are too full to gather any more resources.');
+			this.sendAnnouncement("Your bags are too full to gather any more resources.");
 			return;
 		}
 
 		const eGather = {
-			node,
-			obj: this
+			node
+			, obj: this
 		};
-		eventEmitter.emit('beforeGatherResource', eGather);
-		obj.fireEvent('beforeGatherResource', eGather);
+		eventEmitter.emit("beforeGatherResource", eGather);
+		obj.fireEvent("beforeGatherResource", eGather);
 
 		this.gathering = node;
 
 		let ttlMax = node.resourceNode.ttl || defaultTtlMax;
 
-		if (node.resourceNode.nodeType === 'fish') {
-			if (equipment.isSlotEmpty('tool')) {
-				this.sendAnnouncement('You need a fishing rod to fish');
+		if (node.resourceNode.nodeType === "fish") {
+			if (equipment.isSlotEmpty("tool")) {
+				this.sendAnnouncement("You need a fishing rod to fish");
 				this.gathering = null;
 				return;
 			}
@@ -53,68 +53,70 @@ module.exports = {
 		}
 		this.gatheringTtlMax = ttlMax;
 		this.gatheringTtl = ttlMax;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let gathering = this.gathering;
 		if (!gathering) {
 			return;
 		}
-		let isFish = (gathering.resourceNode.nodeType === 'fish');
+		let isFish = (gathering.resourceNode.nodeType === "fish");
 		let hasSpace = this.hasSpace(this.gathering);
 
 		if (gathering.destroyed || !hasSpace) {
 			this.gathering = null;
 			this.gatheringTtl = 0;
-			this.obj.syncer.set(false, 'gatherer', 'progress', 100);
-			this.obj.syncer.set(true, 'gatherer', 'progress', 100);
-			if (isFish)
-				this.obj.syncer.set(true, 'gatherer', 'action', 'Fishing');
-			if (!hasSpace)
-				this.sendAnnouncement('Your bags are too full to gather any more resources.');
+			this.obj.syncer.set(false, "gatherer", "progress", 100);
+			this.obj.syncer.set(true, "gatherer", "progress", 100);
+			if (isFish) {
+				this.obj.syncer.set(true, "gatherer", "action", "Fishing");
+			}
+			if (!hasSpace) {
+				this.sendAnnouncement("Your bags are too full to gather any more resources.");
+			}
 			return;
 		}
 
 		if (this.gatheringTtl > 0) {
 			if (this.gatheringTtl === this.gatheringTtlMax && gathering.width > 1) {
-				['x', 'y', 'width', 'height'].forEach(p => {
-					this.obj.syncer.set(false, 'gatherer', p, gathering[p]);
+				["x", "y", "width", "height"].forEach((p) => {
+					this.obj.syncer.set(false, "gatherer", p, gathering[p]);
 				});
 			}
 			this.gatheringTtl--;
 			let progress = 100 - Math.floor((this.gatheringTtl / this.gatheringTtlMax) * 100);
-			this.obj.syncer.set(true, 'gatherer', 'progress', progress);
+			this.obj.syncer.set(true, "gatherer", "progress", progress);
 			if (isFish) {
-				this.obj.syncer.set(true, 'gatherer', 'action', 'Fishing');
+				this.obj.syncer.set(true, "gatherer", "action", "Fishing");
 			}
 			return;
 		}
 		this.completeGathering(gathering, isFish);
-	},
+	}
 
-	completeGathering: function (gathering, isFish) {
+	, completeGathering: function (gathering, isFish) {
 		let resourceNode = gathering.resourceNode;
 		let gatherResult = extend({
-			obj: gathering,
-			source: this.obj
+			obj: gathering
+			, source: this.obj
 		}, {
-			nodeType: resourceNode.nodeType,
-			blueprint: resourceNode.blueprint,
-			xp: resourceNode.xp,
-			items: gathering.inventory.items
+			nodeType: resourceNode.nodeType
+			, blueprint: resourceNode.blueprint
+			, xp: resourceNode.xp
+			, items: gathering.inventory.items
 		});
-		this.obj.instance.eventEmitter.emit('beforeGatherResourceComplete', gatherResult);
-		this.obj.fireEvent('beforeGatherResourceComplete', gatherResult);
-		this.obj.syncer.set(false, 'gatherer', 'progress', 100);
+		this.obj.instance.eventEmitter.emit("beforeGatherResourceComplete", gatherResult);
+		this.obj.fireEvent("beforeGatherResourceComplete", gatherResult);
+		this.obj.syncer.set(false, "gatherer", "progress", 100);
 
 		if (isFish) {
 			const catchChance = gatherResult.blueprint.gatherChance + this.obj.stats.values.catchChance;
 			if (Math.floor(Math.random() * 100) >= catchChance) {
-				this.sendAnnouncement('The fish got away');
+				this.sendAnnouncement("The fish got away");
 				this.gathering = null;
 				return;
 			}
-			gatherResult.items.forEach(g => {
+			gatherResult.items.forEach((g) => {
 				if (g.slot) {
 					return;
 				}
@@ -125,11 +127,11 @@ module.exports = {
 				});
 
 				g.name = {
-					0: '',
-					1: 'Big ',
-					2: 'Giant ',
-					3: 'Trophy ',
-					4: 'Fabled '
+					0: ""
+					, 1: "Big "
+					, 2: "Giant "
+					, 3: "Trophy "
+					, 4: "Fabled "
 				}[g.quality] + g.name;
 
 				let statFishWeight = 1 + (this.obj.stats.values.fishWeight / 100);
@@ -141,9 +143,10 @@ module.exports = {
 				g.worth = Math.floor(weight * 10);
 			});
 		} else {
-			gatherResult.items.forEach(g => {
-				if (g.worth === undefined)
+			gatherResult.items.forEach((g) => {
+				if (g.worth === undefined) {
 					g.worth = 1;
+				}
 			});
 		}
 
@@ -151,11 +154,11 @@ module.exports = {
 			let itemChance = 1 + this.obj.stats.values.fishItems;
 			if (Math.floor(Math.random() * 500) < itemChance) {
 				gatherResult.items = [{
-					name: 'Cerulean Pearl',
-					material: true,
-					quantity: 1,
-					quality: 3,
-					sprite: [11, 9]
+					name: "Cerulean Pearl"
+					, material: true
+					, quantity: 1
+					, quality: 3
+					, sprite: [11, 9]
 				}];
 			}
 		}
@@ -173,7 +176,7 @@ module.exports = {
 			}
 			this.obj.inventory.getItem(item, false, false, true);
 			if (item.material) {
-				this.obj.fireEvent('afterGatherResource', gatherResult);
+				this.obj.fireEvent("afterGatherResource", gatherResult);
 			}
 		});
 
@@ -184,35 +187,35 @@ module.exports = {
 
 		if (gathering.destroyed) {
 			if (isFish) {
-				this.sendAnnouncement('The school has been depleted');
+				this.sendAnnouncement("The school has been depleted");
 			}
-			this.nodes.spliceWhere(n => (n === gathering));
+			this.nodes.spliceWhere((n) => (n === gathering));
 			this.updateServerActions(false);
 		}
 		this.gathering = null;
-	},
+	}
 
-	hasSpace: function (node) {
+	, hasSpace: function (node) {
 		// By default, the player is allowed to gather "nothing"
 		if (!node.inventory || !node.inventory.items) {
 			return true;
 		}
 		return this.obj.inventory.hasSpaceList(node.inventory.items);
-	},
+	}
 
-	enter: function (node) {
+	, enter: function (node) {
 		const { obj } = this;
 
 		let gatherResult = extend({
 			nodeName: node.name
 		});
-		obj.instance.eventEmitter.emit('beforeEnterPool', gatherResult, obj);
+		obj.instance.eventEmitter.emit("beforeEnterPool", gatherResult, obj);
 
 		let nodeType = node.resourceNode.nodeType;
 
-		if (nodeType === 'fish') {
-			if (!obj.equipment.eq.has('tool')) {
-				this.sendAnnouncement('You need a fishing rod to fish');
+		if (nodeType === "fish") {
+			if (!obj.equipment.eq.has("tool")) {
+				this.sendAnnouncement("You need a fishing rod to fish");
 
 				return;
 			}
@@ -221,114 +224,120 @@ module.exports = {
 		this.updateServerActions(true);
 
 		let action = null;
-		if (nodeType === 'fish')
-			action = 'fish for';
-		else if (nodeType === 'herb')
-			action = 'gather the';
+		if (nodeType === "fish") {
+			action = "fish for";
+		} else if (nodeType === "herb") {
+			action = "gather the";
+		}
 		const actionString = `${action} ${gatherResult.nodeName}`;
 
 		this.sendAnnouncement(`Press U to ${actionString}`);
 
-		this.nodes.spliceWhere(n => (n === node));
+		this.nodes.spliceWhere((n) => (n === node));
 		this.nodes.push(node);
-	},
+	}
 
-	exit: function (node) {
-		if (!this.nodes.includes(node))
+	, exit: function (node) {
+		if (!this.nodes.includes(node)) {
 			return;
+		}
 
 		this.updateServerActions(false);
 
-		this.nodes.spliceWhere(n => (n === node));
-	},
+		this.nodes.spliceWhere((n) => (n === node));
+	}
 
-	sendAnnouncement: function (msg) {
+	, sendAnnouncement: function (msg) {
 		process.send({
-			method: 'events',
-			data: {
+			method: "events"
+			, data: {
 				onGetAnnouncement: [{
 					obj: {
 						msg: msg
-					},
-					to: [this.obj.serverId]
+					}
+					, to: [this.obj.serverId]
 				}]
 			}
 		});
-	},
+	}
 
-	updateServerActions: function (isAdd) {
+	, updateServerActions: function (isAdd) {
 		const { obj } = this;
 
-		const action = isAdd ? 'addActions' : 'removeActions';
-		obj.syncer.setArray(true, 'serverActions', action, {
-			key: 'u',
-			action: {
-				cpn: 'gatherer',
-				method: 'gather',
-				data: {
+		const action = isAdd ? "addActions" : "removeActions";
+		obj.syncer.setArray(true, "serverActions", action, {
+			key: "u"
+			, action: {
+				cpn: "gatherer"
+				, method: "gather"
+				, data: {
 					targetId: obj.id
 				}
 			}
 		});
-	},
+	}
 
-	events: {
+	, events: {
 		beforeRezone: function () {
 			this.events.beforeMove.call(this);
-		},
+		}
 
-		beforeMove: function () {
-			if (!this.gathering)
+		, beforeMove: function () {
+			if (!this.gathering) {
 				return;
+			}
 
-			['x', 'y', 'width', 'height'].forEach(p => {
-				this.obj.syncer.delete(false, 'gatherer', p);
+			["x", "y", "width", "height"].forEach((p) => {
+				this.obj.syncer.delete(false, "gatherer", p);
 			});
 
-			this.obj.syncer.set(true, 'gatherer', 'progress', 100);
-			this.obj.syncer.set(false, 'gatherer', 'progress', 100);
+			this.obj.syncer.set(true, "gatherer", "progress", 100);
+			this.obj.syncer.set(false, "gatherer", "progress", 100);
 
-			if (this.gathering.resourceNode.nodeType === 'fish')
-				this.obj.syncer.set(true, 'gatherer', 'action', 'Fishing');
+			if (this.gathering.resourceNode.nodeType === "fish") {
+				this.obj.syncer.set(true, "gatherer", "action", "Fishing");
+			}
 
 			this.gathering = null;
-		},
+		}
 
-		beforeCastSpell: function () {
+		, beforeCastSpell: function () {
 			this.events.beforeMove.call(this);
-		},
+		}
 
-		beforeTakeDamage: function (damageEvent) {
+		, beforeTakeDamage: function (damageEvent) {
 			this.events.beforeMove.call(this);
-		},
+		}
 
-		afterEquipItem: function (item) {
+		, afterEquipItem: function (item) {
 			let nodes = this.nodes;
 			let nLen = nodes.length;
 
 			for (let i = 0; i < nLen; i++) {
 				let node = nodes[i];
-				if (item.slot !== 'tool')
+				if (item.slot !== "tool") {
 					continue;
+				}
 
-				if (node.resourceNode.nodeType === 'fish') {
-					if (!this.obj.equipment.eq.has('tool')) {
-						this.sendAnnouncement('You need a fishing rod to fish');
+				if (node.resourceNode.nodeType === "fish") {
+					if (!this.obj.equipment.eq.has("tool")) {
+						this.sendAnnouncement("You need a fishing rod to fish");
 
 						if (this.gathering === node) {
-							if (this.gathering.resourceNode.nodeType === 'fish')
-								this.obj.syncer.set(true, 'gatherer', 'action', 'Fishing');
+							if (this.gathering.resourceNode.nodeType === "fish") {
+								this.obj.syncer.set(true, "gatherer", "action", "Fishing");
+							}
 
 							this.gathering = null;
-							this.obj.syncer.set(true, 'gatherer', 'progress', 100);
-							this.obj.syncer.set(false, 'gatherer', 'progress', 100);
+							this.obj.syncer.set(true, "gatherer", "progress", 100);
+							this.obj.syncer.set(false, "gatherer", "progress", 100);
 						}
 					}
 				}
 			}
-		},
+		}
 
-		afterUnequipItem: function (item) {
+		, afterUnequipItem: function (item) {
 			this.events.afterEquipItem.call(this, item);
 		}
 	}

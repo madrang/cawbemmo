@@ -1,4 +1,4 @@
-let configCurrencies = require('../config/currencies');
+let configCurrencies = require("../config/currencies");
 
 let chances = [];
 for (let c in configCurrencies.chance) {
@@ -14,7 +14,7 @@ module.exports = {
 		if (!blueprint.name) {
 			pick = chances[Math.floor(Math.random() * chances.length)];
 		} else {
-			pick = Object.keys(configCurrencies.currencies).find(c => (c.toLowerCase().indexOf(blueprint.name.toLowerCase()) > -1));
+			pick = Object.keys(configCurrencies.currencies).find((c) => (c.toLowerCase().indexOf(blueprint.name.toLowerCase()) > -1));
 		}
 		item.name = pick;
 		extend(item, configCurrencies.currencies[pick]);

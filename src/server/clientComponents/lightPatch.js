@@ -1,16 +1,16 @@
 define([
-	'js/rendering/renderer'
+	"js/rendering/renderer"
 ], function (
 	renderer
 ) {
 	return {
-		type: 'lightPatch',
+		type: "lightPatch"
 
-		color: 'ffeb38',
-		patches: [],
-		rays: [],
+		, color: "ffeb38"
+		, patches: []
+		, rays: []
 
-		init: function (blueprint) {
+		, init: function (blueprint) {
 			this.blueprint = this.blueprint || {};
 			const obj = this.obj;
 			const x = obj.x;
@@ -24,18 +24,18 @@ define([
 						continue;
 					}
 					const sprite = renderer.buildObject({
-						x: (x + i),
-						y: (y + j),
-						sheetName: 'white',
-						cell: 0,
-						layerName: 'lightPatches'
+						x: (x + i)
+						, y: (y + j)
+						, sheetName: "white"
+						, cell: 0
+						, layerName: "lightPatches"
 					});
 					const size = (3 + Math.floor(Math.random() * 6)) * scaleMult;
 					sprite.width = size;
 					sprite.height = size;
 					sprite.x += scaleMult * Math.floor(Math.random() * 4);
 					sprite.y += scaleMult * Math.floor(Math.random() * 4);
-					sprite.tint = '0x' + this.color;
+					sprite.tint = "0x" + this.color;
 					sprite.alpha = (maxAlpha * 0.3) + (Math.random() * (maxAlpha * 0.7));
 					sprite.blendMode = PIXI.BLEND_MODES.ADD;
 					this.patches.push(sprite);
@@ -51,17 +51,17 @@ define([
 				const hm = 2;
 
 				let rContainer = renderer.buildContainer({
-					layerName: 'lightBeams'
+					layerName: "lightBeams"
 				});
 				this.rays.push(rContainer);
 
 				for (let j = 0; j < h; j++) {
 					const ray = renderer.buildObject({
-						x: nx,
-						y: ny,
-						cell: 0,
-						sheetName: 'white',
-						parent: rContainer
+						x: nx
+						, y: ny
+						, cell: 0
+						, sheetName: "white"
+						, parent: rContainer
 					});
 					ray.x = Math.floor((nx * scale) - (scaleMult * j));
 					ray.y = (ny * scale) + (scaleMult * j * hm);
@@ -73,9 +73,9 @@ define([
 				}
 			}
 			this.setVisible(obj.isVisible);
-		},
+		}
 
-		update: function () {
+		, update: function () {
 			for (let r of this.rays) {
 				r.alpha += (Math.random() * 0.03) - 0.015;
 				if (r.alpha < 0.3) {
@@ -84,9 +84,9 @@ define([
 					r.alpha = 1;
 				}
 			}
-		},
+		}
 
-		setVisible: function (visible) {
+		, setVisible: function (visible) {
 			this.patches.forEach(function (p) {
 				p.visible = visible;
 			});
@@ -94,9 +94,9 @@ define([
 			this.rays.forEach(function (r) {
 				r.visible = visible;
 			});
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			this.patches.forEach(function (p) {
 				p.parent.removeChild(p);
 			});

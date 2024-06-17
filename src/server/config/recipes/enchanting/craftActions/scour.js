@@ -1,23 +1,25 @@
 module.exports = (obj, [item]) => {
-	if (!item.power)
+	if (!item.power) {
 		return;
+	}
 
-	const result = { msg: 'Scour successful', addStatMsgs: [] };
+	const result = { msg: "Scour successful", addStatMsgs: [] };
 
 	for (let p in item.enchantedStats) {
 		let value = item.enchantedStats[p];
 
 		if (item.stats[p]) {
 			result.addStatMsgs.push({
-				stat: p,
-				value: -value
+				stat: p
+				, value: -value
 			});
 
 			item.stats[p] -= value;
-			if (item.stats[p] <= 0)
+			if (item.stats[p] <= 0) {
 				delete item.stats[p];
+			}
 
-			if (p === 'lvlRequire') {
+			if (p === "lvlRequire") {
 				item.level = Math.min(consts.maxLevel, item.level + value);
 				delete item.originalLevel;
 			}

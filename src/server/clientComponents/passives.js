@@ -1,20 +1,20 @@
 define([
-	'js/system/events'
+	"js/system/events"
 ], function (
 	events
 ) {
 	return {
-		type: 'passives',
+		type: "passives"
 
-		selected: [],
-		points: 0,
+		, selected: []
+		, points: 0
 
-		init: function () {
-			events.emit('onGetPassives', this.selected);
-			events.emit('onGetPassivePoints', this.points);
-		},
+		, init: function () {
+			events.emit("onGetPassives", this.selected);
+			events.emit("onGetPassivePoints", this.points);
+		}
 
-		extend: function (blueprint) {
+		, extend: function (blueprint) {
 			let rerender = false;
 
 			if (blueprint.tickNodes) {
@@ -35,12 +35,13 @@ define([
 				rerender = true;
 			}
 
-			if (rerender)
-				events.emit('onGetPassives', this.selected);
+			if (rerender) {
+				events.emit("onGetPassives", this.selected);
+			}
 
 			if (blueprint.points !== null) {
 				this.points = blueprint.points;
-				events.emit('onGetPassivePoints', this.points);
+				events.emit("onGetPassivePoints", this.points);
 			}
 		}
 	};

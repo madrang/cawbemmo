@@ -1,36 +1,37 @@
 define([
-	'js/rendering/renderer'
+	"js/rendering/renderer"
 ], function (
 	renderer
 ) {
 	return {
-		type: 'animation',
+		type: "animation"
 
-		frames: 4,
-		frameDelay: 4,
+		, frames: 4
+		, frameDelay: 4
 
-		sheet: 'attacks',
+		, sheet: "attacks"
 
-		row: null,
-		col: null,
+		, row: null
+		, col: null
 
-		loop: 1,
-		loopCounter: 0,
+		, loop: 1
+		, loopCounter: 0
 
-		frame: 0,
+		, frame: 0
 
-		frameDelayCd: 0,
+		, frameDelayCd: 0
 
-		oldSheetName: null,
-		oldCell: null,
-		oldTexture: null,
+		, oldSheetName: null
+		, oldCell: null
+		, oldTexture: null
 
-		init: function (blueprint) {
+		, init: function (blueprint) {
 			const { template, frameDelay, obj: { sheetName, cell, sprite } } = this;
 
-			if (!sprite)
+			if (!sprite) {
 				return true;
-			
+			}
+
 			this.oldSheetName = sheetName;
 			this.oldCell = cell;
 			this.oldTexture = sprite.texture;
@@ -38,26 +39,27 @@ define([
 			this.frame = 0;
 			this.frameDelayCd = 0;
 
-			for (let p in template) 
+			for (let p in template) {
 				this[p] = template[p];
+			}
 
 			this.frameDelayCd = frameDelay;
 
 			this.setSprite();
-		},
+		}
 
-		setSprite: function () {
+		, setSprite: function () {
 			renderer.setSprite({
-				sprite: this.obj.sprite,
-				cell: (this.row * 8) + this.col + this.frame,
-				sheetName: this.spritesheet || this.sheet
+				sprite: this.obj.sprite
+				, cell: (this.row * 8) + this.col + this.frame
+				, sheetName: this.spritesheet || this.sheet
 			});
-		},
+		}
 
-		update: function () {
-			if (this.frameDelayCd > 0)
+		, update: function () {
+			if (this.frameDelayCd > 0) {
 				this.frameDelayCd--;
-			else {
+			} else {
 				this.frameDelayCd = this.frameDelay;
 				this.frame++;
 				if (this.frame === this.frames) {
@@ -71,9 +73,9 @@ define([
 			}
 
 			this.setSprite();
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			const { oldSheetName, oldCell, oldTexture, obj: { sheetName, cell, sprite } } = this;
 
 			//Make sure something didn't happen while we were in animation form
@@ -85,9 +87,9 @@ define([
 			}
 
 			renderer.setSprite({
-				sprite,
-				cell,
-				sheetName
+				sprite
+				, cell
+				, sheetName
 			});
 		}
 	};

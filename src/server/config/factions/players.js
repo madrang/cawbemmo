@@ -1,11 +1,11 @@
 module.exports = {
-	id: 'players',
-	name: 'Players',
-	description: 'The players faction.',
+	id: "players"
+	, name: "Players"
+	, description: "The players faction."
 
-	relations: {
+	, relations: {
 
-	},
+	}
 
-	noGainRep: true
+	, noGainRep: true
 };

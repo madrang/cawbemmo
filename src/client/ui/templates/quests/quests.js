@@ -1,10 +1,10 @@
 define([
-	'js/system/client',
-	'js/system/events',
-	'html!ui/templates/quests/template',
-	'html!ui/templates/quests/templateQuest',
-	'css!ui/templates/quests/styles',
-	'js/config'
+	"js/system/client"
+	, "js/system/events"
+	, "html!ui/templates/quests/template"
+	, "html!ui/templates/quests/templateQuest"
+	, "css!ui/templates/quests/styles"
+	, "js/config"
 ], function (
 	client,
 	events,
@@ -14,132 +14,139 @@ define([
 	config
 ) {
 	return {
-		tpl: tpl,
+		tpl: tpl
 
-		quests: [],
-		container: '.right',
+		, quests: []
+		, container: ".right"
 
-		postRender: function () {
+		, postRender: function () {
 			if (isMobile) {
-				this.el.on('click', this.toggleButtons.bind(this));
-				this.find('.btnCollapse').on('click', this.toggleButtons.bind(this));
+				this.el.on("click", this.toggleButtons.bind(this));
+				this.find(".btnCollapse").on("click", this.toggleButtons.bind(this));
 			}
 
-			this.onEvent('clearUis', this.clear.bind(this));
+			this.onEvent("clearUis", this.clear.bind(this));
 
-			this.onEvent('onObtainQuest', this.onObtainQuest.bind(this));
-			this.onEvent('onUpdateQuest', this.onUpdateQuest.bind(this));
-			this.onEvent('onCompleteQuest', this.onCompleteQuest.bind(this));
-			this.onEvent('onToggleQuestsVisibility', this.onToggleQuestsVisibility.bind(this));
+			this.onEvent("onObtainQuest", this.onObtainQuest.bind(this));
+			this.onEvent("onUpdateQuest", this.onUpdateQuest.bind(this));
+			this.onEvent("onCompleteQuest", this.onCompleteQuest.bind(this));
+			this.onEvent("onToggleQuestsVisibility", this.onToggleQuestsVisibility.bind(this));
 
 			this.onToggleQuestsVisibility(config.showQuests);
-		},
+		}
 
-		clear: function () {
+		, clear: function () {
 			this.quests = [];
-			this.el.find('.list').empty();
-		},
+			this.el.find(".list").empty();
+		}
 
-		onObtainQuest: function (quest) {
-			let list = this.el.find('.list');
+		, onObtainQuest: function (quest) {
+			let list = this.el.find(".list");
 
 			let html = templateQuest
-				.replace('$ZONE$', quest.zoneName)
-				.replace('$NAME$', quest.name)
-				.replace('$DESCRIPTION$', quest.description)
-				.replace('$REWARD$', quest.xp + ' xp');
+				.replace("$ZONE$", quest.zoneName)
+				.replace("$NAME$", quest.name)
+				.replace("$DESCRIPTION$", quest.description)
+				.replace("$REWARD$", quest.xp + " xp");
 
 			let el = $(html)
 				.appendTo(list);
 
-			if (quest.isReady)
-				el.addClass('ready');
+			if (quest.isReady) {
+				el.addClass("ready");
+			}
 
-			if (quest.active)
-				el.addClass('active');
-			else if (!quest.isReady)
-				el.addClass('disabled');
+			if (quest.active) {
+				el.addClass("active");
+			} else if (!quest.isReady) {
+				el.addClass("disabled");
+			}
 
-			el.on('click', this.onClick.bind(this, el, quest));
+			el.on("click", this.onClick.bind(this, el, quest));
 
 			this.quests.push({
-				id: quest.id,
-				el: el,
-				quest: quest
+				id: quest.id
+				, el: el
+				, quest: quest
 			});
 
-			let quests = list.find('.quest');
-			quests.toArray().forEach(c => {
+			let quests = list.find(".quest");
+			quests.toArray().forEach((c) => {
 				let childEl = $(c);
-				if (childEl.hasClass('active'))
+				if (childEl.hasClass("active")) {
 					childEl.prependTo(list);
+				}
 			});
-		},
+		}
 
-		onClick: function (el, quest) {
-			if (!el.hasClass('ready'))
+		, onClick: function (el, quest) {
+			if (!el.hasClass("ready")) {
 				return;
+			}
 
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'quests',
-					method: 'complete',
-					data: {
+				cpn: "player"
+				, method: "performAction"
+				, data: {
+					cpn: "quests"
+					, method: "complete"
+					, data: {
 						questId: quest.id
 					}
 				}
 			});
-		},
+		}
 
-		onUpdateQuest: function (quest) {
-			let q = this.quests.find(f => f.id === quest.id);
+		, onUpdateQuest: function (quest) {
+			let q = this.quests.find((f) => f.id === quest.id);
 			q.quest.isReady = quest.isReady;
 
-			q.el.find('.description').html(quest.description);
+			q.el.find(".description").html(quest.description);
 
-			q.el.removeClass('ready');
+			q.el.removeClass("ready");
 			if (quest.isReady) {
-				q.el.removeClass('disabled');
-				q.el.addClass('ready');
+				q.el.removeClass("disabled");
+				q.el.addClass("ready");
 
 				if (isMobile) {
-					events.emit('onGetAnnouncement', {
-						msg: 'Quest ready for turn-in'
+					events.emit("onGetAnnouncement", {
+						msg: "Quest ready for turn-in"
 					});
 				}
 
-				events.emit('onQuestReady', quest);
+				events.emit("onQuestReady", quest);
 			}
-		},
+		}
 
-		onCompleteQuest: function (id) {
-			let q = this.quests.find(f => f.id === id);
+		, onCompleteQuest: function (id) {
+			let q = this.quests.find((f) => f.id === id);
 
-			if (!q)
+			if (!q) {
 				return;
+			}
 
 			q.el.remove();
-			this.quests.spliceWhere(f => f.id === id);
-		},
+			this.quests.spliceWhere((f) => f.id === id);
+		}
 
-		toggleButtons: function (e) {
-			this.el.toggleClass('active');
+		, toggleButtons: function (e) {
+			this.el.toggleClass("active");
 			e.stopPropagation();
-		},
+		}
 
-		onToggleQuestsVisibility: function (state) {
-			const shouldHide = state === 'off';
+		, onToggleQuestsVisibility: function (state) {
+			const shouldHide = state === "off";
 
-			if (shouldHide)
+			if (shouldHide) {
 				this.hide();
-			else
+			} else {
 				this.show();
+			}
 
-			this.el.removeClass('minimal');
-			if (state === 'minimal')
-				this.el.addClass('minimal');
+			this.el.removeClass("minimal");
+			if (state === "minimal") {
+				this.el.addClass("minimal");
+			}
 		}
 	};
 });

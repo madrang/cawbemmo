@@ -1,8 +1,8 @@
 define([
-	'js/components/components',
-	'js/rendering/renderer',
-	'js/system/events',
-	'js/config'
+	"js/components/components"
+	, "js/rendering/renderer"
+	, "js/system/events"
+	, "js/config"
 ], function (
 	components,
 	renderer,
@@ -10,12 +10,12 @@ define([
 	config
 ) {
 	return {
-		components: [],
-		offsetX: 0,
-		offsetY: 0,
-		eventCallbacks: {},
+		components: []
+		, offsetX: 0
+		, offsetY: 0
+		, eventCallbacks: {}
 
-		addComponent: function (type, options) {
+		, addComponent: function (type, options) {
 			let c = this[type];
 			if (!c || options.new) {
 				const template = components.getTemplate(type);
@@ -34,14 +34,14 @@ define([
 				this[c.type] = c;
 				this.components.push(c);
 				return c;
-			} 
+			}
 			if (c.extend) {
 				c.extend(options);
 			}
 			return c;
-		},
+		}
 
-		removeComponent: function (type) {
+		, removeComponent: function (type) {
 			const cpn = this[type];
 			if (!cpn) {
 				return;
@@ -50,9 +50,9 @@ define([
 				return c === cpn;
 			});
 			delete this[type];
-		},
+		}
 
-		update: function () {
+		, update: function () {
 			const oComponents = this.components;
 			let len = oComponents.length;
 			for (let i = 0; i < len; i++) {
@@ -70,14 +70,14 @@ define([
 					delete this[c.type];
 				}
 			}
-		},
+		}
 
-		on: function (eventName, callback) {
+		, on: function (eventName, callback) {
 			let list = this.eventCallbacks[eventName] || (this.eventCallbacks[eventName] = []);
 			list.push(events.on(eventName, callback));
-		},
+		}
 
-		setSpritePosition: function () {
+		, setSpritePosition: function () {
 			const { sprite, chatter, stats, x, y } = this;
 
 			if (!sprite) {
@@ -85,7 +85,7 @@ define([
 			}
 			renderer.setSpritePosition(this);
 
-			['nameSprite', 'chatSprite'].forEach((s, i) => {
+			["nameSprite", "chatSprite"].forEach((s, i) => {
 				const subSprite = this[s];
 				if (!subSprite) {
 					return;
@@ -93,7 +93,7 @@ define([
 				let yAdd = scale;
 				if (i === 1) {
 					yAdd *= -0.8;
-					yAdd -= (chatter.msg.split('\r\n').length - 1) * scale * 0.8;
+					yAdd -= (chatter.msg.split("\r\n").length - 1) * scale * 0.8;
 				}
 				subSprite.x = (x * scale) + (scale / 2) - (subSprite.width / 2);
 				subSprite.y = (y * scale) + yAdd;
@@ -101,9 +101,9 @@ define([
 			if (stats) {
 				stats.updateHpSprite();
 			}
-		},
+		}
 
-		updateVisibility: function () {
+		, updateVisibility: function () {
 			const { x, y, hidden, isVisible } = this;
 			const vis = !hidden && (
 				this.self || (
@@ -118,9 +118,9 @@ define([
 			}
 			this.isVisible = vis;
 			this.setVisible(vis);
-		},
+		}
 
-		setVisible: function (visible) {
+		, setVisible: function (visible) {
 			if (this.sprite) {
 				this.sprite.visible = visible;
 			}
@@ -131,21 +131,21 @@ define([
 				this.stats.hpSprite.visible = false;
 				this.stats.hpSpriteInner.visible = false;
 			}
-			this.components.forEach(c => {
+			this.components.forEach((c) => {
 				if (c.setVisible) {
 					c.setVisible(visible);
 				}
 			});
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			if (this.sprite) {
 				renderer.destroyObject(this);
 			}
 			if (this.nameSprite) {
 				renderer.destroyObject({
-					layerName: 'effects',
-					sprite: this.nameSprite
+					layerName: "effects"
+					, sprite: this.nameSprite
 				});
 			}
 			const oComponents = this.components;
@@ -158,14 +158,14 @@ define([
 			}
 			this.destroyed = true;
 			this.offEvents();
-		},
+		}
 
-		offEvents: function () {
+		, offEvents: function () {
 			if (this.pather) {
 				this.pather.resetPath();
 			}
 			for (let e in this.eventCallbacks) {
-				this.eventCallbacks[e].forEach(c => events.off(e, c));
+				this.eventCallbacks[e].forEach((c) => events.off(e, c));
 			}
 		}
 	};

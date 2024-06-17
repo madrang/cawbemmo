@@ -2,7 +2,7 @@ let abs = Math.abs.bind(Math);
 let rnd = Math.random.bind(Math);
 let max = Math.max.bind(Math);
 
-const canPathHome = require('./mob/canPathHome');
+const canPathHome = require("./mob/canPathHome");
 
 const teleportHome = (physics, obj, mob) => {
 	physics.removeObject(obj, obj.x, obj.y);
@@ -19,14 +19,14 @@ const teleportHome = (physics, obj, mob) => {
 const performPatrolAction = ({ obj }, node) => {
 	const { action } = node;
 	const { chatter, syncer, instance: { scheduler } } = obj;
-	if (action === 'chat') {
+	if (action === "chat") {
 		if (!chatter) {
-			obj.addComponent('chatter');
+			obj.addComponent("chatter");
 		}
-		syncer.set(false, 'chatter', 'msg', node.msg);
+		syncer.set(false, "chatter", "msg", node.msg);
 		return true;
 	}
-	if (action === 'wait') {
+	if (action === "wait") {
 		if (node.cron) {
 			return scheduler.isActive(node);
 		} else if (node.ttl === undefined) {
@@ -41,7 +41,7 @@ const performPatrolAction = ({ obj }, node) => {
 	}
 };
 
-const getNextPatrolTarget = mob => {
+const getNextPatrolTarget = (mob) => {
 	const { patrol, obj: { x, y } } = mob;
 	let toX, toY;
 	do {
@@ -61,8 +61,9 @@ const getNextPatrolTarget = mob => {
 		toY = toNode[1];
 		if ((toX - x === 0) && (toY - y === 0)) {
 			mob.patrolTargetNode++;
-			if (mob.patrolTargetNode >= patrol.length)
+			if (mob.patrolTargetNode >= patrol.length) {
 				mob.patrolTargetNode = 0;
+			}
 		} else {
 			break;
 		}
@@ -71,25 +72,25 @@ const getNextPatrolTarget = mob => {
 };
 
 module.exports = {
-	type: 'mob',
+	type: "mob"
 
-	target: null,
+	, target: null
 
-	physics: null,
+	, physics: null
 
-	originX: 0,
-	originY: 0,
+	, originX: 0
+	, originY: 0
 
-	walkDistance: 1,
-	maxChaseDistance: 25,
-	goHome: false,
+	, walkDistance: 1
+	, maxChaseDistance: 25
+	, goHome: false
 
-	patrol: null,
-	patrolTargetNode: 0,
+	, patrol: null
+	, patrolTargetNode: 0
 
-	needLos: null,
+	, needLos: null
 
-	init: function (blueprint) {
+	, init: function (blueprint) {
 		this.physics = this.obj.instance.physics;
 		this.originX = this.obj.x;
 		this.originY = this.obj.y;
@@ -99,10 +100,10 @@ module.exports = {
 		if (blueprint.maxChaseDistance) {
 			this.maxChaseDistance = blueprint.maxChaseDistance;
 		}
-	},
+	}
 
 	/* eslint-disable-next-line max-lines-per-function */
-	update: function () {
+	, update: function () {
 		let obj = this.obj;
 		let target = null;
 		if (obj.aggro) {
@@ -196,35 +197,35 @@ module.exports = {
 		}
 		if (dx <= 1 && dy <= 1) {
 			obj.queue({
-				action: 'move',
-				data: {
-					x: toX,
-					y: toY
+				action: "move"
+				, data: {
+					x: toX
+					, y: toY
 				}
 			});
 			return;
 		}
 		const path = this.physics.getPath({
-			x: obj.x,
-			y: obj.y
+			x: obj.x
+			, y: obj.y
 		}, {
-			x: toX,
-			y: toY
+			x: toX
+			, y: toY
 		}, false);
 		const pLen = path.length;
 		for (let i = 0; i < pLen; i++) {
 			let p = path[i];
 			obj.queue({
-				action: 'move',
-				data: {
-					x: p.x,
-					y: p.y
+				action: "move"
+				, data: {
+					x: p.x
+					, y: p.y
 				}
 			});
 		}
-	},
+	}
 
-	fight: function (target) {
+	, fight: function (target) {
 		const obj = this.obj;
 		if (this.target !== target) {
 			obj.clearQueue();
@@ -256,8 +257,8 @@ module.exports = {
 						return;
 					}
 					let success = obj.spellbook.cast({
-						spell: spell.id,
-						target
+						spell: spell.id
+						, target
 					});
 					//null means we don't have LoS
 					if (success !== null) {
@@ -293,19 +294,19 @@ module.exports = {
 
 		if (abs(x - targetPos.x) <= 1 && abs(y - targetPos.y) <= 1) {
 			obj.queue({
-				action: 'move',
-				data: {
-					x: targetPos.x,
-					y: targetPos.y
+				action: "move"
+				, data: {
+					x: targetPos.x
+					, y: targetPos.y
 				}
 			});
 		} else {
 			let path = this.physics.getPath({
-				x: x,
-				y: y
+				x: x
+				, y: y
 			}, {
-				x: targetPos.x,
-				y: targetPos.y
+				x: targetPos.x
+				, y: targetPos.y
 			});
 			if (path.length === 0) {
 				obj.aggro.ignore(target);
@@ -315,25 +316,25 @@ module.exports = {
 
 			let p = path[0];
 			obj.queue({
-				action: 'move',
-				data: {
-					x: p.x,
-					y: p.y
+				action: "move"
+				, data: {
+					x: p.x
+					, y: p.y
 				}
 			});
 		}
-	},
+	}
 
-	canChase: function (obj) {
+	, canChase: function (obj) {
 		//Patrol mobs can always chase if they don't have a target yet (since they don't have a home yet)
 		if (this.patrol && !this.target && !this.goHome) {
 			return true;
 		}
 		const distanceFromHome = Math.max(abs(this.originX - obj.x), abs(this.originY - obj.y));
 		return !this.goHome && distanceFromHome <= this.maxChaseDistance;
-	},
+	}
 
-	events: {
+	, events: {
 		beforeTakeDamage: function ({ damage }) {
 			if (this.goHome) {
 				damage.failed = true;

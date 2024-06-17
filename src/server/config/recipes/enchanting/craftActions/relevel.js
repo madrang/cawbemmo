@@ -1,5 +1,5 @@
 module.exports = (obj, [item]) => {
-	if (item.slot === 'tool') {
+	if (item.slot === "tool") {
 		return;
 	}
 	let offset = 1 + Math.floor(Math.random() * 2);

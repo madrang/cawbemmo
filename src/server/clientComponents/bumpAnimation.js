@@ -1,41 +1,43 @@
 define([
-	'js/rendering/effects'
+	"js/rendering/effects"
 ], function (
 	effects
 ) {
 	return {
-		type: 'bumpAnimation',
+		type: "bumpAnimation"
 
-		deltaX: 0,
-		deltaY: 0,
+		, deltaX: 0
+		, deltaY: 0
 
-		updateCd: 0,
-		updateCdMax: 1,
+		, updateCd: 0
+		, updateCdMax: 1
 
-		direction: 1,
-		speed: 2,
+		, direction: 1
+		, speed: 2
 
-		duration: 3,
-		durationCounter: 0,
+		, duration: 3
+		, durationCounter: 0
 
-		infinite: false,
+		, infinite: false
 
-		init: function (blueprint) {
+		, init: function (blueprint) {
 			//Only allow one bumper at a time
-			if (this.obj.components.some(c => c.type === this.type))
+			if (this.obj.components.some((c) => c.type === this.type)) {
 				return true;
-		},
+			}
+		}
 
-		update: function () {
+		, update: function () {
 			let deltaX = this.deltaX;
-			if (deltaX < 0)
+			if (deltaX < 0) {
 				this.obj.flipX = true;
-			else if (deltaX > 0)
+			} else if (deltaX > 0) {
 				this.obj.flipX = false;
+			}
 
-			if (this.updateCd > 0) 
+			if (this.updateCd > 0) {
 				this.updateCd--;
-			else {
+			} else {
 				this.obj.offsetX += (this.deltaX * this.direction * this.speed);
 				this.obj.offsetY += (this.deltaY * this.direction * this.speed);
 
@@ -45,15 +47,16 @@ define([
 				if (this.durationCounter === this.duration) {
 					this.durationCounter = 0;
 					this.direction *= -1;
-					if ((this.direction === 1) && (!this.infinite))
+					if ((this.direction === 1) && (!this.infinite)) {
 						this.destroyed = true;
+					}
 				}
 			}
 
 			this.obj.setSpritePosition();
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			this.obj.offsetX = 0;
 			this.obj.offsetY = 0;
 

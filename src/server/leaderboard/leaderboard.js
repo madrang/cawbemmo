@@ -1,13 +1,13 @@
 module.exports = {
-	list: [],
-	waiting: [],
-	loaded: false,
+	list: []
+	, waiting: []
+	, loaded: false
 
-	init: async function () {
+	, init: async function () {
 		await this.getList();
-	},
+	}
 
-	requestList: function (msg) {
+	, requestList: function (msg) {
 		let prophecyFilter = msg.data.prophecies;
 		let offset = msg.data.offset;
 
@@ -44,48 +44,50 @@ module.exports = {
 		}
 
 		msg.callback({
-			list: result,
-			length: length
+			list: result
+			, length: length
 		});
-	},
+	}
 
-	getList: async function () {
+	, getList: async function () {
 		let list = await io.getAllAsync({
-			table: 'leaderboard',
-			isArray: true
+			table: "leaderboard"
+			, isArray: true
 		});
 
-		this.list = list.map(l => ({
+		this.list = list.map((l) => ({
 			//This is a bit of a hack. RethinkDB uses 'id' whereas Sqlite uses 'key'
-			name: l.key || l.id,
-			level: l.value.level,
-			prophecies: l.value.prophecies
+			name: l.key || l.id
+			, level: l.value.level
+			, prophecies: l.value.prophecies
 		}));
 
 		this.sort();
 
 		this.loaded = true;
-	},
+	}
 
-	getLevel: function (name) {
-		if (!this.list)
+	, getLevel: function (name) {
+		if (!this.list) {
 			return null;
+		}
 
-		let result = this.list.find(l => (l.name === name));
-		if (result)
+		let result = this.list.find((l) => (l.name === name));
+		if (result) {
 			return result.level;
+		}
 		return null;
-	},
+	}
 
-	setLevel: function (name, level, prophecies) {
-		let exists = this.list.find(l => l.name === name);
-		if (exists)
+	, setLevel: function (name, level, prophecies) {
+		let exists = this.list.find((l) => l.name === name);
+		if (exists) {
 			exists.level = level;
-		else {
+		} else {
 			exists = {
-				name: name,
-				level: level,
-				prophecies: prophecies
+				name: name
+				, level: level
+				, prophecies: prophecies
 			};
 
 			this.list.push(exists);
@@ -94,46 +96,48 @@ module.exports = {
 		this.sort();
 
 		this.save(exists);
-	},
+	}
 
-	deleteCharacter: async function (name) {
-		this.list.spliceWhere(l => (l.name === name));
-		
+	, deleteCharacter: async function (name) {
+		this.list.spliceWhere((l) => (l.name === name));
+
 		await io.deleteAsync({
-			key: name,
-			table: 'leaderboard'
+			key: name
+			, table: "leaderboard"
 		});
-	},
+	}
 
-	killCharacter: async function (name) {
-		let character = this.list.find(l => (l.name === name));
-		if (!character)
+	, killCharacter: async function (name) {
+		let character = this.list.find((l) => (l.name === name));
+		if (!character) {
 			return;
+		}
 
 		character.dead = true;
 		this.save(character);
-	},
+	}
 
-	sort: function () {
+	, sort: function () {
 		this.list.sort(function (a, b) {
 			return (b.level - a.level);
 		}, this);
-	},
+	}
 
-	save: async function (character) {
+	, save: async function (character) {
 		let value = {
-			level: character.level,
-			prophecies: character.prophecies || []
+			level: character.level
+			, prophecies: character.prophecies || []
 		};
 
-		if (character.dead)
+		if (character.dead) {
 			value.dead = true;
+		}
 
 		await io.setAsync({
-			key: character.name,
-			table: 'leaderboard',
-			value: character,
-			serialize: true
+			key: character.name
+			, table: "leaderboard"
+			, value: character
+			, serialize: true
 		});
 	}
 };

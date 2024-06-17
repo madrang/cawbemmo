@@ -1,15 +1,16 @@
-const salvager = require('../../../items/salvager');
+const salvager = require("../../../items/salvager");
 
 module.exports = (obj, [item]) => {
 	let powerLevel = item.power || 0;
 	let mult = null;
-	if (powerLevel < 3)
+	if (powerLevel < 3) {
 		mult = [5, 10, 20][powerLevel];
-	else
+	} else {
 		return;
+	}
 
 	const result = salvager.salvage(item, true);
-	result.forEach(r => {
+	result.forEach((r) => {
 		r.quantity = Math.max(1, Math.floor(r.quantity * mult));
 	});
 
