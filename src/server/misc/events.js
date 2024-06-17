@@ -1,15 +1,15 @@
 module.exports = {
-	events: {},
+	events: {}
 
 	//The only supported option right now is isAsync: boolean
-	on: function (event, callback, options) {
+	, on: function (event, callback, options) {
 		let list = this.events[event] || (this.events[event] = []);
 		list.push({ callback, ...options });
 
 		return callback;
-	},
+	}
 
-	off: function (event, callback) {
+	, off: function (event, callback) {
 		let list = this.events[event] || [];
 		let lLen = list.length;
 		for (let i = 0; i < lLen; i++) {
@@ -22,24 +22,27 @@ module.exports = {
 			}
 		}
 
-		if (lLen === 0)
+		if (lLen === 0) {
 			delete this.events[event];
-	},
+		}
+	}
 
-	emit: async function (event) {
+	, emit: async function (event) {
 		let args = [].slice.call(arguments, 1);
 
 		let list = this.events[event];
-		if (!list)
+		if (!list) {
 			return;
+		}
 
 		for (let l of list) {
 			const { isAsync, callback } = l;
 
-			if (isAsync)
+			if (isAsync) {
 				await callback.apply(null, args);
-			else
+			} else {
 				callback.apply(null, args);
+			}
 		}
 	}
 };

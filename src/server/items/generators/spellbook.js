@@ -1,8 +1,8 @@
-let spells = require('../../config/spells');
-let spellsConfig = require('../../config/spellsConfig');
-let configTypes = require('../config/types');
+let spells = require("../../config/spells");
+let spellsConfig = require("../../config/spellsConfig");
+let configTypes = require("../config/types");
 
-const qualityGenerator = require('./quality');
+const qualityGenerator = require("./quality");
 const qualityCount = qualityGenerator.qualities.length;
 
 const buildRolls = (item, blueprint, { random: spellProperties, negativeStats = [] }, quality) => {
@@ -31,8 +31,9 @@ const buildRolls = (item, blueprint, { random: spellProperties, negativeStats = 
 		const prop = propKeys[i];
 		const isNegative = negativeStats.includes(prop);
 
-		if (isNegative)
+		if (isNegative) {
 			roll = 1 - roll;
+		}
 
 		const useLevel = item.originalLevel || item.level;
 		const scaledRoll = roll * (useLevel / consts.maxLevel);
@@ -46,54 +47,59 @@ const buildRolls = (item, blueprint, { random: spellProperties, negativeStats = 
 module.exports = {
 	generate: function (item, blueprint) {
 		blueprint = blueprint || {};
-		let spellQuality = blueprint ? blueprint.spellQuality : '';
-		let spellName = blueprint.spellName?.replaceAll('_', ' ');
+		let spellQuality = blueprint ? blueprint.spellQuality : "";
+		let spellName = blueprint.spellName?.replaceAll("_", " ");
 
 		if (!spellName) {
-			let spellList = Object.keys(spellsConfig.spells).filter(s => !spellsConfig.spells[s].auto && !spellsConfig.spells[s].noDrop);
+			let spellList = Object.keys(spellsConfig.spells).filter((s) => !spellsConfig.spells[s].auto && !spellsConfig.spells[s].noDrop);
 			spellName = spellList[Math.floor(Math.random() * spellList.length)];
 		}
 
 		let spell = extend({}, spellsConfig.spells[spellName], blueprint.spellConfig);
-		let spellAesthetic = spells.spells.find(s => s.name.toLowerCase() === spellName) || {};
+		let spellAesthetic = spells.spells.find((s) => s.name.toLowerCase() === spellName) || {};
 
 		if (!item.slot) {
 			let sprite = [10, 0];
 			let statType = spell.statType;
-			if (statType === 'dex')
+			if (statType === "dex") {
 				sprite = [10, 1];
-			else if (statType === 'str')
+			} else if (statType === "str") {
 				sprite = [10, 2];
-			else if (statType instanceof Array) {
-				if ((statType.indexOf('dex') > -1) && (statType.indexOf('int') > -1))
+			} else if (statType instanceof Array) {
+				if ((statType.indexOf("dex") > -1) && (statType.indexOf("int") > -1)) {
 					sprite = [10, 3];
-				else if ((statType.indexOf('str') > -1) && (statType.indexOf('int') > -1))
+				} else if ((statType.indexOf("str") > -1) && (statType.indexOf("int") > -1)) {
 					sprite = [10, 4];
+				}
 			}
 
-			item.name = 'Rune of ' + spellAesthetic.name;
+			item.name = "Rune of " + spellAesthetic.name;
 			item.ability = true;
 			item.sprite = sprite;
-		} else if (spellQuality === 'basic')
+		} else if (spellQuality === "basic") {
 			item.stats = {};
+		}
 
-		if (blueprint.spellConfig)
+		if (blueprint.spellConfig) {
 			spellAesthetic = extend({}, spellAesthetic, blueprint.spellConfig);
+		}
 
 		item.spell = {
-			name: spellAesthetic.name || 'Weapon Damage',
-			type: spellAesthetic.type || spellName,
-			rolls: {},
-			values: {}
+			name: spellAesthetic.name || "Weapon Damage"
+			, type: spellAesthetic.type || spellName
+			, rolls: {}
+			, values: {}
 		};
 
-		if (blueprint.spellConfig) 
+		if (blueprint.spellConfig) {
 			extend(item.spell, blueprint.spellConfig);
+		}
 
 		if (item.type) {
 			let typeConfig = configTypes.types[item.slot][item.type];
-			if (typeConfig)
+			if (typeConfig) {
 				extend(spell, typeConfig.spellConfig);
+			}
 		}
 
 		//If the item has a slot, we need to generate a new quality for the rune
@@ -112,14 +118,14 @@ module.exports = {
 		}
 
 		const rolls = buildRolls(item, blueprint, spell, quality);
-		
-		Object.entries(spell.random || {}).forEach(entry => {
+
+		Object.entries(spell.random || {}).forEach((entry) => {
 			const [ property, range ] = entry;
 			const roll = rolls[property];
 
 			item.spell.rolls[property] = roll;
 
-			const isInt = property.indexOf('i_') === 0;
+			const isInt = property.indexOf("i_") === 0;
 			let useProperty = property;
 			const minRange = range[0];
 			const maxRange = range[1];
@@ -137,8 +143,9 @@ module.exports = {
 
 		if (blueprint.spellProperties) {
 			item.spell.properties = {};
-			for (let p in blueprint.spellProperties) 
+			for (let p in blueprint.spellProperties) {
 				item.spell.properties[p] = blueprint.spellProperties[p];
+			}
 		}
 
 		if (item.range) {

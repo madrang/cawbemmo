@@ -1,33 +1,34 @@
 //External Modules
-const objects = require('../objects/objects');
-const eventEmitter = require('../misc/events');
+const objects = require("../objects/objects");
+const eventEmitter = require("../misc/events");
 
 //Helpers
-const { route, routeGlobal } = require('./connections/route');
+const { route, routeGlobal } = require("./connections/route");
 
 //Module
 module.exports = {
-	players: [],
+	players: []
 
-	sockets: null,
-	playing: 0,
+	, sockets: null
+	, playing: 0
 
-	onHandshake: function (socket) {
-		if (this.players.some(f => f.socket.id === socket.id))
+	, onHandshake: function (socket) {
+		if (this.players.some((f) => f.socket.id === socket.id)) {
 			return;
+		}
 
 		const p = objects.build();
 		p.socket = socket;
-		p.addComponent('auth');
-		p.addComponent('player');
+		p.addComponent("auth");
+		p.addComponent("player");
 
 		objects.pushObjectToList(p);
 
 		this.players.push(p);
-	},
+	}
 
-	onDisconnect: async function (socket) {
-		const player = this.players.find(p => p.socket.id === socket.id);
+	, onDisconnect: async function (socket) {
+		const player = this.players.find((p) => p.socket.id === socket.id);
 		if (!player) {
 			return;
 		}
@@ -36,15 +37,15 @@ module.exports = {
 			? Math.floor((Date.now() - player.player.sessionStart) / 1000)
 			: 0
 		);
-		if (player.has('id')) {
+		if (player.has("id")) {
 			if (player.social) {
 				player.social.dc();
 			}
 
 			atlas.updateObject(player, {
 				components: [{
-					type: 'stats',
-					sessionDuration
+					type: "stats"
+					, sessionDuration
 				}]
 			});
 
@@ -52,43 +53,45 @@ module.exports = {
 			// Likely due to unzoning (character select screen)
 			// Also, rezoning is set to true while rezoning so we don't try to remove objects
 			// from zones if they are currently rezoning
-			if (player.components.some(c => c.type === 'social') && player.rezoning !== true) {
-				await new Promise(res => {
+			if (player.components.some((c) => c.type === "social") && player.rezoning !== true) {
+				await new Promise((res) => {
 					atlas.removeObject(player, false, res);
 				});
 			}
 		}
 		if (player.name) {
-			eventEmitter.emit('playerObjRemoved', {
+			eventEmitter.emit("playerObjRemoved", {
 				id: player.id
 			});
-			if (player.has('id')) {
+			if (player.has("id")) {
 				this.modifyPlayerCount(-1);
 				_.log.connections.info("Player %s disconnected after %s seconds", player.name, sessionDuration);
 			}
 		}
-		this.players.spliceWhere(p => p.socket.id === socket.id);
-	},
+		this.players.spliceWhere((p) => p.socket.id === socket.id);
+	}
 
-	route: function (socket, msg) {
+	, route: function (socket, msg) {
 		route.call(this, socket, msg);
-	},
+	}
 
-	routeGlobal: function (msg) {
+	, routeGlobal: function (msg) {
 		routeGlobal.call(this, msg);
-	},
+	}
 
-	unzone: async function (msg) {
+	, unzone: async function (msg) {
 		let socket = msg.socket;
-		let player = this.players.find(p => p.socket.id === socket.id);
+		let player = this.players.find((p) => p.socket.id === socket.id);
 
-		if (!player)
+		if (!player) {
 			return;
+		}
 
-		if (player.social)
+		if (player.social) {
 			player.social.dc();
+		}
 
-		await new Promise(res => {
+		await new Promise((res) => {
 			atlas.removeObject(player, true, res);
 		});
 
@@ -96,15 +99,15 @@ module.exports = {
 		keys.forEach(function (k) {
 			let val = player[k];
 			if (val && val.type) {
-				if (['player', 'auth', 'syncer'].indexOf(val.type) === -1) {
+				if (["player", "auth", "syncer"].indexOf(val.type) === -1) {
 					delete player[k];
 
-					player.components.spliceWhere(c => c.type === val.type);
+					player.components.spliceWhere((c) => c.type === val.type);
 				}
 			}
 		});
 
-		eventEmitter.emit('playerObjRemoved', {
+		eventEmitter.emit("playerObjRemoved", {
 			id: player.id
 		});
 
@@ -120,67 +123,69 @@ module.exports = {
 		this.modifyPlayerCount(-1);
 
 		msg.callback();
-	},
+	}
 
-	logOut: async function (exclude) {
+	, logOut: async function (exclude) {
 		const { players } = this;
 
 		let pLen = players.length;
 		for (let i = 0; i < pLen; i++) {
 			const p = players[i];
 
-			if (!p || p === exclude || !p.auth)
+			if (!p || p === exclude || !p.auth) {
 				continue;
-			else if (p.auth.username === exclude.auth.username) {
-				if (p.name && p.zoneId)
+			} else if (p.auth.username === exclude.auth.username) {
+				if (p.name && p.zoneId) {
 					await atlas.forceSavePlayer(p.id, p.zoneId);
+				}
 
-				if (p.socket?.connected)
-					p.socket.emit('dc', {});
-				else {
+				if (p.socket?.connected) {
+					p.socket.emit("dc", {});
+				} else {
 					players.splice(i, 1);
 					i--;
 					pLen--;
 				}
 			}
 		}
-	},
+	}
 
-	emit: function (event, msg) {
+	, emit: function (event, msg) {
 		this.sockets.emit(event, msg);
-	},
+	}
 
-	getCharacterList: function () {
+	, getCharacterList: function () {
 		let result = [];
 		let players = this.players;
 		let pLen = players.length;
 		for (let i = 0; i < pLen; i++) {
 			let p = players[i];
-			if (!p.name)
+			if (!p.name) {
 				continue;
+			}
 
 			result.push({
-				zoneName: p.zoneName,
-				zoneId: p.zoneId,
-				name: p.name,
-				level: p.level,
-				class: p.class,
-				id: p.id
+				zoneName: p.zoneName
+				, zoneId: p.zoneId
+				, name: p.name
+				, level: p.level
+				, class: p.class
+				, id: p.id
 			});
 		}
 
 		return result;
-	},
+	}
 
-	forceSaveAll: async function () {
+	, forceSaveAll: async function () {
 		const promises = this.players
-			.filter(p => p.zoneName !== undefined)
-			.map(p => {
-				const promise = new Promise(res => {
+			.filter((p) => p.zoneName !== undefined)
+			.map((p) => {
+				const promise = new Promise((res) => {
 					const msg = {
-						cpn: 'auth',
-						method: 'doSaveManual',
-						data: {
+						cpn: "auth"
+						, method: "doSaveManual"
+						, data: {
 							callbackId: atlas.registerCallback(res)
 						}
 					};
@@ -192,9 +197,9 @@ module.exports = {
 			});
 
 		await Promise.all(promises);
-	},
+	}
 
-	modifyPlayerCount: function (delta) {
+	, modifyPlayerCount: function (delta) {
 		this.playing += delta;
 	}
 };

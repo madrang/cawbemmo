@@ -1,24 +1,24 @@
 //Imports
-const questTemplate = require('./templates/questTemplate');
-const globalQuests = require('../questsBase');
-const { mapList } = require('../../world/mapManager');
+const questTemplate = require("./templates/questTemplate");
+const globalQuests = require("../questsBase");
+const { mapList } = require("../../world/mapManager");
 
 //Exports
 module.exports = {
-	instance: null,
+	instance: null
 
-	init: function (instance) {
+	, init: function (instance) {
 		this.instance = instance;
-	},
+	}
 
-	obtain: function (obj, template) {
+	, obtain: function (obj, template) {
 		let zoneName = template?.zoneName ?? obj.zoneName;
-		let zone = mapList.find(m => m.name === zoneName);
+		let zone = mapList.find((m) => m.name === zoneName);
 		if (!zone) { // Zone doesn't exist any more. Probably been renamed
 			return;
 		}
 		let oQuests = obj.quests;
-		if (oQuests.quests.filter(q => q.zoneName === zoneName).length > 0) {
+		if (oQuests.quests.filter((q) => q.zoneName === zoneName).length > 0) {
 			return;
 		}
 		let zoneTemplate = null;
@@ -33,11 +33,11 @@ module.exports = {
 			zoneTemplate = globalQuests;
 		}
 		const config = extend({}, zoneTemplate);
-		this.instance.eventEmitter.emit('onBeforeGetQuests', {
-			obj,
-			config,
-			zoneName,
-			template
+		this.instance.eventEmitter.emit("onBeforeGetQuests", {
+			obj
+			, config
+			, zoneName
+			, template
 		});
 		if (config.infini.length === 0) {
 			return;
@@ -52,7 +52,7 @@ module.exports = {
 
 		let pickQuest = null;
 		if ((template) && (template.type)) {
-			pickQuest = config.infini.find(c => c.type === template.type);
+			pickQuest = config.infini.find((c) => c.type === template.type);
 		}
 		if (!pickQuest) {
 			pickQuest = config.infini[Math.floor(Math.random() * config.infini.length)];

@@ -1,9 +1,9 @@
 define([
-	'js/objects/objBase',
-	'js/system/events',
-	'js/rendering/renderer',
-	'js/sound/sound',
-	'js/config'
+	"js/objects/objBase"
+	, "js/system/events"
+	, "js/rendering/renderer"
+	, "js/sound/sound"
+	, "js/config"
 ], function (
 	objBase,
 	events,
@@ -12,21 +12,21 @@ define([
 	config
 ) {
 	return {
-		objects: [],
+		objects: []
 
-		init: function () {
-			events.on('onChangeHoverTile', this.getLocation.bind(this));
+		, init: function () {
+			events.on("onChangeHoverTile", this.getLocation.bind(this));
 
 			[
-				'onGetObject',
-				'onTilesVisible',
-				'onToggleNameplates',
-				'destroyAllObjects'
+				"onGetObject"
+				, "onTilesVisible"
+				, "onToggleNameplates"
+				, "destroyAllObjects"
 			]
-				.forEach(e => events.on(e, this[e].bind(this)));
-		},
+				.forEach((e) => events.on(e, this[e].bind(this)));
+		}
 
-		getLocation: function (x, y) {
+		, getLocation: function (x, y) {
 			let objects = this.objects;
 			let oLen = objects.length;
 
@@ -34,9 +34,10 @@ define([
 			let mob = null;
 			for (let i = 0; i < oLen; i++) {
 				let o = objects[i];
-				
-				if (!o.stats || o.nonSelectable || o === window.player || !o.sprite || !o.sprite.visible)
+
+				if (!o.stats || o.nonSelectable || o === window.player || !o.sprite || !o.sprite.visible) {
 					continue;
+				}
 
 				let dx = Math.abs(o.x - x);
 				if ((dx < 3) && (dx < closest)) {
@@ -48,26 +49,29 @@ define([
 				}
 			}
 
-			events.emit('onMobHover', mob);
-		},
+			events.emit("onMobHover", mob);
+		}
 
-		getClosest: function (x, y, maxDistance, reverse, fromMob) {
+		, getClosest: function (x, y, maxDistance, reverse, fromMob) {
 			let objects = this.objects;
 
-			let list = objects.filter(o => {
-				if ((!o.stats) || (o.nonSelectable) || (o === window.player) || (!o.sprite.visible))
+			let list = objects.filter((o) => {
+				if ((!o.stats) || (o.nonSelectable) || (o === window.player) || (!o.sprite.visible)) {
 					return false;
+				}
 
 				let dx = Math.abs(o.x - x);
 				if (dx < maxDistance) {
 					let dy = Math.abs(o.y - y);
-					if (dy < maxDistance)
+					if (dy < maxDistance) {
 						return true;
+					}
 				}
 			});
 
-			if (list.length === 0)
+			if (list.length === 0) {
 				return null;
+			}
 
 			list.sort((a, b) => {
 				let aDistance = Math.max(Math.abs(x - a.x), Math.abs(y - a.y));
@@ -76,90 +80,98 @@ define([
 				return (aDistance - bDistance);
 			});
 
-			list = list.filter(o => ((o.aggro) && (o.aggro.faction !== window.player.aggro.faction)));
+			list = list.filter((o) => ((o.aggro) && (o.aggro.faction !== window.player.aggro.faction)));
 
-			if (!fromMob)
+			if (!fromMob) {
 				return list[0];
+			}
 
-			let fromIndex = list.findIndex(l => l.id === fromMob.id);
+			let fromIndex = list.findIndex((l) => l.id === fromMob.id);
 
-			if (reverse) 
+			if (reverse) {
 				fromIndex = (fromIndex === 0 ? list.length : fromIndex) - 1;
-			else 
+			} else {
 				fromIndex = (fromIndex + 1) % list.length;
+			}
 
 			return list[fromIndex];
-		},
+		}
 
-		destroyAllObjects: function () {
+		, destroyAllObjects: function () {
 			for (let o of this.objects) {
 				o.destroy();
 			}
 			this.objects.length = 0;
 
 			window?.player?.offEvents();
-		},
+		}
 
-		onGetObject: function (obj) {
+		, onGetObject: function (obj) {
 			//Things like attacks don't have ids
 			let exists = null;
-			if (obj.has('id')) 
+			if (obj.has("id")) {
 				exists = this.objects.find(({ id, destroyed }) => id === obj.id && !destroyed);
+			}
 
-			if (!exists)
+			if (!exists) {
 				exists = this.buildObject(obj);
-			else
+			} else {
 				this.updateObject(exists, obj);
-		},
+			}
+		}
 
-		buildObject: function (template) {
+		, buildObject: function (template) {
 			//console.log("Building object from template", template);
 			let obj = $.extend(true, {}, objBase);
 
 			let components = template.components || [];
 			delete template.components;
 
-			let syncTypes = ['portrait', 'area'];
+			let syncTypes = ["portrait", "area"];
 
 			for (let p in template) {
 				let value = template[p];
 				let type = typeof (value);
 
-				if (type === 'object') {
-					if (syncTypes.indexOf(p) > -1)
+				if (type === "object") {
+					if (syncTypes.indexOf(p) > -1) {
 						obj[p] = value;
-				} else
+					}
+				} else {
 					obj[p] = value;
+				}
 			}
 
-			if (obj.sheetName)
+			if (obj.sheetName) {
 				obj.sprite = renderer.buildObject(obj);
+			}
 
 			if (obj.name && obj.sprite) {
 				obj.nameSprite = renderer.buildText({
-					layerName: 'effects',
-					text: obj.name,
-					x: (obj.x * scale) + (scale / 2),
-					y: (obj.y * scale) + scale
+					layerName: "effects"
+					, text: obj.name
+					, x: (obj.x * scale) + (scale / 2)
+					, y: (obj.y * scale) + scale
 				});
 			}
 
-			if (template.filters && obj.sprite)
+			if (template.filters && obj.sprite) {
 				renderer.addFilter(obj.sprite, template.filters[0]);
+			}
 
 			//We need to set visibility before components kick in as they sometimes need access to isVisible
 			obj.updateVisibility();
 
-			components.forEach(c => {
+			components.forEach((c) => {
 				//Map ids to objects
-				let keys = Object.keys(c).filter(k => {
-					return (k.indexOf('id') === 0 && k.length > 2);
+				let keys = Object.keys(c).filter((k) => {
+					return (k.indexOf("id") === 0 && k.length > 2);
 				});
-				keys.forEach(k => {
+				keys.forEach((k) => {
 					let value = c[k];
 					let newKey = k.substr(2, k.length).toLowerCase();
 
-					c[newKey] = this.objects.find(o => o.id === value);
+					c[newKey] = this.objects.find((o) => o.id === value);
 					delete c[k];
 				});
 
@@ -167,36 +179,36 @@ define([
 			});
 
 			if (obj.self) {
-				events.emit('onGetPlayer', obj);
+				events.emit("onGetPlayer", obj);
 				window.player = obj;
 
 				sound.unload(obj.zoneId);
 
 				renderer.setPosition({
-					x: (obj.x - (renderer.width / (scale * 2))) * scale,
-					y: (obj.y - (renderer.height / (scale * 2))) * scale
+					x: (obj.x - (renderer.width / (scale * 2))) * scale
+					, y: (obj.y - (renderer.height / (scale * 2))) * scale
 				}, true);
 			}
 
 			this.objects.push(obj);
 
 			return obj;
-		},
+		}
 
-		updateObject: function (obj, template) {
+		, updateObject: function (obj, template) {
 			//console.log("Updating object", obj);
 			let components = template.components || [];
 
-			components.forEach(c => {
+			components.forEach((c) => {
 				//Map ids to objects
-				let keys = Object.keys(c).filter(k => {
-					return (k.indexOf('id') === 0 && k.length > 2);
+				let keys = Object.keys(c).filter((k) => {
+					return (k.indexOf("id") === 0 && k.length > 2);
 				});
-				keys.forEach(k => {
+				keys.forEach((k) => {
 					let value = c[k];
 					let newKey = k.substr(2, k.length).toLowerCase();
 
-					c[newKey] = this.objects.find(o => o.id === value);
+					c[newKey] = this.objects.find((o) => o.id === value);
 					delete c[k];
 				});
 
@@ -206,7 +218,7 @@ define([
 			delete template.components;
 
 			if (template.removeComponents) {
-				template.removeComponents.forEach(r => {
+				template.removeComponents.forEach((r) => {
 					obj.removeComponent(r);
 				});
 				delete template.removeComponents;
@@ -219,22 +231,25 @@ define([
 				let value = template[p];
 				let type = typeof (value);
 
-				if (type !== 'object')
+				if (type !== "object") {
 					obj[p] = value;
+				}
 
-				if (p === 'casting') {
-					if (obj === window.player)
-						events.emit('onGetSelfCasting', value);
-					else
-						events.emit('onGetTargetCasting', obj.id, value);
+				if (p === "casting") {
+					if (obj === window.player) {
+						events.emit("onGetSelfCasting", value);
+					} else {
+						events.emit("onGetTargetCasting", obj.id, value);
+					}
 				}
 
 				if (sprite) {
-					if (p === 'x') {
-						if (obj.x < oldX)
+					if (p === "x") {
+						if (obj.x < oldX) {
 							obj.flipX = true;
-						else if (obj.x > oldX)
+						} else if (obj.x > oldX) {
 							obj.flipX = false;
+						}
 					}
 				}
 			}
@@ -243,21 +258,24 @@ define([
 				renderer.setSprite(obj);
 			}
 
-			if ((!obj.sprite) && (template.sheetName))
+			if ((!obj.sprite) && (template.sheetName)) {
 				obj.sprite = renderer.buildObject(obj);
+			}
 
-			if (template.filters && !obj.sprite?.filters?.length)
+			if (template.filters && !obj.sprite?.filters?.length) {
 				renderer.addFilter(obj.sprite, template.filters[0]);
+			}
 
 			if (template.name) {
-				if (obj.nameSprite)
+				if (obj.nameSprite) {
 					renderer.destroyObject({ sprite: obj.nameSprite });
+				}
 
 				obj.nameSprite = renderer.buildText({
-					layerName: 'effects',
-					text: template.name,
-					x: (obj.x * scale) + (scale / 2),
-					y: (obj.y * scale) + scale
+					layerName: "effects"
+					, text: template.name
+					, x: (obj.x * scale) + (scale / 2)
+					, y: (obj.y * scale) + scale
 				});
 
 				obj.nameSprite.visible = config.showNames;
@@ -267,12 +285,13 @@ define([
 				obj.updateVisibility();
 				obj.setSpritePosition();
 
-				if (obj.stats)
+				if (obj.stats) {
 					obj.stats.updateHpSprite();
+				}
 			}
-		},
+		}
 
-		update: function () {
+		, update: function () {
 			let objects = this.objects;
 			let len = objects.length;
 			for (let i = 0; i < len; i++) {
@@ -288,9 +307,9 @@ define([
 
 				o.update();
 			}
-		},
+		}
 
-		onTilesVisible: function (tiles) {
+		, onTilesVisible: function (tiles) {
 			for (let o of this.objects) {
 				let onPos;
 				for (let t of tiles.visible.concat(tiles.hidden) ) {
@@ -304,9 +323,9 @@ define([
 				}
 				o.updateVisibility();
 			}
-		},
+		}
 
-		onToggleNameplates: function (show) {
+		, onToggleNameplates: function (show) {
 			for (let obj of this.objects) {
 				const ns = obj.nameSprite;
 				if ((!ns) || (obj.dead) || ((obj.sprite) && (!obj.sprite.visible))) {

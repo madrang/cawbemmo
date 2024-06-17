@@ -1,9 +1,9 @@
 define([
-	'js/system/events',
-	'js/system/client',
-	'html!ui/templates/talk/template',
-	'css!ui/templates/talk/styles',
-	'html!ui/templates/talk/tplOption'
+	"js/system/events"
+	, "js/system/client"
+	, "html!ui/templates/talk/template"
+	, "css!ui/templates/talk/styles"
+	, "html!ui/templates/talk/tplOption"
 ], function (
 	events,
 	client,
@@ -12,51 +12,51 @@ define([
 	tplOption
 ) {
 	return {
-		tpl: template,
+		tpl: template
 
-		modal: true,
+		, modal: true
 
-		postRender: function () {
-			this.onEvent('onGetTalk', this.onGetTalk.bind(this));
-			this.onEvent('clearUis', this.hide.bind(this));
-		},
+		, postRender: function () {
+			this.onEvent("onGetTalk", this.onGetTalk.bind(this));
+			this.onEvent("clearUis", this.hide.bind(this));
+		}
 
-		onGetTalk: function (dialogue) {
+		, onGetTalk: function (dialogue) {
 			this.state = dialogue;
 
 			if (!dialogue) {
 				this.hide();
 				return;
 			}
-			
+
 			this.show();
 
-			this.find('.name').html(dialogue.from);
-			this.find('.msg').html('"' + dialogue.msg + '"');
-			let options = this.find('.options').empty();
+			this.find(".name").html(dialogue.from);
+			this.find(".msg").html("\"" + dialogue.msg + "\"");
+			let options = this.find(".options").empty();
 
 			dialogue.options.forEach(function (o) {
 				let html = tplOption;
 
 				$(html)
 					.appendTo(options)
-					.html('- ' + o.msg)
-					.on('click', this.onReply.bind(this, o));
+					.html("- " + o.msg)
+					.on("click", this.onReply.bind(this, o));
 			}, this);
 
 			this.center(true, false);
-		},
+		}
 
-		onReply: function (option) {
+		, onReply: function (option) {
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'dialogue',
-					method: 'talk',
-					data: {
-						target: this.state.id,
-						state: option.id 
+				cpn: "player"
+				, method: "performAction"
+				, data: {
+					cpn: "dialogue"
+					, method: "talk"
+					, data: {
+						target: this.state.id
+						, state: option.id
 					}
 				}
 			});

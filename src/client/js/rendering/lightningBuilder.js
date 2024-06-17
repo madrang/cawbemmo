@@ -1,5 +1,5 @@
 define([
-	'js/rendering/renderer'
+	"js/rendering/renderer"
 ], function (
 	renderer
 ) {
@@ -47,18 +47,19 @@ define([
 
 				for (let j = 0; j < steps; j++) {
 					let alpha = 1;
-					if ((config.colors) && (i === divisions - 1) && (j > (steps * 0.75)))
+					if ((config.colors) && (i === divisions - 1) && (j > (steps * 0.75))) {
 						alpha = 1 - (j / steps);
+					}
 
 					let c = (config.colors || [0xffeb38, 0xfaac45, 0xfafcfc])[Math.floor(Math.random() * (config.colors ? config.colors.length : 3))];
 					line.sprites.push(renderer.buildRectangle({
-						x: Math.floor(x / scaleMult) * scaleMult,
-						y: Math.floor(y / scaleMult) * scaleMult,
-						w: scaleMult,
-						h: scaleMult,
-						alpha: alpha,
-						color: c,
-						layerName: 'effects'
+						x: Math.floor(x / scaleMult) * scaleMult
+						, y: Math.floor(y / scaleMult) * scaleMult
+						, w: scaleMult
+						, h: scaleMult
+						, alpha: alpha
+						, color: c
+						, layerName: "effects"
 					}));
 
 					let xx = x;
@@ -66,18 +67,18 @@ define([
 					if ((!patches[`${xx}-${yy}`]) && (!config.colors)) {
 						patches[`${xx}-${yy}`] = 1;
 						const lightPatch = renderer.buildObject({
-							sheetName: 'white',
-							x: 0,
-							y: 0,
-							cell: 0,
-							layerName: 'lightPatches'
+							sheetName: "white"
+							, x: 0
+							, y: 0
+							, cell: 0
+							, layerName: "lightPatches"
 						});
 						lightPatch.x = Math.floor((xx - scaleMult) / scaleMult) * scaleMult;
 						lightPatch.y = Math.floor((yy - scaleMult) / scaleMult) * scaleMult;
 						lightPatch.width = scaleMult * linkSize;
 						lightPatch.height = scaleMult * linkSize;
 						lightPatch.alpha = Math.random() * 0.5;
-						lightPatch.tint = '0xffffff';
+						lightPatch.tint = "0xffffff";
 						lightPatch.blendMode = PIXI.BLEND_MODES.ADD;
 						line.sprites.push(lightPatch);
 					}
@@ -87,22 +88,22 @@ define([
 				obj.lines.push(line);
 			}
 			return obj;
-		},
+		}
 
-		toHex: function rgbToHex (r, g, b) {
+		, toHex: function rgbToHex (r, g, b) {
 			let componentToHex = function (c) {
 				let hex = c.toString(16);
-				return hex.length === 1 ? '0' + hex : hex;
+				return hex.length === 1 ? "0" + hex : hex;
 			};
 
-			return '0x' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-		},
+			return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+		}
 
-		update: function (obj) {
+		, update: function (obj) {
 
-		},
+		}
 
-		destroy: function (obj) {
+		, destroy: function (obj) {
 			obj.lines.forEach(function (l) {
 				l.sprites.forEach(function (s) {
 					s.parent.removeChild(s);

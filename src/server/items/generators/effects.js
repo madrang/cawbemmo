@@ -2,7 +2,7 @@ const rollValues = (rollsDefinition, result) => {
 	for (let p in rollsDefinition) {
 		const entry = rollsDefinition[p];
 
-		if (typeof(entry) === 'object' && entry !== null && !Array.isArray(entry) ) {
+		if (typeof(entry) === "object" && entry !== null && !Array.isArray(entry) ) {
 			const newResult = {};
 
 			result[p] = newResult;
@@ -13,23 +13,25 @@ const rollValues = (rollsDefinition, result) => {
 		}
 
 		const range = entry;
-		const isInt = (p.indexOf('i_') === 0);
-		const fieldName = p.replace('i_', '');
+		const isInt = (p.indexOf("i_") === 0);
+		const fieldName = p.replace("i_", "");
 
 		//Keys that start with s_ indicate that they shouldn't be rolled
 		// We use this to allow arrays inside rolls to be hardcoded
-		if (!Array.isArray(entry) || p.indexOf('s_') === 0) {
-			if (p.indexOf('s_') === 0)
+		if (!Array.isArray(entry) || p.indexOf("s_") === 0) {
+			if (p.indexOf("s_") === 0) {
 				result[p.substr(2)] = range;
-			else
+			} else {
 				result[fieldName] = range;
+			}
 
 			continue;
 		}
 
 		let value = range[0] + (Math.random() * (range[1] - range[0]));
-		if (isInt)
+		if (isInt) {
 			value = ~~value;
+		}
 
 		result[fieldName] = value;
 	}
@@ -37,8 +39,9 @@ const rollValues = (rollsDefinition, result) => {
 
 module.exports = {
 	generate: function (item, blueprint) {
-		if (!blueprint.effects)
+		if (!blueprint.effects) {
 			return;
+		}
 
 		item.effects = blueprint.effects.map(function (e) {
 			let rolls = e.rolls;
@@ -47,9 +50,9 @@ module.exports = {
 			rollValues(rolls, newRolls);
 
 			return {
-				type: e.type,
-				properties: e.properties,
-				rolls: newRolls
+				type: e.type
+				, properties: e.properties
+				, rolls: newRolls
 			};
 		});
 	}

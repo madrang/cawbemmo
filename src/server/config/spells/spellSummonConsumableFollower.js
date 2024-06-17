@@ -1,28 +1,28 @@
-let mobBuilder = require('../../world/mobBuilder');
+let mobBuilder = require("../../world/mobBuilder");
 
 module.exports = {
-	type: 'summonConsumableFollower',
+	type: "summonConsumableFollower"
 
-	targetGround: true,
+	, targetGround: true
 
-	cdMax: 30,
-	manaCost: 0,
+	, cdMax: 30
+	, manaCost: 0
 
-	range: 8,
+	, range: 8
 
-	needLos: true,
+	, needLos: true
 
-	minions: [],
-	walkCd: 0,
-	walkCdMax: 5,
+	, minions: []
+	, walkCd: 0
+	, walkCdMax: 5
 
-	explodes: false,
+	, explodes: false
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 		let target = {
-			x: 0,
-			y: 0
+			x: 0
+			, y: 0
 		};
 
 		let angle = Math.random() * Math.PI * 2;
@@ -32,35 +32,35 @@ module.exports = {
 		if (!target) {
 			return false;
 		}
-		obj.syncer.set(false, 'chatter', 'msg', '*tummy grumbles*');
+		obj.syncer.set(false, "chatter", "msg", "*tummy grumbles*");
 
 		//Spawn a mob
 		let mob = obj.instance.spawners.spawn({
-			amountLeft: 1,
-			blueprint: {
-				x: target.x,
-				y: target.y,
-				cell: this.cell || 60,
-				sheetName: this.sheetName || 'mobs',
-				name: this.name || 'Slimy Offspring',
-				properties: {
+			amountLeft: 1
+			, blueprint: {
+				x: target.x
+				, y: target.y
+				, cell: this.cell || 60
+				, sheetName: this.sheetName || "mobs"
+				, name: this.name || "Slimy Offspring"
+				, properties: {
 
-				},
-				extraProperties: {
+				}
+				, extraProperties: {
 
 				}
 			}
 		});
 
 		mobBuilder.build(mob, {
-			level: obj.stats.values.level,
-			faction: obj.aggro.faction,
-			walkDistance: 2,
-			regular: {
-				drops: 0,
-				hpMult: 0.5
+			level: obj.stats.values.level
+			, faction: obj.aggro.faction
+			, walkDistance: 2
+			, regular: {
+				drops: 0
+				, hpMult: 0.5
 			}
-		}, 'regular');
+		}, "regular");
 
 		mob.aggro.getHighest = this.getFollowerAggro.bind(this, mob);
 		mob.aggro.list.push({
@@ -71,20 +71,21 @@ module.exports = {
 		this.minions.push(mob);
 
 		return true;
-	},
+	}
 
-	getFollowerAggro: function (mob) {
+	, getFollowerAggro: function (mob) {
 		return this.obj;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let obj = this.obj;
 		let x = obj.x;
 		let y = obj.y;
 
 		this.walkCd--;
-		if (this.walkCd < 0)
+		if (this.walkCd < 0) {
 			this.walkCd = this.walkCdMax;
+		}
 
 		let minions = this.minions;
 		let mLen = minions.length;
@@ -99,26 +100,27 @@ module.exports = {
 				obj.stats.getHp({
 					heal: {
 						amount: obj.stats.values.hpMax / 10
-					},
-					source: obj,
-					target: obj
+					}
+					, source: obj
+					, target: obj
 				});
 
-				obj.instance.syncer.queue('onGetObject', {
-					x: m.x,
-					y: m.y,
-					components: [{
-						type: 'attackAnimation',
-						row: 1,
-						col: 4
+				obj.instance.syncer.queue("onGetObject", {
+					x: m.x
+					, y: m.y
+					, components: [{
+						type: "attackAnimation"
+						, row: 1
+						, col: 4
 					}]
 				}, -1);
-			} else 
+			} else {
 				m.mob.update = (this.walkCd === 0) ? m.mob.realUpdate : null;
+			}
 		}
-	},
+	}
 
-	onAfterSimplify: function (simple) {
+	, onAfterSimplify: function (simple) {
 		delete simple.minions;
 	}
 };

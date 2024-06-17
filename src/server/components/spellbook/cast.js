@@ -3,7 +3,7 @@ const cast = (cpnSpellbook, action, isAuto) => {
 	const { obj, physics, spells } = cpnSpellbook;
 
 	//Stop casting
-	if (!action.has('spell')) {
+	if (!action.has("spell")) {
 		const wasCasting = cpnSpellbook.isCasting();
 		cpnSpellbook.stopCasting();
 
@@ -11,40 +11,45 @@ const cast = (cpnSpellbook, action, isAuto) => {
 		return wasCasting;
 	}
 
-	const spell = spells.find(s => (s.id === action.spell));
-	if (!spell)
+	const spell = spells.find((s) => (s.id === action.spell));
+	if (!spell) {
 		return false;
+	}
 
 	action.target = cpnSpellbook.getTarget(spell, action);
 	action.auto = spell.auto;
 
 	//If a target has become nonSelectable, we need to stop attacks that are queued/auto
-	if (!action.target || action.target.nonSelectable)
+	if (!action.target || action.target.nonSelectable) {
 		return false;
+	}
 
 	let success = true;
 	if (spell.cd > 0) {
 		if (!isAuto) {
-			const type = (spell.auto) ? 'Weapon' : 'Spell';
+			const type = (spell.auto) ? "Weapon" : "Spell";
 			cpnSpellbook.sendAnnouncement(`${type} is on cooldown`);
 		}
 		success = false;
 	} else if (spell.manaCost > obj.stats.values.mana) {
-		if (!isAuto)
-			cpnSpellbook.sendAnnouncement('Insufficient mana to cast spell');
+		if (!isAuto) {
+			cpnSpellbook.sendAnnouncement("Insufficient mana to cast spell");
+		}
 		success = false;
-	} else if (spell.has('range')) {
+	} else if (spell.has("range")) {
 		const distance = Math.max(Math.abs(action.target.x - obj.x), Math.abs(action.target.y - obj.y));
 		let range = spell.range;
 		if ((spell.useWeaponRange) && (obj.player)) {
 			const weapon = obj.inventory.findItem(obj.equipment.eq.oneHanded) || obj.inventory.findItem(obj.equipment.eq.twoHanded);
-			if (weapon)
+			if (weapon) {
 				range = weapon.range || 1;
+			}
 		}
 
 		if (distance > range) {
-			if (!isAuto)
-				cpnSpellbook.sendAnnouncement('Target out of range');
+			if (!isAuto) {
+				cpnSpellbook.sendAnnouncement("Target out of range");
+			}
 			success = false;
 		}
 	}
@@ -53,8 +58,9 @@ const cast = (cpnSpellbook, action, isAuto) => {
 	//Null means we don't have LoS and as such, we should move
 	if (spell.needLos && success) {
 		if (!physics.hasLos(~~obj.x, ~~obj.y, ~~action.target.x, ~~action.target.y)) {
-			if (!isAuto)
-				cpnSpellbook.sendAnnouncement('Target not in line of sight');
+			if (!isAuto) {
+				cpnSpellbook.sendAnnouncement("Target not in line of sight");
+			}
 			action.auto = false;
 			success = null;
 		}
@@ -63,49 +69,53 @@ const cast = (cpnSpellbook, action, isAuto) => {
 	if (!success) {
 		cpnSpellbook.queueAuto(action, spell);
 		return success;
-	} else if (!cpnSpellbook.queueAuto(action, spell))
+	} else if (!cpnSpellbook.queueAuto(action, spell)) {
 		return false;
+	}
 
 	const eventBeforeCastSpell = {
-		success: true,
-		action
+		success: true
+		, action
 	};
-	obj.fireEvent('beforeCastSpell', eventBeforeCastSpell);
-	if (!eventBeforeCastSpell.success)
+	obj.fireEvent("beforeCastSpell", eventBeforeCastSpell);
+	if (!eventBeforeCastSpell.success) {
 		return false;
+	}
 
 	if (spell.manaReserve) {
 		const reserve = spell.manaReserve;
 
 		if (reserve.percentage) {
 			const reserveEvent = {
-				spell: spell.name,
-				reservePercent: reserve.percentage
+				spell: spell.name
+				, reservePercent: reserve.percentage
 			};
-			obj.fireEvent('onBeforeReserveMana', reserveEvent);
+			obj.fireEvent("onBeforeReserveMana", reserveEvent);
 
 			if (!spell.active) {
 				if (1 - obj.stats.values.manaReservePercent < reserve.percentage) {
-					cpnSpellbook.sendAnnouncement('Insufficient mana to cast spell');
+					cpnSpellbook.sendAnnouncement("Insufficient mana to cast spell");
 					return;
-				} obj.stats.addStat('manaReservePercent', reserveEvent.reservePercent);
-			} else
-				obj.stats.addStat('manaReservePercent', -reserveEvent.reservePercent);
+				} obj.stats.addStat("manaReservePercent", reserveEvent.reservePercent);
+			} else {
+				obj.stats.addStat("manaReservePercent", -reserveEvent.reservePercent);
+			}
 		}
 	}
 
-	if (spell.targetFurthest)
+	if (spell.targetFurthest) {
 		spell.target = obj.aggro.getFurthest();
-	else if (spell.targetRandom)
+	} else if (spell.targetRandom) {
 		spell.target = obj.aggro.getRandom();
+	}
 
 	if (eventBeforeCastSpell.action.target?.effects) {
 		const eventBeforeIsSpellTarget = {
-			source: obj,
-			spell,
-			target: eventBeforeCastSpell.action.target
+			source: obj
+			, spell
+			, target: eventBeforeCastSpell.action.target
 		};
-		eventBeforeIsSpellTarget.target.fireEvent('beforeIsSpellTarget', eventBeforeIsSpellTarget);
+		eventBeforeIsSpellTarget.target.fireEvent("beforeIsSpellTarget", eventBeforeIsSpellTarget);
 		eventBeforeCastSpell.action.target = eventBeforeIsSpellTarget.target;
 	}
 
@@ -117,10 +127,10 @@ const cast = (cpnSpellbook, action, isAuto) => {
 		spell.setCd();
 	}
 
-	obj.fireEvent('afterCastSpell', {
-		castSuccess: success,
-		spell,
-		action: eventBeforeCastSpell.action
+	obj.fireEvent("afterCastSpell", {
+		castSuccess: success
+		, spell
+		, action: eventBeforeCastSpell.action
 	});
 
 	//Null means we didn't fail but are initiating casting
@@ -128,4 +138,4 @@ const cast = (cpnSpellbook, action, isAuto) => {
 };
 
 module.exports = cast;
-	
+

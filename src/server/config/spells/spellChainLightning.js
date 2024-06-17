@@ -1,43 +1,44 @@
 module.exports = {
-	type: 'chainLightning',
-	
-	cdMax: 5,
-	manaCost: 0,
-	range: 9,
-	needLos: true,
+	type: "chainLightning"
 
-	damage: 1,
+	, cdMax: 5
+	, manaCost: 0
+	, range: 9
+	, needLos: true
 
-	cast: function (action) {
+	, damage: 1
+
+	, cast: function (action) {
 		let target = action.target;
 
 		this.sendBump(target);
 
-		this.obj.instance.syncer.queue('onGetObject', {
-			id: this.obj.id,
-			components: [{
-				type: 'lightningEffect',
-				toX: target.x,
-				toY: target.y
+		this.obj.instance.syncer.queue("onGetObject", {
+			id: this.obj.id
+			, components: [{
+				type: "lightningEffect"
+				, toX: target.x
+				, toY: target.y
 			}]
 		}, -1);
 
 		this.queueCallback(this.explode.bind(this, target), 1);
 
 		return true;
-	},
-	explode: function (target) {
-		if ((this.obj.destroyed) || (target.destroyed))
+	}
+	, explode: function (target) {
+		if ((this.obj.destroyed) || (target.destroyed)) {
 			return;
-		
+		}
+
 		let damage = this.getDamage(target);
 		target.stats.takeDamage({
-			damage,
-			threatMult: this.threatMult,
-			source: this.obj,
-			target,
-			spellName: 'chainLightning',
-			noEvents: this.noEvents
+			damage
+			, threatMult: this.threatMult
+			, source: this.obj
+			, target
+			, spellName: "chainLightning"
+			, noEvents: this.noEvents
 		});
 	}
 };

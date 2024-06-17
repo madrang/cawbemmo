@@ -1,27 +1,27 @@
 module.exports = {
-	'cultist biorn': [{
-		msg: 'That pool sure looks cold'
+	"cultist biorn": [{
+		msg: "That pool sure looks cold"
 	}, {
-		msg: '*sighs*'
+		msg: "*sighs*"
 	}, {
-		msg: 'Come on, think!'
+		msg: "Come on, think!"
 	}, {
-		msg: 'How will we ever get across?'
-	}],
-	'cultist veleif': [{
-		msg: 'How about we try and jump?'
+		msg: "How will we ever get across?"
+	}]
+	, "cultist veleif": [{
+		msg: "How about we try and jump?"
 	}, {
-		msg: '*scratches his head*'
+		msg: "*scratches his head*"
 	}, {
-		msg: 'Thorald will be expecting us soon'
+		msg: "Thorald will be expecting us soon"
 	}, {
-		msg: 'This is useless'
-	}],
-	cultist: [{
-		msg: '*pockets a small crystal*'
+		msg: "This is useless"
+	}]
+	, cultist: [{
+		msg: "*pockets a small crystal*"
 	}, {
-		msg: '*sighs*'
+		msg: "*sighs*"
 	}, {
-		msg: '*stares into a crystal*'
+		msg: "*stares into a crystal*"
 	}]
 };

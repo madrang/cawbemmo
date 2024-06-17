@@ -1,38 +1,39 @@
 //Config
-const validModPatterns = ['.png', '/ui/', '/clientComponents/', '/audio/'];
+const validModPatterns = [".png", "/ui/", "/clientComponents/", "/audio/"];
 
 //Methods
 const appRoot = (req, res) => {
-	res.sendFile('index.html');
+	res.sendFile("index.html");
 };
 
 const appFile = (req, res) => {
-	let root = req.url.split('/')[1];
+	let root = req.url.split("/")[1];
 	let file = req.params[0];
-	file = file.replace('/' + root + '/', '');
+	file = file.replace("/" + root + "/", "");
 
 	const validRequest = (
-		root !== 'server' ||
+		root !== "server" ||
 		(
-			root === 'server' &&
-			file.startsWith('clientComponents/')
+			root === "server" &&
+			file.startsWith("clientComponents/")
 		) ||
 		(
-			file.includes('mods/') &&
-			validModPatterns.some(v => file.includes(v))
+			file.includes("mods/") &&
+			validModPatterns.some((v) => file.includes(v))
 		)
 	);
-	
-	if (!validRequest)
+
+	if (!validRequest) {
 		return null;
-	
+	}
+
 	res.sendFile(file, {
-		root: '../' + root
+		root: "../" + root
 	});
 };
 
 //Exports
 module.exports = {
-	appRoot,
-	appFile
+	appRoot
+	, appFile
 };

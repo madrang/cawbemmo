@@ -1,7 +1,7 @@
-const events = require('../../misc/events');
-const { isItemStackable } = require('./helpers');
+const events = require("../../misc/events");
+const { isItemStackable } = require("./helpers");
 
-const getNextId = items => {
+const getNextId = (items) => {
 	let id = 0;
 	let iLen = items.length;
 	for (let i = 0; i < iLen; i++) {
@@ -26,13 +26,13 @@ const dropBagForOverflow = (cpnInv, item) => {
 
 module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull = false) => {
 	const obj = cpnInv.obj;
-	obj.instance.eventEmitter.emit('onBeforeGetItem', item, obj);
-	events.emit('beforePlayerGetItem', obj, item);
+	obj.instance.eventEmitter.emit("onBeforeGetItem", item, obj);
+	events.emit("beforePlayerGetItem", obj, item);
 
 	//We need to know if a mob dropped it for quest purposes
 	let fromMob = item.fromMob;
 
-	if (!item.has('quality')) {
+	if (!item.has("quality")) {
 		item.quality = 0;
 	}
 
@@ -41,7 +41,7 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 
 	let exists = false;
 	if (isItemStackable(item) && !noStack) {
-		let existItem = cpnInv.items.find(i => i.name === item.name);
+		let existItem = cpnInv.items.find((i) => i.name === item.name);
 		if (existItem) {
 			exists = true;
 			existItem.quantity = Math.floor(existItem.quantity || 1) + Math.floor(item.quantity || 1);
@@ -69,11 +69,11 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 		if (item.eq) {
 			delete item.pos;
 		}
-		if (!item.has('pos') && !item.eq) {
+		if (!item.has("pos") && !item.eq) {
 			const iLen = items.length;
 			let pos = iLen;
 			for (let i = 0; i < iLen; i++) {
-				if (!items.some(fi => fi.pos === i)) {
+				if (!items.some((fi) => fi.pos === i)) {
 					pos = i;
 					break;
 				}
@@ -96,24 +96,24 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 		}
 
 		const messages = [{
-			class: 'q' + item.quality,
-			message: 'loot: {' + msg + '}',
-			item: item,
-			type: 'loot'
+			class: "q" + item.quality
+			, message: "loot: {" + msg + "}"
+			, item: item
+			, type: "loot"
 		}];
 
 		if (!hideAlert) {
-			obj.instance.syncer.queue('onGetDamage', {
-				id: obj.id,
-				event: true,
-				text: 'loot'
+			obj.instance.syncer.queue("onGetDamage", {
+				id: obj.id
+				, event: true
+				, text: "loot"
 			}, -1);
 		}
 
 		if (!hideMessage) {
-			obj.instance.syncer.queue('onGetMessages', {
-				id: obj.id,
-				messages: messages
+			obj.instance.syncer.queue("onGetMessages", {
+				id: obj.id
+				, messages: messages
 			}, [obj.serverId]);
 		}
 	}
@@ -130,17 +130,17 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 		} else {
 			obj.equipment.equip({ itemId: item.id });
 		}
-	} else if (item.has('quickSlot')) {
+	} else if (item.has("quickSlot")) {
 		obj.equipment.setQuickSlot({
-			itemId: item.id,
-			slot: item.quickSlot
+			itemId: item.id
+			, slot: item.quickSlot
 		});
 	} else {
-		obj.syncer.deleteFromArray(true, 'inventory', 'getItems', i => i.id === item.id);
-		obj.syncer.setArray(true, 'inventory', 'getItems', cpnInv.simplifyItem(item), true);
+		obj.syncer.deleteFromArray(true, "inventory", "getItems", (i) => i.id === item.id);
+		obj.syncer.setArray(true, "inventory", "getItems", cpnInv.simplifyItem(item), true);
 	}
 	if (!hideMessage && fromMob) {
-		obj.fireEvent('afterLootMobItem', item);
+		obj.fireEvent("afterLootMobItem", item);
 	}
 	return item;
 };

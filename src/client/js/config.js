@@ -1,28 +1,28 @@
 define([
-	'js/system/browserStorage'
+	"js/system/browserStorage"
 ], function (
 	browserStorage
 ) {
 	const config = {
-		showNames: true,
-		showQuests: 'on',
-		showEvents: true,
-		playAudio: true,
-		qualityIndicators: 'off',
-		unusableIndicators: 'off',
-		rememberChatChannel: true,
-		soundVolume: 100,
-		musicVolume: 100,
-		partyView: 'full',
-		damageNumbers: 'element'
+		showNames: true
+		, showQuests: "on"
+		, showEvents: true
+		, playAudio: true
+		, qualityIndicators: "off"
+		, unusableIndicators: "off"
+		, rememberChatChannel: true
+		, soundVolume: 100
+		, musicVolume: 100
+		, partyView: "full"
+		, damageNumbers: "element"
 	};
 
 	const valueChains = {
-		partyView: ['full', 'compact', 'minimal'],
-		showQuests: ['on', 'minimal', 'off'],
-		qualityIndicators: ['border', 'bottom', 'background', 'off'],
-		unusableIndicators: ['off', 'border', 'top', 'background'],
-		damageNumbers: ['element', 'white', 'off']
+		partyView: ["full", "compact", "minimal"]
+		, showQuests: ["on", "minimal", "off"]
+		, qualityIndicators: ["border", "bottom", "background", "off"]
+		, unusableIndicators: ["off", "border", "top", "background"]
+		, damageNumbers: ["element", "white", "off"]
 	};
 
 	const getNextValue = (key) => {
@@ -46,21 +46,22 @@ define([
 	};
 
 	config.toggle = (key) => {
-		if (valueChains[key])
+		if (valueChains[key]) {
 			config[key] = getNextValue(key);
-		else
+		} else {
 			config[key] = !config[key];
+		}
 
 		browserStorage.set(getKeyName(key), config[key]);
 	};
 
 	const loadValue = (key) => {
 		const currentValue = browserStorage.get(getKeyName(key));
-		if (currentValue === '{unset}') {
+		if (currentValue === "{unset}") {
 			return;
 		}
-		if (['true', 'false'].includes(currentValue)) {
-			config[key] = currentValue === 'true';
+		if (["true", "false"].includes(currentValue)) {
+			config[key] = currentValue === "true";
 			return;
 		}
 		const floatValue = Number.parseFloat(currentValue);
@@ -71,7 +72,7 @@ define([
 		config[key] = currentValue;
 	};
 
-	Object.keys(config).forEach(key => loadValue(key));
+	Object.keys(config).forEach((key) => loadValue(key));
 
 	return config;
 });

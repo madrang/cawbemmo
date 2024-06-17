@@ -6,30 +6,32 @@ module.exports = {
 			const stat = effect.rolls.stat;
 			let amount = effect.rolls.amount;
 
-			if (stat === 'hp') {
+			if (stat === "hp") {
 				if (cpnStats.values.hp >= cpnStats.values.hpMax) {
 					effectResult.success = false;
-					effectResult.errorMessage = 'You are already at full health.';
+					effectResult.errorMessage = "You are already at full health.";
 
 					return;
 				}
 
-				if (typeof(amount) === 'string' && amount.indexOf('%') > -1)
-					amount = (cpnStats.values.hpMax / 100) * ~~amount.replace('%', '');
+				if (typeof(amount) === "string" && amount.indexOf("%") > -1) {
+					amount = (cpnStats.values.hpMax / 100) * ~~amount.replace("%", "");
+				}
 
 				cpnStats.getHp({
 					heal: {
-						amount,
-						threatMult: 0
-					}, 
-					source: cpnStats.obj,
-					target: cpnStats.obj
+						amount
+						, threatMult: 0
+					}
+					, source: cpnStats.obj
+					, target: cpnStats.obj
 				});
-			} else
+			} else {
 				cpnStats.addStat(stat, amount);
-		},
+			}
+		}
 
-		onGetText (item, effect) {
+		, onGetText (item, effect) {
 			return `Restores ${effect.rolls.amount} ${effect.rolls.stat}`;
 		}
 	}

@@ -1,72 +1,75 @@
 module.exports = {
-	type: 'events',
+	type: "events"
 
-	list: [],
+	, list: []
 
-	simplify: function (self) {
-		if (!self)
+	, simplify: function (self) {
+		if (!self) {
 			return;
+		}
 
 		let result = {
-			type: 'events'
+			type: "events"
 		};
 
 		if (this.list.length > 0) {
-			result.list = this.list.map(l => ({
-				id: l.id,
-				name: l.config.name,
-				description: l.config.description
+			result.list = this.list.map((l) => ({
+				id: l.id
+				, name: l.config.name
+				, description: l.config.description
 			}));
 		}
 
 		return result;
-	},
+	}
 
-	save: function () {
+	, save: function () {
 		return {
-			type: 'events'
+			type: "events"
 		};
-	},
+	}
 
-	simplifyTransfer: function () {
+	, simplifyTransfer: function () {
 		return this.save();
-	},
+	}
 
-	unregisterEvent: function (event) {
-		this.list.spliceWhere(l => (l === event));
+	, unregisterEvent: function (event) {
+		this.list.spliceWhere((l) => (l === event));
 
-		this.obj.syncer.setArray(true, 'events', 'removeList', {
+		this.obj.syncer.setArray(true, "events", "removeList", {
 			id: event.id
 		});
-	},
+	}
 
-	syncList: function () {
+	, syncList: function () {
 		this.list.forEach(function (l) {
-			this.obj.syncer.setArray(true, 'events', 'updateList', {
-				id: l.id,
-				name: l.config.name,
-				description: l.config.description
+			this.obj.syncer.setArray(true, "events", "updateList", {
+				id: l.id
+				, name: l.config.name
+				, description: l.config.description
 			});
 		}, this);
-	},
+	}
 
-	events: {
+	, events: {
 		afterMove: function () {
 			let events = this.obj.instance.events;
 			let closeEvents = events.getCloseEvents(this.obj);
-			if (!closeEvents)
+			if (!closeEvents) {
 				return;
+			}
 
 			closeEvents.forEach(function (c) {
-				if (this.list.some(l => (l === c)))
+				if (this.list.some((l) => (l === c))) {
 					return;
+				}
 
 				this.list.push(c);
 
-				this.obj.syncer.setArray(true, 'events', 'updateList', {
-					id: c.id,
-					name: c.config.name,
-					description: c.config.description
+				this.obj.syncer.setArray(true, "events", "updateList", {
+					id: c.id
+					, name: c.config.name
+					, description: c.config.description
 				});
 			}, this);
 		}

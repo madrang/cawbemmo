@@ -1,33 +1,34 @@
 define([
-	'js/system/events'
+	"js/system/events"
 ], function (
 	events
 ) {
 	return {
-		type: 'trade',
+		type: "trade"
 
-		itemList: null,
-		action: 'buy',
+		, itemList: null
+		, action: "buy"
 
-		init: function (blueprint) {
-			
-		},
+		, init: function (blueprint) {
 
-		extend: function (blueprint) {
+		}
+
+		, extend: function (blueprint) {
 			let redraw = false;
 
 			if (blueprint.buyList) {
 				this.itemList = blueprint.buyList;
 				redraw = true;
-				this.action = 'buy';
-				if (blueprint.buyList.buyback)
-					this.action = 'buyback';
-				
+				this.action = "buy";
+				if (blueprint.buyList.buyback) {
+					this.action = "buyback";
+				}
+
 				delete blueprint.buyList;
 			} else if (blueprint.sellList) {
 				this.itemList = blueprint.sellList;
 				redraw = true;
-				this.action = 'sell';
+				this.action = "sell";
 				delete blueprint.sellList;
 			}
 
@@ -39,17 +40,21 @@ define([
 				delete blueprint.removeItems;
 			}
 
-			if (blueprint.redraw)
+			if (blueprint.redraw) {
 				redraw = true;
+			}
 
-			for (let p in blueprint) 
+			for (let p in blueprint) {
 				this[p] = blueprint[p];
+			}
 
-			if (redraw)
-				events.emit('onGetTradeList', this.itemList, this.action);
+			if (redraw) {
+				events.emit("onGetTradeList", this.itemList, this.action);
+			}
 
-			if (blueprint.closeTrade)
-				events.emit('onCloseTrade');
+			if (blueprint.closeTrade) {
+				events.emit("onCloseTrade");
+			}
 		}
 	};
 });

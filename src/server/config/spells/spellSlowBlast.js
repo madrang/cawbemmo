@@ -1,21 +1,22 @@
 module.exports = {
-	type: 'slowBlast',
+	type: "slowBlast"
 
-	intCd: 0,
-	intCdMax: 1,
-	thickness: 2,
-	casting: false,
-	radius: 0,
+	, intCd: 0
+	, intCdMax: 1
+	, thickness: 2
+	, casting: false
+	, radius: 0
 
-	needLos: false,
+	, needLos: false
 
-	range: 100,
+	, range: 100
 
-	castingEffect: null,
+	, castingEffect: null
 
-	update: function () {
-		if (!this.casting)
+	, update: function () {
+		if (!this.casting) {
 			return;
+		}
 
 		if (this.intCd > 0) {
 			this.intCd--;
@@ -46,35 +47,38 @@ module.exports = {
 				for (let j = yMin; j <= yMax; j++) {
 					let dy = Math.abs(y - j);
 
-					if (Math.random() < 0.35)
+					if (Math.random() < 0.35) {
 						continue;
+					}
 
 					let distance = ~~Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-					if (distance !== radius)
+					if (distance !== radius) {
 						continue;
+					}
 
-					if (!physics.hasLos(x, y, i, j))
+					if (!physics.hasLos(x, y, i, j)) {
 						continue;
+					}
 
 					success = true;
 
 					let effect = {
-						x: i,
-						y: j,
-						components: [{
-							type: 'attackAnimation',
-							destroyObject: true,
-							row: [10, 10, 10, 10, 10, 10, 10, 8, 8, 8, 7, 7, 7][Math.floor(Math.random() * 13)],
-							col: 4,
-							frameDelay: 1 + Math.floor(Math.random() * 10)
+						x: i
+						, y: j
+						, components: [{
+							type: "attackAnimation"
+							, destroyObject: true
+							, row: [10, 10, 10, 10, 10, 10, 10, 8, 8, 8, 7, 7, 7][Math.floor(Math.random() * 13)]
+							, col: 4
+							, frameDelay: 1 + Math.floor(Math.random() * 10)
 						}, {
-							type: 'particles',
-							noExplosion: true,
-							blueprint: this.particles
+							type: "particles"
+							, noExplosion: true
+							, blueprint: this.particles
 						}]
 					};
 
-					syncer.queue('onGetObject', effect, -1);
+					syncer.queue("onGetObject", effect, -1);
 
 					let mobs = physics.getCell(i, j);
 					let mLen = mobs.length;
@@ -85,17 +89,18 @@ module.exports = {
 						if (!m) {
 							mLen--;
 							continue;
-						} else if (!m.player)
+						} else if (!m.player) {
 							continue;
+						}
 
 						let damage = this.getDamage(m);
 						m.stats.takeDamage({
-							damage,
-							threatMult: 1,
-							source: obj,
-							target: m,
-							spellName: 'slowBlast',
-							noEvents: this.noEvents
+							damage
+							, threatMult: 1
+							, source: obj
+							, target: m
+							, spellName: "slowBlast"
+							, noEvents: this.noEvents
 						});
 					}
 				}
@@ -109,16 +114,16 @@ module.exports = {
 		}
 
 		this.sendBump({
-			x: x,
-			y: y + 1
+			x: x
+			, y: y + 1
 		});
 
 		return true;
-	},
+	}
 
-	cast: function (action) {
+	, cast: function (action) {
 		this.castingEffect = this.obj.effects.addEffect({
-			type: 'casting'
+			type: "casting"
 		});
 
 		this.casting = true;

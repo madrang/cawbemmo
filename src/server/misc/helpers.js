@@ -1,7 +1,7 @@
 //eslint-disable-next-line no-extend-native
-Object.defineProperty(Array.prototype, 'spliceWhere', {
-	enumerable: false,
-	value: function (callback, thisArg) {
+Object.defineProperty(Array.prototype, "spliceWhere", {
+	enumerable: false
+	, value: function (callback, thisArg) {
 		let T = thisArg;
 		let O = Object(this);
 		let len = O.length >>> 0;
@@ -17,13 +17,13 @@ Object.defineProperty(Array.prototype, 'spliceWhere', {
 			}
 			k++;
 		}
-	} 
+	}
 });
 
 //eslint-disable-next-line no-extend-native
-Object.defineProperty(Array.prototype, 'spliceFirstWhere', {
-	enumerable: false,
-	value: function (callback, thisArg) {
+Object.defineProperty(Array.prototype, "spliceFirstWhere", {
+	enumerable: false
+	, value: function (callback, thisArg) {
 		let T = thisArg;
 		let O = Object(this);
 		let len = O.length >>> 0;
@@ -43,19 +43,18 @@ Object.defineProperty(Array.prototype, 'spliceFirstWhere', {
 			}
 			k++;
 		}
-	} 
+	}
 });
 
 //eslint-disable-next-line no-extend-native
-Object.defineProperty(Object.prototype, 'has', {
-	enumerable: false,
-	value: function (prop) {
-		//eslint-disable-next-line no-undefined
+Object.defineProperty(Object.prototype, "has", {
+	enumerable: false
+	, value: function (prop) {
 		return (this.hasOwnProperty(prop) && this[prop] !== undefined && this[prop] !== null);
 	}
 });
 
-const _countRe = function(str, re) {
+const _countRe = function (str, re) {
 	if (typeof str !== "string") {
 		throw new Error(`str need to be a string but an unexpected type of '${typeof str}' was received.`);
 	}
@@ -122,7 +121,7 @@ _eventLevel.STANDARD = _eventLevel.MINIMUM | _eventLevel.NOTICE | _eventLevel.IN
 _eventLevel.VERBOSE = _eventLevel.STANDARD | _eventLevel.DEBUG;
 
 let _consoleLogLevel = _eventLevel.STANDARD;
-let _consoleLogFilter = function(logger, logLvl, args) {
+let _consoleLogFilter = function (logger, logLvl, args) {
 	return true;
 };
 
@@ -131,47 +130,46 @@ const _getColor = function (level) {
 		return "";
 	}
 	switch (level) {
-		case _eventLevel.TRACE:
-			return "\x1b[34m"; // Blue
-		case _eventLevel.DEBUG:
-			return "\x1b[36m"; // Cyan
-		case _eventLevel.INFORMATIVE:
-			return "\x1b[37m"; // White
-		case _eventLevel.NOTICE:
-			return "\x1b[32m"; // Green
-		case _eventLevel.WARNING:
-			return "\x1b[33m"; // Yellow
-		case _eventLevel.ERROR:
-			return "\x1b[31m"; // Red
-		case _eventLevel.FATAL:
-			return "\x1b[31m"; // Red
-		case _eventLevel.CRITICAL:
-			return "\x1b[35m"; // Magenta
-		case _eventLevel.EMERGENCY:
-			return "\x1b[35m"; // Magenta
-		default:
-			return "\x1b[37m"; // White
+	case _eventLevel.TRACE:
+		return "\x1b[34m"; // Blue
+	case _eventLevel.DEBUG:
+		return "\x1b[36m"; // Cyan
+	case _eventLevel.INFORMATIVE:
+		return "\x1b[37m"; // White
+	case _eventLevel.NOTICE:
+		return "\x1b[32m"; // Green
+	case _eventLevel.WARNING:
+		return "\x1b[33m"; // Yellow
+	case _eventLevel.ERROR:
+		return "\x1b[31m"; // Red
+	case _eventLevel.FATAL:
+		return "\x1b[31m"; // Red
+	case _eventLevel.CRITICAL:
+		return "\x1b[35m"; // Magenta
+	case _eventLevel.EMERGENCY:
+		return "\x1b[35m"; // Magenta
+	default:
+		return "\x1b[37m"; // White
 	}
 };
 const _mapArgsToString = function (...args) {
 	return args.map((a) => {
 		const aType = typeof a;
-		if(aType === "undefined") {
+		if (aType === "undefined") {
 			return "undefined";
 		} else if (aType === "string") {
 			return a;
-		} else if(typeof a.toString === "function") {
+		} else if (typeof a.toString === "function") {
 			return a.toString();
-		} else {
-			try { // Converting circular structure to JSON
-				return JSON.stringify(a, undefined, 4);
-			} catch (ex) {
-				return ex.toString();
-			}
+		}
+		try { // Converting circular structure to JSON
+			return JSON.stringify(a, undefined, 4);
+		} catch (ex) {
+			return ex.toString();
 		}
 	});
 };
-const _applyLogFn = function(thisLogger, logLevel, logFn, args) {
+const _applyLogFn = function (thisLogger, logLevel, logFn, args) {
 	if (typeof logFn === "string") {
 		const fnName = logFn;
 		logFn = console[fnName];
@@ -219,12 +217,12 @@ const _applyLogFn = function(thisLogger, logLevel, logFn, args) {
 };
 const _consoleFnNames = {
 	error: _eventLevel.ERROR
-	, warn: _eventLevel.WARNING
-	, info: _eventLevel.NOTICE
-	, debug: _eventLevel.DEBUG
-	, trace: _eventLevel.TRACE
-}
-const _printEvent = function(thisLogger, logLevel, args) {
+	 , warn: _eventLevel.WARNING
+	 , info: _eventLevel.NOTICE
+	 , debug: _eventLevel.DEBUG
+	 , trace: _eventLevel.TRACE
+};
+const _printEvent = function (thisLogger, logLevel, args) {
 	if (!Number.isInteger(logLevel) || (logLevel !== 0 && (logLevel & _consoleLogLevel) === 0)) {
 		return;
 	}
@@ -241,23 +239,23 @@ const _printEvent = function(thisLogger, logLevel, args) {
 	}
 	// Send notifications
 	//if (logLevel === _eventLevel.EMERGENCY) {
-		//TODO Send email on emergencies.
-		//email.notify(message);
+	//TODO Send email on emergencies.
+	//email.notify(message);
 	//}
 };
-const _logBase = function(name) {
+const _logBase = function (name) {
 	if (typeof name === "undefined") {
-		throw new Error("Name is undefined.")
+		throw new Error("Name is undefined.");
 	} else if (typeof name === "string") {
 		this.name = name;
 	} else {
-		throw new Error("Name is not a string.")
+		throw new Error("Name is not a string.");
 	}
 };
 //Add log functions.
 for (const levelName in _eventLevel) {
 	const logLvl = _eventLevel[levelName];
-	_logBase.prototype[levelName.toLowerCase()] = function(...args) {
+	_logBase.prototype[levelName.toLowerCase()] = function (...args) {
 		if (!_consoleLogFilter(this, logLvl, args)) {
 			return;
 		}
@@ -268,27 +266,27 @@ _logBase.prototype.info = _logBase.prototype.informative;
 _logBase.prototype.warn = _logBase.prototype.warning;
 
 const _logHandler = Object.create(null);
-_logHandler.set = function(target, propertyKey, value, receiver) {
+_logHandler.set = function (target, propertyKey, value, receiver) {
 	Reflect.set(target, propertyKey, value, receiver);
 };
-const _createLogger = function(parentLogger, name) {
+const _createLogger = function (parentLogger, name) {
 	let newLoggerName;
 	if (typeof parentLogger === "string" && typeof name === "undefined") {
 		//Name was passed as first arg.
 		newLoggerName = parentLogger;
 	} else if (typeof name === "string") {
 		if (typeof parentLogger === "object" && typeof parentLogger.name === "string" && parentLogger.name !== "System") {
-			newLoggerName = [parentLogger.name, "->", name].join('');
+			newLoggerName = [parentLogger.name, "->", name].join("");
 		} else {
 			//No parent.
 			newLoggerName = name;
 		}
 	} else {
-		throw new Error("Name is not a string.")
+		throw new Error("Name is not a string.");
 	}
 	return new Proxy(new _logBase(newLoggerName), _logHandler);
 };
-_logHandler.get = function(target, propertyKey) {
+_logHandler.get = function (target, propertyKey) {
 	const propType = typeof propertyKey;
 	if (propType === "undefined") {
 		throw new Error("propertyKey is undefined.");
@@ -307,23 +305,21 @@ _logHandler.get = function(target, propertyKey) {
 		}
 		if (weakLogMap.has(propertyKey)) {
 			return weakLogMap.get(propertyKey);
-		} else {
-			let newLoggerName;
-			if (typeof propertyKey.name === "string") {
-				newLoggerName = propertyKey.name;
-			} else if(typeof propertyKey.toString === "function") {
-				newLoggerName = propertyKey.toString();
-			} else {
-				//If function, propertyKey.displayName
-				newLoggerName = propertyKey.prototype.name;
-			}
-			const newLog = _createLogger(target, newLoggerName);
-			weakLogMap.set(propertyKey, newLog);
-			return newLog;
 		}
-	} else {
-		return _createLogger(target, propertyKey);
+		let newLoggerName;
+		if (typeof propertyKey.name === "string") {
+			newLoggerName = propertyKey.name;
+		} else if (typeof propertyKey.toString === "function") {
+			newLoggerName = propertyKey.toString();
+		} else {
+			//If function, propertyKey.displayName
+			newLoggerName = propertyKey.prototype.name;
+		}
+		const newLog = _createLogger(target, newLoggerName);
+		weakLogMap.set(propertyKey, newLog);
+		return newLog;
 	}
+	return _createLogger(target, propertyKey);
 };
 Object.freeze(_logHandler);
 
@@ -334,23 +330,24 @@ module.exports = {
 		for (let i = 0; i < w; i++) {
 			let inner = [];
 			for (let j = 0; j < h; j++) {
-				if (def === 'array')
+				if (def === "array") {
 					inner.push([]);
-				else
+				} else {
 					inner.push(def);
+				}
 			}
 			result.push(inner);
 		}
 		return result;
-	},
-	randomKey: function (o) {
+	}
+	, randomKey: function (o) {
 		const keys = Object.keys(o);
 		return keys[Math.floor(Math.random() * keys.length)];
-	},
-	countRe: _countRe,
-	getDeepProperty: function (obj, path) {
+	}
+	, countRe: _countRe
+	, getDeepProperty: function (obj, path) {
 		if (!path.push) {
-			path = path.split('.');
+			path = path.split(".");
 		}
 		let o = obj;
 		let pLen = path.length;
@@ -361,22 +358,22 @@ module.exports = {
 			}
 		}
 		return o;
-	},
+	}
 
-	getGuid: function () {
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-			let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+	, getGuid: function () {
+		return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+			let r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
 			return v.toString(16);
 		});
-	},
+	}
 
-	safeRequire: function(path) {
+	, safeRequire: function (path) {
 		try {
 			return require(path);
 		} catch (e) {
 			_.log.NodeJS.error(`Failed to import "${path}" Error:`, e);
 		}
-	},
+	}
 
-	log: _createLogger("System")
+	, log: _createLogger("System")
 };

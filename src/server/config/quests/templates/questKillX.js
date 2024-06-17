@@ -1,12 +1,12 @@
 module.exports = {
-	need: 10,
-	have: 0,
+	need: 10
+	, have: 0
 
-	mobType: null,
+	, mobType: null
 
-	type: 'killX',
+	, type: "killX"
 
-	build: function () {
+	, build: function () {
 		//If we're not in the correct zone, don't do this check, it'll just crash the server
 		// since the mob won't be available (most likely) in the zoneFile
 		if (this.obj.zoneName === this.zoneName) {
@@ -23,11 +23,11 @@ module.exports = {
 				let keys = Object.keys(mobTypes).filter(function (m) {
 					let mobBlueprint = mobTypes[m];
 					return (
-						m !== 'default' &&
+						m !== "default" &&
 						!mobBlueprint.noQuest &&
 						(
 							mobBlueprint.attackable ||
-							!mobBlueprint.has('attackable')
+							!mobBlueprint.has("attackable")
 						) &&
 						mobBlueprint.level <= Math.floor(this.obj.stats.values.level * 1.35) &&
 						mobCounts[m] > 1
@@ -47,28 +47,28 @@ module.exports = {
 		}
 		this.description = `Tue ${this.have}/${this.need} ${this.mobName}`;
 		return true;
-	},
+	}
 
-	getXpMultiplier: function () {
+	, getXpMultiplier: function () {
 		return this.need;
-	},
+	}
 
-	events: {
+	, events: {
 		afterKillMob: function (mob) {
 			if (
 				!mob.name ||
 				this.obj.zoneName !== this.zoneName ||
-				mob.name.toLowerCase() !== this.mobName.toLowerCase() || 
+				mob.name.toLowerCase() !== this.mobName.toLowerCase() ||
 				this.have >= this.need
 			) {
 				return;
 			}
 			this.have++;
-			this.description = 'Tue ' + this.have + '/' + this.need + ' ' + this.mobName;
+			this.description = "Tue " + this.have + "/" + this.need + " " + this.mobName;
 			if (this.have >= this.need) {
 				this.ready();
 			}
-			this.obj.syncer.setArray(true, 'quests', 'updateQuests', this.simplify(true));
+			this.obj.syncer.setArray(true, "quests", "updateQuests", this.simplify(true));
 		}
 	}
 };

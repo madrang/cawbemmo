@@ -5,17 +5,17 @@ module.exports = (scope, map) => {
 	let oldMap = map.oldMap;
 
 	templates
-		.filter(r => r.properties.mapping)
-		.forEach(m => {
+		.filter((r) => r.properties.mapping)
+		.forEach((m) => {
 			let x = m.x;
 			let y = m.y;
 			let w = m.width;
 			let h = m.height;
 
 			let baseTile = oldMap[x][y];
-			baseTile = (baseTile || '')
-				.replace('0,', '')
-				.replace(',', '');
+			baseTile = (baseTile || "")
+				.replace("0,", "")
+				.replace(",", "");
 
 			let mapping = scope.tileMappings[baseTile] = [];
 
@@ -25,8 +25,8 @@ module.exports = (scope, map) => {
 
 					if (oM.replace) {
 						oM = oM
-							.replace('0,', '')
-							.replace(',', '');
+							.replace("0,", "")
+							.replace(",", "");
 					}
 
 					mapping.push(oM);

@@ -37,10 +37,9 @@ Array.prototype.spliceFirstWhere = function (callback, thisArg) {
 };
 
 //eslint-disable-next-line no-extend-native
-Object.defineProperty(Object.prototype, 'has', {
-	enumerable: false,
-	value: function (prop) {
-		//eslint-disable-next-line no-undefined
+Object.defineProperty(Object.prototype, "has", {
+	enumerable: false
+	, value: function (prop) {
 		return (this.hasOwnProperty(prop) && this[prop] !== undefined && this[prop] !== null);
 	}
 });
@@ -49,7 +48,7 @@ if (!String.prototype.padStart) {
 	//eslint-disable-next-line no-extend-native
 	String.prototype.padStart = function padStart (targetLength, padString) {
 		targetLength = targetLength >> 0;
-		padString = String(typeof padString !== 'undefined' ? padString : ' ');
+		padString = String(typeof padString !== "undefined" ? padString : " ");
 		if (this.length >= targetLength) {
 			return String(this);
 		}
@@ -61,23 +60,23 @@ if (!String.prototype.padStart) {
 	};
 }
 
-const _sendLogBuffer = function(logData) {
+const _sendLogBuffer = function (logData) {
 	fetch("/log", {
-		method:"POST"
-		,  headers: {
+		method: "POST"
+		  , headers: {
 			"Content-Type": "application/json"
 		}
-		, body: JSON.stringify(logData)
+		 , body: JSON.stringify(logData)
 	}).then(console.info, console.error);
 };
 
 window._ = {
-	get2dArray: function (w, h, def=0) {
+	get2dArray: function (w, h, def = 0) {
 		let result = [];
 		for (let i = 0; i < w; i++) {
 			let inner = [];
 			for (let j = 0; j < h; j++) {
-				if (def === 'array') {
+				if (def === "array") {
 					inner.push([]);
 				} else {
 					inner.push(def);
@@ -86,9 +85,9 @@ window._ = {
 			result.push(inner);
 		}
 		return result;
-	},
+	}
 
-	toggleFullScreen: function () {
+	, toggleFullScreen: function () {
 		const doc = window.document;
 		if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
 			const docEl = doc.documentElement;
@@ -98,29 +97,29 @@ window._ = {
 			const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 			cancelFullScreen.call(doc);
 		}
-	},
+	}
 
-	isIos: function () {
+	, isIos: function () {
 		return ([
-			'iPad Simulator',
-			'iPhone Simulator',
-			'iPod Simulator',
-			'iPad',
-			'iPhone',
-			'iPod'
-		].includes(navigator.platform) || (navigator.userAgent.includes('Mac') && 'ontouchend' in document));
-	},
+			"iPad Simulator"
+			, "iPhone Simulator"
+			, "iPod Simulator"
+			, "iPad"
+			, "iPhone"
+			, "iPod"
+		].includes(navigator.platform) || (navigator.userAgent.includes("Mac") && "ontouchend" in document));
+	}
 
-	log: undefined //TODO
+	, log: undefined //TODO
 };
 
 define([], function () {
-	const urlParams = Object.fromEntries(window.location.search.substr(1).split('&').map(k => k.split('=')));
+	const urlParams = Object.fromEntries(window.location.search.substr(1).split("&").map((k) => k.split("=")));
 	window.isMobile = (
-		urlParams.forceMobile === 'true' ||
+		urlParams.forceMobile === "true" ||
 		/Mobi|Android/i.test(navigator.userAgent) ||
 		(
-			navigator.platform === 'MacIntel' &&
+			navigator.platform === "MacIntel" &&
 			navigator.maxTouchPoints > 1
 		)
 	);

@@ -1,13 +1,13 @@
 define([
-	'js/system/events',
-	'js/system/client',
-	'js/system/globals',
-	'js/objects/objects',
-	'html!ui/templates/party/template',
-	'css!ui/templates/party/styles',
-	'html!ui/templates/party/templateInvite',
-	'html!ui/templates/party/templatePartyMember',
-	'js/config'
+	"js/system/events"
+	, "js/system/client"
+	, "js/system/globals"
+	, "js/objects/objects"
+	, "html!ui/templates/party/template"
+	, "css!ui/templates/party/styles"
+	, "html!ui/templates/party/templateInvite"
+	, "html!ui/templates/party/templatePartyMember"
+	, "js/config"
 ], function (
 	events,
 	client,
@@ -20,213 +20,227 @@ define([
 	config
 ) {
 	return {
-		tpl: template,
+		tpl: template
 
-		invite: null,
-		party: null,
+		, invite: null
+		, party: null
 
-		postRender: function () {
-			this.onEvent('onGetInvite', this.onGetInvite.bind(this));
-			this.onEvent('onGetParty', this.onGetParty.bind(this));
-			this.onEvent('onPartyDisband', this.onPartyDisband.bind(this));
+		, postRender: function () {
+			this.onEvent("onGetInvite", this.onGetInvite.bind(this));
+			this.onEvent("onGetParty", this.onGetParty.bind(this));
+			this.onEvent("onPartyDisband", this.onPartyDisband.bind(this));
 
-			this.onEvent('globalObjectListUpdated', this.globalObjectListUpdated.bind(this));
+			this.onEvent("globalObjectListUpdated", this.globalObjectListUpdated.bind(this));
 
-			this.onEvent('onGetPartyStats', this.onGetPartyStats.bind(this));
+			this.onEvent("onGetPartyStats", this.onGetPartyStats.bind(this));
 
-			this.onEvent('onTogglePartyView', this.onTogglePartyView.bind(this));
+			this.onEvent("onTogglePartyView", this.onTogglePartyView.bind(this));
 			this.onTogglePartyView(config.partyView);
-		},
+		}
 
-		globalObjectListUpdated: function ({ list }) {
-			if (!window.player)
+		, globalObjectListUpdated: function ({ list }) {
+			if (!window.player) {
 				return;
+			}
 
 			const { party } = this;
 			const { player: { serverId: playerId } } = window;
 
-			const player = list.find(l => l.id === playerId);
+			const player = list.find((l) => l.id === playerId);
 			const { zoneId: playerZone } = player;
 
-			if (!party)
+			if (!party) {
 				return;
+			}
 
-			list.forEach(l => {
+			list.forEach((l) => {
 				const { id: mId, zoneId: mZone, level: mLevel } = l;
 
-				if (!party.includes(mId))
+				if (!party.includes(mId)) {
 					return;
+				}
 
 				if (mId !== playerId) {
-					const el = this.find('.member[memberId="' + mId + '"]');
-					el.removeClass('differentZone');
+					const el = this.find(".member[memberId=\"" + mId + "\"]");
+					el.removeClass("differentZone");
 
-					if (mZone !== playerZone)
-						el.addClass('differentZone');
+					if (mZone !== playerZone) {
+						el.addClass("differentZone");
+					}
 
-					el.find('.txtLevel').html('level: ' + mLevel);
+					el.find(".txtLevel").html("level: " + mLevel);
 				}
 			});
-		},
+		}
 
-		onGetPartyStats: function (id, stats) {
+		, onGetPartyStats: function (id, stats) {
 			let party = this.party;
-			if (!party)
+			if (!party) {
 				return;
+			}
 
-			let el = this.find('.member[memberId="' + id + '"]');
-			if (el.length === 0)
+			let el = this.find(".member[memberId=\"" + id + "\"]");
+			if (el.length === 0) {
 				return;
+			}
 
 			if ((stats.hp !== null) && (stats.hpMax !== null)) {
 				let hpPercentage = Math.min(100, (stats.hp / stats.hpMax) * 100);
-				el.find('.statHp').css('width', hpPercentage + '%');
+				el.find(".statHp").css("width", hpPercentage + "%");
 			}
 
 			if ((stats.mana !== null) && (stats.manaMax !== null)) {
 				let manaPercentage = Math.min((stats.mana / stats.manaMax) * 100, 100);
-				el.find('.statMana').css('width', manaPercentage + '%');
+				el.find(".statMana").css("width", manaPercentage + "%");
 			}
 
-			if (stats.level !== null) 
-				el.find('.txtLevel').html('level: ' + stats.level);
-		},
+			if (stats.level !== null) {
+				el.find(".txtLevel").html("level: " + stats.level);
+			}
+		}
 
-		onPartyDisband: function () {
-			this.find('.party .list')
+		, onPartyDisband: function () {
+			this.find(".party .list")
 				.empty();
-		},
+		}
 
-		onGetParty: function (party) {
+		, onGetParty: function (party) {
 			// Destroy invite frame if you join a party
-			if (this.invite)
+			if (this.invite) {
 				this.destroyInvite();
+			}
 
-			let container = this.find('.party .list')
+			let container = this.find(".party .list")
 				.empty();
 
 			this.party = party;
-			if (!party)
+			if (!party) {
 				return;
+			}
 
-			party.forEach(p => {
-				if (p === window.player.serverId)
+			party.forEach((p) => {
+				if (p === window.player.serverId) {
 					return;
+				}
 
-				let player = globals.onlineList.find(o => o.id === p);
-				let playerName = player ? player.name : 'unknown';
-				let level = 'level: ' + (player ? player.level : '?');
+				let player = globals.onlineList.find((o) => o.id === p);
+				let playerName = player ? player.name : "unknown";
+				let level = "level: " + (player ? player.level : "?");
 
 				let html = templatePartyMember
-					.replace('$NAME$', playerName)
-					.replace('$LEVEL$', level);
+					.replace("$NAME$", playerName)
+					.replace("$LEVEL$", level);
 
 				let el = $(html)
 					.appendTo(container)
-					.attr('memberId', p)
-					.on('contextmenu', this.showContext.bind(this, playerName, p));
+					.attr("memberId", p)
+					.on("contextmenu", this.showContext.bind(this, playerName, p));
 
-				if (player.zoneId !== window.player.zoneId)
-					el.addClass('differentZone');
+				if (player.zoneId !== window.player.zoneId) {
+					el.addClass("differentZone");
+				}
 
 				//Find stats
-				let memberObj = objects.objects.find(o => o.serverId === p);
-				if ((memberObj) && (memberObj.stats))
+				let memberObj = objects.objects.find((o) => o.serverId === p);
+				if ((memberObj) && (memberObj.stats)) {
 					this.onGetPartyStats(p, memberObj.stats.values);
+				}
 			});
-		},
+		}
 
-		showContext: function (charName, id, e) {
-			events.emit('onContextMenu', [{
-				text: 'whisper',
-				callback: events.emit.bind(events, 'onDoWhisper', charName)
+		, showContext: function (charName, id, e) {
+			events.emit("onContextMenu", [{
+				text: "whisper"
+				, callback: events.emit.bind(events, "onDoWhisper", charName)
 			}, {
-				text: 'remove from party',
-				callback: this.removeFromParty.bind(this, id)
+				text: "remove from party"
+				, callback: this.removeFromParty.bind(this, id)
 			}, {
-				text: 'leave party',
-				callback: this.leaveParty.bind(this)
+				text: "leave party"
+				, callback: this.leaveParty.bind(this)
 			}], e);
 
 			e.preventDefault();
 			return false;
-		},
+		}
 
-		onGetInvite: function (sourceId) {
-			if (this.invite)
+		, onGetInvite: function (sourceId) {
+			if (this.invite) {
 				this.destroyInvite();
+			}
 
-			let sourcePlayer = globals.onlineList.find(o => o.id === sourceId);
+			let sourcePlayer = globals.onlineList.find((o) => o.id === sourceId);
 
 			let html = templateInvite
-				.replace('$NAME$', sourcePlayer.name);
+				.replace("$NAME$", sourcePlayer.name);
 
 			let el = $(html)
 				.appendTo(this.el);
 			el
-				.find('.btn')
-				.on('click', this.destroyInvite.bind(this));
+				.find(".btn")
+				.on("click", this.destroyInvite.bind(this));
 
 			this.invite = {
-				fromId: sourcePlayer.id,
-				fromName: sourcePlayer.name,
-				el: el
+				fromId: sourcePlayer.id
+				, fromName: sourcePlayer.name
+				, el: el
 			};
-		},
+		}
 
-		destroyInvite: function (e) {
+		, destroyInvite: function (e) {
 			if (e) {
-				if ($(e.target).hasClass('btnAccept'))
+				if ($(e.target).hasClass("btnAccept")) {
 					this.acceptInvite();
-				else
+				} else {
 					this.declineInvite();
+				}
 			}
 
 			this.invite.el.remove();
 			this.invite = null;
 
-			events.emit('onUiHover', false);
-		},
+			events.emit("onUiHover", false);
+		}
 
-		acceptInvite: function () {
+		, acceptInvite: function () {
 			client.request({
-				cpn: 'social',
-				method: 'acceptInvite',
-				data: {
+				cpn: "social"
+				, method: "acceptInvite"
+				, data: {
 					targetId: this.invite.fromId
 				}
 			});
-		},
+		}
 
-		declineInvite: function () {
+		, declineInvite: function () {
 			client.request({
-				cpn: 'social',
-				method: 'declineInvite',
-				data: {
+				cpn: "social"
+				, method: "declineInvite"
+				, data: {
 					targetId: this.invite.fromId
 				}
 			});
-		},
+		}
 
-		removeFromParty: function (id) {
+		, removeFromParty: function (id) {
 			client.request({
-				cpn: 'social',
-				method: 'removeFromParty',
-				data: {
+				cpn: "social"
+				, method: "removeFromParty"
+				, data: {
 					id
 				}
 			});
-		},
+		}
 
-		leaveParty: function () {
+		, leaveParty: function () {
 			client.request({
-				cpn: 'social',
-				method: 'leaveParty'
+				cpn: "social"
+				, method: "leaveParty"
 			});
-		},
+		}
 
-		onTogglePartyView: function (state) {
-			this.el.removeClass('full compact minimal');
+		, onTogglePartyView: function (state) {
+			this.el.removeClass("full compact minimal");
 			this.el.addClass(state);
 		}
 	};

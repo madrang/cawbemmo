@@ -1,33 +1,34 @@
 module.exports = {
-	type: 'harvestLife',
-	
-	cdMax: 5,
-	manaCost: 0,
-	range: 1,
+	type: "harvestLife"
 
-	damage: 1,
+	, cdMax: 5
+	, manaCost: 0
+	, range: 1
 
-	col: 4,
-	row: 1,
+	, damage: 1
 
-	init: function () {
-		if (this.range > 1)
+	, col: 4
+	, row: 1
+
+	, init: function () {
+		if (this.range > 1) {
 			this.needLos = true;
-	},
+		}
+	}
 
-	cast: function (action) {
+	, cast: function (action) {
 		let target = action.target;
 
 		let row = this.row;
 		let col = this.col;
 
 		this.sendAnimation({
-			id: target.id,
-			components: [{
-				type: 'attackAnimation',
-				new: true,
-				row: row,
-				col: col
+			id: target.id
+			, components: [{
+				type: "attackAnimation"
+				, new: true
+				, row: row
+				, col: col
 			}]
 		});
 
@@ -36,30 +37,31 @@ module.exports = {
 		this.queueCallback(this.explode.bind(this, target), 100);
 
 		return true;
-	},
-	explode: function (target) {
+	}
+	, explode: function (target) {
 		let obj = this.obj;
 
-		if ((obj.destroyed) || (target.destroyed))
+		if ((obj.destroyed) || (target.destroyed)) {
 			return;
-		
+		}
+
 		let damage = this.getDamage(target);
 		target.stats.takeDamage({
-			damage,
-			threatMult: this.threatMult,
-			source: obj,
-			target,
-			spellName: 'harvestLife',
-			noEvents: this.noEvents
+			damage
+			, threatMult: this.threatMult
+			, source: obj
+			, target
+			, spellName: "harvestLife"
+			, noEvents: this.noEvents
 		});
 
 		let healAmount = damage.amount * (this.healPercent / 100);
 		obj.stats.getHp({
 			heal: {
 				amount: healAmount
-			},
-			source: obj,
-			target: obj
+			}
+			, source: obj
+			, target: obj
 		});
 	}
 };

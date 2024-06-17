@@ -1,7 +1,7 @@
 module.exports = {
-	desc: null,
+	desc: null
 
-	init: function (event) {
+	, init: function (event) {
 		event.eventManager.setEventDescription(event.config.name, this.desc);
 	}
 };

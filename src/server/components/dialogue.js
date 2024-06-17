@@ -1,21 +1,22 @@
 module.exports = {
-	type: 'dialogue',
+	type: "dialogue"
 
-	states: {},
-	sourceStates: {},
+	, states: {}
+	, sourceStates: {}
 
-	trigger: null,
+	, trigger: null
 
-	init: function (blueprint) {
+	, init: function (blueprint) {
 		this.states = blueprint.config;
-	},
+	}
 
-	destroy: function () {
-		if (this.trigger)
+	, destroy: function () {
+		if (this.trigger) {
 			this.trigger.destroyed = true;
-	},
+		}
+	}
 
-	talk: async function (msg) {
+	, talk: async function (msg) {
 		if (!msg) {
 			return false;
 		}
@@ -24,12 +25,12 @@ module.exports = {
 			return false;
 		}
 		if (target && !target.id) {
-			target = this.obj.instance.objects.objects.find(o => o.id === target);
+			target = this.obj.instance.objects.objects.find((o) => o.id === target);
 			if (!target) {
 				return false;
 			}
 		} else if (msg.targetName) {
-			target = this.obj.instance.objects.objects.find(o => ((o.name) && (o.name.toLowerCase() === msg.targetName.toLowerCase())));
+			target = this.obj.instance.objects.objects.find((o) => ((o.name) && (o.name.toLowerCase() === msg.targetName.toLowerCase())));
 			if (!target) {
 				return false;
 			}
@@ -43,21 +44,20 @@ module.exports = {
 		}
 		const state = await target.dialogue.getState(this.obj, msg.state);
 		if (!state) {
-			this.obj.syncer.set(true, 'dialogue', 'state', null);
+			this.obj.syncer.set(true, "dialogue", "state", null);
 			return false;
 		}
-		this.obj.syncer.set(true, 'dialogue', 'state', state);
-	},
+		this.obj.syncer.set(true, "dialogue", "state", state);
+	}
 
-	stopTalk: function () {
-		this.obj.syncer.set(true, 'dialogue', 'state', null);
-	},
+	, stopTalk: function () {
+		this.obj.syncer.set(true, "dialogue", "state", null);
+	}
 
-	/* eslint-disable-next-line max-lines-per-function */
-	getState: async function (sourceObj, state = 1) {
+	, getState: async function (sourceObj, state = 1) {
 		let result = null;
-		if ((state + '').indexOf('.') > -1) {
-			let config = this.states[(state + '').split('.')[0]];
+		if ((state + "").indexOf(".") > -1) {
+			let config = this.states[(state + "").split(".")[0]];
 			if (!config) {
 				return false;
 			}
@@ -114,10 +114,10 @@ module.exports = {
 			}
 		}
 		result = {
-			id: this.obj.id,
-			msg: null,
-			from: this.obj.name,
-			options: []
+			id: this.obj.id
+			, msg: null
+			, from: this.obj.name
+			, options: []
 		};
 		if (useMsg instanceof Array) {
 			const msgs = [];
@@ -125,8 +125,8 @@ module.exports = {
 				let rolls = (m.chance * 100) || 100;
 				for (let j = 0; j < rolls; j++) {
 					msgs.push({
-						msg: m,
-						index: i
+						msg: m
+						, index: i
 					});
 				}
 			});
@@ -139,14 +139,14 @@ module.exports = {
 		}
 
 		if (!(result.options instanceof Array)) {
-			if (result.options[0] === '$') {
-				result.options = this.states[result.options.replace('$', '')].options;
+			if (result.options[0] === "$") {
+				result.options = this.states[result.options.replace("$", "")].options;
 			}
 			result.options = Object.keys(result.options);
 		}
 		result.options = result.options
 			.map(function (o) {
-				const gotoState = this.states[(o + '').split('.')[0]];
+				const gotoState = this.states[(o + "").split(".")[0]];
 				const picked = gotoState.options[o];
 				if (!picked) {
 					return null;
@@ -157,37 +157,37 @@ module.exports = {
 					}
 				}
 				return {
-					id: o,
-					msg: picked.msg
+					id: o
+					, msg: picked.msg
 				};
 			}, this)
-			.filter(o => Boolean(o));
+			.filter((o) => Boolean(o));
 
 		result.options.push({
-			msg: 'Au revoir',
-			id: 999
+			msg: "Au revoir"
+			, id: 999
 		});
 		return result;
-	},
+	}
 
-	simplify: function (self) {
+	, simplify: function (self) {
 		return {
-			type: 'dialogue'
+			type: "dialogue"
 		};
-	},
+	}
 
 	//These don't belong here, but I can't figure out where to put them right now
 	//They are actions that can be performed while chatting with someone
-	teleport: function (msg) {
-		this.obj.syncer.set(true, 'dialogue', 'state', null);
+	, teleport: function (msg) {
+		this.obj.syncer.set(true, "dialogue", "state", null);
 
-		let portal = extend({}, require('./portal'), msg);
+		let portal = extend({}, require("./portal"), msg);
 		portal.collisionEnter(this.obj);
-	},
+	}
 
-	getItem: function (msg, source) {
+	, getItem: function (msg, source) {
 		let inventory = this.obj.inventory;
-		let exists = inventory.items.find(i => (i.name === msg.item.name));
+		let exists = inventory.items.find((i) => (i.name === msg.item.name));
 		if (!exists) {
 			inventory.getItem(msg.item);
 			return msg.successMsg || false;

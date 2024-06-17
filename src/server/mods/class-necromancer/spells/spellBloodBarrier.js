@@ -1,23 +1,23 @@
 module.exports = {
-	type: 'bloodBarrier',
+	type: "bloodBarrier"
 
-	cdMax: 7,
-	manaCost: 0,
+	, cdMax: 7
+	, manaCost: 0
 
-	range: 9,
+	, range: 9
 
-	speed: 150,
-	damage: 1,
+	, speed: 150
+	, damage: 1
 
-	row: 3,
-	col: 0,
+	, row: 3
+	, col: 0
 
-	needLos: true,
-	autoTargetFollower: true,
-	targetFriendly: true,
-	noTargetSelf: true,
+	, needLos: true
+	, autoTargetFollower: true
+	, targetFriendly: true
+	, noTargetSelf: true
 
-	cast: function (action) {
+	, cast: function (action) {
 		const { target } = action;
 
 		this.sendBump(target);
@@ -25,30 +25,31 @@ module.exports = {
 		this.queueCallback(this.explode.bind(this, action), 1, null, target);
 
 		return true;
-	},
+	}
 
-	explode: function (action) {
+	, explode: function (action) {
 		const { obj } = this;
 		const { target } = action;
 
-		if ((obj.destroyed) || (target.destroyed))
+		if ((obj.destroyed) || (target.destroyed)) {
 			return;
+		}
 
 		let amount = (obj.stats.values.hpMax / 100) * this.drainPercentage;
 		obj.stats.takeDamage({
-			damage: { amount },
-			threatMult: 0,
-			source: obj,
-			target: obj,
-			spellName: 'bloodBarrier'
+			damage: { amount }
+			, threatMult: 0
+			, source: obj
+			, target: obj
+			, spellName: "bloodBarrier"
 		});
 
 		amount = amount * this.shieldMultiplier;
 		const heal = { amount };
 		target.stats.getHp({
-			heal, 
-			source: obj,
-			target
+			heal
+			, source: obj
+			, target
 		});
 
 		//Only reset the first spell's cooldown if it's an auto attack and not a spell
@@ -59,13 +60,14 @@ module.exports = {
 			firstSpell.auto
 		);
 
-		if (resetFirstSpell)
+		if (resetFirstSpell) {
 			target.spellbook.spells[0].cd = 0;
+		}
 
 		target.effects.addEffect({
-			type: 'frenzy',
-			ttl: this.frenzyDuration,
-			newCd: target.player ? 2 : 0
+			type: "frenzy"
+			, ttl: this.frenzyDuration
+			, newCd: target.player ? 2 : 0
 		});
 	}
 };

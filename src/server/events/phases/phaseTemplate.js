@@ -1,11 +1,11 @@
 module.exports = {
-	end: false,
+	end: false
 
-	init: function () {
+	, init: function () {
 
-	},
-	
-	update: function () {
-		
+	}
+
+	, update: function () {
+
 	}
 };

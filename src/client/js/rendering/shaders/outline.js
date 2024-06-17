@@ -1,6 +1,6 @@
 define([
-	'js/rendering/shaders/outline/vert',
-	'js/rendering/shaders/outline/frag'
+	"js/rendering/shaders/outline/vert"
+	, "js/rendering/shaders/outline/frag"
 ], function (
 	vertex,
 	fragment
@@ -9,7 +9,7 @@ define([
 		constructor ({ thickness = 5, color = 0xFFFFFF, quality = 0.1, alpha = 1.0, knockout = false }) {
 			const angleStep = Math.PI / 2;
 
-			super(vertex, fragment.replace('$angleStep$', angleStep));
+			super(vertex, fragment.replace("$angleStep$", angleStep));
 
 			this.uniforms.uThickness = new Float32Array([thickness, thickness]);
 			this.uniforms.uColor = new Float32Array([1, 1, 1, 1]);

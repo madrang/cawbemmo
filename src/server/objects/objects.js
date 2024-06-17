@@ -1,37 +1,37 @@
-const eventEmitter = require('../misc/events');
-const objBase = require('./objBase');
+const eventEmitter = require("../misc/events");
+const objBase = require("./objBase");
 
 module.exports = {
-	lastId: 0,
-	instance: null,
-	objects: [],
+	lastId: 0
+	, instance: null
+	, objects: []
 
-	init: function (_instance) {
+	, init: function (_instance) {
 		this.instance = _instance;
 		this.physics = this.instance.physics;
-	},
+	}
 
-	getNextId: function () {
+	, getNextId: function () {
 		return ++this.lastId;
-	},
+	}
 
-	build: function (isClientObj, id) {
+	, build: function (isClientObj, id) {
 		let o = extend({}, objBase);
 		if (isClientObj) {
 			o.update = null;
 		} else {
 			o.id = id || this.getNextId();
-			o.addComponent('syncer');
+			o.addComponent("syncer");
 			o.instance = this.instance;
 		}
 		return o;
-	},
+	}
 
-	pushObjectToList: function (obj) {
+	, pushObjectToList: function (obj) {
 		this.objects.push(obj);
-	},
+	}
 
-	transferObject: function (o) {
+	, transferObject: function (o) {
 		const obj = this.build();
 		let components = o.components;
 		delete o.components;
@@ -53,9 +53,9 @@ module.exports = {
 		this.pushObjectToList(obj);
 		this.physics.addObject(obj, obj.x, obj.y);
 		return obj;
-	},
+	}
 
-	buildObjects: function (list, skipPush) {
+	, buildObjects: function (list, skipPush) {
 		let lLen = list.length;
 		for (let i = 0; i < lLen; i++) {
 			let l = list[i];
@@ -80,28 +80,28 @@ module.exports = {
 			//Add components (certain ones need to happen first)
 			//TODO: Clean this part up
 			let properties = extend({}, l.properties);
-			['cpnMob'].forEach(function (c) {
+			["cpnMob"].forEach(function (c) {
 				let blueprint = properties[c] || null;
-				if ((blueprint) && (typeof (blueprint) === 'string')) {
+				if ((blueprint) && (typeof (blueprint) === "string")) {
 					blueprint = JSON.parse(blueprint);
 				}
 				if (!blueprint) {
 					return;
 				}
 				delete properties[c];
-				let type = c.replace('cpn', '').toLowerCase();
+				let type = c.replace("cpn", "").toLowerCase();
 				obj.addComponent(type, blueprint);
 			}, this);
 
 			for (let p in properties) {
-				if (p.indexOf('cpn') === -1) {
+				if (p.indexOf("cpn") === -1) {
 					obj[p] = properties[p];
 					continue;
 				}
-				let type = p.replace('cpn', '');
+				let type = p.replace("cpn", "");
 				type = type[0].toLowerCase() + type.substr(1);
 				let blueprint = properties[p] || null;
-				if ((blueprint) && (typeof (blueprint) === 'string')) {
+				if ((blueprint) && (typeof (blueprint) === "string")) {
 					blueprint = JSON.parse(blueprint);
 				}
 				obj.addComponent(type, blueprint);
@@ -135,18 +135,18 @@ module.exports = {
 				return obj;
 			}
 		}
-	},
+	}
 
-	find: function (callback) {
+	, find: function (callback) {
 		return this.objects.find(callback);
-	},
+	}
 
-	filter: function (callback) {
+	, filter: function (callback) {
 		return this.objects.filter(callback);
-	},
+	}
 
-	removeObject: function (obj, callback, useServerId) {
-		let found = this.objects.spliceFirstWhere(o => obj.id === (useServerId ? o.serverId : o.id));
+	, removeObject: function (obj, callback, useServerId) {
+		let found = this.objects.spliceFirstWhere((o) => obj.id === (useServerId ? o.serverId : o.id));
 		if (!found) {
 			return;
 		}
@@ -162,9 +162,9 @@ module.exports = {
 		if (callback) {
 			callback(found);
 		}
-	},
+	}
 
-	addObject: function (o, callback) {
+	, addObject: function (o, callback) {
 		const newO = this.build();
 		const components = o.components;
 		delete o.components;
@@ -183,21 +183,21 @@ module.exports = {
 		}
 		callback(newO);
 		return newO;
-	},
+	}
 
-	sendEvent: function (msg, { name: sourceZone }) {
+	, sendEvent: function (msg, { name: sourceZone }) {
 		const { id, data } = msg;
-		const player = this.objects.find(p => p.id === id);
+		const player = this.objects.find((p) => p.id === id);
 		if (!player || player.zoneName !== sourceZone) {
 			return;
 		}
-		player.socket.emit('event', {
-			event: data.event,
-			data: data.data
+		player.socket.emit("event", {
+			event: data.event
+			, data: data.data
 		});
-	},
+	}
 
-	sendEvents: function ({ data }, { name: sourceZone }) {
+	, sendEvents: function ({ data }, { name: sourceZone }) {
 		const { objects } = this;
 		//Store will contain all events to be sent to players
 		const store = {};
@@ -207,10 +207,10 @@ module.exports = {
 			for (let j = 0; j < eLen; j++) {
 				const eventEntry = event[j];
 				const { obj: eventObj, to } = eventEntry;
-				if (e === 'serverModule') {
+				if (e === "serverModule") {
 					const { method, msg } = eventObj;
 					if (Array.isArray(msg)) {
-						global[eventObj.module][method](...msg);	
+						global[eventObj.module][method](...msg);
 					} else {
 						global[eventObj.module][method](msg);
 					}
@@ -222,14 +222,15 @@ module.exports = {
 
 					let storeEntry = store[toId];
 					if (!storeEntry) {
-						const playerObj = objects.find(o => o.id === toId);
+						const playerObj = objects.find((o) => o.id === toId);
 
-						if (!playerObj || playerObj.zoneName !== sourceZone)
+						if (!playerObj || playerObj.zoneName !== sourceZone) {
 							continue;
+						}
 
 						store[toId] = {
-							obj: playerObj,
-							events: { [e]: [eventObj] }
+							obj: playerObj
+							, events: { [e]: [eventObj] }
 						};
 
 						continue;
@@ -245,67 +246,70 @@ module.exports = {
 		for (let p in store) {
 			const { obj: { socket }, events } = store[p];
 
-			socket.emit('events', events);
+			socket.emit("events", events);
 		}
-	},
+	}
 
-	updateObject: async function (msg) {
-		let player = this.objects.find(p => p.id === msg.serverId);
-		if (!player)
+	, updateObject: async function (msg) {
+		let player = this.objects.find((p) => p.id === msg.serverId);
+		if (!player) {
 			return;
+		}
 
 		let obj = msg.obj;
-		for (let p in obj) 
+		for (let p in obj) {
 			player[p] = obj[p];
+		}
 
-		if (obj.permadead)
+		if (obj.permadead) {
 			await leaderboard.killCharacter(player.name);
+		}
 
 		if (obj.level) {
 			await leaderboard.setLevel(player.name, obj.level);
 
-			player.components.find(c => c.type === 'stats').values.level = obj.level;
+			player.components.find((c) => c.type === "stats").values.level = obj.level;
 
-			cons.emit('events', {
+			cons.emit("events", {
 				onGetMessages: [{
 					messages: [{
-						class: 'color-blueB',
-						message: `${player.name} has reached level ${obj.level}`
+						class: "color-blueB"
+						, message: `${player.name} has reached level ${obj.level}`
 					}]
 				}]
 			});
 
-			eventEmitter.emit('playerObjChanged', {
+			eventEmitter.emit("playerObjChanged", {
 				obj: player
 			});
 		}
-	},
+	}
 
-	notifyCollisionChange: function (x, y, collides) {
+	, notifyCollisionChange: function (x, y, collides) {
 		this.objects
-			.filter(o => o.player)
+			.filter((o) => o.player)
 			.forEach(function (o) {
-				o.syncer.setArray(true, 'player', 'collisionChanges', {
-					x,
-					y,
-					collides
+				o.syncer.setArray(true, "player", "collisionChanges", {
+					x
+					, y
+					, collides
 				});
 			});
-	},
+	}
 
-	notifyMapChange: function (x, y, mapCellString) {
+	, notifyMapChange: function (x, y, mapCellString) {
 		this.objects
-			.filter(o => o.player)
+			.filter((o) => o.player)
 			.forEach(function (o) {
-				o.syncer.setArray(true, 'player', 'mapChanges', {
-					x,
-					y,
-					mapCellString
+				o.syncer.setArray(true, "player", "mapChanges", {
+					x
+					, y
+					, mapCellString
 				});
 			});
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let objects = this.objects;
 		let len = objects.length;
 
@@ -321,8 +325,9 @@ module.exports = {
 
 			//Don't remove it from the list if it's destroyed, but don't update it either
 			//That's syncer's job
-			if ((o.update) && (!o.destroyed))
+			if ((o.update) && (!o.destroyed)) {
 				o.update();
+			}
 
 			//When objects are sent to other zones, we destroy them immediately (thhrough sendObjToZone)
 			if (o.forceDestroy) {
@@ -333,11 +338,12 @@ module.exports = {
 
 			if (o.ttl) {
 				o.ttl--;
-				if (!o.ttl)
+				if (!o.ttl) {
 					o.destroyed = true;
+				}
 			}
 
-			o.fireEvent('afterTick');
+			o.fireEvent("afterTick");
 		}
 	}
 };

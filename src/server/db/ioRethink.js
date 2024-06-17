@@ -1,23 +1,23 @@
-const serverConfig = require('../config/serverConfig');
-const tableNames = require('./tableNames');
+const serverConfig = require("../config/serverConfig");
+const tableNames = require("./tableNames");
 
-const r = require('rethinkdbdash')({
-	host: serverConfig.dbHost,
-	port: serverConfig.dbPort,
-	db: serverConfig.dbName,
-	user: serverConfig.dbUser,
-	password: serverConfig.dpPass
+const r = require("rethinkdbdash")({
+	host: serverConfig.dbHost
+	, port: serverConfig.dbPort
+	, db: serverConfig.dbName
+	, user: serverConfig.dbUser
+	, password: serverConfig.dpPass
 });
 
 module.exports = {
-	staticCon: null,
+	staticCon: null
 
-	init: async function (cbReady) {
+	, init: async function (cbReady) {
 		await this.create();
 		cbReady();
-	},
+	}
 
-	create: async function () {
+	, create: async function () {
 		try {
 			await r.dbCreate(serverConfig.dbName).run();
 		} catch (e) {
@@ -27,42 +27,42 @@ module.exports = {
 			try {
 				await r.tableCreate(table).run();
 			} catch (e) {
-				if (!e.message.includes('already exists')) {
+				if (!e.message.includes("already exists")) {
 					_.log.ioDB.error(e);
 				}
 			}
 		}
 
 		//Create indices used for case-insensitive checks
-		if (!(await r.table('login').indexList()).includes('idLowerCase')) {
-			await r.table('login').indexCreate('idLowerCase', r.row('id').downcase());
-			_.log.ioDB.debug('Created index: idLowerCase on table: login');
+		if (!(await r.table("login").indexList()).includes("idLowerCase")) {
+			await r.table("login").indexCreate("idLowerCase", r.row("id").downcase());
+			_.log.ioDB.debug("Created index: idLowerCase on table: login");
 		}
 
-		if (!(await r.table('character').indexList()).includes('idLowerCase')) {
-			await r.table('character').indexCreate('idLowerCase', r.row('id').downcase());
-			_.log.ioDB.debug('Created index: idLowerCase on table: character');
+		if (!(await r.table("character").indexList()).includes("idLowerCase")) {
+			await r.table("character").indexCreate("idLowerCase", r.row("id").downcase());
+			_.log.ioDB.debug("Created index: idLowerCase on table: character");
 		}
-	},
+	}
 
-	createTable: async function (tableName) {
+	, createTable: async function (tableName) {
 		try {
 			await r.tableCreate(tableName).run();
 		} catch (e) {
-			if (!e.message.includes('already exists')) {
+			if (!e.message.includes("already exists")) {
 				_.log.ioDB.error(e);
 			}
 		}
-	},
+	}
 
-	getAsyncIgnoreCase: async function (table, key) {
+	, getAsyncIgnoreCase: async function (table, key) {
 		const res = await r.table(table)
-			.getAll(key.toLowerCase(), { index: 'idLowerCase' })
+			.getAll(key.toLowerCase(), { index: "idLowerCase" })
 			.run();
 		return res[0];
-	},
+	}
 
-	getAsync: async function ({
+	, getAsync: async function ({
 		table,
 		key,
 		isArray,
@@ -81,9 +81,9 @@ module.exports = {
 			return [];
 		}
 		return res;
-	},
+	}
 
-	getFilterAsync: async function (
+	, getFilterAsync: async function (
 		{ table, noDefault, filter, limit, offset, orderAsc, orderDesc }
 	) {
 		let res = r.table(table).filter(filter);
@@ -107,9 +107,9 @@ module.exports = {
 			return [];
 		}
 		return null;
-	},
+	}
 
-	getAllAsync: async function ({
+	, getAllAsync: async function ({
 		table,
 		key,
 		isArray,
@@ -123,58 +123,58 @@ module.exports = {
 			return [];
 		}
 		return res;
-	},
+	}
 
-	setAsync: async function ({
+	, setAsync: async function ({
 		table,
 		key: id,
 		value,
-		conflict = 'update'
+		conflict = "update"
 	}) {
 		try {
 			await r.table(table)
 				.insert({
-					id,
-					value
+					id
+					, value
 				}, {
 					conflict
 				})
 				.run();
 		} catch (e) {
 			await this.logError({
-				sourceModule: 'ioRethink',
-				sourceMethod: 'setAsync',
-				error: e,
-				info: {
-					table,
-					key: id,
-					value: JSON.stringify(value)
+				sourceModule: "ioRethink"
+				, sourceMethod: "setAsync"
+				, error: e
+				, info: {
+					table
+					, key: id
+					, value: JSON.stringify(value)
 				}
 			});
 		}
-	},
+	}
 
-	setFlat: async function ({
+	, setFlat: async function ({
 		table,
 		value,
-		conflict = 'update'
+		conflict = "update"
 	}) {
 		try {
 			await r.table(table).insert(value, { conflict }).run();
 		} catch (e) {
 			await this.logError({
-				sourceModule: 'ioRethink',
-				sourceMethod: 'setFlat',
-				error: e,
-				info: {
-					table,
-					value: JSON.stringify(value)
+				sourceModule: "ioRethink"
+				, sourceMethod: "setFlat"
+				, error: e
+				, info: {
+					table
+					, value: JSON.stringify(value)
 				}
 			});
 		}
-	},
+	}
 
-	deleteAsync: async function ({
+	, deleteAsync: async function ({
 		key,
 		table
 	}) {
@@ -182,9 +182,9 @@ module.exports = {
 			.get(key)
 			.delete()
 			.run();
-	},
+	}
 
-	deleteFilterAsync: async function ({
+	, deleteFilterAsync: async function ({
 		table,
 		filter
 	}) {
@@ -192,15 +192,15 @@ module.exports = {
 			.filter(filter)
 			.delete()
 			.run();
-	},
+	}
 
-	subscribe: function (table) {
+	, subscribe: function (table) {
 		return r.table(table)
 			.changes()
 			.run();
-	},
+	}
 
-	append: async function ({
+	, append: async function ({
 		table,
 		key,
 		value,
@@ -209,11 +209,11 @@ module.exports = {
 		try {
 			await r.table(table)
 				.get(key)
-				.update(row => {
+				.update((row) => {
 					return r.branch(
-						row('value').typeOf().eq('ARRAY'),
+						row("value").typeOf().eq("ARRAY"),
 						{
-							[field]: row('value').setUnion(value)
+							[field]: row("value").setUnion(value)
 						},
 						{
 							[field]: value
@@ -223,20 +223,20 @@ module.exports = {
 				.run();
 		} catch (e) {
 			await this.logError({
-				sourceModule: 'ioRethink',
-				sourceMethod: 'append',
-				error: e,
-				info: {
-					table,
-					key,
-					field,
-					value: JSON.stringify(value)
+				sourceModule: "ioRethink"
+				, sourceMethod: "append"
+				, error: e
+				, info: {
+					table
+					, key
+					, field
+					, value: JSON.stringify(value)
 				}
 			});
 		}
-	},
+	}
 
-	exists: async function ({
+	, exists: async function ({
 		table,
 		key
 	}) {
@@ -245,20 +245,20 @@ module.exports = {
 			.run();
 
 		return Boolean(res);
-	},
+	}
 
-	logError: async function ({ sourceModule, sourceMethod, error, info }) {
+	, logError: async function ({ sourceModule, sourceMethod, error, info }) {
 		_.log.ioDB.error(error);
 		try {
 			await this.setAsync({
-				table: 'error',
-				value: {
-					date: new Date(),
-					sourceModule,
-					sourceMethod,
-					error: error.toString(),
-					stack: error.stack.toString(),
-					info
+				table: "error"
+				, value: {
+					date: new Date()
+					, sourceModule
+					, sourceMethod
+					, error: error.toString()
+					, stack: error.stack.toString()
+					, info
 				}
 			});
 		} catch (e) {
@@ -266,7 +266,7 @@ module.exports = {
 		}
 		if (process.send) {
 			process.send({
-				event: 'onCrashed'
+				event: "onCrashed"
 			});
 		} else {
 			process.exit();

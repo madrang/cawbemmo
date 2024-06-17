@@ -1,22 +1,22 @@
 define([
-	'js/system/browserStorage'
+	"js/system/browserStorage"
 ], function (
 	browserStorage
 ) {
-	const getEntryName = key => {
+	const getEntryName = (key) => {
 		return `iwd_${key.toLowerCase()}`;
 	};
 
 	return {
-		get: key => {
+		get: (key) => {
 			const keyName = getEntryName(key);
 
-			const { [keyName]: value = '{unset}' } = localStorage;
+			const { [keyName]: value = "{unset}" } = localStorage;
 
 			return value;
-		},
+		}
 
-		set: (key, value) => {
+		, set: (key, value) => {
 			const keyName = getEntryName(key);
 
 			localStorage.setItem(keyName, value);

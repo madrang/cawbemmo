@@ -1,30 +1,30 @@
 define([
-	'js/system/events'
+	"js/system/events"
 ], function (
 	events
 ) {
 	return {
-		type: 'inventory',
+		type: "inventory"
 
-		items: [],
+		, items: []
 
-		init: function (blueprint) {
-			events.emit('onGetItems', this.items);
-		},
+		, init: function (blueprint) {
+			events.emit("onGetItems", this.items);
+		}
 
-		extend: function ({ destroyItems, getItems }) {
+		, extend: function ({ destroyItems, getItems }) {
 			const { items } = this;
 
 			let rerenderNeeded = false;
 
 			if (destroyItems) {
 				rerenderNeeded = true;
-				events.emit('onDestroyItems', destroyItems, this.items);
+				events.emit("onDestroyItems", destroyItems, this.items);
 			}
 
 			if (getItems) {
-				getItems.forEach(g => {
-					const findItem = items.find(i => i.id === g.id);
+				getItems.forEach((g) => {
+					const findItem = items.find((i) => i.id === g.id);
 
 					if (!findItem) {
 						rerenderNeeded = true;
@@ -42,40 +42,43 @@ define([
 							findItem.pos !== g.pos ||
 							findItem.eq !== g.eq ||
 							findItem.active !== g.active ||
-							findItem.quickSlot !== g.quickSlot || 
+							findItem.quickSlot !== g.quickSlot ||
 							findItem.quantity !== g.quantity
 						);
 					}
 
-					Object.getOwnPropertyNames(findItem).forEach(p => {
+					Object.getOwnPropertyNames(findItem).forEach((p) => {
 						delete findItem[p];
 					});
 
 					$.extend(findItem, g);
 				});
 
-				events.emit('onGetItems', this.items, rerenderNeeded, getItems);
+				events.emit("onGetItems", this.items, rerenderNeeded, getItems);
 			}
-		},
+		}
 
-		equipItemErrors: function (item) {
+		, equipItemErrors: function (item) {
 			const { obj: { reputation, stats: { values: statValues } } } = this;
 
 			const errors = [];
 
-			if (item.level > statValues.level)
-				errors.push('level');
+			if (item.level > statValues.level) {
+				errors.push("level");
+			}
 
-			if (item.requires && item.requires[0] && statValues[item.requires[0].stat] < item.requires[0].value)
-				errors.push('stats');
+			if (item.requires && item.requires[0] && statValues[item.requires[0].stat] < item.requires[0].value) {
+				errors.push("stats");
+			}
 
-			if (item.factions?.some(f => reputation.getTier(f.id) < f.tier))
-				errors.push('faction');
+			if (item.factions?.some((f) => reputation.getTier(f.id) < f.tier)) {
+				errors.push("faction");
+			}
 
 			return errors;
-		},
+		}
 
-		canEquipItem: function (item) {
+		, canEquipItem: function (item) {
 			return (this.equipItemErrors(item).length === 0);
 		}
 	};

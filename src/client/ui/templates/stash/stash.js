@@ -1,11 +1,11 @@
 define([
-	'js/system/events',
-	'js/system/client',
-	'html!ui/templates/stash/template',
-	'css!ui/templates/stash/styles',
-	'html!ui/templates/inventory/templateItem',
-	'js/input',
-	'ui/shared/renderItem'
+	"js/system/events"
+	, "js/system/client"
+	, "html!ui/templates/stash/template"
+	, "css!ui/templates/stash/styles"
+	, "html!ui/templates/inventory/templateItem"
+	, "js/input"
+	, "ui/shared/renderItem"
 ], function (
 	events,
 	client,
@@ -16,38 +16,39 @@ define([
 	renderItem
 ) {
 	return {
-		tpl: template,
+		tpl: template
 
-		centered: true,
-		hoverItem: null,
+		, centered: true
+		, hoverItem: null
 
-		items: [],
-		maxItems: null,
+		, items: []
+		, maxItems: null
 
-		modal: true,
-		hasClose: true,
+		, modal: true
+		, hasClose: true
 
-		postRender: function () {
+		, postRender: function () {
 			[
-				'onKeyUp',
-				'onKeyDown',
-				'onOpenStash',
-				'onAddStashItems',
-				'onRemoveStashItems'
+				"onKeyUp"
+				, "onKeyDown"
+				, "onOpenStash"
+				, "onAddStashItems"
+				, "onRemoveStashItems"
 			]
-				.forEach(e => {
+				.forEach((e) => {
 					this.onEvent(e, this[e].bind(this));
 				});
-		},
+		}
 
-		build: function () {
+		, build: function () {
 			const { el, maxItems, items } = this;
 
-			el.removeClass('scrolls');
-			if (maxItems > 50)
-				el.addClass('scrolls');
+			el.removeClass("scrolls");
+			if (maxItems > 50) {
+				el.addClass("scrolls");
+			}
 
-			const container = this.el.find('.grid').empty();
+			const container = this.el.find(".grid").empty();
 
 			const renderItemCount = Math.max(items.length, maxItems);
 
@@ -55,8 +56,9 @@ define([
 				const item = items[i];
 				const itemEl = renderItem(container, item);
 
-				if (!item)
+				if (!item) {
 					continue;
+				}
 
 				let moveHandler = this.onHover.bind(this, itemEl, item);
 				let downHandler = () => {};
@@ -66,141 +68,151 @@ define([
 				}
 
 				itemEl
-					.data('item', item)
-					.on('mousedown', downHandler)
-					.on('mousemove', moveHandler)
-					.on('mouseleave', this.hideTooltip.bind(this, itemEl, item))
-					.find('.icon')
-					.on('contextmenu', this.showContext.bind(this, item));
+					.data("item", item)
+					.on("mousedown", downHandler)
+					.on("mousemove", moveHandler)
+					.on("mouseleave", this.hideTooltip.bind(this, itemEl, item))
+					.find(".icon")
+					.on("contextmenu", this.showContext.bind(this, item));
 			}
-		},
+		}
 
-		showContext: function (item, e) {
-			events.emit('onContextMenu', [{
-				text: 'withdraw',
-				callback: this.withdraw.bind(this, item)
+		, showContext: function (item, e) {
+			events.emit("onContextMenu", [{
+				text: "withdraw"
+				, callback: this.withdraw.bind(this, item)
 			}], e);
 
 			e.preventDefault();
 			return false;
-		},
+		}
 
-		hideTooltip: function () {
-			events.emit('onHideItemTooltip', this.hoverItem);
+		, hideTooltip: function () {
+			events.emit("onHideItemTooltip", this.hoverItem);
 			this.hoverItem = null;
-		},
-		
-		onHover: function (el, item, e) {
-			if (item)
+		}
+
+		, onHover: function (el, item, e) {
+			if (item) {
 				this.hoverItem = item;
-			else
+			} else {
 				item = this.hoverItem;
+			}
 
 			let ttPos = null;
 
 			if (el) {
-				el.removeClass('new');
+				el.removeClass("new");
 				delete item.isNew;
 
 				let elOffset = el.offset();
 				ttPos = {
-					x: Math.floor(elOffset.left + 74),
-					y: Math.floor(elOffset.top + 4)
+					x: Math.floor(elOffset.left + 74)
+					, y: Math.floor(elOffset.top + 4)
 				};
 			}
-		
-			events.emit('onShowItemTooltip', item, ttPos, true);
-		},
 
-		onGetStashItems: function (items) {
+			events.emit("onShowItemTooltip", item, ttPos, true);
+		}
+
+		, onGetStashItems: function (items) {
 			this.items = items;
 
-			if (this.shown)
+			if (this.shown) {
 				this.build();
-		},
+			}
+		}
 
-		onAddStashItems: function (addItems) {
+		, onAddStashItems: function (addItems) {
 			const { items } = this;
 
-			addItems.forEach(newItem => {
-				const existIndex = items.findIndex(i => i.id === newItem.id);
-				if (existIndex !== -1)
+			addItems.forEach((newItem) => {
+				const existIndex = items.findIndex((i) => i.id === newItem.id);
+				if (existIndex !== -1) {
 					items.splice(existIndex, 1, newItem);
-				else
+				} else {
 					items.push(newItem);
+				}
 			});
-		},
+		}
 
-		onRemoveStashItems: function (removeItemIds) {
+		, onRemoveStashItems: function (removeItemIds) {
 			const { items } = this;
 
-			removeItemIds.forEach(id => {
-				const item = items.find(i => i.id === id);
-				if (item === this.hoverItem) 
+			removeItemIds.forEach((id) => {
+				const item = items.find((i) => i.id === id);
+				if (item === this.hoverItem) {
 					this.hideTooltip();
+				}
 
-				items.spliceWhere(i => i.id === id);
+				items.spliceWhere((i) => i.id === id);
 			});
 
-			if (this.shown)
+			if (this.shown) {
 				this.build();
-		},
+			}
+		}
 
-		onAfterShow: function () {
-			if ((!this.shown) && (!window.player.stash.active))
+		, onAfterShow: function () {
+			if ((!this.shown) && (!window.player.stash.active)) {
 				return;
+			}
 
-			events.emit('onShowOverlay', this.el);
+			events.emit("onShowOverlay", this.el);
 			this.build();
-		},
+		}
 
-		beforeHide: function () {
-			if ((!this.shown) && (!window.player.stash.active))
+		, beforeHide: function () {
+			if ((!this.shown) && (!window.player.stash.active)) {
 				return;
+			}
 
-			events.emit('onHideOverlay', this.el);
-			events.emit('onHideContextMenu');
-		},
+			events.emit("onHideOverlay", this.el);
+			events.emit("onHideContextMenu");
+		}
 
-		onOpenStash: function ({ items, maxItems }) {
+		, onOpenStash: function ({ items, maxItems }) {
 			this.maxItems = maxItems;
 
 			this.show();
 
 			this.onGetStashItems(items);
-		},
+		}
 
-		beforeDestroy: function () {
-			events.emit('onHideOverlay', this.el);
-		},
+		, beforeDestroy: function () {
+			events.emit("onHideOverlay", this.el);
+		}
 
-		withdraw: function (item) {
-			if (!item)
+		, withdraw: function (item) {
+			if (!item) {
 				return;
+			}
 
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'stash',
-					method: 'withdraw',
-					data: {
+				cpn: "player"
+				, method: "performAction"
+				, data: {
+					cpn: "stash"
+					, method: "withdraw"
+					, data: {
 						itemId: item.id
 					}
 				}
 			});
-		},
+		}
 
-		onKeyDown: function (key) {
-			if (key === 'shift' && this.hoverItem)
+		, onKeyDown: function (key) {
+			if (key === "shift" && this.hoverItem) {
 				this.onHover();
-			else if (key === 'esc' && this.shown)
+			} else if (key === "esc" && this.shown) {
 				this.toggle();
-		},
+			}
+		}
 
-		onKeyUp: function (key) {
-			if (key === 'shift' && this.hoverItem)
+		, onKeyUp: function (key) {
+			if (key === "shift" && this.hoverItem) {
 				this.onHover();
+			}
 		}
 	};
 });

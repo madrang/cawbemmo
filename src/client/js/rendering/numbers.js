@@ -1,8 +1,8 @@
 define([
-	'js/system/events',
-	'js/objects/objects',
-	'js/rendering/renderer',
-	'js/config'
+	"js/system/events"
+	, "js/objects/objects"
+	, "js/rendering/renderer"
+	, "js/config"
 ], function (
 	events,
 	objects,
@@ -15,15 +15,15 @@ define([
 	const TTL = 35;
 	const FONT_SIZE = 18;
 	const FONT_SIZE_CRIT = 22;
-	const LAYER_NAME = 'effects';
+	const LAYER_NAME = "effects";
 
 	const PADDING = scaleMult;
 
 	const POSITION = {
-		BOTTOM_CENTER: 0,
-		LEFT_BOTTOM: 1,
-		RIGHT_BOTTOM: 2,
-		TOP_CENTER: 3
+		BOTTOM_CENTER: 0
+		, LEFT_BOTTOM: 1
+		, RIGHT_BOTTOM: 2
+		, TOP_CENTER: 3
 	};
 
 	//Internals
@@ -32,11 +32,11 @@ define([
 	//Create an object of the form: { elementName: elementIntegerColor, ... } from corresponding variable values.
 	// These variables are defined in main.less and take the form: var(--color-element-elementName)
 	const elementColors = Object.fromEntries(
-		['default', 'arcane', 'frost', 'fire', 'holy', 'poison'].map(e => {
+		["default", "arcane", "frost", "fire", "holy", "poison"].map((e) => {
 			const variableName = `--color-element-${e}`;
 			const variableValue = getComputedStyle(document.documentElement).getPropertyValue(variableName);
 
-			const integerColor = `0x${variableValue.replace('#', '')}`;
+			const integerColor = `0x${variableValue.replace("#", "")}`;
 
 			return [e, integerColor];
 		})
@@ -44,8 +44,9 @@ define([
 
 	//Helpers
 	const getColor = ({ color, element }) => {
-		if (color)
+		if (color) {
 			return color;
+		}
 
 		return elementColors[element];
 	};
@@ -115,22 +116,22 @@ define([
 	};
 
 	//Events
-	const onGetDamage = msg => {
+	const onGetDamage = (msg) => {
 		const { ttl = TTL } = msg;
 
-		if (config.damageNumbers === 'off') {
+		if (config.damageNumbers === "off") {
 			return;
 		}
-		const target = objects.objects.find(o => o.id === msg.id);
+		const target = objects.objects.find((o) => o.id === msg.id);
 		if (!target || !target.isVisible) {
 			return;
 		}
 		const sprite = renderer.buildText({
-			fontSize: getFontSize(msg),
-			layerName: LAYER_NAME,
-			text: getText(msg),
-			color: getColor(msg),
-			visible: false
+			fontSize: getFontSize(msg)
+			, layerName: LAYER_NAME
+			, text: getText(msg)
+			, color: getColor(msg)
+			, visible: false
 		});
 		const position = getPosition(msg);
 		const movementDelta = getMovementDelta(msg, position);
@@ -141,13 +142,13 @@ define([
 		sprite.visible = true;
 
 		const numberObj = {
-			obj: target,
-			x,
-			y,
-			ttl,
-			ttlMax: ttl,
-			movementDelta,
-			sprite
+			obj: target
+			, x
+			, y
+			, ttl
+			, ttlMax: ttl
+			, movementDelta
+			, sprite
 		};
 		list.push(numberObj);
 	};
@@ -156,29 +157,29 @@ define([
 	// around the player
 	/* eslint-disable-next-line no-unused-vars */
 	const test = () => {
-		objects.objects.forEach(o => {
+		objects.objects.forEach((o) => {
 			if (!o.player) {
 				return;
 			}
 			const amount = Math.random() < 0.5 ? Math.floor(Math.random() * 100) : undefined;
 			const isEvent = amount ? false : Math.random() < 0.5;
-			const text = amount ? undefined : 'text';
+			const text = amount ? undefined : "text";
 			const heal = Math.random() < 0.5;
 			let position;
 			if (!amount) {
 				position = Math.random() < 0.5 ? POSITION.TOP_CENTER : POSITION.BOTTOM_CENTER;
 			}
-			const element = ['default', 'arcane', 'frost', 'fire', 'holy', 'poison'][Math.floor(Math.random() * 6)];
+			const element = ["default", "arcane", "frost", "fire", "holy", "poison"][Math.floor(Math.random() * 6)];
 			const crit = amount > 50;
 			onGetDamage({
-				id: o.id,
-				event: isEvent,
-				text,
-				amount,
-				element,
-				heal,
-				position,
-				crit
+				id: o.id
+				, event: isEvent
+				, text
+				, amount
+				, element
+				, heal
+				, position
+				, crit
 			});
 		});
 	};
@@ -194,8 +195,8 @@ define([
 				lLen--;
 
 				renderer.destroyObject({
-					layerName: 'effects',
-					sprite: l.sprite
+					layerName: "effects"
+					, sprite: l.sprite
 				});
 				continue;
 			}
@@ -211,14 +212,14 @@ define([
 	};
 
 	const init = () => {
-		events.on('onGetDamage', onGetDamage);
+		events.on("onGetDamage", onGetDamage);
 	};
 
 	//Exports
 	return {
-		init,
-		update,
-		onGetDamage,
-		POSITION
+		init
+		, update
+		, onGetDamage
+		, POSITION
 	};
 });

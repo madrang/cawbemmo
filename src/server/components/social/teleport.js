@@ -2,13 +2,15 @@ module.exports = async (cpnSocial, targetName) => {
 	const { obj } = cpnSocial;
 	const { instance: { objects, physics }, syncer } = obj;
 
-	if (typeof(targetName) !== 'string')
+	if (typeof(targetName) !== "string") {
 		return;
+	}
 
-	const target = objects.find(o => o.name?.toLowerCase().includes(targetName.toLowerCase()));
+	const target = objects.find((o) => o.name?.toLowerCase().includes(targetName.toLowerCase()));
 
-	if (!target)
+	if (!target) {
 		return;
+	}
 
 	physics.removeObject(obj, obj.x, obj.y);
 

@@ -3,8 +3,9 @@ module.exports = (scope, room, ignore) => {
 
 	for (let i = 0; i < rooms.length; i++) {
 		let r = rooms[i];
-		if (r === ignore)
+		if (r === ignore) {
 			continue;
+		}
 
 		let collides = (!(
 			(room.x + room.template.width < r.x) ||
@@ -12,8 +13,9 @@ module.exports = (scope, room, ignore) => {
 				(room.x >= r.x + r.template.width) ||
 				(room.y >= r.y + r.template.height)
 		));
-		if (collides)
+		if (collides) {
 			return true;
+		}
 	}
 
 	return false;

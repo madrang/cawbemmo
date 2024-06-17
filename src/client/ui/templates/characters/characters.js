@@ -1,11 +1,11 @@
 define([
-	'js/system/events',
-	'js/system/client',
-	'ui/factory',
-	'html!ui/templates/characters/template',
-	'html!ui/templates/characters/templateListItem',
-	'css!ui/templates/characters/styles',
-	'js/system/globals'
+	"js/system/events"
+	, "js/system/client"
+	, "ui/factory"
+	, "html!ui/templates/characters/template"
+	, "html!ui/templates/characters/templateListItem"
+	, "css!ui/templates/characters/styles"
+	, "js/system/globals"
 ], function (
 	events,
 	client,
@@ -16,111 +16,117 @@ define([
 	globals
 ) {
 	return {
-		tpl: template,
+		tpl: template
 
-		centered: true,
-		characterInfo: {},
-		characters: null,
-		selected: null,
-		selectedIndex: -1,
-		deleteCount: 0,
+		, centered: true
+		, characterInfo: {}
+		, characters: null
+		, selected: null
+		, selectedIndex: -1
+		, deleteCount: 0
 
-		beforeRender: function () {
+		, beforeRender: function () {
 			const { clientConfig: { logoPath } } = globals;
-			if (!logoPath)
+			if (!logoPath) {
 				return;
+			}
 
 			const tempEl = $(this.tpl);
-			tempEl.find('.logo').attr('src', logoPath);
+			tempEl.find(".logo").attr("src", logoPath);
 
-			this.tpl = tempEl.prop('outerHTML');
-		},
+			this.tpl = tempEl.prop("outerHTML");
+		}
 
-		postRender: function () {
-			this.find('.btnPlay').on('click', this.onPlayClick.bind(this));
-			this.find('.btnNew').on('click', this.onNewClick.bind(this));
-			this.find('.btnDelete')
-				.on('click', this.onDeleteClick.bind(this))
-				.on('mouseleave', this.onDeleteReset.bind(this));
+		, postRender: function () {
+			this.find(".btnPlay").on("click", this.onPlayClick.bind(this));
+			this.find(".btnNew").on("click", this.onNewClick.bind(this));
+			this.find(".btnDelete")
+				.on("click", this.onDeleteClick.bind(this))
+				.on("mouseleave", this.onDeleteReset.bind(this));
 
 			this.getCharacters();
 
-			this.onEvent('onKeyDown', this.onKeyDown.bind(this));
-		},
+			this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+		}
 
-		onKeyDown: function (key) {
-			if (this.el.hasClass('disabled'))
+		, onKeyDown: function (key) {
+			if (this.el.hasClass("disabled")) {
 				return;
+			}
 
-			if (key === 'enter')
+			if (key === "enter") {
 				this.onPlayClick();
-			else if (key === 'up' || key === 'down') {
-				if (!this.characters || this.selectedIndex === -1)
+			} else if (key === "up" || key === "down") {
+				if (!this.characters || this.selectedIndex === -1) {
 					return;
+				}
 
 				const numChars = this.characters.length;
-				if (!numChars)
+				if (!numChars) {
 					return;
+				}
 
-				const delta = key === 'up' ? -1 : 1;
+				const delta = key === "up" ? -1 : 1;
 
 				//Clamp index within range [0, numChars - 1]
 				const newIndex = Math.min(Math.max(this.selectedIndex + delta, 0), numChars - 1);
 
-				const list = this.find('.left');
-				if (!list)
+				const list = this.find(".left");
+				if (!list) {
 					return;
+				}
 
 				const li = list.children()[newIndex];
 				li.click();
 
 				list.scrollTop(li.offsetTop);
 			}
-		},
+		}
 
-		onPlayClick: function () {
+		, onPlayClick: function () {
 			let char = this.selected;
-			if (!char)
+			if (!char) {
 				return;
+			}
 
-			this.el.addClass('disabled');
+			this.el.addClass("disabled");
 
 			client.request({
-				cpn: 'auth',
-				method: 'play',
-				data: {
+				cpn: "auth"
+				, method: "play"
+				, data: {
 					name: this.selected
-				},
-				callback: this.onPlay.bind(this)
+				}
+				, callback: this.onPlay.bind(this)
 			});
-		},
-		onPlay: function () {
-			this.el.removeClass('disabled');
+		}
+		, onPlay: function () {
+			this.el.removeClass("disabled");
 			this.destroy();
-		},
+		}
 
-		onNewClick: function () {
-			uiFactory.build('createCharacter', {});
+		, onNewClick: function () {
+			uiFactory.build("createCharacter", {});
 			this.destroy();
-		},
+		}
 
-		getCharacters: function () {
-			this.el.addClass('disabled');
+		, getCharacters: function () {
+			this.el.addClass("disabled");
 
 			client.request({
-				cpn: 'auth',
-				method: 'getCharacterList',
-				callback: this.onGetCharacters.bind(this)
+				cpn: "auth"
+				, method: "getCharacterList"
+				, callback: this.onGetCharacters.bind(this)
 			});
-		},
-		onGetCharacters: function (characters) {
+		}
+		, onGetCharacters: function (characters) {
 			this.characters = characters;
-			this.find('.sprite').css('background', '');
-			this.find('.info div').html('');
+			this.find(".sprite").css("background", "");
+			this.find(".info div").html("");
 
-			this.el.removeClass('disabled');
+			this.el.removeClass("disabled");
 
-			let list = this.find('.left')
+			let list = this.find(".left")
 				.empty();
 
 			this.characters
@@ -129,28 +135,30 @@ define([
 				})
 				.forEach(function (c, i) {
 					let charName = c.name;
-					if (c.level !== null)
-						charName += '<font class="color-yellowB">&nbsp;(' + c.level + ')</font>';
+					if (c.level !== null) {
+						charName += "<font class=\"color-yellowB\">&nbsp;(" + c.level + ")</font>";
+					}
 
 					let html = templateListItem
-						.replace('$NAME$', charName);
+						.replace("$NAME$", charName);
 
 					let li = $(html)
 						.appendTo(list);
 
-					li.on('click', this.onCharacterClick.bind(this, c.name, i));
+					li.on("click", this.onCharacterClick.bind(this, c.name, i));
 
-					if (i === 0)
+					if (i === 0) {
 						li.click();
+					}
 				}, this);
-		},
-		onCharacterClick: function (charName, charIndex, e) {
+		}
+		, onCharacterClick: function (charName, charIndex, e) {
 			this.selectedIndex = charIndex;
-			this.el.addClass('disabled');
+			this.el.addClass("disabled");
 
 			let el = $(e.target);
-			el.parent().find('.selected').removeClass('selected');
-			el.addClass('selected');
+			el.parent().find(".selected").removeClass("selected");
+			el.addClass("selected");
 
 			let charInfo = this.characterInfo[charName];
 			if (charInfo) {
@@ -160,16 +168,16 @@ define([
 			}
 
 			client.request({
-				cpn: 'auth',
-				method: 'getCharacter',
-				data: {
+				cpn: "auth"
+				, method: "getCharacter"
+				, data: {
 					name: charName
-				},
-				callback: this.onGetCharacter.bind(this, charName)
+				}
+				, callback: this.onGetCharacter.bind(this, charName)
 			});
-		},
-		onGetCharacter: function (charName, result) {
-			this.find('.btn').removeClass('disabled');
+		}
+		, onGetCharacter: function (charName, result) {
+			this.find(".btn").removeClass("disabled");
 
 			let spriteY = Math.floor(result.cell / 8);
 			let spirteX = result.cell - (spriteY * 8);
@@ -178,98 +186,102 @@ define([
 			spriteY = -(spriteY * 8);
 
 			let spritesheet = result.sheetName;
-			if (spritesheet === 'characters')
-				spritesheet = '../../../images/characters.png';
+			if (spritesheet === "characters") {
+				spritesheet = "../../../images/characters.png";
+			}
 
-			this.find('.sprite')
-				.css('background', 'url("' + spritesheet + '") ' + spirteX + 'px ' + spriteY + 'px')
+			this.find(".sprite")
+				.css("background", "url(\"" + spritesheet + "\") " + spirteX + "px " + spriteY + "px")
 				.show();
 
-			this.find('.name').html(charName);
+			this.find(".name").html(charName);
 			let stats = result.components.find(function (c) {
-				return (c.type === 'stats');
+				return (c.type === "stats");
 			});
 			if (stats) {
-				this.find('.class').html(
-					'Lvl ' + stats.values.level +
-					' ' +
+				this.find(".class").html(
+					"Lvl " + stats.values.level +
+					" " +
 					result.class[0].toUpperCase() + result.class.substr(1)
 				);
-			} else 
-				this.find('.class').html('');
+			} else {
+				this.find(".class").html("");
+			}
 
-			this.el.removeClass('disabled');
+			this.el.removeClass("disabled");
 
 			this.characterInfo[charName] = result;
 			this.selected = charName;
 
 			let prophecies = result.components.find(function (c) {
-				return (c.type === 'prophecies');
+				return (c.type === "prophecies");
 			});
 
-			if ((prophecies) && (prophecies.list.indexOf('hardcore') > -1))
-				this.find('.name').html(charName + ' (hc)');
+			if ((prophecies) && (prophecies.list.indexOf("hardcore") > -1)) {
+				this.find(".name").html(charName + " (hc)");
+			}
 
-			this.find('.btnPlay').removeClass('disabled');
+			this.find(".btnPlay").removeClass("disabled");
 
 			if (result.permadead) {
-				this.find('.name').html(charName + ' (hc - rip)');
-				this.find('.btnPlay').addClass('disabled');
+				this.find(".name").html(charName + " (hc - rip)");
+				this.find(".btnPlay").addClass("disabled");
 			}
-		},
+		}
 
-		setMessage: function (msg) {
-			this.find('.message').html(msg);
-		},
+		, setMessage: function (msg) {
+			this.find(".message").html(msg);
+		}
 
-		onDeleteClick: async function () {
-			if (!this.selected)
+		, onDeleteClick: async function () {
+			if (!this.selected) {
 				return;
+			}
 
 			if (this.deleteCount < 3) {
 				this.deleteCount++;
 
-				this.setMessage('click delete ' + (4 - this.deleteCount) + ' more time' + ((this.deleteCount === 3) ? '' : 's') + ' to confirm');
+				this.setMessage("click delete " + (4 - this.deleteCount) + " more time" + ((this.deleteCount === 3) ? "" : "s") + " to confirm");
 
-				this.find('.btnDelete')
-					.removeClass('deleting')
-					.addClass('deleting')
-					.html('delete (' + (4 - this.deleteCount) + ')');
+				this.find(".btnDelete")
+					.removeClass("deleting")
+					.addClass("deleting")
+					.html("delete (" + (4 - this.deleteCount) + ")");
 
 				return;
 			}
 			this.onDeleteReset();
 
-			this.el.addClass('disabled');
+			this.el.addClass("disabled");
 
-			const result = await new Promise(res => {
+			const result = await new Promise((res) => {
 				client.request({
-					cpn: 'auth',
-					method: 'deleteCharacter',
-					data: {
+					cpn: "auth"
+					, method: "deleteCharacter"
+					, data: {
 						name: this.selected
-					},
-					callback: res
+					}
+					, callback: res
 				});
 			});
 
 			if (!result.success) {
 				this.setMessage(result.msg);
-				this.el.removeClass('disabled');
+				this.el.removeClass("disabled");
 
 				return;
 			}
 
 			this.onGetCharacters(result.characterList);
-		},
+		}
 
-		onDeleteReset: function () {
+		, onDeleteReset: function () {
 			this.deleteCount = 0;
-			this.find('.btnDelete')
-				.removeClass('deleting')
-				.html('delete');
+			this.find(".btnDelete")
+				.removeClass("deleting")
+				.html("delete");
 
-			setTimeout(this.setMessage.bind(this, ''), 5000);
+			setTimeout(this.setMessage.bind(this, ""), 5000);
 		}
 	};
 });

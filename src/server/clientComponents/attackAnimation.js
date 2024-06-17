@@ -1,37 +1,38 @@
 define([
-	'js/rendering/effects',
-	'js/rendering/renderer'
+	"js/rendering/effects"
+	, "js/rendering/renderer"
 ], function (
 	effects,
 	renderer
 ) {
 	return {
-		type: 'attackAnimation',
+		type: "attackAnimation"
 
-		frames: 4,
-		frameDelay: 4,
-		layer: 'attacks',
-		spriteSheet: 'attacks',
+		, frames: 4
+		, frameDelay: 4
+		, layer: "attacks"
+		, spriteSheet: "attacks"
 
-		row: null,
-		col: null,
+		, row: null
+		, col: null
 
-		loop: 1,
-		loopCounter: 0,
+		, loop: 1
+		, loopCounter: 0
 
-		frame: 0,
+		, frame: 0
 
-		frameDelayCd: 0,
+		, frameDelayCd: 0
 
-		flipped: false,
+		, flipped: false
 
-		sprite: null,
+		, sprite: null
 
-		init: function (blueprint) {
+		, init: function (blueprint) {
 			effects.register(this);
 
-			if ((this.hideSprite) && (this.obj.sprite))
+			if ((this.hideSprite) && (this.obj.sprite)) {
 				this.obj.sprite.visible = false;
+			}
 
 			this.flipped = (Math.random() < 0.5);
 
@@ -40,36 +41,38 @@ define([
 			let cell = (this.row * 8) + this.col + this.frame;
 
 			this.sprite = renderer.buildObject({
-				sheetName: this.spritesheet || this.spriteSheet,
-				cell: cell,
-				x: this.obj.x,
-				y: this.obj.y,
-				offsetX: this.obj.offsetX,
-				offsetY: this.obj.offsetY,
-				flipX: this.flipped
+				sheetName: this.spritesheet || this.spriteSheet
+				, cell: cell
+				, x: this.obj.x
+				, y: this.obj.y
+				, offsetX: this.obj.offsetX
+				, offsetY: this.obj.offsetY
+				, flipX: this.flipped
 			});
 			this.sprite.alpha = 1;
 
-			if (this.noSprite)
+			if (this.noSprite) {
 				this.obj.sheetName = null;
+			}
 
 			this.sprite.visible = this.obj.isVisible;
-		},
+		}
 
-		renderManual: function () {
-			if (this.frameDelayCd > 0)
+		, renderManual: function () {
+			if (this.frameDelayCd > 0) {
 				this.frameDelayCd--;
-			else {
+			} else {
 				this.frameDelayCd = this.frameDelay;
 				this.frame++;
 				if (this.frame === this.frames) {
 					this.loopCounter++;
 					if (this.loopCounter === this.loop) {
-						if (this.destroyObject)
+						if (this.destroyObject) {
 							this.obj.destroyed = true;
-						else {
-							if (this.obj.isVisible && this.obj.sprite)
+						} else {
+							if (this.obj.isVisible && this.obj.sprite) {
 								this.obj.sprite.visible = true;
+							}
 
 							this.destroyed = true;
 						}
@@ -86,22 +89,23 @@ define([
 			let cell = (this.row * 8) + this.col + this.frame;
 
 			renderer.setSprite({
-				sheetName: this.spritesheet || this.spriteSheet,
-				cell: cell,
-				flipX: this.flipped,
-				sprite: this.sprite
+				sheetName: this.spritesheet || this.spriteSheet
+				, cell: cell
+				, flipX: this.flipped
+				, sprite: this.sprite
 			});
 
 			if ((!this.hideSprite) || (this.loop > 0)) {
-				if (this.flipped)
+				if (this.flipped) {
 					this.sprite.x += scale;
+				}
 			}
-		},
+		}
 
-		destroyManual: function () {
+		, destroyManual: function () {
 			renderer.destroyObject({
-				layerName: this.spriteSheet,
-				sprite: this.sprite
+				layerName: this.spriteSheet
+				, sprite: this.sprite
 			});
 		}
 	};

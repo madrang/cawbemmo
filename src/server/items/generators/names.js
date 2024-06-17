@@ -1,14 +1,14 @@
-let prefixes = require('../config/prefixes');
-let suffixes = require('../config/suffixes');
+let prefixes = require("../config/prefixes");
+let suffixes = require("../config/suffixes");
 
 module.exports = {
 	generators: [
-		'basic', ['basic'],
-		['gPrefix', 'gSuffix'],
-		['gPrefix', 'gSuffix'],
-		['gPrefix', 'gSuffix']
-	],
-	generate: function (item, blueprint) {
+		"basic", ["basic"]
+		, ["gPrefix", "gSuffix"]
+		, ["gPrefix", "gSuffix"]
+		, ["gPrefix", "gSuffix"]
+	]
+	, generate: function (item, blueprint) {
 		if (blueprint.name) {
 			item.name = blueprint.name;
 			return;
@@ -20,42 +20,42 @@ module.exports = {
 		if (!(gen instanceof Array)) {
 			gen = [gen];
 		}
-		gen.forEach(g => this.types[g].call(this, item, blueprint));
-	},
-	types: {
+		gen.forEach((g) => this.types[g].call(this, item, blueprint));
+	}
+	, types: {
 		basic: function (item, blueprint) {
 			item.name = item.type;
-		},
+		}
 
-		gPrefix: function (item, blueprint) {
+		, gPrefix: function (item, blueprint) {
 			let list = prefixes.generic.concat(prefixes.slots[item.slot] || []);
 			if (item.stats.armor) {
 				list = list.concat(prefixes.armor);
-			} else if (item.slot === 'twoHanded') {
+			} else if (item.slot === "twoHanded") {
 				list = list.concat(prefixes.weapons);
 			}
 			let pick = list[Math.floor(Math.random() * list.length)];
 			item.name = pick[0].toUpperCase() + pick.substr(1);
-			if (item.name.indexOf('%') > -1) {
-				let replacer = (Math.random() < 0.5) ? '\'s' : '';
-				item.name = item.name.split('%').join(replacer);
+			if (item.name.indexOf("%") > -1) {
+				let replacer = (Math.random() < 0.5) ? "'s" : "";
+				item.name = item.name.split("%").join(replacer);
 			}
-		},
+		}
 
-		gSuffix: function (item, blueprint) {
+		, gSuffix: function (item, blueprint) {
 			let list = null;
-			if (item.slot === 'tool') {
+			if (item.slot === "tool") {
 				list = suffixes.slots.tool;
 			} else {
 				list = suffixes.generic.concat(suffixes.slots[item.slot] || []);
 				if (item.stats.armor) {
 					list = list.concat(suffixes.armor);
-				} else if (item.slot === 'twoHanded') {
+				} else if (item.slot === "twoHanded") {
 					list = list.concat(suffixes.weapons);
 				}
 			}
 			let pick = list[Math.floor(Math.random() * list.length)];
-			item.name += ' ' + pick[0].toUpperCase() + pick.substr(1);
+			item.name += " " + pick[0].toUpperCase() + pick.substr(1);
 		}
 	}
 };

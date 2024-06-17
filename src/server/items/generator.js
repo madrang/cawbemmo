@@ -1,18 +1,18 @@
 const GENERATORS = {
-	level: require('./generators/level')
-	, quality: require('./generators/quality')
-	, slots: require('./generators/slots')
-	, types: require('./generators/types')
-	, stats: require('./generators/stats')
-	, names: require('./generators/names')
-	, worth: require('./generators/worth')
-	, quantity: require('./generators/quantity')
-	, spellbook: require('./generators/spellbook')
-	, currency: require('./generators/currency')
-	, effects: require('./generators/effects')
-	, attrRequire: require('./generators/attrRequire')
-	, recipeBook: require('./generators/recipeBook')
-}
+	level: require("./generators/level")
+	, quality: require("./generators/quality")
+	, slots: require("./generators/slots")
+	, types: require("./generators/types")
+	, stats: require("./generators/stats")
+	, names: require("./generators/names")
+	, worth: require("./generators/worth")
+	, quantity: require("./generators/quantity")
+	, spellbook: require("./generators/spellbook")
+	, currency: require("./generators/currency")
+	, effects: require("./generators/effects")
+	, attrRequire: require("./generators/attrRequire")
+	, recipeBook: require("./generators/recipeBook")
+};
 const itemGenerators = [
 	GENERATORS.level
 	, GENERATORS.quality
@@ -43,28 +43,28 @@ const recipeGenerators = [
 	, GENERATORS.recipeBook
 ];
 module.exports = {
-	spellChance: 0.035,
-	currencyChance: 0.035,
+	spellChance: 0.035
+	, currencyChance: 0.035
 
-	generate: function (blueprint, ownerLevel) {
+	, generate: function (blueprint, ownerLevel) {
 		const hadBlueprint = Boolean(blueprint);
 		blueprint = blueprint || {};
 
 		const dropChancesEvent = {
-			blueprint,
-			spellChance: this.spellChance,
-			currencyChance: this.currencyChance
+			blueprint
+			, spellChance: this.spellChance
+			, currencyChance: this.currencyChance
 		};
 		if (!blueprint.slot && !blueprint.type && !blueprint.spell) {
-			global.instancer.instances[0].eventEmitter.emit('onBeforeGetDropChances', dropChancesEvent);
+			global.instancer.instances[0].eventEmitter.emit("onBeforeGetDropChances", dropChancesEvent);
 		}
 		delete dropChancesEvent.blueprint;
 		const beforeGenerateItemEvent = {
-			blueprint,
-			item: null,
-			dropChances: dropChancesEvent
+			blueprint
+			, item: null
+			, dropChances: dropChancesEvent
 		};
-		global.instancer.instances[0].eventEmitter.emit('beforeGenerateItem', beforeGenerateItemEvent);
+		global.instancer.instances[0].eventEmitter.emit("beforeGenerateItem", beforeGenerateItemEvent);
 		if (beforeGenerateItemEvent.item) {
 			return beforeGenerateItemEvent.item;
 		}
@@ -105,9 +105,9 @@ module.exports = {
 
 		const item = {};
 		if (isSpell) {
-			spellGenerators.forEach(g => g.generate(item, blueprint));
+			spellGenerators.forEach((g) => g.generate(item, blueprint));
 		} else if (isCurrency) {
-			currencyGenerators.forEach(g => g.generate(item, blueprint));
+			currencyGenerators.forEach((g) => g.generate(item, blueprint));
 		} else if (blueprint.material) {
 			item.material = true;
 			item.sprite = blueprint.sprite || null;
@@ -115,15 +115,15 @@ module.exports = {
 			item.noSalvage = blueprint.noSalvage || null;
 			item.noDestroy = blueprint.noDestroy || null;
 			item.quality = blueprint.quality || 0;
-			materialGenerators.forEach(g => g.generate(item, blueprint));
-		} else if (blueprint.type === 'mtx' || blueprint.type === 'toy') {
+			materialGenerators.forEach((g) => g.generate(item, blueprint));
+		} else if (blueprint.type === "mtx" || blueprint.type === "toy") {
 			//TODO: MTXs have been moved to a mod so we shouldn't have this any more
-			item = extend({}, blueprint);
+			extend(item, blueprint);
 			delete item.chance;
-		} else if (blueprint.type === 'recipe') {
-			recipeGenerators.forEach(g => g.generate(item, blueprint));
+		} else if (blueprint.type === "recipe") {
+			recipeGenerators.forEach((g) => g.generate(item, blueprint));
 		} else {
-			itemGenerators.forEach(g => g.generate(item, blueprint));
+			itemGenerators.forEach((g) => g.generate(item, blueprint));
 			if (blueprint.spellName) {
 				GENERATORS.spellbook.generate(item, blueprint);
 			}
@@ -141,21 +141,21 @@ module.exports = {
 			item.description = blueprint.description;
 		}
 		return item;
-	},
+	}
 
-	removeStat: function (item, stat) {
+	, removeStat: function (item, stat) {
 		if (!stat) {
-			stat = Object.keys(item.stats).filter(s => (s !== 'armor'));
+			stat = Object.keys(item.stats).filter((s) => (s !== "armor"));
 			stat = stat[Math.floor(Math.random() * stat.length)];
 		}
 		delete item.stats[stat];
-		if (stat === 'lvlRequire') {
+		if (stat === "lvlRequire") {
 			item.level = item.originalLevel;
 			delete item.originalLevel;
 		}
-	},
+	}
 
-	pickRandomSlot: function () {
+	, pickRandomSlot: function () {
 		let item = {};
 		let blueprint = {};
 		GENERATORS.slots.generate(item, blueprint);

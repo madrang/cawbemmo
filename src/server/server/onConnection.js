@@ -1,5 +1,5 @@
 //Imports
-const router = require('../security/router');
+const router = require("../security/router");
 
 //Events
 const onHandshake = (socket) => {
@@ -13,34 +13,37 @@ const onDisconnect = (socket) => {
 const onRequest = (socket, msg, callback) => {
 	msg.callback = callback;
 
-	if (!msg.data)
+	if (!msg.data) {
 		msg.data = {};
+	}
 
-	const source = cons.players.find(p => p.socket.id === socket.id);
+	const source = cons.players.find((p) => p.socket.id === socket.id);
 
-	if (!router.isMsgValid(msg, source))
+	if (!router.isMsgValid(msg, source)) {
 		return;
+	}
 
-	if (msg.cpn)
+	if (msg.cpn) {
 		cons.route(socket, msg);
-	else if (msg.threadModule)
+	} else if (msg.threadModule) {
 		cons.route(socket, msg);
-	else {
+	} else {
 		msg.socket = socket;
 
-		if (source)
+		if (source) {
 			msg.data.sourceId = source.id;
+		}
 
 		cons.routeGlobal(msg);
 	}
 };
 
 const onConnection = (socket) => {
-	socket.on('handshake', onHandshake.bind(null, socket));
-	socket.on('disconnect', onDisconnect.bind(null, socket));
-	socket.on('request', onRequest.bind(null, socket));
+	socket.on("handshake", onHandshake.bind(null, socket));
+	socket.on("disconnect", onDisconnect.bind(null, socket));
+	socket.on("request", onRequest.bind(null, socket));
 
-	socket.emit('handshake');
+	socket.emit("handshake");
 };
 
 //Exports

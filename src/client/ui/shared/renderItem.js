@@ -6,20 +6,20 @@ const tplItem = `
 `;
 
 define([
-	'js/system/events',
-	'js/system/globals'
+	"js/system/events"
+	, "js/system/globals"
 ], function (
 	events,
 	globals
 ) {
 	const hideTooltip = (el, item, e) => {
-		events.emit('onHideItemTooltip', item);
+		events.emit("onHideItemTooltip", item);
 	};
 
 	const renderItemManager = {
-		hoverItem: null,
+		hoverItem: null
 
-		onHover: function (el, item, e) {
+		, onHover: function (el, item, e) {
 			if (item) {
 				this.hoverItem = item;
 			} else {
@@ -28,26 +28,26 @@ define([
 			let ttPos = null;
 			if (el) {
 				ttPos = {
-					x: Math.floor(e.clientX + 32),
-					y: Math.floor(e.clientY)
+					x: Math.floor(e.clientX + 32)
+					, y: Math.floor(e.clientY)
 				};
 			}
-			events.emit('onShowItemTooltip', item, ttPos, true);
-		},
+			events.emit("onShowItemTooltip", item, ttPos, true);
+		}
 
-		onKeyDown: function (key) {
-			if (key === 'shift' && this.hoverItem) {
+		, onKeyDown: function (key) {
+			if (key === "shift" && this.hoverItem) {
 				this.onHover();
 			}
-		},
+		}
 
-		onKeyUp: function (key) {
-			if (key === 'shift' && this.hoverItem) {
+		, onKeyUp: function (key) {
+			if (key === "shift" && this.hoverItem) {
 				this.onHover();
 			}
-		},
+		}
 
-		onMouseLeave: function (el, item, e) {
+		, onMouseLeave: function (el, item, e) {
 			if (this.hoverItem !== item) {
 				return;
 			}
@@ -56,8 +56,8 @@ define([
 		}
 	};
 
-	events.on('onKeyDown', renderItemManager.onKeyDown.bind(renderItemManager));
-	events.on('onKeyUp', renderItemManager.onKeyUp.bind(renderItemManager));
+	events.on("onKeyDown", renderItemManager.onKeyDown.bind(renderItemManager));
+	events.on("onKeyUp", renderItemManager.onKeyUp.bind(renderItemManager));
 
 	const addTooltipEvents = (el, item) => {
 		const leaveHandler = renderItemManager.onMouseLeave.bind(renderItemManager, el, item);
@@ -77,10 +77,10 @@ define([
 		};
 
 		el
-			.on('mousedown', downHandler)
-			.on('mousemove', moveHandler)
-			.on('mouseleave', leaveHandler)
-			.on('destroyed', leaveHandler);
+			.on("mousedown", downHandler)
+			.on("mousemove", moveHandler)
+			.on("mouseleave", leaveHandler)
+			.on("destroyed", leaveHandler);
 	};
 
 	const onShowContext = (item, getItemContextConfig, e) => {
@@ -91,38 +91,38 @@ define([
 		if (!contextConfig.length) {
 			return;
 		}
-		events.emit('onContextMenu', contextConfig, e);
+		events.emit("onContextMenu", contextConfig, e);
 		e.preventDefault();
 		return false;
 	};
 
 	const addContextEvents = (el, item, getItemContextConfig) => {
-		el.on('contextmenu', onShowContext.bind(this, item, getItemContextConfig));
+		el.on("contextmenu", onShowContext.bind(this, item, getItemContextConfig));
 	};
 
 	return (container, item, useEl, manageTooltip, getItemContextConfig, showNewIndicators = true) => {
 		const itemEl = useEl || $(tplItem).appendTo(container);
 
 		if (!item) {
-			itemEl.addClass('empty');
+			itemEl.addClass("empty");
 			return itemEl;
 		}
 
-		let spritesheet = item.spritesheet || '../../../images/items.png';
+		let spritesheet = item.spritesheet || "../../../images/items.png";
 		if (!item.spritesheet) {
 			if (item.material) {
-				spritesheet = '../../../images/materials.png';
+				spritesheet = "../../../images/materials.png";
 			} else if (item.quest) {
-				spritesheet = '../../../images/questItems.png';
-			} else if (item.type === 'consumable') {
-				spritesheet = '../../../images/consumables.png';
-			} else if (item.type === 'skin') {
-				spritesheet = '../../../images/characters.png';
+				spritesheet = "../../../images/questItems.png";
+			} else if (item.type === "consumable") {
+				spritesheet = "../../../images/consumables.png";
+			} else if (item.type === "skin") {
+				spritesheet = "../../../images/characters.png";
 			}
 		}
 
 		let size = 64;
-		if (item.type === 'skin') {
+		if (item.type === "skin") {
 			size = 8;
 		}
 		if (item.spriteSize) {
@@ -130,7 +130,7 @@ define([
 		}
 		const spriteSizes = globals.clientConfig.spriteSizes;
 		// Extract filename from path.
-		const sheetName = spritesheet.split(/[\\/]/g).pop().split('.')[0];
+		const sheetName = spritesheet.split(/[\\/]/g).pop().split(".")[0];
 		if (spriteSizes[sheetName]) {
 			size = spriteSizes[sheetName];
 		}
@@ -140,35 +140,36 @@ define([
 		const backgroundPosition = `${imgX}px ${imgY}px`;
 
 		itemEl
-			.find('.icon')
+			.find(".icon")
 			.css({
-				background: `url(${spritesheet}) no-repeat scroll ${backgroundPosition} / auto`,
-				width: `${size}px`,
-				height: `${size}px`
+				background: `url(${spritesheet}) no-repeat scroll ${backgroundPosition} / auto`
+				, width: `${size}px`
+				, height: `${size}px`
 			});
 
-		if (item.quantity > 1 || item.eq || item.active || item.has('quickSlot')) {
-			let elQuantity = itemEl.find('.quantity');
+		if (item.quantity > 1 || item.eq || item.active || item.has("quickSlot")) {
+			let elQuantity = itemEl.find(".quantity");
 			let txtQuantity = item.quantity;
 			if (!txtQuantity) {
-				txtQuantity = item.has('quickSlot') ? 'QS' : 'EQ';
+				txtQuantity = item.has("quickSlot") ? "QS" : "EQ";
 			}
 			elQuantity.html(txtQuantity);
 			//If the item doesn't have a quantity and we reach this point
 			//it must mean that it's active, EQd or QSd
 			if (!item.quantity) {
-				itemEl.addClass('eq');
+				itemEl.addClass("eq");
 			}
 		} else if (item.isNew && showNewIndicators) {
-			itemEl.addClass('new');
-			itemEl.find('.quantity').html('NEW');
+			itemEl.addClass("new");
+			itemEl.find(".quantity").html("NEW");
 		}
 		if (item.slot) {
 			const equipErrors = window.player.inventory.equipItemErrors(item);
-			if (equipErrors.length)
-				itemEl.addClass('no-equip');
+			if (equipErrors.length) {
+				itemEl.addClass("no-equip");
+			}
 		}
-		if (item.has('quality')) {
+		if (item.has("quality")) {
 			itemEl.addClass(`quality-${item.quality}`);
 		}
 		if (manageTooltip) {

@@ -1,7 +1,7 @@
 const getTargetPos = (physics, obj, m, pushback) => {
 	let targetPos = {
-		x: m.x,
-		y: m.y
+		x: m.x
+		, y: m.y
 	};
 
 	let dx = m.x - obj.x;
@@ -17,9 +17,9 @@ const getTargetPos = (physics, obj, m, pushback) => {
 	for (let l = 0; l < pushback; l++) {
 		if (physics.isTileBlocking(targetPos.x + dx, targetPos.y + dy)) {
 			if (physics.isTileBlocking(targetPos.x + dx, targetPos.y)) {
-				if (physics.isTileBlocking(targetPos.x, targetPos.y + dy)) 
+				if (physics.isTileBlocking(targetPos.x, targetPos.y + dy)) {
 					break;
-				else {
+				} else {
 					dx = 0;
 					targetPos.y += dy;
 				}
@@ -37,17 +37,17 @@ const getTargetPos = (physics, obj, m, pushback) => {
 };
 
 module.exports = {
-	type: 'fireblast',
+	type: "fireblast"
 
-	targetGround: true,
-	targetPlayerPos: true,
+	, targetGround: true
+	, targetPlayerPos: true
 
-	radius: 2,
-	pushback: 4,
+	, radius: 2
+	, pushback: 4
 
-	damage: 1,
+	, damage: 1
 
-	cast: function (action) {
+	, cast: function (action) {
 		const { obj, targetPlayerPos } = this;
 
 		let { x, y, instance: { physics, syncer } } = obj;
@@ -60,28 +60,30 @@ module.exports = {
 		let radius = this.radius;
 
 		const particleEvent = {
-			source: this,
-			particleConfig: extend({}, this.particles)
+			source: this
+			, particleConfig: extend({}, this.particles)
 		};
-		obj.fireEvent('beforeSpawnParticles', particleEvent);
+		obj.fireEvent("beforeSpawnParticles", particleEvent);
 
 		for (let i = x - radius; i <= x + radius; i++) {
 			for (let j = y - radius; j <= y + radius; j++) {
-				if (!physics.hasLos(~~x, ~~y, ~~i, ~~j))
+				if (!physics.hasLos(~~x, ~~y, ~~i, ~~j)) {
 					continue;
+				}
 
 				let effect = {
-					x: i,
-					y: j,
-					components: [{
-						type: 'particles',
-						ttl: 10,
-						blueprint: particleEvent.particleConfig
+					x: i
+					, y: j
+					, components: [{
+						type: "particles"
+						, ttl: 10
+						, blueprint: particleEvent.particleConfig
 					}]
 				};
 
-				if ((i !== x) || (j !== y))
-					syncer.queue('onGetObject', effect, -1);
+				if ((i !== x) || (j !== y)) {
+					syncer.queue("onGetObject", effect, -1);
+				}
 
 				let mobs = physics.getCell(i, j);
 				let mLen = mobs.length;
@@ -92,10 +94,11 @@ module.exports = {
 					if (!m) {
 						mLen--;
 						continue;
-					} else if (!m.aggro || !m.effects)
+					} else if (!m.aggro || !m.effects) {
 						continue;
-					else if (!obj.aggro.canAttack(m))
+					} else if (!obj.aggro.canAttack(m)) {
 						continue;
+					}
 
 					const targetPos = getTargetPos(physics, obj, m, this.pushback);
 
@@ -106,42 +109,45 @@ module.exports = {
 
 					let damage = this.getDamage(m);
 					m.stats.takeDamage({
-						damage,
-						threatMult: 1,
-						source: this.obj,
-						target: m,
-						spellName: 'fireblast',
-						noEvents: this.noEvents
+						damage
+						, threatMult: 1
+						, source: this.obj
+						, target: m
+						, spellName: "fireblast"
+						, noEvents: this.noEvents
 					});
 
-					if (m.destroyed)
+					if (m.destroyed) {
 						continue;
+					}
 
 					const eventMsg = {
-						success: true,
-						targetPos
+						success: true
+						, targetPos
 					};
-					m.fireEvent('beforePositionChange', eventMsg);
+					m.fireEvent("beforePositionChange", eventMsg);
 
-					if (!eventMsg.success)
+					if (!eventMsg.success) {
 						continue;
+					}
 
 					const targetEffect = m.effects.addEffect({
-						type: 'stunned',
-						silent: true
+						type: "stunned"
+						, silent: true
 					});
 
 					//If targetEffect is undefined, it means that the target has become resistant
-					if (!targetEffect)
+					if (!targetEffect) {
 						continue;
+					}
 
 					this.sendAnimation({
-						id: m.id,
-						components: [{
-							type: 'moveAnimation',
-							targetX: targetPos.x,
-							targetY: targetPos.y,
-							ttl: ttl
+						id: m.id
+						, components: [{
+							type: "moveAnimation"
+							, targetX: targetPos.x
+							, targetY: targetPos.y
+							, ttl: ttl
 						}]
 					});
 
@@ -159,14 +165,14 @@ module.exports = {
 		}
 
 		this.sendBump({
-			x: x,
-			y: y - 1
+			x: x
+			, y: y - 1
 		});
 
 		return true;
-	},
+	}
 
-	endEffect: function (target, targetPos, targetEffect) {
+	, endEffect: function (target, targetPos, targetEffect) {
 		const { instance: { physics }, syncer, effects } = target;
 		const { x: xNew, y: yNew } = targetPos;
 
@@ -178,9 +184,9 @@ module.exports = {
 		target.x = xNew;
 		target.y = yNew;
 
-		if (physics.addObject(target, xNew, yNew, xOld, yOld))
+		if (physics.addObject(target, xNew, yNew, xOld, yOld)) {
 			physics.removeObject(target, xOld, yOld, xNew, yNew);
-		else {
+		} else {
 			target.x = xOld;
 			target.y = yOld;
 
@@ -195,23 +201,24 @@ module.exports = {
 
 		const moveEvent = {
 			oldPos: {
-				x: xOld,
-				y: yOld
-			},
-			newPos: {
-				x: xFinal,
-				y: yFinal
-			},
-			source: this.obj,
-			target,
-			spellName: 'fireblast',
-			spell: this
+				x: xOld
+				, y: yOld
+			}
+			, newPos: {
+				x: xFinal
+				, y: yFinal
+			}
+			, source: this.obj
+			, target
+			, spellName: "fireblast"
+			, spell: this
 		};
-		target.fireEvent('afterPositionChange', moveEvent);
-	},
+		target.fireEvent("afterPositionChange", moveEvent);
+	}
 
-	destroyEffectOnTarget: function (target, targetEffect) {
-		if (targetEffect)
+	, destroyEffectOnTarget: function (target, targetEffect) {
+		if (targetEffect) {
 			target.effects.removeEffect(targetEffect.id);
+		}
 	}
 };

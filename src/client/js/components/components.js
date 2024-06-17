@@ -1,6 +1,6 @@
 define([
-	'js/system/events',
-	'js/system/globals'
+	"js/system/events"
+	, "js/system/globals"
 ], function (
 	events,
 	globals
@@ -20,12 +20,12 @@ define([
 
 	const unhookEvents = function () {
 		Object.entries(this.eventList).forEach(([eventName, callbacks]) => {
-			callbacks.forEach(c => events.off(eventName, c));
+			callbacks.forEach((c) => events.off(eventName, c));
 		});
 	};
 
 	//Helpers
-	const loadComponent = cpn => {
+	const loadComponent = (cpn) => {
 		return new Promise((res) => {
 			require([cpn.path], (tpl) => {
 				if (cpn.type) {
@@ -42,14 +42,14 @@ define([
 	//Init Methods
 	const loadComponents = (paths) => {
 		return Promise.all(
-			paths.map(p => loadComponent(p))
+			paths.map((p) => loadComponent(p))
 		);
 	};
 
 	const buildComponents = () => {
-		templates.forEach(t => {
-			const extensions = extenders.filter(e => e.extends === t.type);
-			extensions.forEach(e => $.extend(true, t, e.tpl));
+		templates.forEach((t) => {
+			const extensions = extenders.filter((e) => e.extends === t.type);
+			extensions.forEach((e) => $.extend(true, t, e.tpl));
 			t.eventList = {};
 			t.hookEvent = hookEvent;
 			t.unhookEvents = unhookEvents;
@@ -62,13 +62,13 @@ define([
 			const paths = globals.clientConfig.clientComponents;
 			await loadComponents(paths);
 			buildComponents();
-		},
+		}
 
-		getTemplate: function (type) {
-			if (type === 'lightpatch') {
-				type = 'lightPatch';
+		, getTemplate: function (type) {
+			if (type === "lightpatch") {
+				type = "lightPatch";
 			}
-			return templates.find(t => t.type === type) || { type: type };
+			return templates.find((t) => t.type === type) || { type: type };
 		}
 	};
 });

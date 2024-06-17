@@ -1,27 +1,30 @@
 let cpnArcanePatch = {
-	type: 'arcanePatch',
+	type: "arcanePatch"
 
-	contents: [],
+	, contents: []
 
-	init: function (blueprint) {
-		for (let p in blueprint) 
+	, init: function (blueprint) {
+		for (let p in blueprint) {
 			this[p] = blueprint[p];
-	},
+		}
+	}
 
-	collisionEnter: function (o) {
-		if ((!o.aggro) || (!o.player))
+	, collisionEnter: function (o) {
+		if ((!o.aggro) || (!o.player)) {
 			return;
+		}
 
 		let isPlayer = Boolean(this.caster.player);
 		let isTargetPlayer = Boolean(o.player);
 
-		if ((this.caster.aggro.canAttack(o)) || (isPlayer !== isTargetPlayer))
+		if ((this.caster.aggro.canAttack(o)) || (isPlayer !== isTargetPlayer)) {
 			return;
+		}
 
 		this.contents.push(o);
-	},
+	}
 
-	collisionExit: function (o) {
+	, collisionExit: function (o) {
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -30,9 +33,9 @@ let cpnArcanePatch = {
 				return;
 			}
 		}
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -40,26 +43,26 @@ let cpnArcanePatch = {
 
 			let heal = this.spell.getDamage(c, true);
 			c.stats.getHp({
-				heal,
-				source: this.caster,
-				target: c
+				heal
+				, source: this.caster
+				, target: c
 			});
 		}
 	}
 };
 
 module.exports = {
-	type: 'arcaneBarrier',
+	type: "arcaneBarrier"
 
-	cdMax: 20,
-	manaCost: 0,
-	range: 9,
+	, cdMax: 20
+	, manaCost: 0
+	, range: 9
 
-	duration: 70,
+	, duration: 70
 
-	targetGround: true,
+	, targetGround: true
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 		let target = action.target;
 
@@ -78,31 +81,33 @@ module.exports = {
 			for (let j = y - radius; j <= y + radius; j++) {
 				let distance = dx + Math.abs(j - y);
 
-				if (distance > radius + 1)
+				if (distance > radius + 1) {
 					continue;
+				}
 
-				if (!physics.hasLos(x, y, i, j))
+				if (!physics.hasLos(x, y, i, j)) {
 					continue;
+				}
 
 				let patch = objects.buildObjects([{
-					x: i,
-					y: j,
-					properties: {
-						cpnArcanePatch: cpnArcanePatch,
-						cpnParticles: {
+					x: i
+					, y: j
+					, properties: {
+						cpnArcanePatch: cpnArcanePatch
+						, cpnParticles: {
 							simplify: function () {
 								return {
-									type: 'particles',
-									blueprint: this.blueprint
+									type: "particles"
+									, blueprint: this.blueprint
 								};
-							},
-							blueprint: this.particles
+							}
+							, blueprint: this.particles
 						}
-					},
-					extraProperties: {
+					}
+					, extraProperties: {
 						arcanePatch: {
-							caster: obj,
-							spell: this
+							caster: obj
+							, spell: this
 						}
 					}
 				}]);
@@ -116,10 +121,11 @@ module.exports = {
 		this.queueCallback(null, this.duration * consts.tickTime, this.endEffect.bind(this, patches), null, true);
 
 		return true;
-	},
-	endEffect: function (patches) {
+	}
+	, endEffect: function (patches) {
 		let pLen = patches.length;
-		for (let i = 0; i < pLen; i++) 
+		for (let i = 0; i < pLen; i++) {
 			patches[i].destroyed = true;
+		}
 	}
 };

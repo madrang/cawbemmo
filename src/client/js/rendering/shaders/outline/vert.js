@@ -1,7 +1,7 @@
 define([
-	
+
 ], function (
-	
+
 ) {
 	return `
 		attribute vec2 aVertexPosition;
@@ -30,5 +30,5 @@ define([
 		    gl_Position = filterVertexPosition();
 		    vTextureCoord = filterTextureCoord();
 		}
-	`;	
+	`;
 });

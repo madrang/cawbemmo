@@ -1,13 +1,13 @@
 module.exports = {
-	type: 'hasten',
+	type: "hasten"
 
-	events: {
+	, events: {
 		init: function () {
 
-		},
+		}
 
-		destroy: function () {
-			
+		, destroy: function () {
+
 		}
 	}
 };

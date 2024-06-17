@@ -1,33 +1,33 @@
 define([
-	'particles',
-	'js/rendering/particleDefaults',
-	'js/rendering/shaders/outline'
+	"particles"
+	, "js/rendering/particleDefaults"
+	, "js/rendering/shaders/outline"
 ], function (
 	pixiParticles,
 	particleDefaults,
 	shaderOutline
 ) {
 	return {
-		renderer: null,
-		stage: null,
+		renderer: null
+		, stage: null
 
-		emitters: [],
+		, emitters: []
 
-		lastTick: null,
+		, lastTick: null
 
-		init: function (options) {
+		, init: function (options) {
 			this.r = options.r;
 			this.renderer = options.renderer;
 			this.stage = options.stage;
 			this.lastTick = Date.now();
-		},
+		}
 
-		buildEmitter: function (config) {
+		, buildEmitter: function (config) {
 			const obj = config.obj;
 			delete config.obj;
 			const options = $.extend(true, {}, particleDefaults, config);
 			//FIXME remove upgradeConfig after updating the particle configuration.
-			const newCfg = PIXI.particles.upgradeConfig(options, ['images/particles.png']);
+			const newCfg = PIXI.particles.upgradeConfig(options, ["images/particles.png"]);
 			console.warn("Legacy Emitter config updated from %o to %o", options, newCfg);
 			const emitter = new PIXI.particles.Emitter(this.stage, newCfg);
 			emitter.obj = obj;
@@ -35,13 +35,13 @@ define([
 			emitter.particleEngine = this;
 			this.emitters.push(emitter);
 			return emitter;
-		},
+		}
 
-		destroyEmitter: function (emitter) {
+		, destroyEmitter: function (emitter) {
 			emitter.emit = false;
-		},
+		}
 
-		update: function () {
+		, update: function () {
 			const renderer = this.r;
 			const now = Date.now();
 			const emitters = this.emitters;
@@ -53,7 +53,7 @@ define([
 				if (destroy) {
 					if (e.particleCount > 0) {
 						visible = renderer.isVisible(e.spawnPos.x, e.spawnPos.y);
-						if (visible)  {
+						if (visible) {
 							destroy = false;
 						}
 					}
@@ -72,7 +72,8 @@ define([
 					continue;
 				}
 				let r;
-				try { //FIXME, Negative color crash in pixi.particles.js when tab is hidden for too long.
+				try {
+					//FIXME, Negative color crash in pixi.particles.js when tab is hidden for too long.
 					r = e.update((now - this.lastTick) * 0.001);
 				} catch (error) {
 					console.error(error);
@@ -80,8 +81,8 @@ define([
 				if (r) {
 					console.log("Particles", r);
 					r.forEach(function (rr) {
-						if (e.blendMode === 'overlay') {
-							rr.pluginName = 'picture';
+						if (e.blendMode === "overlay") {
+							rr.pluginName = "picture";
 						}
 					}, this);
 				}

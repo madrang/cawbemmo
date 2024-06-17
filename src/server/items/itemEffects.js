@@ -1,4 +1,4 @@
-let events = require('../misc/events');
+let events = require("../misc/events");
 
 let list = {
 
@@ -6,14 +6,15 @@ let list = {
 
 module.exports = {
 	init: function () {
-		events.emit('onBeforeGetItemEffectList', list);
-	},
+		events.emit("onBeforeGetItemEffectList", list);
+	}
 
-	get: function (name) {
+	, get: function (name) {
 		let res = list[name];
 
-		if (!res)
-			return 'config/itemEffects/' + name;
+		if (!res) {
+			return "config/itemEffects/" + name;
+		}
 
 		return res;
 	}

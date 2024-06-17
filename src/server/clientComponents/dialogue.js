@@ -1,35 +1,35 @@
 define([
-	'js/system/client',
-	'js/system/events',
-	'ui/factory'
+	"js/system/client"
+	, "js/system/events"
+	, "ui/factory"
 ], function (
 	client,
 	events,
 	factory
 ) {
 	return {
-		type: 'dialogue',
+		type: "dialogue"
 
-		init: function () {
+		, init: function () {
 
-		},
+		}
 
-		talk: function (target) {
+		, talk: function (target) {
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'dialogue',
-					method: 'talk',
-					data: {
+				cpn: "player"
+				, method: "performAction"
+				, data: {
+					cpn: "dialogue"
+					, method: "talk"
+					, data: {
 						target: target.id
 					}
 				}
 			});
-		},
+		}
 
-		extend: function (blueprint) {
-			events.emit('onGetTalk', blueprint.state);
+		, extend: function (blueprint) {
+			events.emit("onGetTalk", blueprint.state);
 		}
 	};
 });
