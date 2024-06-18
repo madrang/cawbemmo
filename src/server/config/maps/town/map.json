@@ -1277,24 +1277,6 @@
                  "y":704
                 }, 
                 {
-                 "gid":982,
-                 "height":24,
-                 "id":881,
-                 "name":"crystal caves",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"cave\",\"pos\":{\"x\":269,\"y\":27}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":24,
-                 "x":560,
-                 "y":400
-                }, 
-                {
                  "gid":969,
                  "height":24,
                  "id":937,
@@ -1310,7 +1292,7 @@
                  "gid":434,
                  "height":8,
                  "id":1065,
-                 "name":"",
+                 "name":"depanneur",
                  "properties":[
                         {
                          "name":"cpnPortal",
