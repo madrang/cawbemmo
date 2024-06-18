@@ -3,11 +3,11 @@ const events = require("../misc/events");
 
 //Internals
 const mapList = [
-	{
+/*	{
 		name: "depanneur"
 		, path: "config/maps"
 	}
-	, {
+	,*/ {
 		name: "town"
 		, path: "config/maps"
 	}
