@@ -2,7 +2,7 @@
 
 module.exports = {
 	version: "0"
-	, port: process.env.SRV_PORT || 4000
+	, port: process.env.SRV_PORT || '4001'
 	, startupMessage: "Server: ready"
 
 	, nodeEnv: process.env.NODE_ENV

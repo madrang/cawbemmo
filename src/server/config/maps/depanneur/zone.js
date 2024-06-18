@@ -1,6 +1,6 @@
 module.exports = {
-	name: "The Crystal Caves"
-	, level: [14, 16]
+	name: "Depanneur"
+	, level: [10, 14]
 	, addLevel: 0
 	, resources: {}
 	, mobs: {
@@ -19,7 +19,7 @@ module.exports = {
 		}
 
 		, "crystal snail": {
-			level: 14
+			level: 11
 
 			, regular: {
 				drops: {
@@ -93,7 +93,7 @@ module.exports = {
 		}
 
 		, "crystal whelk": {
-			level: 16
+			level: 12
 
 			, regular: {
 				drops: {
@@ -167,7 +167,7 @@ module.exports = {
 		}
 
 		, radulos: {
-			level: 18
+			level: 13
 			, spawnCd: 1714
 
 			, regular: {
