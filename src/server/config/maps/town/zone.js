@@ -8,7 +8,7 @@ module.exports = {
 		}
 		, weed: {
 			type: "herb"
-			, max: 1
+			, max: 5
 			, cdMax: 17100
 		}
 	}

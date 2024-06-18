@@ -18,7 +18,7 @@ module.exports = {
 			}
 		}
 
-		, "crystal snail": {
+		, "canette": {
 			level: 11
 
 			, regular: {
