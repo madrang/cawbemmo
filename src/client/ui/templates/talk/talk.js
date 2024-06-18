@@ -13,7 +13,6 @@ define([
 ) {
 	return {
 		tpl: template
-
 		, modal: true
 
 		, postRender: function () {
@@ -23,27 +22,20 @@ define([
 
 		, onGetTalk: function (dialogue) {
 			this.state = dialogue;
-
 			if (!dialogue) {
 				this.hide();
 				return;
 			}
-
 			this.show();
-
 			this.find(".name").html(dialogue.from);
-			this.find(".msg").html("\"" + dialogue.msg + "\"");
-			let options = this.find(".options").empty();
-
+			this.find(".msg").html(`"${dialogue.msg}"`);
+			const options = this.find(".options").empty();
 			dialogue.options.forEach(function (o) {
-				let html = tplOption;
-
-				$(html)
+				$(tplOption)
 					.appendTo(options)
 					.html("- " + o.msg)
 					.on("click", this.onReply.bind(this, o));
 			}, this);
-
 			this.center(true, false);
 		}
 

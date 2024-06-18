@@ -117,7 +117,6 @@ define([
 
 			, onGetItems: function (items) {
 				this.items = items;
-
 				const quickItem = items.find((f) => f.has("quickSlot"));
 				this.quickItem = quickItem;
 				if (!quickItem) {
@@ -133,14 +132,11 @@ define([
 						.css("background", "");
 					return;
 				}
-
 				const itemContainer = this.find(".quickItem").show();
 				const itemEl = renderItem(null, quickItem, itemContainer);
-
 				if (itemEl.data("item") && itemEl.data("item").id === quickItem.id) {
 					return;
 				}
-
 				itemEl.data("item", quickItem);
 			}
 

@@ -66,31 +66,26 @@ define([
 			if (isMobile) {
 				return;
 			}
-
 			if (this.el.hasClass("typing")) {
 				return;
 			}
-
 			const time = new Date();
-			const hours = time.getUTCHours().toString().padStart(2, 0);
-			const minutes = time.getUTCMinutes().toString().padStart(2, 0);
+			const hours = time.getHours().toString().padStart(2, 0);
+			const minutes = time.getMinutes().toString().padStart(2, 0);
 
-			let elTime = this.find(".time");
+			const elTime = this.find(".time");
 			const timeString = `[ ${hours}:${minutes} ]`;
-
 			if (elTime.html() !== timeString) {
 				elTime.html(timeString);
 			}
 		}
 
 		, enforceMaxMsgLength: function () {
-			let textbox = this.find("input");
+			const textbox = this.find("input");
 			let val = textbox.val();
-
 			if (val.length <= this.maxChatLength) {
 				return;
 			}
-
 			val = val.substr(0, this.maxChatLength);
 			textbox.val(val);
 		}
@@ -101,7 +96,6 @@ define([
 
 		, onJoinChannel: function (channel) {
 			const container = this.find(".filters");
-
 			const channelName = channel.trim();
 
 			this.customChannels.spliceWhere((c) => c === channel);
@@ -121,7 +115,6 @@ define([
 
 		, onLeaveChannel: function (channel) {
 			this.customChannels.spliceWhere((c) => c === channel);
-
 			this.find(`.filters div[filter="${channel}"]`).remove();
 		}
 
@@ -130,18 +123,15 @@ define([
 		}
 
 		, onClickFilter: function (e) {
-			let el = $(e.target);
+			const el = $(e.target);
 			el.toggleClass("active");
-
-			let filter = el.attr("filter");
-			let method = (el.hasClass("active") ? "show" : "hide");
-
+			const filter = el.attr("filter");
+			const method = (el.hasClass("active") ? "show" : "hide");
 			if (method === "show") {
 				this.find(".list").addClass(filter);
 			} else {
 				this.find(".list").removeClass(filter);
 			}
-
 			if (el.hasClass("channel")) {
 				this.find(".list ." + filter)[method]();
 			}
@@ -286,7 +276,6 @@ define([
 				this.hoverCell = null;
 				return;
 			}
-
 			events.emit("onHideItemTooltip", this.hoverItem);
 			this.hoverItem = null;
 		}
@@ -297,11 +286,9 @@ define([
 			} else {
 				item = this.hoverItem;
 			}
-
 			if (!item) {
 				return;
 			}
-
 			let ttPos = null;
 			if (el) {
 				ttPos = {
@@ -309,9 +296,7 @@ define([
 					, y: Math.floor(e.clientY)
 				};
 			}
-
-			let bottomAlign = !isMobile;
-
+			const bottomAlign = !isMobile;
 			events.emit("onShowItemTooltip", item, ttPos, true, bottomAlign);
 		}
 
@@ -319,14 +304,12 @@ define([
 			if (isFake && this.hoverFilter) {
 				return;
 			}
-
 			input.resetKeys();
 
 			this.el.removeClass("typing");
 			this.el.find(".main").removeClass("hasBorderShadow");
 
-			let textbox = this.find("input");
-
+			const textbox = this.find("input");
 			if (show) {
 				this.el.addClass("typing");
 				this.el.find(".main").addClass("hasBorderShadow");
@@ -335,7 +318,6 @@ define([
 					this.currentChannel = "global";
 					this.currentSubChannel = null;
 				}
-
 				this.find(".channelPicker").html(this.currentSubChannel || this.currentChannel);
 				textbox.focus();
 				this.find(".list").scrollTop(9999999);
@@ -349,26 +331,23 @@ define([
 					this.currentChannel = "global";
 				}
 			}
-
 			if (e) {
 				e.stopPropagation();
 			}
 		}
 
 		, sendChat: function (e) {
-			let textbox = this.find("input");
-			let msgConfig = {
+			const textbox = this.find("input");
+			const msgConfig = {
 				success: true
 				, message: textbox.val()
 				, event: e
 				, cancel: false
 			};
-
 			this.processChat(msgConfig);
 			if (msgConfig.cancel || this.el.hasClass("picking")) {
 				return false;
 			}
-
 			const { which: charCode } = e;
 
 			if ([9, 27].includes(charCode) || charCode !== 13) {
@@ -378,10 +357,8 @@ define([
 				} else if (charCode === 27) {
 					this.toggle(false);
 				}
-
 				return;
 			}
-
 			events.emit("onBeforeChat", msgConfig);
 
 			let val = msgConfig.message
@@ -392,12 +369,10 @@ define([
 				this.toggle(false);
 				return;
 			}
-
 			if (val.trim() === "") {
 				this.toggle(false);
 				return;
 			}
-
 			client.request({
 				cpn: "social"
 				, method: "chat"
@@ -407,7 +382,6 @@ define([
 					, subType: this.currentSubChannel
 				}
 			});
-
 			this.toggle();
 		}
 	};

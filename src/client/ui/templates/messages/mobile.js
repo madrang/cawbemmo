@@ -106,12 +106,9 @@ define([
 	return {
 		init: function () {
 			$.extend(this, extensionObj);
-
 			this.kbUpper = 0;
-
 			this.el.on("click", this.toggle.bind(this, true));
 			this.renderKeyboard();
-
 			$(tplTab)
 				.appendTo(this.find(".filters"))
 				.addClass("btnClose")
