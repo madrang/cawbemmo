@@ -1,4 +1,4 @@
-const version = "0.0.4";
+const version = '0.0.4';
 
 const content = `
 Version de TEST public
@@ -25,7 +25,7 @@ Le max level es niveau 20
 `;
 
 module.exports = {
-	version
-	, required: true
-	, content
+	version,
+	required: true,
+	content
 };

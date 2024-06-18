@@ -1,4 +1,14 @@
 module.exports = {
+	"commis": [{
+		msg: "Une tite lotterie avec ca"
+	}, {
+		msg: "Un grateux ?"
+	}, {
+		msg: "avez vous votre carte de poin?"
+	}, {
+		msg: "Bonjour, High!"
+	}]
+	,
 	"cultist biorn": [{
 		msg: "That pool sure looks cold"
 	}, {
