@@ -1,5 +1,5 @@
 global.io = require("./db/io");
-global.extend = require("./misc/clone");
+global.extend = require("../common/assign");
 global.cons = require("./security/connections");
 global._ = require("./misc/helpers");
 global.atlas = require("./world/atlas");

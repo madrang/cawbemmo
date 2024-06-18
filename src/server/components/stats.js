@@ -114,12 +114,12 @@ module.exports = {
 	, init: function (blueprint) {
 		this.syncer = this.obj.instance.syncer;
 
-		let values = (blueprint || {}).values || {};
+		const values = (blueprint || {}).values || {};
 		for (let v in values) {
 			this.values[v] = values[v];
 		}
 
-		let stats = (blueprint || {}).stats || {};
+		const stats = (blueprint || {}).stats || {};
 		for (let v in stats) {
 			this.stats[v] = stats[v];
 		}
@@ -136,10 +136,17 @@ module.exports = {
 	}
 
 	, resetHp: function () {
-		let values = this.values;
+		const values = this.values;
 		values.hp = values.hpMax;
 
 		this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
+	}
+
+	, resetMana: function () {
+		const values = this.values;
+		values.mana = values.manaMax;
+
+		this.obj.syncer.setObject(false, "stats", "values", "mana", values.mana);
 	}
 
 	, update: function () {
@@ -147,12 +154,7 @@ module.exports = {
 			return;
 		}
 
-		let values = this.values;
-
-		let manaMax = values.manaMax;
-		manaMax -= (manaMax * values.manaReservePercent);
-
-		let regen = {
+		const regen = {
 			success: true
 		};
 		this.obj.fireEvent("beforeRegen", regen);
@@ -167,33 +169,30 @@ module.exports = {
 				return;
 			}
 		}
+		const values = this.values;
 
-		let regenHp = 0;
-		let regenMana = 0;
-
-		regenMana = values.regenMana / 50;
-
-		if (!isInCombat) {
-			regenHp = Math.max(values.hpMax / 112, values.regenHp * 0.2);
-		} else {
-			regenHp = values.regenHp * 0.2;
-		}
-
+		// Health Regen
 		if (values.hp < values.hpMax) {
+			const regenHp = (isInCombat
+				? values.regenHp * 0.2
+				: Math.max(values.hpMax / 112, values.regenHp * 0.2)
+			);
 			values.hp += regenHp;
 			this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
 		}
-
 		if (values.hp > values.hpMax) {
 			values.hp = values.hpMax;
 			this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
 		}
 
+		// Mana Regen
+		let manaMax = values.manaMax;
+		manaMax -= (manaMax * values.manaReservePercent);
 		if (values.mana < manaMax) {
+			const regenMana = values.regenMana / 50;
 			values.mana += regenMana;
 			this.obj.syncer.setObject(!this.obj.player, "stats", "values", "mana", values.mana);
 		}
-
 		if (values.mana > manaMax) {
 			values.mana = manaMax;
 			this.obj.syncer.setObject(!this.obj.player, "stats", "values", "mana", values.mana);
@@ -201,14 +200,12 @@ module.exports = {
 	}
 
 	, addStat: function (stat, value) {
-		let values = this.values;
-
+		const values = this.values;
 		if (["lvlRequire", "allAttributes"].indexOf(stat) === -1) {
 			values[stat] += value;
 		}
 
-		let sendOnlyToSelf = (["hp", "hpMax", "mana", "manaMax", "vit"].indexOf(stat) === -1);
-
+		const sendOnlyToSelf = (["hp", "hpMax", "mana", "manaMax", "vit"].indexOf(stat) === -1);
 		this.obj.syncer.setObject(sendOnlyToSelf, "stats", "values", stat, values[stat]);
 		if (sendOnlyToSelf) {
 			this.obj.syncer.setObject(false, "stats", "values", stat, values[stat]);
@@ -248,7 +245,7 @@ module.exports = {
 	}
 
 	, calcXpMax: function () {
-		let level = this.values.level;
+		const level = this.values.level;
 		this.values.xpMax = (level * 5) + Math.floor(level * 10 * Math.pow(level, 2.2)) - 5;
 
 		this.obj.syncer.setObject(true, "stats", "values", "xpMax", this.values.xpMax);
@@ -256,35 +253,35 @@ module.exports = {
 
 	, calcHpMax: function () {
 		const spiritConfig = spirits.stats[this.obj.class];
-
-		const initialHp = spiritConfig ? spiritConfig.values.hpMax : 32.7;
-		let increase = spiritConfig ? spiritConfig.values.hpPerLevel : 32.7;
-
+		const initialHp = (spiritConfig
+			? spiritConfig.values.hpMax
+			: 32.7
+		);
+		const increase = (spiritConfig
+			? spiritConfig.values.hpPerLevel
+			: 32.7
+		);
 		this.values.hpMax = initialHp + (((this.values.level || 1) - 1) * increase);
 	}
 
 	//Source is the object that caused you to gain xp (mostly yourself)
 	//Target is the source of the xp (a mob or quest)
 	, getXp: function (amount, source, target) {
-		let obj = this.obj;
-		let values = this.values;
-
+		const values = this.values;
 		if (values.level === consts.maxLevel) {
 			return;
 		}
-
-		let xpEvent = {
+		const xpEvent = {
 			source: source
 			, target: target
 			, amount: amount
 			, multiplier: 1
 		};
-
+		const obj = this.obj;
 		obj.fireEvent("beforeGetXp", xpEvent);
 		if (xpEvent.amount === 0) {
 			return;
 		}
-
 		obj.instance.eventEmitter.emit("onBeforeGetGlobalXpMultiplier", xpEvent);
 
 		amount = Math.floor(xpEvent.amount * (1 + (values.xpIncrease / 100)) * xpEvent.multiplier);
@@ -296,12 +293,11 @@ module.exports = {
 		this.syncer.queue("onGetDamage", {
 			id: obj.id
 			, event: true
-			, text: "+" + amount + " xp"
+			, text: `+${amount} xp`
 		}, -1);
 
-		let syncO = {};
+		const syncObj = {};
 		let didLevelUp = false;
-
 		while (values.xp >= values.xpMax) {
 			didLevelUp = true;
 			values.xp -= values.xpMax;
@@ -314,7 +310,6 @@ module.exports = {
 			if (values.level === consts.maxLevel) {
 				values.xp = 0;
 			}
-
 			this.calcHpMax();
 			obj.syncer.setObject(true, "stats", "values", "hpMax", values.hpMax);
 
@@ -328,7 +323,7 @@ module.exports = {
 				, text: "level up"
 			}, -1);
 
-			syncO.level = values.level;
+			syncObj.level = values.level;
 
 			this.calcXpMax();
 		}
@@ -345,9 +340,8 @@ module.exports = {
 		process.send({
 			method: "object"
 			, serverId: this.obj.serverId
-			, obj: syncO
+			, obj: syncObj
 		});
-
 		if (didLevelUp) {
 			this.obj.syncer.setObject(true, "stats", "values", "hpMax", values.hpMax);
 			this.obj.syncer.setObject(true, "stats", "values", "level", values.level);
@@ -490,7 +484,6 @@ module.exports = {
 		if (!this.obj.dead) {
 			return;
 		}
-
 		this.obj.syncer.set(true, null, "dead", false);
 
 		let obj = this.obj;
@@ -534,7 +527,6 @@ module.exports = {
 	, addLevelAttributes: function (singleLevel) {
 		const gainStats = spirits.stats[this.obj.class].gainStats;
 		const count = singleLevel ? 1 : this.values.level;
-
 		for (let s in gainStats) {
 			this.addStat(s, gainStats[s] * count);
 		}
@@ -567,7 +559,7 @@ module.exports = {
 			threatMult = 1;
 		}
 
-		let values = this.values;
+		const values = this.values;
 		let hpMax = values.hpMax;
 
 		if (values.hp < hpMax) {
@@ -580,7 +572,7 @@ module.exports = {
 				values.hp = hpMax;
 			}
 
-			let recipients = [];
+			const recipients = [];
 			if (this.obj.serverId) {
 				recipients.push(this.obj.serverId);
 			}
@@ -608,10 +600,8 @@ module.exports = {
 					a.aggro.tryEngage(source, threat);
 				}
 			}
-
 			this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
 		}
-
 		if (!eventHeal.noEvents) {
 			source.fireEvent("afterGiveHp", eventHeal);
 		}
@@ -622,9 +612,7 @@ module.exports = {
 			this.stats.played = Math.floor(this.stats.played + this.sessionDuration);
 			delete this.sessionDuration;
 		}
-
 		const values = this.values;
-
 		return {
 			type: "stats"
 			, values: {
@@ -639,8 +627,7 @@ module.exports = {
 	}
 
 	, simplify: function (self) {
-		let values = this.values;
-
+		const values = this.values;
 		if (!self) {
 			let result = {
 				type: "stats"
@@ -652,10 +639,8 @@ module.exports = {
 					, level: values.level
 				}
 			};
-
 			return result;
 		}
-
 		return {
 			type: "stats"
 			, values: values
@@ -673,13 +658,13 @@ module.exports = {
 	}
 
 	, onLogin: function () {
-		let stats = this.stats;
-		let time = scheduler.getTime();
+		const stats = this.stats;
+		const time = scheduler.getTime();
 		stats.lastLogin = time;
 	}
 
 	, getKillStreakCoefficient: function (mobName) {
-		let killStreak = this.stats.mobKillStreaks[mobName];
+		const killStreak = this.stats.mobKillStreaks[mobName];
 		if (!killStreak) {
 			return 1;
 		}
@@ -690,34 +675,29 @@ module.exports = {
 		if (!mob.inventory.dailyDrops) {
 			return true;
 		}
-
-		let lootStats = this.stats.lootStats[mob.name];
-		let time = scheduler.getTime();
+		const lootStats = this.stats.lootStats[mob.name];
+		const time = scheduler.getTime();
 		if (!lootStats) {
 			this.stats.lootStats[mob.name] = time;
 		} else {
-			return ((lootStats.day !== time.day) || (lootStats.month !== time.month));
+			return (lootStats.day !== time.day || lootStats.month !== time.month);
 		}
 	}
 
 	, events: {
 		afterKillMob: function (mob) {
-			let mobKillStreaks = this.stats.mobKillStreaks;
-			let mobName = mob.name;
-
+			const mobKillStreaks = this.stats.mobKillStreaks;
+			const mobName = mob.name;
 			if (!mobKillStreaks[mobName]) {
 				mobKillStreaks[mobName] = 0;
 			}
-
 			if (mobKillStreaks[mobName] < 100) {
 				mobKillStreaks[mobName]++;
 			}
-
 			for (let p in mobKillStreaks) {
 				if (p === mobName) {
 					continue;
 				}
-
 				mobKillStreaks[p]--;
 				if (mobKillStreaks[p] <= 0) {
 					delete mobKillStreaks[p];
@@ -726,10 +706,9 @@ module.exports = {
 		}
 
 		, beforeGetXp: function (event) {
-			if ((!event.target.mob) && (!event.target.player)) {
+			if (!event.target.mob && !event.target.player) {
 				return;
 			}
-
 			event.amount *= this.getKillStreakCoefficient(event.target.name);
 		}
 
@@ -737,17 +716,14 @@ module.exports = {
 			if (!event.source.mob) {
 				return;
 			}
-
 			event.chanceMultiplier *= this.getKillStreakCoefficient(event.source.name);
-
-			if ((event.chanceMultiplier > 0) && (!this.canGetMobLoot(event.source))) {
+			if (event.chanceMultiplier > 0 && !this.canGetMobLoot(event.source)) {
 				event.chanceMultiplier = 0;
 			}
 		}
 
 		, afterMove: function (event) {
-			let mobKillStreaks = this.stats.mobKillStreaks;
-
+			const mobKillStreaks = this.stats.mobKillStreaks;
 			for (let p in mobKillStreaks) {
 				mobKillStreaks[p] -= 0.085;
 				if (mobKillStreaks[p] <= 0) {
@@ -760,13 +736,10 @@ module.exports = {
 			if (damage.element) {
 				return;
 			}
-
 			const { obj, values: { lifeOnHit } } = this;
-
 			if (target === obj || !lifeOnHit) {
 				return;
 			}
-
 			this.getHp({
 				heal: { amount: lifeOnHit }
 				, source: obj

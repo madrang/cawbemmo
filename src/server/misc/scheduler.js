@@ -16,17 +16,13 @@ module.exports = {
 		if (cron.length !== 5) {
 			return false;
 		}
-
-		let time = this.getTime();
-
+		const time = this.getTime();
 		return ["minute", "hour", "day", "month", "weekday"].every((t, i) => {
 			let f = cron[i].split("-");
 			if (f[0] === "*") {
 				return true;
 			}
-
-			let useTime = time[t];
-
+			const useTime = time[t];
 			if (f.length === 1) {
 				f = f[0].split("/");
 				if (f.length === 1) {
@@ -38,7 +34,7 @@ module.exports = {
 				}
 				return ((useTime % f[1]) === 0);
 			}
-			return ((useTime >= f[0]) && (useTime <= f[1]));
+			return (useTime >= f[0] && useTime <= f[1]);
 		});
 	}
 
@@ -82,8 +78,7 @@ module.exports = {
 				.apply(null, Array(1 + timeT - lastTimeT))
 				.map((j, k) => (k + lastTimeT))
 				.some(function (s) {
-					let useTime = (s >= overflow) ? (s - overflow) : s;
-
+					const useTime = (s >= overflow) ? (s - overflow) : s;
 					return tCheck.some(function (f) {
 						f = f.split("-");
 						if (f.length === 1) {
@@ -93,15 +88,13 @@ module.exports = {
 							}
 							return ((useTime % f[1]) === 0);
 						}
-						return ((useTime >= f[0]) && (useTime <= f[1]));
+						return (useTime >= f[0] && useTime <= f[1]);
 					});
 				});
 		});
-
 		if (run) {
 			c.lastRun = time;
 		}
-
 		return run;
 	}
 
