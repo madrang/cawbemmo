@@ -1,13 +1,15 @@
-const getDefaultRotationSpell = rotationSpells => {
-	const spells = rotationSpells.filter(s => !s.atRotationTicks);
+const getDefaultRotationSpell = (rotationSpells) => {
+	const spells = rotationSpells.filter((s) => !s.atRotationTicks);
 
-	if (!spells.length)
+	if (!spells.length) {
 		return;
+	}
 
-	if (spells.length === 1)
+	if (spells.length === 1) {
 		return spells[0];
+	}
 
-	const randomSpell = spells[~~(Math.random() * spells.length)];
+	const randomSpell = spells[Math.floor(Math.random() * spells.length)];
 
 	return randomSpell;
 };
@@ -17,17 +19,20 @@ const getRotationSpell = (source, target) => {
 	const { spells, rotation: { currentTick, spells: rotationSpells } } = source;
 
 	//Find spell matching current tick
-	let rotationEntry = rotationSpells.find(s => s.atRotationTicks?.includes(currentTick));
+	let rotationEntry = rotationSpells.find((s) => s.atRotationTicks?.includes(currentTick));
 
-	if (!rotationEntry)
+	if (!rotationEntry) {
 		rotationEntry = getDefaultRotationSpell(rotationSpells);
+	}
 
-	if (!rotationEntry)
+	if (!rotationEntry) {
 		return;
+	}
 
 	//Don't cast anything
-	if (rotationEntry.spellIndex === -1)
+	if (rotationEntry.spellIndex === -1) {
 		return;
+	}
 
 	const useSpell = spells[rotationEntry.spellIndex];
 
@@ -35,55 +40,62 @@ const getRotationSpell = (source, target) => {
 	// later and we want to allow that on bosses
 	useSpell.cd = 0;
 	useSpell.manaCost = 0;
-	if (!useSpell.selfCast && !useSpell.canCast(target))
+	if (!useSpell.selfCast && !useSpell.canCast(target)) {
 		return getDefaultRotationSpell(rotationSpells);
+	}
 
 	return useSpell;
 };
 
 //Mobs without rune rotations (normally the case) simple select any random spell that is valid
 const getRandomSpell = (source, target) => {
-	const valid = source.spells.filter(s => {
+	const valid = source.spells.filter((s) => {
 		return (!s.selfCast && !s.procCast && !s.castOnDeath && s.canCast(target));
 	});
 
-	if (!valid.length)
+	if (!valid.length) {
 		return null;
+	}
 
-	return valid[~~(Math.random() * valid.length)];
+	return valid[Math.floor(Math.random() * valid.length)];
 };
 
 const getSpellToCast = (source, target) => {
-	if (source.rotation)
+	if (source.rotation) {
 		return getRotationSpell(source, target);
+	}
 
 	const { obj: { follower } } = source;
 
 	//Mobs don't cast all the time but player followers do
-	if (!follower?.master?.player && Math.random() >= 0.65)
+	if (!follower?.master?.player && Math.random() >= 0.65) {
 		return;
+	}
 
 	return getRandomSpell(source, target);
 };
 
-const tick = source => {
-	if (!source.obj.aggro.isInCombat())
+const tick = (source) => {
+	if (!source.obj.aggro.isInCombat()) {
 		return;
+	}
 
 	const { rotation } = source;
 
 	rotation.currentTick++;
 
-	if (rotation.currentTick === rotation.duration)
+	if (rotation.currentTick === rotation.duration) {
 		rotation.currentTick = 1;
+	}
 };
 
 //Gets the range we need to be at to cast a specific rotation spell
 const getFurthestRangeRotation = (source, target, checkCanCast) => {
 	const spell = getRotationSpell(source, target);
 
-	if (!spell)
+	if (!spell) {
 		return 0;
+	}
 
 	return spell.range;
 };
@@ -99,33 +111,37 @@ const getFurthestRangeRotation = (source, target, checkCanCast) => {
 const getFurthestRange = (source, target, checkCanCast) => {
 	const { spells, rotation } = source;
 
-	if (rotation)
+	if (rotation) {
 		return getFurthestRangeRotation(source, target, checkCanCast);
+	}
 
 	let sLen = spells.length;
 	let furthest = 0;
 	for (let i = 0; i < sLen; i++) {
 		let spell = spells[i];
-		if (spell.procCast || spell.castOnDeath)
+		if (spell.procCast || spell.castOnDeath) {
 			continue;
+		}
 
-		if (spell.range > furthest && (!checkCanCast || spell.canCast()))
+		if (spell.range > furthest && (!checkCanCast || spell.canCast())) {
 			furthest = spell.range;
+		}
 	}
 
 	return furthest;
 };
 
-const resetRotation = source => {
-	if (!source.rotation)
+const resetRotation = (source) => {
+	if (!source.rotation) {
 		return;
+	}
 
 	source.rotation.currentTick = 0;
 };
 
 module.exports = {
-	tick,
-	resetRotation,
-	getSpellToCast,
-	getFurthestRange
+	tick
+	, resetRotation
+	, getSpellToCast
+	, getFurthestRange
 };

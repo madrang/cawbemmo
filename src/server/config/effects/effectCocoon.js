@@ -1,10 +1,10 @@
 module.exports = {
-	type: 'cocoon',
-	cocoon: null,
+	type: "cocoon"
+	, cocoon: null
 
-	persist: true,
+	, persist: true
 
-	init: function (source) {
+	, init: function (source) {
 		let obj = this.obj;
 		let syncO = obj.syncer.o;
 
@@ -14,22 +14,22 @@ module.exports = {
 		syncO.nonSelectable = true;
 
 		this.cocoon = obj.instance.objects.buildObjects([{
-			name: 'cocoon',
-			sheetName: 'objects',
-			cell: 54,
-			x: obj.x,
-			y: obj.y,
-			properties: {
+			name: "cocoon"
+			, sheetName: "objects"
+			, cell: 54
+			, x: obj.x
+			, y: obj.y
+			, properties: {
 				cpnAggro: {
 					faction: source.aggro.faction
-				},
-				cpnStats: {
+				}
+				, cpnStats: {
 					values: {
-						hpMax: 10,
-						hp: 10
+						hpMax: 10
+						, hp: 10
 					}
-				},
-				cpnEffects: {}
+				}
+				, cpnEffects: {}
 			}
 		}]);
 
@@ -38,13 +38,13 @@ module.exports = {
 				afterDeath: this.onDestroyCocoon.bind(this)
 			}
 		});
-	},
+	}
 
-	onDestroyCocoon: function () {
+	, onDestroyCocoon: function () {
 		this.destroyed = true;
-	},
+	}
 
-	destroy: function () {
+	, destroy: function () {
 		let obj = this.obj;
 		let syncO = obj.syncer.o;
 
@@ -54,29 +54,30 @@ module.exports = {
 		syncO.nonSelectable = false;
 
 		this.cocoon.destroyed = true;
-	},
+	}
 
-	simplify: function () {
+	, simplify: function () {
 		return {
-			type: 'cocoon',
-			ttl: this.ttl
+			type: "cocoon"
+			, ttl: this.ttl
 		};
-	},
+	}
 
-	events: {
+	, events: {
 		beforeMove: function (targetPos) {
 			let obj = this.obj;
 
 			targetPos.x = obj.x;
 			targetPos.y = obj.y;
-		},
+		}
 
-		beforeDealDamage: function ({ damage }) {
-			if (damage)
+		, beforeDealDamage: function ({ damage }) {
+			if (damage) {
 				damage.failed = true;
-		},
+			}
+		}
 
-		beforeCastSpell: function (successObj) {
+		, beforeCastSpell: function (successObj) {
 			successObj.success = false;
 		}
 	}

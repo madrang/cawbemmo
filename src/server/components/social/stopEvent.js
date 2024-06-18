@@ -1,11 +1,11 @@
 //Imports
-const { messageAllThreads } = require('../../world/threadManager');
+const { messageAllThreads } = require("../../world/threadManager");
 
 //Exports
 module.exports = async (cpnSocial, eventName) => {
 	messageAllThreads({
-		threadModule: 'eventManager',
-		method: 'stopEventByCode',
-		data: eventName
+		threadModule: "eventManager"
+		, method: "stopEventByCode"
+		, data: eventName
 	});
 };

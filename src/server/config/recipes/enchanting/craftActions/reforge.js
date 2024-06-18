@@ -1,8 +1,9 @@
-let generatorSpells = require('../../../../items/generators/spellbook');
+let generatorSpells = require("../../../../items/generators/spellbook");
 
 module.exports = (obj, [item]) => {
-	if (!item.spell)
+	if (!item.spell) {
 		return;
+	}
 
 	let spellName = item.spell.name.toLowerCase();
 	let oldSpell = item.spell;

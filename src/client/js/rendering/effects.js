@@ -1,20 +1,20 @@
 define([
-	
+
 ], function (
-	
+
 ) {
 	return {
-		list: [],
+		list: []
 
-		register: function (cpn) {
+		, register: function (cpn) {
 			this.list.push(cpn);
-		},
+		}
 
-		unregister: function (cpn) {
-			this.list.spliceWhere(l => l === cpn);
-		},
+		, unregister: function (cpn) {
+			this.list.spliceWhere((l) => l === cpn);
+		}
 
-		render: function () {
+		, render: function () {
 			let list = this.list;
 			let lLen = list.length;
 

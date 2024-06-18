@@ -1,77 +1,77 @@
-let events = require('../misc/events');
+let events = require("../misc/events");
 
 module.exports = {
-	list: ['bear', 'owl', 'lynx','necro'],
-	portraits: {
+	list: ["bear", "owl", "lynx", "necro"]
+	, portraits: {
 		bear: {
-			x: 0,
-			y: 0
-		},
-		owl: {
-			x: 2,
-			y: 0
-		},
-		lynx: {
-			x: 3,
-			y: 0
+			x: 0
+			, y: 0
 		}
-	},
-	spells: {
-		owl: ['magic missile', 'ice spear'],
-		bear: ['slash', 'charge'],
-		lynx: ['flurry', 'smokebomb'],
-		necro: ['harvest life','summon skeleton']
-	},
-	stats: {
+		, owl: {
+			x: 2
+			, y: 0
+		}
+		, lynx: {
+			x: 3
+			, y: 0
+		}
+	}
+	, spells: {
+		owl: ["magic missile", "ice spear"]
+		, bear: ["slash", "charge"]
+		, lynx: ["flurry", "smokebomb"]
+		, necro: ["harvest life", "summon skeleton"]
+	}
+	, stats: {
 		owl: {
 			values: {
-				hpMax: 35,
-				hpPerLevel: 32
-			},
-			gainStats: {
+				hpMax: 35
+				, hpPerLevel: 32
+			}
+			, gainStats: {
 				int: 1
 			}
-		},
-		lynx: {
+		}
+		, lynx: {
 			values: {
-				hpMax: 45,
-				hpPerLevel: 36
-			},
-			gainStats: {
+				hpMax: 45
+				, hpPerLevel: 36
+			}
+			, gainStats: {
 				dex: 1
 			}
-		},
-		bear: {
+		}
+		, bear: {
 			values: {
-				hpMax: 55,
-				hpPerLevel: 40
-			},
-			gainStats: {
+				hpMax: 55
+				, hpPerLevel: 40
+			}
+			, gainStats: {
 				str: 1
 			}
-		},
-		necro: {
+		}
+		, necro: {
 			values: {
-				hpMax: 40,
-				hpPerLevel: 37
-			},
-			gainStats: {
+				hpMax: 40
+				, hpPerLevel: 37
+			}
+			, gainStats: {
 				int: 1
 			}
 		}
-	},
-	weapons: {
-		owl: 'Gnarled Staff',
-		lynx: 'Dagger',
-		bear: 'Sword',
-		necro: 'Sickle'
-	},
+	}
+	, weapons: {
+		owl: "Gnarled Staff"
+		, lynx: "Dagger"
+		, bear: "Sword"
+		, necro: "Sickle"
+	}
 
-	getSpritesheet: function (className) {
-		return this.stats[className].spritesheet || 'characters';
-	},
+	, getSpritesheet: function (className) {
+		return this.stats[className].spritesheet || "characters";
+	}
 
-	init: function () {
-		events.emit('onBeforeGetSpirits', this);
+	, init: function () {
+		events.emit("onBeforeGetSpirits", this);
 	}
 };

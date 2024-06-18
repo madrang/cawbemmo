@@ -1,17 +1,17 @@
 module.exports = {
-	type: 'syncer',
+	type: "syncer"
 
-	locked: false,
-	buffer: [],
+	, locked: false
+	, buffer: []
 
-	o: {
+	, o: {
 		components: []
-	},
-	oSelf: {
+	}
+	, oSelf: {
 		components: []
-	},
+	}
 
-	reset: function () {
+	, reset: function () {
 		this.o = {
 			components: []
 		};
@@ -22,49 +22,52 @@ module.exports = {
 
 		this.locked = false;
 
-		this.buffer.forEach(q => {
+		this.buffer.forEach((q) => {
 			const [ method, ...rest ] = q;
 
 			this[method].apply(this, rest);
 		});
 
 		this.buffer = [];
-	},
+	}
 
-	queue: function (args) {
+	, queue: function (args) {
 		this.buffer.push(args);
-	},
+	}
 
-	get: function (self) {
+	, get: function (self) {
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
+		}
 
 		let keys = Object.keys(o);
 		if (o.components.length === 0) {
-			if (keys.length === 1)
+			if (keys.length === 1) {
 				return null;
+			}
 			delete o.components;
 		}
 
 		o.id = this.obj.id;
 
 		return o;
-	},
+	}
 
-	set: function (self, cpnType, property, value) {
+	, set: function (self, cpnType, property, value) {
 		if (this.locked) {
-			this.queue(['set', self, cpnType, property, value]);
+			this.queue(["set", self, cpnType, property, value]);
 
 			return;
 		}
 
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
+		}
 
 		if (cpnType) {
-			let cpn = o.components.find(c => (c.type === cpnType));
+			let cpn = o.components.find((c) => (c.type === cpnType));
 
 			if (!cpn) {
 				cpn = {
@@ -74,39 +77,43 @@ module.exports = {
 			}
 
 			cpn[property] = value;
-		} else 
+		} else {
 			o[property] = value;
-	},
+		}
+	}
 
-	setComponent: function (self, cpnType, cpn) {
+	, setComponent: function (self, cpnType, cpn) {
 		if (this.locked) {
-			this.queue(['setComponent', self, cpnType, cpn]);
+			this.queue(["setComponent", self, cpnType, cpn]);
 
 			return;
 		}
 
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
+		}
 
-		let exists = o.components.find(c => c.type === cpnType);
-		if (exists)
+		let exists = o.components.find((c) => c.type === cpnType);
+		if (exists) {
 			extend(exists, cpn);
-		else
+		} else {
 			o.components.push(cpn);
-	},
+		}
+	}
 
-	setObject: function (self, cpnType, object, property, value) {
+	, setObject: function (self, cpnType, object, property, value) {
 		if (this.locked) {
-			this.queue(['setObject', self, cpnType, object, property, value]);
+			this.queue(["setObject", self, cpnType, object, property, value]);
 
 			return;
 		}
 
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
-		let cpn = o.components.find(c => (c.type === cpnType));
+		}
+		let cpn = o.components.find((c) => (c.type === cpnType));
 
 		if (!cpn) {
 			cpn = {
@@ -122,19 +129,20 @@ module.exports = {
 		}
 
 		obj[property] = value;
-	},
+	}
 
-	setArray: function (self, cpnType, property, value, noDuplicate) {
+	, setArray: function (self, cpnType, property, value, noDuplicate) {
 		if (this.locked) {
-			this.queue(['setArray', self, cpnType, property, value, noDuplicate]);
+			this.queue(["setArray", self, cpnType, property, value, noDuplicate]);
 
 			return;
 		}
 
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
-		let cpn = o.components.find(c => (c.type === cpnType));
+		}
+		let cpn = o.components.find((c) => (c.type === cpnType));
 
 		if (!cpn) {
 			cpn = {
@@ -143,58 +151,67 @@ module.exports = {
 			o.components.push(cpn);
 		}
 
-		if (!cpn[property])
+		if (!cpn[property]) {
 			cpn[property] = [];
+		}
 
-		if ((noDuplicate) && (cpn[property].find(f => (f === value))))
+		if ((noDuplicate) && (cpn[property].find((f) => (f === value)))) {
 			return;
+		}
 
 		cpn[property].push(value);
-	},
+	}
 
-	setSelfArray: function (self, property, value) {
+	, setSelfArray: function (self, property, value) {
 		if (this.locked) {
-			this.queue(['setSelfArray', self, property, value]);
+			this.queue(["setSelfArray", self, property, value]);
 
 			return;
 		}
 
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
+		}
 
-		if (!o.has(property))
+		if (!o.has(property)) {
 			o[property] = [];
+		}
 
 		o[property].push(value);
-	},
+	}
 
-	delete: function (self, cpnType, property) {
+	, delete: function (self, cpnType, property) {
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
+		}
 
 		if (cpnType) {
-			let cpn = o.components.find(c => (c.type === cpnType));
+			let cpn = o.components.find((c) => (c.type === cpnType));
 
-			if (!cpn)
+			if (!cpn) {
 				return;
+			}
 
 			delete cpn[property];
-		} else 
+		} else {
 			delete o[property];
-	},
+		}
+	}
 
-	deleteFromArray: function (self, cpnType, property, cbMatch) {
+	, deleteFromArray: function (self, cpnType, property, cbMatch) {
 		let o = this.o;
-		if (self)
+		if (self) {
 			o = this.oSelf;
-		let cpn = o.components.find(c => (c.type === cpnType));
+		}
+		let cpn = o.components.find((c) => (c.type === cpnType));
 
-		if (!cpn)
+		if (!cpn) {
 			return;
-		else if (!cpn[property])
+		} else if (!cpn[property]) {
 			return;
+		}
 
 		cpn[property].spliceWhere(cbMatch);
 	}

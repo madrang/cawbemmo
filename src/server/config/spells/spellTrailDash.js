@@ -1,27 +1,27 @@
 let cpnSpikePatch = {
-	type: 'spikePatch',
+	type: "spikePatch"
 
-	contents: [],
+	, contents: []
 
-	applyDamage: function (target, damage) {
+	, applyDamage: function (target, damage) {
 		target.stats.takeDamage({
-			damage,
-			threatMult: 1,
-			source: this.caster,
-			target: target,
-			spellName: 'smokeBomb',
-			noEvents: this.noEvents
+			damage
+			, threatMult: 1
+			, source: this.caster
+			, target: target
+			, spellName: "smokeBomb"
+			, noEvents: this.noEvents
 		});
-	},
+	}
 
-	collisionEnter: function (o) {
-		if ((o.mob) || (!o.stats))
+	, collisionEnter: function (o) {
+		if ((o.mob) || (!o.stats)) {
 			return;
-
+		}
 		this.contents.push(o);
-	},
+	}
 
-	collisionExit: function (o) {
+	, collisionExit: function (o) {
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -30,12 +30,12 @@ let cpnSpikePatch = {
 				return;
 			}
 		}
-	},
+	}
 
-	update: function () {
-		if (this.caster.destroyed)
+	, update: function () {
+		if (this.caster.destroyed) {
 			return;
-
+		}
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -48,76 +48,76 @@ let cpnSpikePatch = {
 };
 
 module.exports = {
-	type: 'trailDash',
+	type: "trailDash"
 
-	intCd: 0,
-	intCdMax: 0,
-	casting: false,
+	, intCd: 0
+	, intCdMax: 0
+	, casting: false
 
-	range: 10,
-	distance: 0,
+	, range: 10
+	, distance: 0
 
-	castingEffect: null,
+	, castingEffect: null
 
-	dx: 0,
-	dy: 0,
+	, dx: 0
+	, dy: 0
 
-	targetX: 0,
-	targetY: 0,
+	, targetX: 0
+	, targetY: 0
 
-	currentX: 0,
-	currentY: 0,
+	, currentX: 0
+	, currentY: 0
 
-	duration: 6,
+	, duration: 6
 
-	update: function () {
-		if (!this.casting)
+	, update: function () {
+		if (!this.casting) {
 			return;
-
+		}
 		if (this.intCd > 0) {
 			this.intCd--;
 			return;
-		} 
+		}
 		this.intCd = this.intCdMax;
 
 		this.currentX += this.dx;
 		this.currentY += this.dy;
 
-		let x = ~~this.currentX;
-		let y = ~~this.currentY;
+		let x = Math.floor(this.currentX);
+		let y = Math.floor(this.currentY);
 
-		if (this.obj.instance.physics.isTileBlocking(x, y)) 
+		if (this.obj.instance.physics.isTileBlocking(x, y)) {
 			this.distance = 7;
-		else if ((x !== this.obj.x) || (y !== this.obj.y)) {
+		} else if ((x !== this.obj.x) || (y !== this.obj.y)) {
 			//if ((x !== this.targetX) || (y !== this.targetY)) {
 			let particles = this.particles;
 
 			let spike = this.obj.instance.objects.buildObjects([{
-				x: this.obj.x,
-				y: this.obj.y,
-				properties: {
-					cpnHealPatch: cpnSpikePatch,
-					cpnAttackAnimation: {
+				x: this.obj.x
+				, y: this.obj.y
+				, properties: {
+					cpnHealPatch: cpnSpikePatch
+					, cpnAttackAnimation: {
 						simplify: function () {
 							return {
-								type: 'attackAnimation',
-								destroyObject: true,
-								row: [9, 9, 9, 9, 9, 9, 9, 9][~~(Math.random() * 8)],
-								col: 4,
-								frameDelay: 6 + ~~(Math.random() * 7),
-								loop: -1
+								type: "attackAnimation"
+								, destroyObject: true
+								, row: [9, 9, 9, 9, 9, 9, 9, 9][Math.floor(Math.random() * 8)]
+								, col: 4
+								, frameDelay: 6 + Math.floor(Math.random() * 7)
+								, loop: -1
 							};
 						}
-					},
-					cpnParticles: {
+					}
+					, cpnParticles: {
 						simplify: function () {
 							return {
-								type: 'particles',
-								noExplosion: true,
-								blueprint: particles
+								type: "particles"
+								, noExplosion: true
+								, blueprint: particles
 							};
-						},
-						blueprint: particles
+						}
+						, blueprint: particles
 					}
 				}
 			}]);
@@ -139,24 +139,22 @@ module.exports = {
 			this.intCd = 0;
 			this.update();
 		}
-
 		if (this.distance > 6) {
 			this.casting = false;
 			this.castingEffect.destroyed = true;
 			return true;
 		}
-
 		return true;
-	},
+	}
 
-	endEffect: function (spike) {
+	, endEffect: function (spike) {
 		spike.destroyed = true;
-	},
+	}
 
-	cast: function (action) {
+	, cast: function (action) {
 		do {
-			this.targetX = action.target.x + ~~(Math.random() * 6) - 3;
-			this.targetY = action.target.y + ~~(Math.random() * 6) - 3;
+			this.targetX = action.target.x + Math.floor(Math.random() * 6) - 3;
+			this.targetY = action.target.y + Math.floor(Math.random() * 6) - 3;
 		} while (this.obj.instance.physics.isTileBlocking(this.targetX, this.targetY));
 
 		this.currentX = this.obj.x;
@@ -166,13 +164,12 @@ module.exports = {
 		this.dy = this.targetY - this.currentY;
 
 		let distance = Math.sqrt(Math.pow(this.dx, 2) + Math.pow(this.dy, 2));
-
-		if (distance <= 0)
+		if (distance <= 0) {
 			return false;
-
+		}
 		this.castingEffect = this.obj.effects.addEffect({
-			type: 'casting',
-			silent: true
+			type: "casting"
+			, silent: true
 		});
 
 		this.casting = true;

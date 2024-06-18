@@ -18,8 +18,8 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 
 		if (toRelativePos) {
 			toPos = {
-				x: invokingObj.obj.x + toRelativePos.x,
-				y: invokingObj.obj.y + toRelativePos.y
+				x: invokingObj.obj.x + toRelativePos.x
+				, y: invokingObj.obj.y + toRelativePos.y
 			};
 		}
 
@@ -28,15 +28,15 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 
 		physics.addObject(obj, obj.x, obj.y);
 
-		globalSyncer.queue('teleportToPosition', {
-			x: obj.x,
-			y: obj.y
+		globalSyncer.queue("teleportToPosition", {
+			x: obj.x
+			, y: obj.y
 		}, [obj.serverId]);
 
 		return;
 	}
 
-	obj.fireEvent('beforeRezone');
+	obj.fireEvent("beforeRezone");
 
 	//We set this before saving so that objects aren't saved ON portals
 	obj.zoneName = zoneName;
@@ -46,12 +46,12 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	globalSyncer.processDestroyedObject(obj);
 	await obj.auth.doSave();
 
-	//Inform the main thread that we are rezoning. We do this because if the player 
+	//Inform the main thread that we are rezoning. We do this because if the player
 	// dc's before rezone is complete the player might become stuck in the main thread
 	process.send({
-		method: 'object',
-		serverId: obj.serverId,
-		obj: {
+		method: "object"
+		, serverId: obj.serverId
+		, obj: {
 			rezoning: true
 		}
 	});
@@ -67,11 +67,11 @@ const sendObjToZone = async ({ obj, invokingObj, zoneName, toPos, toRelativePos 
 	rezoneManager.stageRezone(simpleObj, zoneName);
 
 	process.send({
-		method: 'events',
-		data: {
+		method: "events"
+		, data: {
 			rezoneStart: [{
-				obj: { msg: {} },
-				to: [serverId]
+				obj: { msg: {} }
+				, to: [serverId]
 			}]
 		}
 	});

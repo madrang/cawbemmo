@@ -1,30 +1,33 @@
 module.exports = {
-	type: 'resourceNode',
+	type: "resourceNode"
 
-	collisionEnter: function (obj) {
-		if (!obj.player)
+	, collisionEnter: function (obj) {
+		if (!obj.player) {
 			return;
+		}
 
 		obj.gatherer.enter(this.obj);
-	},
+	}
 
-	collisionExit: function (obj) {
-		if (!obj.player)
+	, collisionExit: function (obj) {
+		if (!obj.player) {
 			return;
+		}
 
 		obj.gatherer.exit(this.obj);
-	},
+	}
 
-	gather: function () {
+	, gather: function () {
 		this.quantity--;
-		if (this.quantity <= 0)
+		if (this.quantity <= 0) {
 			this.obj.destroyed = true;
-	},
+		}
+	}
 
-	simplify: function () {
+	, simplify: function () {
 		return {
-			type: 'resourceNode',
-			nodeType: this.nodeType
+			type: "resourceNode"
+			, nodeType: this.nodeType
 		};
 	}
 };

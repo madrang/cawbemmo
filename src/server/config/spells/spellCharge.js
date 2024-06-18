@@ -1,18 +1,18 @@
 module.exports = {
-	type: 'charge',
+	type: "charge"
 
-	cdMax: 20,
-	manaCost: 10,
-	range: 9,
+	, cdMax: 20
+	, manaCost: 10
+	, range: 9
 
-	damage: 1,
-	speed: 70,
-	isAttack: true,
+	, damage: 1
+	, speed: 70
+	, isAttack: true
 
-	stunDuration: 15,
-	needLos: true,
+	, stunDuration: 15
+	, needLos: true
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 		let target = action.target;
 
@@ -24,25 +24,28 @@ module.exports = {
 
 		//We need to stop just short of the target
 		let offsetX = 0;
-		if (dx !== 0)
+		if (dx !== 0) {
 			offsetX = dx / Math.abs(dx);
+		}
 
 		let offsetY = 0;
-		if (dy !== 0)
+		if (dy !== 0) {
 			offsetY = dy / Math.abs(dy);
+		}
 
 		let targetPos = {
-			x: target.x,
-			y: target.y
+			x: target.x
+			, y: target.y
 		};
 
 		let physics = obj.instance.physics;
 		//Check where we should land
 		if (!this.isTileValid(physics, x, y, targetPos.x - offsetX, targetPos.y - offsetY)) {
-			if (!this.isTileValid(physics, x, y, targetPos.x - offsetX, targetPos.y)) 
+			if (!this.isTileValid(physics, x, y, targetPos.x - offsetX, targetPos.y)) {
 				targetPos.y -= offsetY;
-			else 
+			} else {
 				targetPos.x -= offsetX;
+			}
 		} else {
 			targetPos.x -= offsetX;
 			targetPos.y -= offsetY;
@@ -52,35 +55,35 @@ module.exports = {
 		let ttl = distance * this.speed;
 
 		let targetEffect = target.effects.addEffect({
-			type: 'stunned'
+			type: "stunned"
 		});
 
 		let selfEffect = this.obj.effects.addEffect({
-			type: 'stunned',
-			silent: true,
-			force: true
+			type: "stunned"
+			, silent: true
+			, force: true
 		});
 
 		const moveAnimationEffect = {
-			type: 'moveAnimation',
-			idTarget: target.id,
-			targetX: targetPos.x,
-			targetY: targetPos.y,
-			ttl: ttl
+			type: "moveAnimation"
+			, idTarget: target.id
+			, targetX: targetPos.x
+			, targetY: targetPos.y
+			, ttl: ttl
 		};
-		this.obj.fireEvent('beforeAddSpellEffect', this, moveAnimationEffect);
+		this.obj.fireEvent("beforeAddSpellEffect", this, moveAnimationEffect);
 
 		this.sendAnimation({
-			id: this.obj.id,
-			components: [moveAnimationEffect]
+			id: this.obj.id
+			, components: [moveAnimationEffect]
 		});
 
 		if (this.animation) {
-			this.obj.instance.syncer.queue('onGetObject', {
-				id: this.obj.id,
-				components: [{
-					type: 'animation',
-					template: this.animation
+			this.obj.instance.syncer.queue("onGetObject", {
+				id: this.obj.id
+				, components: [{
+					type: "animation"
+					, template: this.animation
 				}]
 			}, -1);
 		}
@@ -94,24 +97,25 @@ module.exports = {
 		this.obj.spellbook.registerDestroyCallback(this.destroyEffectOnTarget.bind(this, target, targetEffect));
 
 		return true;
-	},
+	}
 
-	reachDestination: function (target, targetPos, targetEffect, selfEffect) {
-		if (this.obj.destroyed)
+	, reachDestination: function (target, targetPos, targetEffect, selfEffect) {
+		if (this.obj.destroyed) {
 			return;
+		}
 
 		let obj = this.obj;
 
 		const moveEvent = {
 			oldPos: {
-				x: obj.x,
-				y: obj.y
-			},
-			newPos: targetPos,
-			source: this.obj,
-			target: this.obj,
-			spellName: 'charge',
-			spell: this
+				x: obj.x
+				, y: obj.y
+			}
+			, newPos: targetPos
+			, source: this.obj
+			, target: this.obj
+			, spellName: "charge"
+			, spell: this
 		};
 
 		obj.instance.physics.removeObject(obj, obj.x, obj.y);
@@ -129,33 +133,37 @@ module.exports = {
 
 		this.obj.aggro.move();
 
-		if (targetEffect)
+		if (targetEffect) {
 			targetEffect.ttl = this.stunDuration;
+		}
 
 		let damage = this.getDamage(target);
 		target.stats.takeDamage({
-			damage,
-			threatMult: this.threatMult,
-			source: this.obj,
-			target,
-			spellName: 'charge',
-			noEvents: this.noEvents
+			damage
+			, threatMult: this.threatMult
+			, source: this.obj
+			, target
+			, spellName: "charge"
+			, noEvents: this.noEvents
 		});
 
-		this.obj.fireEvent('afterPositionChange', moveEvent);
+		this.obj.fireEvent("afterPositionChange", moveEvent);
 
-		if (this.castOnEnd)
+		if (this.castOnEnd) {
 			this.obj.spellbook.spells[this.castOnEnd].cast();
-	},
+		}
+	}
 
-	destroyEffectOnTarget: function (target, targetEffect) {
-		if (targetEffect)
+	, destroyEffectOnTarget: function (target, targetEffect) {
+		if (targetEffect) {
 			target.effects.removeEffect(targetEffect.id);
-	},
+		}
+	}
 
-	isTileValid: function (physics, fromX, fromY, toX, toY) {
-		if (physics.isTileBlocking(toX, toY))
+	, isTileValid: function (physics, fromX, fromY, toX, toY) {
+		if (physics.isTileBlocking(toX, toY)) {
 			return false;
+		}
 		return physics.hasLos(fromX, fromY, toX, toY);
 	}
 };

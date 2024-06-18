@@ -1,8 +1,8 @@
-const { version } = require('../../config/serverConfig');
+const { version } = require("../../config/serverConfig");
 
 module.exports = (req, res, next) => {
 	res.jsonp({
-		v: version,
-		p: cons.playing
+		v: version
+		, p: cons.playing
 	});
 };

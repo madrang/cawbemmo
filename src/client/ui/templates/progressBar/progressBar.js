@@ -1,9 +1,9 @@
 define([
-	'js/system/events',
-	'js/system/client',
-	'html!ui/templates/progressBar/template',
-	'html!ui/templates/progressBar/templateBar',
-	'css!ui/templates/progressBar/styles'
+	"js/system/events"
+	, "js/system/client"
+	, "html!ui/templates/progressBar/template"
+	, "html!ui/templates/progressBar/templateBar"
+	, "css!ui/templates/progressBar/styles"
 ], function (
 	events,
 	client,
@@ -12,15 +12,15 @@ define([
 	styles
 ) {
 	return {
-		tpl: tpl,
+		tpl: tpl
 
-		bars: [],
+		, bars: []
 
-		postRender: function () {
-			this.onEvent('onShowProgress', this.onShowProgress.bind(this));
-		},
+		, postRender: function () {
+			this.onEvent("onShowProgress", this.onShowProgress.bind(this));
+		}
 
-		onShowProgress: function (text, percentage) {
+		, onShowProgress: function (text, percentage) {
 			let bar = this.bars.find(function (b) {
 				return (b.text === text);
 			});
@@ -31,16 +31,17 @@ define([
 					this.bars.spliceWhere(function (b) {
 						return (b === bar);
 					});
-				} else
-					bar.el.find('.bar').css('width', percentage + '%');
+				} else {
+					bar.el.find(".bar").css("width", percentage + "%");
+				}
 			} else if (percentage < 100) {
 				bar = $(tplBar).appendTo(this.el);
-				bar.find('.bar').css('width', percentage + '%');
-				bar.find('.text').html(text);
+				bar.find(".bar").css("width", percentage + "%");
+				bar.find(".text").html(text);
 
 				this.bars.push({
-					text: text,
-					el: bar
+					text: text
+					, el: bar
 				});
 			}
 		}

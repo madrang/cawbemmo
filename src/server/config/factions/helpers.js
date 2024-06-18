@@ -1,12 +1,12 @@
 //Imports
-let factionBase = require('../factionBase');
-let factions = require('../factions');
+let factionBase = require("../factionBase");
+let factions = require("../factions");
 
 //Internals
 const cache = {};
 
 //Method
-const getFactionBlueprint = factionId => {
+const getFactionBlueprint = (factionId) => {
 	if (cache[factionId]) {
 		return cache[factionId];
 	}
@@ -14,7 +14,7 @@ const getFactionBlueprint = factionId => {
 	try {
 		res = factions.getFaction(factionId);
 	} catch (e) {
-		_.error(e);
+		_.log.getFactionBlueprint.error(e);
 	}
 	if (!res) {
 		return;

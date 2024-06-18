@@ -1,7 +1,7 @@
 define([], function () {
 	return {
-		type: 'stash',
+		type: "stash"
 
-		init: function () {}
+		, init: function () {}
 	};
 });

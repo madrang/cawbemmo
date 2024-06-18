@@ -1,25 +1,25 @@
 define([
-	'js/rendering/effects'
+	"js/rendering/effects"
 ], function (
 	effects
 ) {
 	return {
-		type: 'whirlwind',
+		type: "whirlwind"
 
-		source: null,
+		, source: null
 
-		row: null,
-		col: null,
-		frames: 4,
-		frameDelay: 4,
-		spriteSheet: 'attacks',
+		, row: null
+		, col: null
+		, frames: 4
+		, frameDelay: 4
+		, spriteSheet: "attacks"
 
-		delay: 32,
-		coordinates: [],
+		, delay: 32
+		, coordinates: []
 
-		objects: null,
+		, objects: null
 
-		init: async function (blueprint) {
+		, init: async function (blueprint) {
 			await this.getObjectsModule();
 
 			if (!this.source) {
@@ -34,39 +34,39 @@ define([
 			});
 
 			effects.register(this);
-		},
+		}
 
-		getObjectsModule: async function () {
-			return new Promise(res => {
-				require(['js/objects/objects'], o => {
+		, getObjectsModule: async function () {
+			return new Promise((res) => {
+				require(["js/objects/objects"], (o) => {
 					this.objects = o;
 					res();
 				});
 			});
-		},
+		}
 
-		spawnThing: function (x, y) {
+		, spawnThing: function (x, y) {
 			const { frames: frameCount, row, col, spriteSheet, frameDelay } = this;
 
 			this.objects.buildObject({
-				x,
-				y,
-				components: [{
-					type: 'attackAnimation',
-					row,
-					col,
-					frames: frameCount,
-					spriteSheet,
-					frameDelay
+				x
+				, y
+				, components: [{
+					type: "attackAnimation"
+					, row
+					, col
+					, frames: frameCount
+					, spriteSheet
+					, frameDelay
 				}]
 			});
-		},
+		}
 
-		renderManual: function () {
-			
-		},
+		, renderManual: function () {
 
-		destroy: function () {
+		}
+
+		, destroy: function () {
 			effects.unregister(this);
 		}
 	};

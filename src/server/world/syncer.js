@@ -1,38 +1,41 @@
 const { viewDistanceX, viewDistanceY } = consts;
 
 module.exports = {
-	buffer: {},
-	dirty: false,
+	buffer: {}
+	, dirty: false
 
-	init: function (msg) {
+	, init: function (msg) {
 		this.objects = msg.objects;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let objects = this.objects;
 
 		let oList = objects.objects;
 		let oLen = oList.length;
 
-		let pList = oList.filter(f => f.player && !f.destroyed);
+		let pList = oList.filter((f) => f.player && !f.destroyed);
 		let pLen = pList.length;
 
-		if (pLen === 0)
+		if (pLen === 0) {
 			this.updateZoneEmpty(objects, oList, oLen);
-		else if (pLen > 0)
+		} else if (pLen > 0) {
 			this.updateZoneNotEmpty(objects, oList, oLen, pList, pLen);
+		}
 
 		oLen = oList.length;
 
-		for (let i = 0; i < oList.length; i++) 
+		for (let i = 0; i < oList.length; i++) {
 			oList[i].syncer.reset();
-	},
+		}
+	}
 
-	updateZoneEmpty: function (objects, oList, oLen) {
+	, updateZoneEmpty: function (objects, oList, oLen) {
 		for (let i = 0; i < oLen; i++) {
 			let o = oList[i];
-			if (!o.destroyed) 
+			if (!o.destroyed) {
 				continue;
+			}
 
 			objects.removeObject(o);
 
@@ -41,10 +44,10 @@ module.exports = {
 		}
 
 		this.sendServerModuleMessages();
-	},
+	}
 
-	updateZoneNotEmpty: function (objects, oList, oLen, pList, pLen) {
-		let queueFunction = this.queue.bind(this, 'onGetObject');
+	, updateZoneNotEmpty: function (objects, oList, oLen, pList, pLen) {
+		let queueFunction = this.queue.bind(this, "onGetObject");
 
 		let cache = {};
 
@@ -55,8 +58,9 @@ module.exports = {
 			let ox = o.x;
 			let oy = o.y;
 
-			if (!o.syncer)
+			if (!o.syncer) {
 				continue;
+			}
 
 			let destroyed = o.destroyed;
 
@@ -68,9 +72,9 @@ module.exports = {
 				o.syncer.locked = true;
 			} else {
 				sync = {
-					id: o.id,
-					destroyed: true,
-					destructionEvent: o.destructionEvent
+					id: o.id
+					, destroyed: true
+					, destructionEvent: o.destructionEvent
 				};
 
 				objects.removeObject(o);
@@ -103,8 +107,9 @@ module.exports = {
 
 				if (hasSeen) {
 					if (canSee) {
-						if (p.id === oId && syncSelf)
+						if (p.id === oId && syncSelf) {
 							queueFunction(syncSelf, [ p.serverId ]);
+						}
 
 						if (sync) {
 							toList.push(p.serverId);
@@ -115,9 +120,9 @@ module.exports = {
 					if (destroyed || !canSee) {
 						if (!canSee) {
 							queueFunction({
-								id: oId,
-								destroyed: true,
-								destructionEvent: 'visibility'
+								id: oId
+								, destroyed: true
+								, destructionEvent: "visibility"
 							},
 							[ p.serverId ]);
 						}
@@ -134,8 +139,9 @@ module.exports = {
 						continue;
 					} else {
 						cached = cache[oId];
-						if (!cached)
+						if (!cached) {
 							cached = cache[oId] = o.getSimple();
+						}
 					}
 
 					completeObj = cached;
@@ -146,23 +152,26 @@ module.exports = {
 				}
 			}
 
-			if (sendTo)
+			if (sendTo) {
 				queueFunction(sync, toList);
-			if (sendComplete) 
+			}
+			if (sendComplete) {
 				queueFunction(completeObj, completeList);
+			}
 		}
 
 		this.send();
-	},
+	}
 
-	queue: function (event, obj, to) {
+	, queue: function (event, obj, to) {
 		//Send to all players in zone?
 		if (to === -1) {
-			let pList = this.objects.objects.filter(o => o.player);
-			to = pList.map(p => p.serverId);
+			let pList = this.objects.objects.filter((o) => o.player);
+			to = pList.map((p) => p.serverId);
 		}
-		if (!to.length)
+		if (!to.length) {
 			return;
+		}
 
 		this.dirty = true;
 
@@ -170,26 +179,27 @@ module.exports = {
 		let list = buffer[event] || (buffer[event] = []);
 
 		list.push({
-			to: to,
-			obj: obj
+			to: to
+			, obj: obj
 		});
-	},
+	}
 
-	flushForTarget: function (targetServerId) {
+	, flushForTarget: function (targetServerId) {
 		const buffer = this.buffer;
 
 		for (let p in buffer) {
 			const list = buffer[p];
 
-			list.forEach(l => l.to.spliceWhere(f => f === targetServerId));
-			list.spliceWhere(l => !l.to.length);
+			list.forEach((l) => l.to.spliceWhere((f) => f === targetServerId));
+			list.spliceWhere((l) => !l.to.length);
 
-			if (!list.length)
+			if (!list.length) {
 				delete buffer[p];
+			}
 		}
-	},
+	}
 
-	processDestroyedObject: function (obj) {
+	, processDestroyedObject: function (obj) {
 		const { objects, queue } = this;
 		const { id, serverId } = obj;
 
@@ -200,41 +210,43 @@ module.exports = {
 		obj.forceDestroy = true;
 
 		const msg = {
-			id: id,
-			destroyed: true
+			id: id
+			, destroyed: true
 		};
 
 		objects.removeObject(obj);
 
 		this.flushForTarget(serverId);
 
-		const fnQueueMsg = queue.bind(this, 'onGetObject');
+		const fnQueueMsg = queue.bind(this, "onGetObject");
 
 		//Find any players that have seen this obj
 		objects
-			.filter(o => !o.destroyed && o?.player?.hasSeen(id))
-			.forEach(o => {
+			.filter((o) => !o.destroyed && o?.player?.hasSeen(id))
+			.forEach((o) => {
 				fnQueueMsg(msg, [o.serverId]);
 			});
-	},
+	}
 
-	send: function () {
-		if (!this.dirty)
+	, send: function () {
+		if (!this.dirty) {
 			return;
+		}
 
 		this.dirty = false;
 
 		process.send({
-			method: 'events',
-			data: this.buffer
+			method: "events"
+			, data: this.buffer
 		});
 
 		this.buffer = {};
-	},
+	}
 
-	sendServerModuleMessages: function () {
-		if (!this.dirty)
+	, sendServerModuleMessages: function () {
+		if (!this.dirty) {
 			return;
+		}
 
 		this.dirty = false;
 
@@ -242,8 +254,8 @@ module.exports = {
 
 		if (serverModuleMsgs) {
 			process.send({
-				method: 'events',
-				data: {
+				method: "events"
+				, data: {
 					serverModule: serverModuleMsgs
 				}
 			});

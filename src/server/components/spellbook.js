@@ -1,42 +1,42 @@
 //Imports
-const spellTemplate = require('../config/spells/spellTemplate');
-const animations = require('../config/animations');
-const playerSpells = require('../config/spells');
-const playerSpellsConfig = require('../config/spellsConfig');
+const spellTemplate = require("../config/spells/spellTemplate");
+const animations = require("../config/animations");
+const playerSpells = require("../config/spells");
+const playerSpellsConfig = require("../config/spellsConfig");
 
 //Helpers
-const rotationManager = require('./spellbook/rotationManager');
-const cast = require('./spellbook/cast');
+const rotationManager = require("./spellbook/rotationManager");
+const cast = require("./spellbook/cast");
 
 //Component
 module.exports = {
-	type: 'spellbook',
+	type: "spellbook"
 
-	spells: [],
+	, spells: []
 
-	physics: null,
-	objects: null,
+	, physics: null
+	, objects: null
 
-	closestRange: -1,
-	furthestRange: -1,
+	, closestRange: -1
+	, furthestRange: -1
 
-	callbacks: [],
+	, callbacks: []
 
-	rotation: null,
+	, rotation: null
 
-	init: function (blueprint) {
+	, init: function (blueprint) {
 		this.objects = this.obj.instance.objects;
 		this.physics = this.obj.instance.physics;
 
-		(blueprint.spells || []).forEach(s => this.addSpell(s, -1));
+		(blueprint.spells || []).forEach((s) => this.addSpell(s, -1));
 
 		if (blueprint.rotation) {
 			const { duration, spells } = blueprint.rotation;
 
 			this.rotation = {
-				currentTick: 0,
-				duration,
-				spells
+				currentTick: 0
+				, duration
+				, spells
 			};
 		}
 
@@ -46,54 +46,56 @@ module.exports = {
 		this.getSpellToCast = rotationManager.getSpellToCast.bind(null, this);
 		this.getFurthestRange = rotationManager.getFurthestRange.bind(null, this);
 		this.resetRotation = rotationManager.resetRotation.bind(null, this);
-	},
+	}
 
-	transfer: function () {
+	, transfer: function () {
 		let spells = this.spells;
 		this.spells = [];
 
-		spells.forEach(s => this.addSpell(s, -1));
-	},
+		spells.forEach((s) => this.addSpell(s, -1));
+	}
 
-	die: function () {
+	, die: function () {
 		this.stopCasting();
 
-		this.spells.forEach(s => {
+		this.spells.forEach((s) => {
 			let reserve = s.manaReserve;
 
 			if (reserve && reserve.percentage && s.active) {
 				let reserveEvent = {
-					spell: s.name,
-					reservePercent: reserve.percentage
+					spell: s.name
+					, reservePercent: reserve.percentage
 				};
-				this.obj.fireEvent('onBeforeReserveMana', reserveEvent);
-				this.obj.stats.addStat('manaReservePercent', -reserveEvent.reservePercent);
+				this.obj.fireEvent("onBeforeReserveMana", reserveEvent);
+				this.obj.stats.addStat("manaReservePercent", -reserveEvent.reservePercent);
 			}
 
 			s.die();
 		}, this);
-	},
+	}
 
-	simplify: function (self) {
-		if (!self)
+	, simplify: function (self) {
+		if (!self) {
 			return null;
+		}
 
 		let s = {
-			type: this.type,
-			closestRange: this.closestRange,
-			furthestRange: this.furthestRange
+			type: this.type
+			, closestRange: this.closestRange
+			, furthestRange: this.furthestRange
 		};
 
 		let spells = this.spells;
-		if (spells.length && spells[0].obj)
-			spells = spells.map(f => f.simplify());
+		if (spells.length && spells[0].obj) {
+			spells = spells.map((f) => f.simplify());
+		}
 
 		s.spells = spells;
 
 		return s;
-	},
+	}
 
-	addSpell: function (options, spellId) {
+	, addSpell: function (options, spellId) {
 		if (!options.type) {
 			options = {
 				type: options
@@ -103,61 +105,69 @@ module.exports = {
 		let type = options.type[0].toUpperCase() + options.type.substr(1);
 
 		let typeTemplate = {
-			type: type,
-			template: null
+			type: type
+			, template: null
 		};
-		this.obj.instance.eventEmitter.emit('onBeforeGetSpellTemplate', typeTemplate);
-		if (!typeTemplate.template)
-			typeTemplate.template = require('../config/spells/spell' + type);
+		this.obj.instance.eventEmitter.emit("onBeforeGetSpellTemplate", typeTemplate);
+		if (!typeTemplate.template) {
+			typeTemplate.template = require("../config/spells/spell" + type);
+		}
 
 		let builtSpell = extend({}, spellTemplate, typeTemplate.template, options);
 		builtSpell.obj = this.obj;
 		builtSpell.baseDamage = builtSpell.damage || 0;
 		builtSpell.damage += (options.damageAdd || 0);
-		if (options.damage)
+		if (options.damage) {
 			builtSpell.damage = options.damage;
+		}
 
 		if (builtSpell.animation) {
 			let animation = null;
-			let sheetName = this.obj.sheetName || '../../../images/characters.png';
+			let sheetName = this.obj.sheetName || "../../../images/characters.png";
 			let animationName = builtSpell.animation;
 
-			if (sheetName === 'mobs')
+			if (sheetName === "mobs") {
 				animation = animations.mobs;
-			else if (sheetName === 'bosses')
+			} else if (sheetName === "bosses") {
 				animation = animations.bosses;
-			else if (sheetName.indexOf('/') > -1)
+			} else if (sheetName.indexOf("/") > -1) {
 				animation = animations.mobs[sheetName];
-			else
+			} else {
 				animation = animations.classes;
+			}
 
 			if ((animation) && (animation[this.obj.cell]) && (animation[this.obj.cell][animationName])) {
 				builtSpell.animation = extend({}, animation[this.obj.cell][animationName]);
 				builtSpell.animation.name = animationName;
-			} else
+			} else {
 				builtSpell.animation = null;
+			}
 		}
 
 		if (!builtSpell.castOnDeath && builtSpell.range) {
-			if (this.closestRange === -1 || builtSpell.range < this.closestRange)
+			if (this.closestRange === -1 || builtSpell.range < this.closestRange) {
 				this.closestRange = builtSpell.range;
-			if (this.furthestRange === -1 || builtSpell.range > this.furthestRange)
+			}
+			if (this.furthestRange === -1 || builtSpell.range > this.furthestRange) {
 				this.furthestRange = builtSpell.range;
+			}
 		}
 
-		if ((!options.has('id')) && (spellId === -1)) {
+		if ((!options.has("id")) && (spellId === -1)) {
 			spellId = 0;
 			this.spells.forEach(function (s) {
-				if (s.id >= spellId)
+				if (s.id >= spellId) {
 					spellId = s.id + 1;
+				}
 			});
 		}
 
-		builtSpell.id = !options.has('id') ? spellId : options.id;
+		builtSpell.id = !options.has("id") ? spellId : options.id;
 
 		//Mobs don't get abilities put on CD when they learn them
-		if (!this.obj.mob && builtSpell.cdMax)
+		if (!this.obj.mob && builtSpell.cdMax) {
 			builtSpell.cd = builtSpell.cdMax;
+		}
 
 		this.spells.push(builtSpell);
 		this.spells.sort(function (a, b) {
@@ -165,30 +175,34 @@ module.exports = {
 		});
 
 		builtSpell.calcDps(null, true);
-		if (builtSpell.init)
+		if (builtSpell.init) {
 			builtSpell.init();
+		}
 
-		if (this.obj.player)
-			this.obj.syncer.setArray(true, 'spellbook', 'getSpells', builtSpell.simplify());
+		if (this.obj.player) {
+			this.obj.syncer.setArray(true, "spellbook", "getSpells", builtSpell.simplify());
+		}
 
 		return builtSpell.id;
-	},
+	}
 
-	addSpellFromRune: function (runeSpell, spellId) {
+	, addSpellFromRune: function (runeSpell, spellId) {
 		let type = runeSpell.type;
-		let playerSpell = playerSpells.spells.find(s => (s.name.toLowerCase() === runeSpell.name.toLowerCase())) || playerSpells.spells.find(s => (s.type === type));
+		let playerSpell = playerSpells.spells.find((s) => (s.name.toLowerCase() === runeSpell.name.toLowerCase())) || playerSpells.spells.find((s) => (s.type === type));
 		let playerSpellConfig = playerSpellsConfig.spells[runeSpell.name.toLowerCase()] || playerSpellsConfig.spells[runeSpell.type];
-		if (!playerSpellConfig)
+		if (!playerSpellConfig) {
 			return -1;
+		}
 
-		if (!runeSpell.rolls)
+		if (!runeSpell.rolls) {
 			runeSpell.rolls = {};
+		}
 
 		runeSpell.values = {};
 
 		let builtSpell = extend({
-			type: runeSpell.type,
-			values: {}
+			type: runeSpell.type
+			, values: {}
 		}, playerSpell, playerSpellConfig, runeSpell);
 
 		for (let r in builtSpell.random) {
@@ -196,14 +210,15 @@ module.exports = {
 			let roll = runeSpell.rolls[r] || 0;
 			runeSpell.rolls[r] = roll;
 
-			let int = r.indexOf('i_') === 0;
+			let int = r.indexOf("i_") === 0;
 
 			let val = range[0] + ((range[1] - range[0]) * roll);
 			if (int) {
 				val = Math.round(val);
-				r = r.replace('i_', '');
-			} else
-				val = ~~(val * 100) / 100;
+				r = r.replace("i_", "");
+			} else {
+				val = Math.floor(val * 100) / 100;
+			}
 
 			builtSpell[r] = val;
 			builtSpell.values[r] = val;
@@ -211,25 +226,27 @@ module.exports = {
 		}
 
 		if (runeSpell.properties) {
-			for (let p in runeSpell.properties)
+			for (let p in runeSpell.properties) {
 				builtSpell[p] = runeSpell.properties[p];
+			}
 		}
 
-		if (runeSpell.cdMult)
+		if (runeSpell.cdMult) {
 			builtSpell.cdMax *= runeSpell.cdMult;
+		}
 
 		delete builtSpell.rolls;
 		delete builtSpell.random;
 
 		return this.addSpell(builtSpell, spellId);
-	},
+	}
 
-	calcDps: function () {
-		this.spells.forEach(s => s.calcDps());
-	},
+	, calcDps: function () {
+		this.spells.forEach((s) => s.calcDps());
+	}
 
-	removeSpellById: function (id) {
-		let exists = this.spells.spliceFirstWhere(s => (s.id === id));
+	, removeSpellById: function (id) {
+		let exists = this.spells.spliceFirstWhere((s) => (s.id === id));
 
 		if (exists) {
 			if (exists.manaReserve && exists.active) {
@@ -237,148 +254,164 @@ module.exports = {
 
 				if (reserve.percentage) {
 					let reserveEvent = {
-						spell: exists.name,
-						reservePercent: reserve.percentage
+						spell: exists.name
+						, reservePercent: reserve.percentage
 					};
-					this.obj.fireEvent('onBeforeReserveMana', reserveEvent);
-					this.obj.stats.addStat('manaReservePercent', -reserveEvent.reservePercent);
+					this.obj.fireEvent("onBeforeReserveMana", reserveEvent);
+					this.obj.stats.addStat("manaReservePercent", -reserveEvent.reservePercent);
 				}
 			}
 
-			if (exists.unlearn)
+			if (exists.unlearn) {
 				exists.unlearn();
+			}
 
-			this.obj.syncer.setArray(true, 'spellbook', 'removeSpells', id);
+			this.obj.syncer.setArray(true, "spellbook", "removeSpells", id);
 		}
-	},
+	}
 
-	queueAuto: function (action, spell) {
-		if (!action.auto || spell.autoActive)
+	, queueAuto: function (action, spell) {
+		if (!action.auto || spell.autoActive) {
 			return true;
+		}
 
-		this.spells.forEach(s => s.setAuto(null));
+		this.spells.forEach((s) => s.setAuto(null));
 
 		spell.setAuto({
-			target: action.target,
-			spell: spell.id
+			target: action.target
+			, spell: spell.id
 		});
-	},
+	}
 
-	getTarget: function (spell, action) {
+	, getTarget: function (spell, action) {
 		let target = action.target;
 
 		//Cast on self?
 		if (action.self) {
 			if (spell.targetGround) {
 				target = {
-					x: this.obj.x,
-					y: this.obj.y
+					x: this.obj.x
+					, y: this.obj.y
 				};
-			} else if (spell.spellType === 'buff')
+			} else if (spell.spellType === "buff") {
 				target = this.obj;
+			}
 		}
 
 		if (!spell.aura && !spell.targetGround) {
 			//Did we pass in the target id?
 			if (target && !target.id) {
-				target = this.objects.objects.find(o => o.id === target);
-				if (!target)
+				target = this.objects.objects.find((o) => o.id === target);
+				if (!target) {
 					return null;
-			}
-
-			if (target === this.obj && spell.noTargetSelf)
-				target = null;
-
-			if (!target || !target.player) {
-				if (spell.autoTargetFollower) {
-					target = this.spells.find(s => s.minions && s.minions.length > 0);
-					if (target)
-						target = target.minions[0];
-					else
-						return null;
 				}
 			}
 
-			if (target.aggro && (spell.spellType === 'buff' || spell.spellType === 'heal')) {
-				if (this.obj.aggro.faction !== target.aggro.faction)
+			if (target === this.obj && spell.noTargetSelf) {
+				target = null;
+			}
+
+			if (!target || !target.player) {
+				if (spell.autoTargetFollower) {
+					target = this.spells.find((s) => s.minions && s.minions.length > 0);
+					if (target) {
+						target = target.minions[0];
+					} else {
+						return null;
+					}
+				}
+			}
+
+			if (target.aggro && (spell.spellType === "buff" || spell.spellType === "heal")) {
+				if (this.obj.aggro.faction !== target.aggro.faction) {
 					return;
+				}
 			} else if (target.aggro && !this.obj.aggro.canAttack(target)) {
-				if (this.obj.player)
+				if (this.obj.player) {
 					this.sendAnnouncement("You don't feel like attacking that target");
+				}
 				return;
 			}
 		}
 
 		if (!spell.targetGround && target && !target.aggro && !spell.aura) {
-			if (spell.spellType === 'heal')
+			if (spell.spellType === "heal") {
 				this.sendAnnouncement("You don't feel like healing that target");
-			else
+			} else {
 				this.sendAnnouncement("You don't feel like attacking that target");
+			}
 
 			return;
 		}
 
-		if (spell.aura)
+		if (spell.aura) {
 			target = this.obj;
+		}
 
 		return target;
-	},
+	}
 
-	canCast: function (action) {
-		if (!action.has('spell'))
+	, canCast: function (action) {
+		if (!action.has("spell")) {
 			return false;
+		}
 
-		let spell = this.spells.find(s => (s.id === action.spell));
+		let spell = this.spells.find((s) => (s.id === action.spell));
 
-		if (!spell)
+		if (!spell) {
 			return false;
+		}
 
 		let target = this.getTarget(spell, action);
 
 		return spell.canCast(target);
-	},
+	}
 
-	cast: function (action, isAuto) {
+	, cast: function (action, isAuto) {
 		return cast(this, action, isAuto);
-	},
+	}
 
-	getClosestRange: function (spellNum) {
-		if (spellNum)
+	, getClosestRange: function (spellNum) {
+		if (spellNum) {
 			return this.spells[spellNum].range;
+		}
 		return this.closestRange;
-	},
+	}
 
-	getCooldowns: function () {
+	, getCooldowns: function () {
 		let cds = [];
 		this.spells.forEach(
-			s => cds.push({
-				cd: s.cd,
-				cdMax: s.cdMax,
-				canCast: ((s.manaCost <= this.obj.stats.values.mana) && (s.cd === 0))
+			(s) => cds.push({
+				cd: s.cd
+				, cdMax: s.cdMax
+				, canCast: ((s.manaCost <= this.obj.stats.values.mana) && (s.cd === 0))
 			}), this);
 
 		return cds;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let didCast = false;
 		const isCasting = this.isCasting();
 
-		if (this.rotation)
+		if (this.rotation) {
 			rotationManager.tick(this);
+		}
 
-		this.spells.forEach(s => {
+		this.spells.forEach((s) => {
 			let auto = s.autoActive;
 			if (auto) {
-				if (!auto.target || auto.target.destroyed)
+				if (!auto.target || auto.target.destroyed) {
 					s.setAuto(null);
-				else if (!isCasting && this.cast(auto, true))
+				} else if (!isCasting && this.cast(auto, true)) {
 					didCast = true;
+				}
 			}
 
 			s.updateBase();
-			if (s.update)
+			if (s.update) {
 				s.update();
+			}
 		});
 
 		let callbacks = this.callbacks;
@@ -396,10 +429,12 @@ module.exports = {
 			c.time -= consts.tickTime;
 
 			if (c.time <= 0) {
-				if (c.callback)
+				if (c.callback) {
 					c.callback();
-				if (c.destroyCallback)
+				}
+				if (c.destroyCallback) {
 					c.destroyCallback();
+				}
 				callbacks.splice(i, 1);
 				i--;
 				cLen--;
@@ -407,31 +442,31 @@ module.exports = {
 		}
 
 		return didCast || isCasting;
-	},
+	}
 
 	//Callbacks to be called when this object is destroyed
-	registerDestroyCallback: function (callback) {
+	, registerDestroyCallback: function (callback) {
 		this.callbacks.push({
 			cbOnSelfDestroyed: callback
 		});
-	},
+	}
 
-	registerCallback: function (sourceId, callback, time, destroyCallback, targetId, destroyOnRezone) {
+	, registerCallback: function (sourceId, callback, time, destroyCallback, targetId, destroyOnRezone) {
 		let obj = {
-			sourceId: sourceId,
-			targetId: targetId,
-			callback: callback,
-			destroyCallback: destroyCallback,
-			destroyOnRezone: destroyOnRezone,
-			time: time
+			sourceId: sourceId
+			, targetId: targetId
+			, callback: callback
+			, destroyCallback: destroyCallback
+			, destroyOnRezone: destroyOnRezone
+			, time: time
 		};
 
 		this.callbacks.push(obj);
 
 		return obj;
-	},
+	}
 
-	unregisterCallback: function (objId, isTarget) {
+	, unregisterCallback: function (objId, isTarget) {
 		let callbacks = this.callbacks;
 		let cLen = callbacks.length;
 		for (let i = 0; i < cLen; i++) {
@@ -446,31 +481,32 @@ module.exports = {
 					c.sourceId === objId
 				)
 			) {
-				if (c.destroyCallback)
+				if (c.destroyCallback) {
 					c.destroyCallback();
+				}
 
 				callbacks.splice(i, 1);
 				i--;
 				cLen--;
 			}
 		}
-	},
+	}
 
-	sendAnnouncement: function (msg) {
+	, sendAnnouncement: function (msg) {
 		process.send({
-			method: 'events',
-			data: {
+			method: "events"
+			, data: {
 				onGetAnnouncement: [{
 					obj: {
 						msg: msg
-					},
-					to: [this.obj.serverId]
+					}
+					, to: [this.obj.serverId]
 				}]
 			}
 		});
-	},
+	}
 
-	fireEvent: function (event, args) {
+	, fireEvent: function (event, args) {
 		let spells = this.spells;
 		let sLen = spells.length;
 		for (let i = 0; i < sLen; i++) {
@@ -479,77 +515,86 @@ module.exports = {
 			let spellEvents = s.events;
 			if (spellEvents) {
 				let callback = spellEvents[event];
-				if (!callback)
+				if (!callback) {
 					continue;
+				}
 
 				callback.apply(s, args);
 			}
 
-			if (s.castEvent === event)
+			if (s.castEvent === event) {
 				s.cast();
+			}
 		}
-	},
+	}
 
-	isCasting: function () {
-		return this.spells.some(s => s.currentAction);
-	},
+	, isCasting: function () {
+		return this.spells.some((s) => s.currentAction);
+	}
 
-	stopCasting: function (ignore, skipAuto) {
-		this.spells.forEach(s => {
-			if (s === ignore)
+	, stopCasting: function (ignore, skipAuto) {
+		this.spells.forEach((s) => {
+			if (s === ignore) {
 				return;
+			}
 
-			if (!skipAuto)
+			if (!skipAuto) {
 				s.setAuto(null);
+			}
 
-			if (!s.currentAction)
+			if (!s.currentAction) {
 				return;
+			}
 
 			s.castTime = 0;
 			s.currentAction = null;
 
-			if (!ignore || !ignore.castTimeMax)
-				this.obj.syncer.set(false, null, 'casting', 0);
+			if (!ignore || !ignore.castTimeMax) {
+				this.obj.syncer.set(false, null, "casting", 0);
+			}
 		});
-	},
+	}
 
-	destroy: function () {
-		this.callbacks.forEach(c => {
-			if (c.cbOnSelfDestroyed)
+	, destroy: function () {
+		this.callbacks.forEach((c) => {
+			if (c.cbOnSelfDestroyed) {
 				c.cbOnSelfDestroyed();
+			}
 		});
 
-		this.spells.forEach(s => {
-			if (s.destroy)
+		this.spells.forEach((s) => {
+			if (s.destroy) {
 				s.destroy();
+			}
 		});
-	},
+	}
 
-	events: {
+	, events: {
 		beforeMove: function () {
 			this.stopCasting(null, true);
-		},
+		}
 
-		onBeforeUseItem: function () {
+		, onBeforeUseItem: function () {
 			this.stopCasting(null, true);
-		},
+		}
 
-		clearQueue: function () {
+		, clearQueue: function () {
 			this.stopCasting(null, true);
-		},
+		}
 
-		beforeDeath: function () {
+		, beforeDeath: function () {
 			this.stopCasting(null, true);
 
 			this.spells.forEach(function (s) {
-				if (!s.castOnDeath)
+				if (!s.castOnDeath) {
 					return;
+				}
 
 				s.cast();
 			});
-		},
+		}
 
-		beforeRezone: function () {
+		, beforeRezone: function () {
 			this.spells.forEach(function (s) {
 				if (s.active) {
 					s.active = false;
@@ -558,11 +603,11 @@ module.exports = {
 
 					if (reserve && reserve.percentage) {
 						let reserveEvent = {
-							spell: s.name,
-							reservePercent: reserve.percentage
+							spell: s.name
+							, reservePercent: reserve.percentage
 						};
-						this.obj.fireEvent('onBeforeReserveMana', reserveEvent);
-						this.obj.stats.addStat('manaReservePercent', -reserveEvent.reservePercent);
+						this.obj.fireEvent("onBeforeReserveMana", reserveEvent);
+						this.obj.stats.addStat("manaReservePercent", -reserveEvent.reservePercent);
 					}
 
 					//Make sure to remove the buff from party members
@@ -584,8 +629,9 @@ module.exports = {
 				}
 
 				if (c.destroyOnRezone) {
-					if (c.destroyCallback)
+					if (c.destroyCallback) {
 						c.destroyCallback();
+					}
 					callbacks.splice(i, 1);
 					i--;
 					cLen--;

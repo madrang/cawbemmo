@@ -1,46 +1,46 @@
 module.exports = {
-	type: 'iceSpear',
+	type: "iceSpear"
 
-	cdMax: 7,
-	manaCost: 0,
+	, cdMax: 7
+	, manaCost: 0
 
-	range: 9,
+	, range: 9
 
-	speed: 70,
-	damage: 1,
+	, speed: 70
+	, damage: 1
 
-	freezeDuration: 10,
+	, freezeDuration: 10
 
-	needLos: true,
+	, needLos: true
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 		let target = action.target;
 
 		let ttl = Math.sqrt(Math.pow(target.x - obj.x, 2) + Math.pow(target.y - obj.y, 2)) * this.speed;
 
 		let projectileConfig = {
-			caster: this.obj.id,
-			x: obj.x,
-			y: obj.y,
-			components: [{
-				idSource: this.obj.id,
-				idTarget: target.id,
-				type: 'projectile',
-				row: 3,
-				col: 0,
-				ttl: ttl,
-				particles: this.particles
+			caster: this.obj.id
+			, x: obj.x
+			, y: obj.y
+			, components: [{
+				idSource: this.obj.id
+				, idTarget: target.id
+				, type: "projectile"
+				, row: 3
+				, col: 0
+				, ttl: ttl
+				, particles: this.particles
 			}, {
-				type: 'attackAnimation',
-				layer: 'projectiles',
-				loop: -1,
-				row: 3,
-				col: 4
+				type: "attackAnimation"
+				, layer: "projectiles"
+				, loop: -1
+				, row: 3
+				, col: 4
 			}]
 		};
 
-		this.obj.fireEvent('beforeSpawnProjectile', this, projectileConfig);
+		this.obj.fireEvent("beforeSpawnProjectile", this, projectileConfig);
 
 		this.sendAnimation(projectileConfig);
 
@@ -49,24 +49,25 @@ module.exports = {
 		this.queueCallback(this.explode.bind(this, target), ttl);
 
 		return true;
-	},
-	explode: function (target) {
-		if (this.obj.destroyed)
+	}
+	, explode: function (target) {
+		if (this.obj.destroyed) {
 			return;
+		}
 
 		target.effects.addEffect({
-			type: 'slowed',
-			ttl: this.freezeDuration
+			type: "slowed"
+			, ttl: this.freezeDuration
 		});
 
 		let damage = this.getDamage(target);
 		target.stats.takeDamage({
-			damage,
-			threatMult: this.threatMult,
-			source: this.obj,
-			target,
-			spellName: 'iceSpear',
-			noEvents: this.noEvents
+			damage
+			, threatMult: this.threatMult
+			, source: this.obj
+			, target
+			, spellName: "iceSpear"
+			, noEvents: this.noEvents
 		});
 	}
 };

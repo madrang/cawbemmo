@@ -1,31 +1,33 @@
 let cpnSmokePatch = {
-	type: 'smokePatch',
+	type: "smokePatch"
 
-	contents: [],
-	ttl: 0,
+	, contents: []
+	, ttl: 0
 
-	applyDamage: function (target, damage) {
+	, applyDamage: function (target, damage) {
 		target.stats.takeDamage({
-			damage,
-			threatMult: 1,
-			source: this.caster,
-			target: target,
-			spellName: 'smokeBomb',
-			noEvents: this.noEvents
+			damage
+			, threatMult: 1
+			, source: this.caster
+			, target: target
+			, spellName: "smokeBomb"
+			, noEvents: this.noEvents
 		});
-	},
+	}
 
-	collisionEnter: function (o) {
-		if (!o.aggro)
+	, collisionEnter: function (o) {
+		if (!o.aggro) {
 			return;
+		}
 
-		if (!this.caster.aggro.canAttack(o))
+		if (!this.caster.aggro.canAttack(o)) {
 			return;
+		}
 
 		this.contents.push(o);
-	},
+	}
 
-	collisionExit: function (o) {
+	, collisionExit: function (o) {
 		let contents = this.contents;
 		let cLen = contents.length;
 		for (let i = 0; i < cLen; i++) {
@@ -34,12 +36,13 @@ let cpnSmokePatch = {
 				return;
 			}
 		}
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		this.ttl--;
-		if (this.ttl <= 0)
+		if (this.ttl <= 0) {
 			this.obj.destroyed = true;
+		}
 
 		let contents = this.contents;
 		for (let i = 0; i < contents.length; i++) {
@@ -56,68 +59,70 @@ let cpnSmokePatch = {
 const particles = {
 	scale: {
 		start: {
-			min: 16,
-			max: 30
-		},
-		end: {
-			min: 8,
-			max: 14
+			min: 16
+			, max: 30
 		}
-	},
-	opacity: {
-		start: 0.02,
-		end: 0
-	},
-	lifetime: {
-		min: 1,
-		max: 3
-	},
-	speed: {
-		start: 12,
-		end: 2
-	},
-	color: {
-		start: ['fcfcfc', '80f643'],
-		end: ['c0c3cf', '2b4b3e']
-	},
-	chance: 0.03,
-	randomColor: true,
-	randomScale: true,
-	blendMode: 'screen'
+		, end: {
+			min: 8
+			, max: 14
+		}
+	}
+	, opacity: {
+		start: 0.02
+		, end: 0
+	}
+	, lifetime: {
+		min: 1
+		, max: 3
+	}
+	, speed: {
+		start: 12
+		, end: 2
+	}
+	, color: {
+		start: ["fcfcfc", "80f643"]
+		, end: ["c0c3cf", "2b4b3e"]
+	}
+	, chance: 0.03
+	, randomColor: true
+	, randomScale: true
+	, blendMode: "screen"
 };
 
 module.exports = {
-	type: 'smokeBomb',
+	type: "smokeBomb"
 
-	cdMax: 20,
-	manaCost: 0,
+	, cdMax: 20
+	, manaCost: 0
 
-	damage: 1,
-	duration: 10,
-	isAttack: true,
+	, damage: 1
+	, duration: 10
+	, isAttack: true
 
-	radius: 1,
-	targetGround: true,
-	targetPlayerPos: true,
+	, radius: 1
+	, targetGround: true
+	, targetPlayerPos: true
 
-	particles: particles,
+	, particles: particles
 
-	update: function () {
+	, update: function () {
 		let selfCast = this.selfCast;
 
-		if (!selfCast)
+		if (!selfCast) {
 			return;
+		}
 
-		if ((selfCast !== true) && (Math.random() >= selfCast))
+		if ((selfCast !== true) && (Math.random() >= selfCast)) {
 			return;
+		}
 
 		if (this.canCast()) {
 			this.cd = this.cdMax;
 			this.cast();
 		}
-	},
+	}
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 
 		let radius = this.radius;
@@ -125,10 +130,10 @@ module.exports = {
 		let repeat = this.repeat || 1;
 
 		const particleEvent = {
-			source: this,
-			particleConfig: extend({}, this.particles)
+			source: this
+			, particleConfig: extend({}, this.particles)
 		};
-		obj.fireEvent('beforeSpawnParticles', particleEvent);
+		obj.fireEvent("beforeSpawnParticles", particleEvent);
 
 		for (let r = 0; r < repeat; r++) {
 			let x = obj.x;
@@ -137,8 +142,8 @@ module.exports = {
 			if (this.randomPos) {
 				let range = this.range;
 				while ((x === obj.x) && (y === obj.y)) {
-					x = obj.x + ~~(Math.random() * range * 2) - range;
-					y = obj.y + ~~(Math.random() * range * 2) - range;
+					x = obj.x + Math.floor(Math.random() * range * 2) - range;
+					y = obj.y + Math.floor(Math.random() * range * 2) - range;
 				}
 			}
 
@@ -152,36 +157,38 @@ module.exports = {
 				for (let j = y - radius; j <= y + radius; j++) {
 					let distance = dx + Math.abs(j - y);
 
-					if (distance > radius + 1)
+					if (distance > radius + 1) {
 						continue;
+					}
 
-					if (!physics.hasLos(x, y, i, j))
+					if (!physics.hasLos(x, y, i, j)) {
 						continue;
+					}
 
 					let patch = objects.buildObjects([{
-						x: i,
-						y: j,
-						properties: {
-							cpnSmokePatch: cpnSmokePatch,
-							cpnParticles: {
+						x: i
+						, y: j
+						, properties: {
+							cpnSmokePatch: cpnSmokePatch
+							, cpnParticles: {
 								simplify: function () {
 									return {
-										type: 'particles',
-										blueprint: this.blueprint
+										type: "particles"
+										, blueprint: this.blueprint
 									};
-								},
-								blueprint: particleEvent.particleConfig
+								}
+								, blueprint: particleEvent.particleConfig
 							}
-						},
-						extraProperties: {
+						}
+						, extraProperties: {
 							smokePatch: {
-								caster: obj,
-								statType: this.statType,
-								getDamage: this.getDamage.bind(this),
-								ttl: this.duration,
-								noEvents: this.noEvents
+								caster: obj
+								, statType: this.statType
+								, getDamage: this.getDamage.bind(this)
+								, ttl: this.duration
+								, noEvents: this.noEvents
 							}
-						} 
+						}
 					}]);
 
 					patches.push(patch);
@@ -190,8 +197,8 @@ module.exports = {
 
 			if (!this.castEvent) {
 				this.sendBump({
-					x: x,
-					y: y - 1
+					x: x
+					, y: y - 1
 				});
 			}
 		}

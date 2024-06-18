@@ -23,13 +23,15 @@ const willDodge = ({ isAttack, tgtValues: { dodgeAttackChance, dodgeSpellChance 
 //Method
 const avoid = (config, result) => {
 	//Heals, among other things, should not be avoided
-	if (config.noMitigate)
+	if (config.noMitigate) {
 		return;
+	}
 
 	result.blocked = willBlock(config);
 
-	if (!result.blocked)
+	if (!result.blocked) {
 		result.dodged = willDodge(config);
+	}
 };
 
 //Exports

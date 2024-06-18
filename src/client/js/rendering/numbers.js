@@ -1,8 +1,8 @@
 define([
-	'js/system/events',
-	'js/objects/objects',
-	'js/rendering/renderer',
-	'js/config'
+	"js/system/events"
+	, "js/objects/objects"
+	, "js/rendering/renderer"
+	, "js/config"
 ], function (
 	events,
 	objects,
@@ -15,15 +15,15 @@ define([
 	const TTL = 35;
 	const FONT_SIZE = 18;
 	const FONT_SIZE_CRIT = 22;
-	const LAYER_NAME = 'effects';
+	const LAYER_NAME = "effects";
 
 	const PADDING = scaleMult;
 
 	const POSITION = {
-		BOTTOM_CENTER: 0,
-		LEFT_BOTTOM: 1,
-		RIGHT_BOTTOM: 2,
-		TOP_CENTER: 3
+		BOTTOM_CENTER: 0
+		, LEFT_BOTTOM: 1
+		, RIGHT_BOTTOM: 2
+		, TOP_CENTER: 3
 	};
 
 	//Internals
@@ -32,11 +32,11 @@ define([
 	//Create an object of the form: { elementName: elementIntegerColor, ... } from corresponding variable values.
 	// These variables are defined in main.less and take the form: var(--color-element-elementName)
 	const elementColors = Object.fromEntries(
-		['default', 'arcane', 'frost', 'fire', 'holy', 'poison'].map(e => {
+		["default", "arcane", "frost", "fire", "holy", "poison"].map((e) => {
 			const variableName = `--color-element-${e}`;
 			const variableValue = getComputedStyle(document.documentElement).getPropertyValue(variableName);
 
-			const integerColor = `0x${variableValue.replace('#', '')}`;
+			const integerColor = `0x${variableValue.replace("#", "")}`;
 
 			return [e, integerColor];
 		})
@@ -44,35 +44,35 @@ define([
 
 	//Helpers
 	const getColor = ({ color, element }) => {
-		if (color)
+		if (color) {
 			return color;
+		}
 
 		return elementColors[element];
 	};
 
 	const getText = ({ amount, text, heal }) => {
-		if (amount === undefined)
+		if (amount === undefined) {
 			return text;
-
-		const div = ((~~(amount * 10) / 10) > 0) ? 10 : 100;
-		let result = ~~(amount * div) / div;
-
-		if (heal)
+		}
+		const div = ((Math.floor(amount * 10) / 10) > 0) ? 10 : 100;
+		let result = Math.floor(amount * div) / div;
+		if (heal) {
 			result = `+${result}`;
-
+		}
 		return result;
 	};
 
 	const getPosition = ({ position, event: isEvent, heal }) => {
-		if (position)
+		if (position) {
 			return position;
-
+		}
 		//Events render under the target, centered
-		if (isEvent)
+		if (isEvent) {
 			return POSITION.BOTTOM_CENTER;
-		else if (heal)
+		} else if (heal) {
 			return POSITION.LEFT_BOTTOM;
-
+		}
 		return POSITION.RIGHT_BOTTOM;
 	};
 
@@ -93,48 +93,46 @@ define([
 			x = -sprite.width - PADDING;
 			y = scale - sprite.height + (scaleMult * 2);
 		}
-
 		return { x, y };
 	};
 
 	const getMovementDelta = ({ movementDelta }, position) => {
-		if (movementDelta)
+		if (movementDelta) {
 			return movementDelta;
-
-		if (position === POSITION.BOTTOM_CENTER)
+		}
+		if (position === POSITION.BOTTOM_CENTER) {
 			return [0, 1];
-
+		}
 		return [0, -1];
 	};
 
 	const getFontSize = ({ fontSize, crit }) => {
-		if (fontSize)
+		if (fontSize) {
 			return fontSize;
-		else if (crit)
+		} else if (crit) {
 			return FONT_SIZE_CRIT;
-
+		}
 		return FONT_SIZE;
 	};
 
 	//Events
-	const onGetDamage = msg => {
+	const onGetDamage = (msg) => {
 		const { ttl = TTL } = msg;
 
-		if (config.damageNumbers === 'off')
+		if (config.damageNumbers === "off") {
 			return;
-
-		const target = objects.objects.find(o => o.id === msg.id);
-		if (!target || !target.isVisible)
+		}
+		const target = objects.objects.find((o) => o.id === msg.id);
+		if (!target || !target.isVisible) {
 			return;
-
+		}
 		const sprite = renderer.buildText({
-			fontSize: getFontSize(msg),
-			layerName: LAYER_NAME,
-			text: getText(msg),
-			color: getColor(msg),
-			visible: false
+			fontSize: getFontSize(msg)
+			, layerName: LAYER_NAME
+			, text: getText(msg)
+			, color: getColor(msg)
+			, visible: false
 		});
-
 		const position = getPosition(msg);
 		const movementDelta = getMovementDelta(msg, position);
 		const { x, y } = getXY(msg, position, sprite);
@@ -144,15 +142,14 @@ define([
 		sprite.visible = true;
 
 		const numberObj = {
-			obj: target,
-			x,
-			y,
-			ttl,
-			ttlMax: ttl,
-			movementDelta,
-			sprite
+			obj: target
+			, x
+			, y
+			, ttl
+			, ttlMax: ttl
+			, movementDelta
+			, sprite
 		};
-
 		list.push(numberObj);
 	};
 
@@ -160,29 +157,29 @@ define([
 	// around the player
 	/* eslint-disable-next-line no-unused-vars */
 	const test = () => {
-		objects.objects.forEach(o => {
-			if (!o.player)
+		objects.objects.forEach((o) => {
+			if (!o.player) {
 				return;
-
-			const amount = Math.random() < 0.5 ? ~~(Math.random() * 100) : undefined;
+			}
+			const amount = Math.random() < 0.5 ? Math.floor(Math.random() * 100) : undefined;
 			const isEvent = amount ? false : Math.random() < 0.5;
-			const text = amount ? undefined : 'text';
+			const text = amount ? undefined : "text";
 			const heal = Math.random() < 0.5;
 			let position;
-			if (!amount)
+			if (!amount) {
 				position = Math.random() < 0.5 ? POSITION.TOP_CENTER : POSITION.BOTTOM_CENTER;
-			const element = ['default', 'arcane', 'frost', 'fire', 'holy', 'poison'][~~(Math.random() * 6)];
+			}
+			const element = ["default", "arcane", "frost", "fire", "holy", "poison"][Math.floor(Math.random() * 6)];
 			const crit = amount > 50;
-
 			onGetDamage({
-				id: o.id,
-				event: isEvent,
-				text,
-				amount,
-				element,
-				heal,
-				position,
-				crit
+				id: o.id
+				, event: isEvent
+				, text
+				, amount
+				, element
+				, heal
+				, position
+				, crit
 			});
 		});
 	};
@@ -198,10 +195,9 @@ define([
 				lLen--;
 
 				renderer.destroyObject({
-					layerName: 'effects',
-					sprite: l.sprite
+					layerName: "effects"
+					, sprite: l.sprite
 				});
-
 				continue;
 			}
 
@@ -216,14 +212,14 @@ define([
 	};
 
 	const init = () => {
-		events.on('onGetDamage', onGetDamage);
+		events.on("onGetDamage", onGetDamage);
 	};
 
 	//Exports
 	return {
-		init,
-		update,
-		onGetDamage,
-		POSITION
+		init
+		, update
+		, onGetDamage
+		, POSITION
 	};
 });

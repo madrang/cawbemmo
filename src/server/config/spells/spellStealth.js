@@ -1,16 +1,16 @@
 module.exports = {
-	type: 'stealth',
+	type: "stealth"
 
-	cdMax: 0,
-	manaCost: 0,
+	, cdMax: 0
+	, manaCost: 0
 
-	duration: 10,
+	, duration: 10
 
-	targetGround: true,
+	, targetGround: true
 
-	effect: null,
+	, effect: null
 
-	cast: function (action) {
+	, cast: function (action) {
 		//Clear Aggro
 		this.obj.aggro.die();
 
@@ -18,15 +18,16 @@ module.exports = {
 		let endCallback = this.queueCallback(this.endEffect.bind(this), ttl - 50);
 
 		this.effect = this.obj.effects.addEffect({
-			type: 'stealth',
-			endCallback: endCallback
+			type: "stealth"
+			, endCallback: endCallback
 		});
 
 		return true;
-	},
-	endEffect: function () {
-		if (this.obj.destroyed)
+	}
+	, endEffect: function () {
+		if (this.obj.destroyed) {
 			return;
+		}
 
 		let obj = this.obj;
 

@@ -1,22 +1,24 @@
 module.exports = {
-	type: 'stunned',
+	type: "stunned"
 
-	init: function () {
-		if (this.obj.spellbook)
+	, init: function () {
+		if (this.obj.spellbook) {
 			this.obj.spellbook.stopCasting();
-	},
+		}
+	}
 
-	events: {
+	, events: {
 		beforeMove: function (targetPos) {
 			targetPos.success = false;
-		},
+		}
 
-		beforeDealDamage: function ({ damage }) {
-			if (damage)
+		, beforeDealDamage: function ({ damage }) {
+			if (damage) {
 				damage.failed = true;
-		},
+			}
+		}
 
-		beforeCastSpell: function (successObj) {		
+		, beforeCastSpell: function (successObj) {
 			successObj.success = false;
 		}
 	}

@@ -1,16 +1,17 @@
 module.exports = {
-	type: 'slowed',
-	chance: 0.7,
+	type: "slowed"
+	, chance: 0.7
 
-	events: {
+	, events: {
 		beforeMove: function (targetPos) {
-			if (Math.random() >= this.chance)
+			if (Math.random() >= this.chance) {
 				return;
+			}
 
 			targetPos.success = false;
-		},
+		}
 
-		beforeGetSpellCastTime: function (castEvent) {
+		, beforeGetSpellCastTime: function (castEvent) {
 			castEvent.castTimeMax *= 3;
 		}
 	}

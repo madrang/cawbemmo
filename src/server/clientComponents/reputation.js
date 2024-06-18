@@ -1,38 +1,39 @@
 define([
-	'js/system/events'
+	"js/system/events"
 ], function (
 	events
 ) {
 	return {
-		type: 'reputation',
+		type: "reputation"
 
-		list: [],
-		factions: [],
+		, list: []
+		, factions: []
 
-		init: function () {
-			events.emit('onGetReputations', this.list);
-		},
+		, init: function () {
+			events.emit("onGetReputations", this.list);
+		}
 
-		extend: function (blueprint) {
+		, extend: function (blueprint) {
 			if (blueprint.modifyRep) {
 				blueprint.modifyRep.forEach(function (m) {
-					let exists = this.list.find(l => (l.id === m.id));
-					if (!exists)
+					let exists = this.list.find((l) => (l.id === m.id));
+					if (!exists) {
 						this.list.push(m);
-					else {
-						for (let p in m) 
+					} else {
+						for (let p in m) {
 							exists[p] = m[p];
+						}
 					}
 				}, this);
 
 				delete blueprint.modifyRep;
 
-				events.emit('onGetReputations', this.list);
+				events.emit("onGetReputations", this.list);
 			}
-		},
+		}
 
-		getTier: function (factionId) {
-			return this.list.find(f => f.id === factionId)?.tier ?? 3;
+		, getTier: function (factionId) {
+			return this.list.find((f) => f.id === factionId)?.tier ?? 3;
 		}
 	};
 });

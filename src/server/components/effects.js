@@ -1,108 +1,114 @@
-const effectTemplate = require('../config/effects/effectTemplate');
+const effectTemplate = require("../config/effects/effectTemplate");
 
 module.exports = {
-	type: 'effects',
+	type: "effects"
 
-	effects: [],
-	nextId: 0,
+	, effects: []
+	, nextId: 0
 
-	ccResistances: {
-		stunned: 0,
-		slowed: 0
-	},
+	, ccResistances: {
+		stunned: 0
+		, slowed: 0
+	}
 
-	init: function (blueprint) {
+	, init: function (blueprint) {
 		let effects = blueprint.effects || [];
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
 			let e = effects[i];
-			if (!e.type)
+			if (!e.type) {
 				continue;
+			}
 
 			this.addEffect(e);
 		}
 
 		delete blueprint.effects;
-	},
+	}
 
-	transfer: function () {
+	, transfer: function () {
 		let transferEffects = this.effects;
 		this.effects = [];
 
 		this.init({
 			effects: transferEffects
 		});
-	},
+	}
 
-	save: function () {
+	, save: function () {
 		let e = {
-			type: 'effects',
-			effects: this.effects
-				.map(f => f.save ? f.save() : f)
-				.filter(f => Boolean(f))
+			type: "effects"
+			, effects: this.effects
+				.map((f) => f.save ? f.save() : f)
+				.filter((f) => Boolean(f))
 		};
 
 		return e;
-	},
+	}
 
-	simplify: function (self) {
+	, simplify: function (self) {
 		let e = {
-			type: 'effects'
+			type: "effects"
 		};
 
 		let effects = this.effects;
 		if ((effects.length > 0) && (effects[0].obj)) {
 			effects = effects
-				.map(f => f.simplify())
-				.filter(f => Boolean(f));
+				.map((f) => f.simplify())
+				.filter((f) => Boolean(f));
 		}
 		e.effects = effects;
 
 		return e;
-	},
+	}
 
-	destroy: function () {
-		if (this.obj.instance)
+	, destroy: function () {
+		if (this.obj.instance) {
 			this.events.beforeRezone.call(this);
-	},
+		}
+	}
 
-	die: function () {
+	, die: function () {
 		this.events.beforeRezone.call(this, true);
-	},
+	}
 
-	reset: function () {
+	, reset: function () {
 		let effects = this.effects;
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
 			let effect = effects[i];
 
-			if (effect.reset)
+			if (effect.reset) {
 				effect.reset();
+			}
 		}
-	},
+	}
 
-	reapply: function () {
+	, reapply: function () {
 		let effects = this.effects;
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
 			let effect = effects[i];
 
-			if (effect.reapply)
+			if (effect.reapply) {
 				effect.reapply();
+			}
 		}
-	},
+	}
 
-	destroyEffect: function (effect) {
-		this.obj.fireEvent('beforeDestroyEffect', effect);
+	, destroyEffect: function (effect) {
+		this.obj.fireEvent("beforeDestroyEffect", effect);
 
-		if (effect.events && effect.events.beforeDestroy)
+		if (effect.events && effect.events.beforeDestroy) {
 			effect.events.beforeDestroy(effect);
+		}
 
-		if (effect.destroy)
+		if (effect.destroy) {
 			effect.destroy();
-	},
+		}
+	}
 
-	events: {
+	, events: {
 		beforeRezone: function (forceDestroy) {
 			let effects = this.effects;
 			let eLen = effects.length;
@@ -123,36 +129,40 @@ module.exports = {
 				i--;
 			}
 		}
-	},
+	}
 
-	canApplyEffect: function (type) {
-		if (!this.ccResistances.has(type))
+	, canApplyEffect: function (type) {
+		if (!this.ccResistances.has(type)) {
 			return true;
+		}
 
 		let ccResistances = this.ccResistances;
 		if ((100 - ccResistances[type]) >= 50) {
 			ccResistances[type] += 50;
 			return true;
 		} return false;
-	},
+	}
 
-	addEffect: function (options, source) {
+	, addEffect: function (options, source) {
 		//Skip 0-duration effects
-		if ((options.has('ttl')) && (options.ttl === 0))
+		if ((options.has("ttl")) && (options.ttl === 0)) {
 			return;
+		}
 
 		options.caster = options.caster || source;
 
 		//"X of Y in Z" cc resist check
-		if (!options.force && !this.canApplyEffect(options.type))
+		if (!options.force && !this.canApplyEffect(options.type)) {
 			return;
+		}
 
-		let oldEffect = this.effects.find(e => e.type === options.type);
+		let oldEffect = this.effects.find((e) => e.type === options.type);
 
 		//If there is no existing effect or the effect is not stackable, make a new effect
-		if (!oldEffect || !oldEffect.shouldStack)
+		if (!oldEffect || !oldEffect.shouldStack) {
 			return this.buildEffect(options);
-		
+		}
+
 		//If the effect is stackable and the new effect should stack, stack with the old effect
 		let shouldStack = oldEffect.shouldStack(options);
 		if (shouldStack && oldEffect.incrementStack) {
@@ -162,102 +172,110 @@ module.exports = {
 
 		//Otherwise make a new effect
 		return this.buildEffect(options);
-	},
+	}
 
-	getTypeTemplate: function (type) {
+	, getTypeTemplate: function (type) {
 		let typeTemplate = null;
 		if (type) {
 			let capitalizedType = type[0].toUpperCase() + type.substr(1);
 			let result = {
-				type: type,
-				url: 'config/effects/effect' + capitalizedType + '.js'
+				type: type
+				, url: "config/effects/effect" + capitalizedType + ".js"
 			};
-			this.obj.instance.eventEmitter.emit('onBeforeGetEffect', result);
+			this.obj.instance.eventEmitter.emit("onBeforeGetEffect", result);
 
-			typeTemplate = require('../' + result.url);
+			typeTemplate = require("../" + result.url);
 		}
 
 		let builtEffect = extend({}, effectTemplate, typeTemplate);
 		return builtEffect;
-	},
+	}
 
-	buildEffect: function (options) {
+	, buildEffect: function (options) {
 		let builtEffect = this.getTypeTemplate(options.type);
 
-		for (let p in options) 
+		for (let p in options) {
 			builtEffect[p] = options[p];
-		
+		}
+
 		builtEffect.obj = this.obj;
 		builtEffect.id = this.nextId++;
 		builtEffect.silent = options.silent;
 
-		if (builtEffect.init)
+		if (builtEffect.init) {
 			builtEffect.init(options.source);
+		}
 
 		this.effects.push(builtEffect);
 
-		if (!options.silent)
-			this.obj.syncer.setArray(false, 'effects', 'addEffects', builtEffect.simplify());
+		if (!options.silent) {
+			this.obj.syncer.setArray(false, "effects", "addEffects", builtEffect.simplify());
+		}
 
-		this.obj.instance.eventEmitter.emit('onAddEffect', this.obj, builtEffect);
+		this.obj.instance.eventEmitter.emit("onAddEffect", this.obj, builtEffect);
 
 		return builtEffect;
-	},
+	}
 
-	syncExtend: function (id, data) {
-		let effect = this.effects.find(e => e.id === id);
-		if (!effect)
+	, syncExtend: function (id, data) {
+		let effect = this.effects.find((e) => e.id === id);
+		if (!effect) {
 			return;
+		}
 
 		//Never sync silent effects
-		if (effect.silent)
+		if (effect.silent) {
 			return;
+		}
 
-		this.obj.syncer.setArray(false, 'effects', 'extendEffects', {
-			id,
-			data
+		this.obj.syncer.setArray(false, "effects", "extendEffects", {
+			id
+			, data
 		});
-	},
+	}
 
-	syncRemove: function (id) {
-		let effect = this.effects.find(e => e.id === id);
+	, syncRemove: function (id) {
+		let effect = this.effects.find((e) => e.id === id);
 
-		if (!effect)
+		if (!effect) {
 			return;
+		}
 
-		if (effect.silent)
+		if (effect.silent) {
 			return;
+		}
 
-		this.obj.syncer.setArray(false, 'effects', 'removeEffects', id);
-	},
+		this.obj.syncer.setArray(false, "effects", "removeEffects", id);
+	}
 
-	removeEffect: function (id) {
-		const effect = this.effects.find(e => e.id === id);
+	, removeEffect: function (id) {
+		const effect = this.effects.find((e) => e.id === id);
 
 		//It's possible that something else has removed the effect
-		if (!effect)
+		if (!effect) {
 			return;
+		}
 
 		this.destroyEffect(effect);
 
 		this.syncRemove(effect.id);
-		
-		this.effects.spliceWhere(e => e.id === id);
-	},
 
-	removeEffectByType: function (type) {
-		const effects = this.effects.filter(e => e.type === type);
+		this.effects.spliceWhere((e) => e.id === id);
+	}
 
-		effects.forEach(e => this.removeEffect(e.id));
-	},
+	, removeEffectByType: function (type) {
+		const effects = this.effects.filter((e) => e.type === type);
 
-	getEffectByType: function (effectType) {
-		const effect = this.effects.find(e => e.type === effectType);
+		effects.forEach((e) => this.removeEffect(e.id));
+	}
+
+	, getEffectByType: function (effectType) {
+		const effect = this.effects.find((e) => e.type === effectType);
 
 		return effect;
-	},
+	}
 
-	fireEvent: function (event, args) {
+	, fireEvent: function (event, args) {
 		let effects = this.effects;
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
@@ -270,33 +288,38 @@ module.exports = {
 				continue;
 			}
 
-			if (e.ttl === 0)
+			if (e.ttl === 0) {
 				continue;
+			}
 			let events = e.events;
-			if (!events)
+			if (!events) {
 				continue;
+			}
 
 			let callback = events[event];
-			if (!callback)
+			if (!callback) {
 				continue;
+			}
 
 			callback.apply(e, args);
 		}
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let effects = this.effects;
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
 			let e = effects[i];
 
-			if (e.ttl > 0)
+			if (e.ttl > 0) {
 				e.ttl--;
-			else if (e.ttl === 0)
+			} else if (e.ttl === 0) {
 				e.destroyed = true;
+			}
 
-			if (e.update)
+			if (e.update) {
 				e.update();
+			}
 
 			if (e.destroyed) {
 				this.destroyEffect(e);
@@ -310,8 +333,9 @@ module.exports = {
 		}
 
 		for (let p in this.ccResistances) {
-			if (this.ccResistances[p] > 0)
+			if (this.ccResistances[p] > 0) {
 				this.ccResistances[p]--;
+			}
 		}
 	}
 };

@@ -1,28 +1,28 @@
 /* eslint-disable max-lines-per-function */
 
 define([
-	'js/rendering/lightningBuilder',
-	'js/rendering/effects'
+	"js/rendering/lightningBuilder"
+	, "js/rendering/effects"
 ], function (
 	lightningBuilder,
 	effects
 ) {
 	return {
-		type: 'lightningEffect',
+		type: "lightningEffect"
 
-		cd: 0,
-		cdMax: 1,
+		, cd: 0
+		, cdMax: 1
 
-		effect: null,
+		, effect: null
 
-		ttl: 6,
-		lineGrow: false,
-		linePercentage: 0.1,
+		, ttl: 6
+		, lineGrow: false
+		, linePercentage: 0.1
 
-		lineShrink: false,
-		shrinking: false,
+		, lineShrink: false
+		, shrinking: false
 
-		init: function () {
+		, init: function () {
 			effects.register(this);
 
 			if (this.toX === undefined && this.target === undefined) {
@@ -40,24 +40,25 @@ define([
 			toY = this.lineGrow ? fromY : toY + 0.5;
 
 			this.effect = lightningBuilder.build({
-				fromX: fromX,
-				fromY: fromY,
-				toX: toX,
-				toY: toY,
-				divisions: this.divisions,
-				colors: this.colors,
-				maxDeviate: this.maxDeviate,
-				divDistance: this.divDistance,
-				linkSize: this.linkSize
+				fromX: fromX
+				, fromY: fromY
+				, toX: toX
+				, toY: toY
+				, divisions: this.divisions
+				, colors: this.colors
+				, maxDeviate: this.maxDeviate
+				, divDistance: this.divDistance
+				, linkSize: this.linkSize
 			});
-		},
+		}
 
-		renderManual: function () {
+		, renderManual: function () {
 			let linePercentage = this.linePercentage;
 
 			let cdMax = this.cdMax;
-			if (((this.lineGrow) && (linePercentage < 1)) || ((this.shrinking) && (linePercentage > 0)))
+			if (((this.lineGrow) && (linePercentage < 1)) || ((this.shrinking) && (linePercentage > 0))) {
 				cdMax = 1;
+			}
 
 			if (this.cd > 0) {
 				this.cd--;
@@ -90,7 +91,7 @@ define([
 
 			let changeTo = (
 				(
-					(this.lineGrow) && 
+					(this.lineGrow) &&
 					(linePercentage < 1)
 				) ||
 				(
@@ -100,12 +101,13 @@ define([
 			);
 
 			if (changeTo) {
-				if (this.shrinking) 
+				if (this.shrinking) {
 					linePercentage /= 1.5;
-				else {
+				} else {
 					linePercentage *= 1.5;
-					if (linePercentage > 1)
+					if (linePercentage > 1) {
 						linePercentage = 1;
+					}
 				}
 
 				let angle = Math.atan2(toY - fromY, toX - fromX);
@@ -115,27 +117,29 @@ define([
 			}
 
 			this.effect = lightningBuilder.build({
-				fromX: fromX,
-				fromY: fromY,
-				toX: toX,
-				toY: toY,
-				divisions: this.divisions,
-				colors: this.colors,
-				maxDeviate: this.maxDeviate,
-				divDistance: this.divDistance,
-				linkSize: this.linkSize
+				fromX: fromX
+				, fromY: fromY
+				, toX: toX
+				, toY: toY
+				, divisions: this.divisions
+				, colors: this.colors
+				, maxDeviate: this.maxDeviate
+				, divDistance: this.divDistance
+				, linkSize: this.linkSize
 			});
 
-			if ((this.shrinking) && (linePercentage < 0.1))
+			if ((this.shrinking) && (linePercentage < 0.1)) {
 				this.destroyed = true;
+			}
 
 			this.linePercentage = linePercentage;
-		},
+		}
 
-		destroyManual: function () {
+		, destroyManual: function () {
 			if ((!this.lineShrink) || (this.shrinking)) {
-				if (this.effect)
+				if (this.effect) {
 					lightningBuilder.destroy(this.effect);
+				}
 
 				//effects.unregister(this);
 				return;

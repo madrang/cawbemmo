@@ -1,43 +1,43 @@
 define([
-	'js/system/client',
-	'js/misc/physics',
-	'js/system/events'
+	"js/system/client"
+	, "js/misc/physics"
+	, "js/system/events"
 ], function (
 	client,
 	physics,
 	events
 ) {
 	return {
-		type: 'touchMover',
+		type: "touchMover"
 
-		lastNode: null,
-		nodes: [],
+		, lastNode: null
+		, nodes: []
 
-		hoverTile: null,
+		, hoverTile: null
 
-		minSqrDistance: 1650,
+		, minSqrDistance: 1650
 
-		init: function () {
-			['onTouchStart', 'onTouchMove', 'onTouchEnd', 'onTouchCancel'].forEach(e => {
+		, init: function () {
+			["onTouchStart", "onTouchMove", "onTouchEnd", "onTouchCancel"].forEach((e) => {
 				this.hookEvent(e, this[e].bind(this));
 			});
 
-			this.obj.on('onShake', this.onShake.bind(this));
-		},
+			this.obj.on("onShake", this.onShake.bind(this));
+		}
 
-		onTouchStart: function (e) {
+		, onTouchStart: function (e) {
 			this.lastNode = e;
 
 			const tileX = Math.floor(e.worldX / scale);
 			const tileY = Math.floor(e.worldY / scale);
 			this.hoverTile = {
-				x: tileX,
-				y: tileY
+				x: tileX
+				, y: tileY
 			};
-			events.emit('onChangeHoverTile', tileX, tileY);
-		},
+			events.emit("onChangeHoverTile", tileX, tileY);
+		}
 
-		onTouchMove: function (e) {
+		, onTouchMove: function (e) {
 			const lastNode = this.lastNode;
 
 			let sqrDistance = Math.pow(lastNode.x - e.x, 2) + Math.pow(lastNode.y - e.y, 2);
@@ -66,44 +66,46 @@ define([
 				return;
 			}
 			this.obj.pather.add(newX, newY);
-		},
+		}
 
-		onTouchEnd: function (e) {
+		, onTouchEnd: function (e) {
 			this.lastNode = null;
-		},
+		}
 
-		onTouchCancel: function () {
+		, onTouchCancel: function () {
 			this.lastNode = null;
-		},
+		}
 
-		onShake: function () {
-			if (!this.obj.pather.path.length)
+		, onShake: function () {
+			if (!this.obj.pather.path.length) {
 				return;
+			}
 
 			client.request({
-				cpn: 'player',
-				method: 'performAction',
-				data: {
-					cpn: 'player',
-					method: 'clearQueue',
-					data: {}
+				cpn: "player"
+				, method: "performAction"
+				, data: {
+					cpn: "player"
+					, method: "clearQueue"
+					, data: {}
 				}
 			});
 
 			window.navigator.vibrate(150);
-		},
+		}
 
-		bump: function (dx, dy) {
-			if (this.obj.pather.path.length > 0)
+		, bump: function (dx, dy) {
+			if (this.obj.pather.path.length > 0) {
 				return;
+			}
 
-			this.obj.addComponent('bumpAnimation', {
-				deltaX: dx,
-				deltaY: dy
+			this.obj.addComponent("bumpAnimation", {
+				deltaX: dx
+				, deltaY: dy
 			});
-		},
+		}
 
-		destroy: function () {
+		, destroy: function () {
 			this.unhookEvents();
 		}
 	};

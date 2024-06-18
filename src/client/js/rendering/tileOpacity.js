@@ -1,27 +1,28 @@
 define([
-	'js/system/globals'
+	"js/system/globals"
 ], function (
 	globals
 ) {
 	return {
 		getSheetNum: function (tile) {
-			if (tile < 224)
+			if (tile < 224) {
 				return 0;
-			else if (tile < 480)
+			} else if (tile < 480) {
 				return 1;
+			}
 			return 2;
-		},
+		}
 
-		getSheetName: function (tile) {
+		, getSheetName: function (tile) {
 			const { clientConfig: { atlasTextures } } = globals;
 
 			const sheetNum = this.getSheetNum(tile);
 			const sheetName = atlasTextures[sheetNum];
 
 			return sheetName;
-		},
+		}
 
-		getOffsetAndSheet: function (tile) {
+		, getOffsetAndSheet: function (tile) {
 			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
 
 			let offset = 0;
@@ -34,19 +35,20 @@ define([
 				const dimensions = atlasTextureDimensions[sheetName];
 				const spriteCount = dimensions.w * dimensions.h;
 
-				if (offset + spriteCount > tile)
+				if (offset + spriteCount > tile) {
 					break;
+				}
 
 				offset += spriteCount;
 			}
 
 			return {
-				offset,
-				sheetName
+				offset
+				, sheetName
 			};
-		},
+		}
 
-		map: function (tile) {
+		, map: function (tile) {
 			const { clientConfig: { tileOpacities } } = globals;
 
 			const { offset, sheetName } = this.getOffsetAndSheet(tile);
@@ -61,17 +63,18 @@ define([
 			}
 
 			return alpha;
-		},
+		}
 
-		canFlip: function (tile) {
+		, canFlip: function (tile) {
 			const { clientConfig: { tilesNoFlip } } = globals;
 
 			const { offset, sheetName } = this.getOffsetAndSheet(tile);
 			const mappedTile = tile - offset;
 
 			const noFlipTiles = tilesNoFlip[sheetName];
-			if (!noFlipTiles)
+			if (!noFlipTiles) {
 				return true;
+			}
 
 			return !noFlipTiles.includes(mappedTile);
 		}

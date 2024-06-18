@@ -1,57 +1,61 @@
 //Imports
-const objects = require('../objects/objects');
-const events = require('../misc/events');
+const objects = require("../objects/objects");
+const events = require("../misc/events");
 const {
 	getThread, killThread, sendMessageToThread, getThreadFromId, doesThreadExist,
 	returnWhenThreadsIdle, getPlayerCountInThread, killThreadIfEmpty
-} = require('./threadManager');
-const { registerCallback, removeCallback } = require('./atlas/registerCallback');
+} = require("./threadManager");
+const { registerCallback, removeCallback } = require("./atlas/registerCallback");
 
 //Exports
 module.exports = {
-	nextId: 0,
+	nextId: 0
 
-	addObject: async function (obj, keepPos, transfer) {
-		const serverObj = objects.objects.find(o => o.id === obj.id);
-		if (!serverObj)
+	, addObject: async function (obj, keepPos, transfer) {
+		const serverObj = objects.objects.find((o) => o.id === obj.id);
+		if (!serverObj) {
 			return;
+		}
 
 		//While rezoning, this is set to true. So we remove it
 		delete serverObj.rezoning;
 
-		events.emit('onBeforePlayerEnterWorld', obj);
+		events.emit("onBeforePlayerEnterWorld", obj);
 
 		let { zoneName, zoneId } = obj;
 
-		const partyIds = obj.components.find(c => c.type === 'social')?.party;
+		const partyIds = obj.components.find((c) => c.type === "social")?.party;
 		if (partyIds) {
-			const partyLeader = cons.players.find(p => {
-				if (!partyIds.includes(p.id))
+			const partyLeader = cons.players.find((p) => {
+				if (!partyIds.includes(p.id)) {
 					return false;
+				}
 
-				const cpnSocial = p.components.find(c => c.type === 'social');
+				const cpnSocial = p.components.find((c) => c.type === "social");
 
-				if (!cpnSocial)
+				if (!cpnSocial) {
 					return false;
+				}
 
 				return cpnSocial.isPartyLeader;
 			});
 
-			if (partyLeader?.zoneName === zoneName)
+			if (partyLeader?.zoneName === zoneName) {
 				zoneId = partyLeader.zoneId;
+			}
 		}
 
 		const eGetThread = {
-			zoneName,
-			zoneId
+			zoneName
+			, zoneId
 		};
 
 		if (!doesThreadExist(eGetThread)) {
-			serverObj.socket.emit('event', {
-				event: 'onGetAnnouncement',
-				data: {
-					msg: 'Generating a new map, please wait as this may take a few moments..',
-					ttl: 500
+			serverObj.socket.emit("event", {
+				event: "onGetAnnouncement"
+				, data: {
+					msg: "Generating a new map, please wait as this may take a few moments.."
+					, ttl: 500
 				}
 			});
 		}
@@ -64,7 +68,7 @@ module.exports = {
 
 			return;
 		}
-		
+
 		if (resetObjPosition) {
 			delete obj.x;
 			delete obj.y;
@@ -76,50 +80,52 @@ module.exports = {
 		serverObj.zoneId = thread.id;
 		serverObj.zoneName = thread.name;
 
-		events.emit('playerObjChanged', {
+		events.emit("playerObjChanged", {
 			obj
 		});
 
 		const simpleObj = obj.getSimple ? obj.getSimple(true, true) : obj;
 
 		sendMessageToThread({
-			threadId: obj.zoneId,
-			msg: {
-				method: 'addObject',
-				args: {
-					keepPos: keepPos,
-					obj: simpleObj,
-					transfer: transfer
+			threadId: obj.zoneId
+			, msg: {
+				method: "addObject"
+				, args: {
+					keepPos: keepPos
+					, obj: simpleObj
+					, transfer: transfer
 				}
 			}
 		});
-	},
+	}
 
-	removeObjectFromInstancedZone: async function (thread, objId, callback) {
-		await new Promise(res => {
+	, removeObjectFromInstancedZone: async function (thread, objId, callback) {
+		await new Promise((res) => {
 			const cb = this.registerCallback(res);
 
 			thread.worker.send({
-				method: 'forceSavePlayer',
-				args: {
-					playerId: objId,
-					callbackId: cb
+				method: "forceSavePlayer"
+				, args: {
+					playerId: objId
+					, callbackId: cb
 				}
 			});
 		});
 
 		killThread(thread);
 
-		if (callback)
+		if (callback) {
 			callback();
-	},
+		}
+	}
 
-	removeObject: async function (obj, skipLocal, callback) {
+	, removeObject: async function (obj, skipLocal, callback) {
 		//We need to store the player id because the calling thread might delete it (connections.unzone)
 		const playerId = obj.id;
 
-		if (!skipLocal)
+		if (!skipLocal) {
 			objects.removeObject(obj);
+		}
 
 		const thread = getThreadFromId(obj.zoneId);
 		if (!thread) {
@@ -135,87 +141,90 @@ module.exports = {
 		}
 
 		let callbackId = null;
-		if (callback)
+		if (callback) {
 			callbackId = this.registerCallback(callback);
+		}
 
 		sendMessageToThread({
-			threadId: obj.zoneId,
-			msg: {
-				method: 'removeObject',
-				args: {
-					obj: obj.getSimple(true),
-					callbackId: callbackId
+			threadId: obj.zoneId
+			, msg: {
+				method: "removeObject"
+				, args: {
+					obj: obj.getSimple(true)
+					, callbackId: callbackId
 				}
 			}
 		});
-	},
-	updateObject: function (obj, msgObj) {
+	}
+	, updateObject: function (obj, msgObj) {
 		sendMessageToThread({
-			threadId: obj.zoneId,
-			msg: {
-				method: 'updateObject',
-				args: {
-					id: obj.id,
-					obj: msgObj
+			threadId: obj.zoneId
+			, msg: {
+				method: "updateObject"
+				, args: {
+					id: obj.id
+					, obj: msgObj
 				}
 			}
 		});
-	},
-	queueAction: function (obj, action) {
+	}
+	, queueAction: function (obj, action) {
 		sendMessageToThread({
-			threadId: obj.zoneId,
-			msg: {
-				method: 'queueAction',
-				args: {
-					id: obj.id,
-					action: action
+			threadId: obj.zoneId
+			, msg: {
+				method: "queueAction"
+				, args: {
+					id: obj.id
+					, action: action
 				}
 			}
 		});
-	},
-	performAction: function (obj, action) {
+	}
+	, performAction: function (obj, action) {
 		sendMessageToThread({
-			threadId: obj.zoneId,
-			msg: {
-				method: 'performAction',
-				args: {
-					id: obj.id,
-					action: action
+			threadId: obj.zoneId
+			, msg: {
+				method: "performAction"
+				, args: {
+					id: obj.id
+					, action: action
 				}
 			}
 		});
-	},
+	}
 
-	registerCallback: function (callback) {
+	, registerCallback: function (callback) {
 		return registerCallback(callback);
-	},
+	}
 
-	resolveCallback: function (msg) {
+	, resolveCallback: function (msg) {
 		const callback = removeCallback(msg.msg.id);
-		if (!callback)
+		if (!callback) {
 			return;
+		}
 
 		callback.callback(msg.msg.result);
-	},
+	}
 
-	returnWhenZonesIdle: async function () {
+	, returnWhenZonesIdle: async function () {
 		await returnWhenThreadsIdle();
-	},
+	}
 
-	forceSavePlayer: async function (playerId, zoneId) {
+	, forceSavePlayer: async function (playerId, zoneId) {
 		const thread = getThreadFromId(zoneId);
 
-		if (!thread)
+		if (!thread) {
 			return;
+		}
 
-		return new Promise(res => {
+		return new Promise((res) => {
 			const callbackId = this.registerCallback(res);
 
 			thread.worker.send({
-				method: 'forceSavePlayer',
-				args: {
-					playerId,
-					callbackId
+				method: "forceSavePlayer"
+				, args: {
+					playerId
+					, callbackId
 				}
 			});
 		});

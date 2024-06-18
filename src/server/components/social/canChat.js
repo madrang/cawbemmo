@@ -1,4 +1,5 @@
-module.exports = (obj, time) => { // canChat
+// social/canChat
+module.exports = (obj, time) => {
 	const accountLevel = obj.auth.getAccountLevel();
 	if (accountLevel >= 5) {
 		return true;

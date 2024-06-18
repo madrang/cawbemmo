@@ -1,66 +1,67 @@
 const particlePatch = {
-	type: 'particlePatch',
+	type: "particlePatch"
 
-	ttl: 0,
+	, ttl: 0
 
-	update: function () {
+	, update: function () {
 		this.ttl--;
-		if (this.ttl <= 0)
+		if (this.ttl <= 0) {
 			this.obj.destroyed = true;
+		}
 	}
 };
 
 module.exports = {
-	type: 'ambush',
+	type: "ambush"
 
-	cdMax: 40,
-	manaCost: 10,
-	range: 9,
+	, cdMax: 40
+	, manaCost: 10
+	, range: 9
 
-	damage: 1,
-	speed: 70,
-	isAttack: true,
+	, damage: 1
+	, speed: 70
+	, isAttack: true
 
-	stunDuration: 20,
-	needLos: true,
+	, stunDuration: 20
+	, needLos: true
 
-	tickParticles: {
-		ttl: 5,
-		blueprint: { color: {
-			start: ['a24eff', '7a3ad3'],
-			end: ['533399', '393268']
-		},
-		scale: {
+	, tickParticles: {
+		ttl: 5
+		, blueprint: { color: {
+			start: ["a24eff", "7a3ad3"]
+			, end: ["533399", "393268"]
+		}
+		, scale: {
 			start: {
-				min: 2,
-				max: 12
-			},
-			end: {
-				min: 0,
-				max: 6
+				min: 2
+				, max: 12
 			}
-		},
-		lifetime: {
-			min: 1,
-			max: 2
-		},
-		alpha: {
-			start: 0.8,
-			end: 0
-		},
-		spawnType: 'rect',
-		spawnRect: {
-			x: -12,
-			y: -12,
-			w: 24,
-			h: 24
-		},
-		randomScale: true,
-		randomColor: true,
-		frequency: 0.25 }
-	},
+			, end: {
+				min: 0
+				, max: 6
+			}
+		}
+		, lifetime: {
+			min: 1
+			, max: 2
+		}
+		, alpha: {
+			start: 0.8
+			, end: 0
+		}
+		, spawnType: "rect"
+		, spawnRect: {
+			x: -12
+			, y: -12
+			, w: 24
+			, h: 24
+		}
+		, randomScale: true
+		, randomColor: true
+		, frequency: 0.25 }
+	}
 
-	cast: function (action) {
+	, cast: function (action) {
 		let obj = this.obj;
 		let target = action.target;
 
@@ -74,16 +75,18 @@ module.exports = {
 		// furthest side of the target instead of the closest. Hence, we multiply
 		// the delta by -1
 		let offsetX = 0;
-		if (dx !== 0)
+		if (dx !== 0) {
 			offsetX = dx / Math.abs(dx);
+		}
 
 		let offsetY = 0;
-		if (dy !== 0)
+		if (dy !== 0) {
 			offsetY = dy / Math.abs(dy);
+		}
 
 		let targetPos = {
-			x: target.x,
-			y: target.y
+			x: target.x
+			, y: target.y
 		};
 
 		const physics = obj.instance.physics;
@@ -94,34 +97,36 @@ module.exports = {
 				if (!fnTileValid(targetPos.x, targetPos.y + offsetY)) {
 					targetPos.x -= offsetX;
 					targetPos.y -= offsetY;
-				} else
+				} else {
 					targetPos.y += offsetY;
-			} else 
+				}
+			} else {
 				targetPos.x += offsetX;
+			}
 		} else {
 			targetPos.x += offsetX;
 			targetPos.y += offsetY;
 		}
 
 		let targetEffect = target.effects.addEffect({
-			type: 'stunned',
-			ttl: this.stunDuration
+			type: "stunned"
+			, ttl: this.stunDuration
 		});
 
 		if (targetEffect) {
-			this.obj.instance.syncer.queue('onGetDamage', {
-				id: target.id,
-				event: true,
-				text: 'stunned'
+			this.obj.instance.syncer.queue("onGetDamage", {
+				id: target.id
+				, event: true
+				, text: "stunned"
 			}, -1);
 		}
 
 		if (this.animation) {
-			this.obj.instance.syncer.queue('onGetObject', {
-				id: this.obj.id,
-				components: [{
-					type: 'animation',
-					template: this.animation
+			this.obj.instance.syncer.queue("onGetObject", {
+				id: this.obj.id
+				, components: [{
+					type: "animation"
+					, template: this.animation
 				}]
 			}, -1);
 		}
@@ -132,9 +137,9 @@ module.exports = {
 		this.reachDestination(target, targetPos);
 
 		return true;
-	},
+	}
 
-	onCastTick: function (particleFrequency) {
+	, onCastTick: function (particleFrequency) {
 		const { obj, tickParticles } = this;
 		const { x, y, instance: { objects } } = obj;
 
@@ -143,31 +148,32 @@ module.exports = {
 		});
 
 		objects.buildObjects([{
-			x,
-			y,
-			properties: {
-				cpnParticlePatch: particlePatch,
-				cpnParticles: {
+			x
+			, y
+			, properties: {
+				cpnParticlePatch: particlePatch
+				, cpnParticles: {
 					simplify: function () {
 						return {
-							type: 'particles',
-							blueprint: particleBlueprint
+							type: "particles"
+							, blueprint: particleBlueprint
 						};
-					},
-					blueprint: this.particles
+					}
+					, blueprint: this.particles
 				}
-			},
-			extraProperties: {
+			}
+			, extraProperties: {
 				particlePatch: {
 					ttl: tickParticles.ttl
 				}
-			} 
+			}
 		}]);
-	},
+	}
 
-	reachDestination: function (target, targetPos) {
-		if (this.obj.destroyed)
+	, reachDestination: function (target, targetPos) {
+		if (this.obj.destroyed) {
 			return;
+		}
 
 		let obj = this.obj;
 
@@ -184,18 +190,19 @@ module.exports = {
 
 		let damage = this.getDamage(target);
 		target.stats.takeDamage({
-			damage,
-			threatMult: this.threatMult,
-			source: this.obj,
-			target,
-			spellName: 'ambush',
-			noEvents: this.noEvents
+			damage
+			, threatMult: this.threatMult
+			, source: this.obj
+			, target
+			, spellName: "ambush"
+			, noEvents: this.noEvents
 		});
-	},
+	}
 
-	isTileValid: function (physics, fromX, fromY, toX, toY) {
-		if (physics.isTileBlocking(toX, toY))
+	, isTileValid: function (physics, fromX, fromY, toX, toY) {
+		if (physics.isTileBlocking(toX, toY)) {
 			return false;
+		}
 		return physics.hasLos(fromX, fromY, toX, toY);
 	}
 };

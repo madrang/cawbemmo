@@ -1,98 +1,105 @@
-let combat = require('../../combat/combat');
+let combat = require("../../combat/combat");
 
 module.exports = {
-	id: 'akarei',
-	name: 'The Akarei',
-	description: 'Not much is known about the Akarei. Dwelling deep underground in the Crystal Caves of Fjolarok, they have taken an interest in the local fauna.',
+	id: "akarei"
+	, name: "The Akarei"
+	, description: "Not much is known about the Akarei. Dwelling deep underground in the Crystal Caves of Fjolarok, they have taken an interest in the local fauna."
 
-	uniqueStat: {
-		damage: 1,
+	, uniqueStat: {
+		damage: 1
 
-		chance: {
-			min: 20,
-			max: 45
-		},
+		, chance: {
+			min: 20
+			, max: 45
+		}
 
-		generate: function (item) {
+		, generate: function (item) {
 			let chance = this.chance;
-			let chanceRoll = ~~(random.norm(chance.min, chance.max) * 10) / 10;
+			let chanceRoll = Math.floor(random.norm(chance.min, chance.max) * 10) / 10;
 
 			let result = null;
-			if (item.effects)
-				result = item.effects.find(e => (e.factionId === 'akarei'));
+			if (item.effects) {
+				result = item.effects.find((e) => (e.factionId === "akarei"));
+			}
 
 			if (!result) {
-				if (!item.effects)
+				if (!item.effects) {
 					item.effects = [];
+				}
 
 				result = {
-					factionId: 'akarei',
-					properties: {
+					factionId: "akarei"
+					, properties: {
 						chance: chanceRoll
-					},
-					text: chanceRoll + '% chance on crit to cast a lightning bolt',
-					events: {}
+					}
+					, text: chanceRoll + "% chance on crit to cast a lightning bolt"
+					, events: {}
 				};
 
 				item.effects.push(result);
 			}
 
-			if (!result.events)
+			if (!result.events) {
 				result.events = {};
+			}
 
-			for (let e in this.events) 
+			for (let e in this.events) {
 				result.events[e] = this.events[e];
+			}
 
 			return result;
-		},
+		}
 
-		events: {
+		, events: {
 			beforeDealDamage: function (item, { damage, target }) {
-				if (!damage.crit)
+				if (!damage.crit) {
 					return;
+				}
 
-				let effect = item.effects.find(e => (e.factionId === 'akarei'));
+				let effect = item.effects.find((e) => (e.factionId === "akarei"));
 
 				let roll = Math.random() * 100;
-				if (roll >= effect.properties.chance)
+				if (roll >= effect.properties.chance) {
 					return;
+				}
 
 				let cbExplode = function (boundTarget) {
-					if ((this.destroyed) || (boundTarget.destroyed))
+					if ((this.destroyed) || (boundTarget.destroyed)) {
 						return;
+					}
 
 					let damageConfig = combat.getDamage({
-						source: this,
-						target: boundTarget,
-						damage: item.level * 5,
-						element: 'arcane',
-						noCrit: true
+						source: this
+						, target: boundTarget
+						, damage: item.level * 5
+						, element: "arcane"
+						, noCrit: true
 					});
 
 					boundTarget.stats.takeDamage({
-						damage: damageConfig,
-						threatMult: 1,
-						source: this,
-						target: boundTarget,
-						effectName: 'akareiZap'
+						damage: damageConfig
+						, threatMult: 1
+						, source: this
+						, target: boundTarget
+						, effectName: "akareiZap"
 					});
 				};
 
-				this.instance.syncer.queue('onGetObject', {
-					id: this.id,
-					components: [{
-						type: 'lightningEffect',
-						toX: target.x,
-						toY: target.y
+				this.instance.syncer.queue("onGetObject", {
+					id: this.id
+					, components: [{
+						type: "lightningEffect"
+						, toX: target.x
+						, toY: target.y
 					}]
 				}, -1);
 
 				this.spellbook.registerCallback(this.id, cbExplode.bind(this, target), 1);
 			}
 		}
-	},
+	}
 
-	rewards: {
+	, rewards: {
 
 	}
 };

@@ -1,9 +1,9 @@
 let cpnDeathStopper = {
-	type: 'deathStopper',
-	percentage: 0,
-	end: false,
+	type: "deathStopper"
+	, percentage: 0
+	, end: false
 
-	events: {
+	, events: {
 		beforeTakeDamage: function ({ damage }) {
 			let statValues = this.obj.stats.values;
 			let minHp = statValues.hpMax * this.percentage;
@@ -16,11 +16,12 @@ let cpnDeathStopper = {
 };
 
 module.exports = {
-	mobs: null,
+	mobs: null
 
-	init: function () {
-		if (!this.mobs.push)
+	, init: function () {
+		if (!this.mobs.push) {
 			this.mobs = [this.mobs];
+		}
 
 		let mobs = this.mobs;
 		let percentage = this.percentage;
@@ -30,8 +31,9 @@ module.exports = {
 		for (let i = 0; i < oLen; i++) {
 			let o = objects[i];
 			let index = mobs.indexOf(o.id);
-			if (index === -1)
+			if (index === -1) {
 				continue;
+			}
 
 			if (percentage) {
 				let cpn = extend({}, cpnDeathStopper, {
@@ -43,18 +45,19 @@ module.exports = {
 
 			mobs.splice(index, 1, o);
 		}
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let mobs = this.mobs;
 		let mLen = mobs.length;
 		for (let i = 0; i < mLen; i++) {
 			let m = mobs[i];
 			let destroyed = m.destroyed;
 			if (!destroyed) {
-				let deathStopper = m.components.find(c => (c.type === 'deathStopper'));
-				if (deathStopper)
+				let deathStopper = m.components.find((c) => (c.type === "deathStopper"));
+				if (deathStopper) {
 					destroyed = deathStopper.end;
+				}
 			}
 
 			if (destroyed) {
@@ -64,7 +67,8 @@ module.exports = {
 			}
 		}
 
-		if (mobs.length === 0)
+		if (mobs.length === 0) {
 			this.end = true;
+		}
 	}
 };

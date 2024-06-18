@@ -1,15 +1,15 @@
 define([
-	'js/resources',
-	'js/system/events',
-	'js/misc/physics',
-	'js/rendering/effects',
-	'js/rendering/tileOpacity',
-	'js/rendering/particles',
-	'js/rendering/shaders/outline',
-	'js/rendering/spritePool',
-	'js/system/globals',
-	'js/rendering/renderLoginBackground',
-	'js/rendering/helpers/resetRenderer'
+	"js/resources"
+	, "js/system/events"
+	, "js/misc/physics"
+	, "js/rendering/effects"
+	, "js/rendering/tileOpacity"
+	, "js/rendering/particles"
+	, "js/rendering/shaders/outline"
+	, "js/rendering/spritePool"
+	, "js/system/globals"
+	, "js/rendering/renderLoginBackground"
+	, "js/rendering/helpers/resetRenderer"
 ], function (
 	resources,
 	events,
@@ -25,62 +25,59 @@ define([
 ) {
 	const mRandom = Math.random.bind(Math);
 
-	const particleLayers = ['particlesUnder', 'particles'];
+	const particleLayers = ["particlesUnder", "particles"];
 	const particleEngines = {};
 
 	// Minimum number of textures available.
 	const PIXI_REQUIRED_SPRITE_MAX_TEXTURES = 16;
 
 	return {
-		stage: null,
-		layers: {
-			particlesUnder: null,
-			objects: null,
-			mobs: null,
-			characters: null,
-			attacks: null,
-			effects: null,
-			particles: null,
-			lightPatches: null,
-			lightBeams: null,
-			tileSprites: null,
-			hiders: null
-		},
+		stage: null
+		, layers: {
+			particlesUnder: null
+			, objects: null
+			, mobs: null
+			, characters: null
+			, attacks: null
+			, effects: null
+			, particles: null
+			, lightPatches: null
+			, lightBeams: null
+			, tileSprites: null
+			, hiders: null
+		}
 
-		titleScreen: false,
+		, titleScreen: false
 
-		width: 0,
-		height: 0,
+		, width: 0
+		, height: 0
 
-		showTilesW: 0,
-		showTilesH: 0,
+		, showTilesW: 0
+		, showTilesH: 0
 
-		pos: {
-			x: 0,
-			y: 0
-		},
-		moveTo: null,
-		moveSpeed: 0,
-		moveSpeedMax: 1.50,
-		moveSpeedInc: 0.5,
+		, pos: { x: 0, y: 0 }
+		, moveTo: null
+		, moveSpeed: 0
+		, moveSpeedMax: 1.50
+		, moveSpeedInc: 0.5
 
-		lastUpdatePos: {
-			x: 0,
-			y: 0
-		},
+		, lastUpdatePos: {
+			x: 0
+			, y: 0
+		}
 
-		zoneId: null,
+		, zoneId: null
 
-		textures: {},
-		textureCache: {},
+		, textures: {}
+		, textureCache: {}
 
-		sprites: [],
+		, sprites: []
 
-		lastTick: null,
+		, lastTick: null
 
-		hiddenRooms: null,
+		, hiddenRooms: null
 
-		init: function () {
+		, init: function () {
 			PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
 			PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 			if (PIXI.settings.SPRITE_MAX_TEXTURES < PIXI_REQUIRED_SPRITE_MAX_TEXTURES) {
@@ -90,94 +87,88 @@ define([
 			}
 			PIXI.settings.RESOLUTION = 1;
 
-			events.on('onGetMap', this.onGetMap.bind(this));
-			events.on('onToggleFullscreen', this.toggleScreen.bind(this));
-			events.on('onMoveSpeedChange', this.adaptCameraMoveSpeed.bind(this));
-			events.on('resetRenderer', resetRenderer.bind(this));
+			events.on("onGetMap", this.onGetMap.bind(this));
+			events.on("onToggleFullscreen", this.toggleScreen.bind(this));
+			events.on("onMoveSpeedChange", this.adaptCameraMoveSpeed.bind(this));
+			events.on("resetRenderer", resetRenderer.bind(this));
 
-			this.width = $('body').width();
-			this.height = $('body').height();
+			this.width = $("body").width();
+			this.height = $("body").height();
 
 			this.showTilesW = Math.ceil((this.width / scale) / 2) + 3;
 			this.showTilesH = Math.ceil((this.height / scale) / 2) + 3;
 
 			this.renderer = new PIXI.Renderer({
-				width: this.width,
-				height: this.height,
-				backgroundColor: '0x2d2136'
+				width: this.width
+				, height: this.height
+				, backgroundColor: "0x2d2136"
 			});
 
-			window.addEventListener('resize', this.onResize.bind(this));
+			window.addEventListener("resize", this.onResize.bind(this));
 
-			$(this.renderer.view).appendTo('.canvas-container');
+			$(this.renderer.view).appendTo(".canvas-container");
 
 			this.stage = new PIXI.Container();
 
-			let layers = this.layers;
-			Object.keys(layers).forEach(l => {
+			const layers = this.layers;
+			Object.keys(layers).forEach((l) => {
 				layers[l] = new PIXI.Container();
-				layers[l].layer = (l === 'tileSprites') ? 'tiles' : l;
-
+				layers[l].layer = (l === "tileSprites") ? "tiles" : l;
 				this.stage.addChild(layers[l]);
 			});
-
-			particleLayers.forEach(p => {
+			particleLayers.forEach((p) => {
 				const engine = $.extend({}, particles);
 				engine.init({
-					r: this,
-					renderer: this.renderer,
-					stage: this.layers[p]
+					r: this
+					, renderer: this.renderer
+					, stage: this.layers[p]
 				});
-
 				particleEngines[p] = engine;
 			});
-
 			this.buildSpritesTexture();
-		},
+		}
 
-		buildSpritesTexture: function () {
+		, buildSpritesTexture: function () {
 			const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes, textureList } } = globals;
 			const sprites = resources.sprites;
-			textureList.forEach(t => {
+			textureList.forEach((t) => {
 				this.textures[t] = new PIXI.BaseTexture(sprites[t]);
 				this.textures[t].scaleMode = PIXI.settings.SCALE_MODE;
 			});
-			atlasTextures.forEach(t => {
+			atlasTextures.forEach((t) => {
 				const texture = this.textures[t];
 				const spSize = spriteSizes[t] || 8;
 				atlasTextureDimensions[t] = {
-					w: texture.width / spSize,
-					h: texture.height / spSize
+					w: texture.width / spSize
+					, h: texture.height / spSize
 				};
 			});
-		},
+		}
 
-		toggleScreen: function () {
-			let isFullscreen = (window.innerHeight === screen.height);
-
-			if (isFullscreen) {
-				let doc = document;
+		, toggleScreen: function () {
+			if (window.innerHeight === screen.height) { // isFullscreen
+				// Change to windowed mode.
+				const doc = document;
 				(doc.cancelFullscreen || doc.msCancelFullscreen || doc.mozCancelFullscreen || doc.webkitCancelFullScreen).call(doc);
-				return 'Windowed';
-			} 
-
-			let el = $('body')[0];
+				return "Windowed";
+			}
+			// Enable fullscreen mode.
+			const el = $("body")[0];
 			(el.requestFullscreen || el.msRequestFullscreen || el.mozRequestFullscreen || el.webkitRequestFullscreen).call(el);
-			return 'Fullscreen';
-		},
+			return "Fullscreen";
+		}
 
-		buildTitleScreen: function () {
+		, buildTitleScreen: function () {
 			this.titleScreen = true;
-
 			renderLoginBackground(this);
-		},
+		}
 
-		onResize: function () {
-			if (isMobile)
+		, onResize: function () {
+			if (isMobile) {
 				return;
-
-			this.width = $('body').width();
-			this.height = $('body').height();
+			}
+			this.width = $("body").width();
+			this.height = $("body").height();
 
 			this.showTilesW = Math.ceil((this.width / scale) / 2) + 3;
 			this.showTilesH = Math.ceil((this.height / scale) / 2) + 3;
@@ -185,20 +176,18 @@ define([
 			this.renderer.resize(this.width, this.height);
 			if (window.player) {
 				this.setPosition({
-					x: (window.player.x - (this.width / (scale * 2))) * scale,
-					y: (window.player.y - (this.height / (scale * 2))) * scale
+					x: (window.player.x - (this.width / (scale * 2))) * scale
+					, y: (window.player.y - (this.height / (scale * 2))) * scale
 				}, true);
 			}
-
 			if (this.titleScreen) {
 				this.clean();
 				this.buildTitleScreen();
 			}
+			events.emit("onResize");
+		}
 
-			events.emit('onResize');
-		},
-
-		getTexture: function (baseTex, cell, size=8) {
+		, getTexture: function (baseTex, cell, size = 8) {
 			if (!baseTex) {
 				throw Error(`Missing baseTex!`);
 			}
@@ -206,16 +195,15 @@ define([
 				// The 'sprites' texture maps to all the sheets in loading order.
 				const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes } } = globals;
 				let curId = 0;
-				baseTex = atlasTextures.find(t => {
+				baseTex = atlasTextures.find((t) => {
 					const texture = this.textures[t];
 					const spSize = spriteSizes[t] || 8;
 					const spCount = (texture.width / spSize) * (texture.height / spSize);
 					if (cell - (curId + spCount) >= 0) {
 						curId += spCount;
 						return false;
-					} else {
-						return true;
 					}
+					return true;
 				});
 				//console.log(`Texture 'sprites':${cell} remapped to '${baseTex}':${cell - curId}`);
 				cell = cell - curId;
@@ -232,55 +220,50 @@ define([
 			cached = new PIXI.Texture(this.textures[baseTex], new PIXI.Rectangle(x * size, y * size, size, size));
 			this.textureCache[textureName] = cached;
 			return cached;
-		},
+		}
 
-		clean: function () {
+		, clean: function () {
 			this.stage.removeChild(this.layers.hiders);
 			this.layers.hiders = new PIXI.Container();
-			this.layers.hiders.layer = 'hiders';
+			this.layers.hiders.layer = "hiders";
 			this.stage.addChild(this.layers.hiders);
 
 			let container = this.layers.tileSprites;
 			this.stage.removeChild(container);
 
 			this.layers.tileSprites = container = new PIXI.Container();
-			container.layer = 'tiles';
+			container.layer = "tiles";
 			this.stage.addChild(container);
 
 			this.stage.children.sort((a, b) => {
-				if (a.layer === 'hiders')
+				if (a.layer === "hiders") {
 					return 1;
-				else if (b.layer === 'hiders')
+				} else if (b.layer === "hiders") {
 					return -1;
-				else if (a.layer === 'tiles')
+				} else if (a.layer === "tiles") {
 					return -1;
-				else if (b.layer === 'tiles')
+				} else if (b.layer === "tiles") {
 					return 1;
+				}
 				return 0;
 			});
-		},
+		}
 
-		buildTile: function (c, i, j) {
-			let alpha = tileOpacity.map(c);
-			let canFlip = tileOpacity.canFlip(c);
-
-			let tile = new PIXI.Sprite(this.getTexture('sprites', c));
-
-			tile.alpha = alpha;
+		, buildTile: function (c, i, j) {
+			const tile = new PIXI.Sprite(this.getTexture("sprites", c));
+			tile.alpha = tileOpacity.map(c);
 			tile.position.x = i * scale;
 			tile.position.y = j * scale;
 			tile.width = scale;
 			tile.height = scale;
-
-			if (canFlip && mRandom() < 0.5) {
+			if (tileOpacity.canFlip(c) && mRandom() < 0.5) {
 				tile.position.x += scale;
 				tile.scale.x = -scaleMult;
 			}
-
 			return tile;
-		},
+		}
 
-		onGetMap: function (msg) {
+		, onGetMap: function (msg) {
 			this.titleScreen = false;
 			physics.init(msg.collisionMap);
 
@@ -291,53 +274,54 @@ define([
 			for (let i = 0; i < w; i++) {
 				let row = map[i];
 				for (let j = 0; j < h; j++) {
-					if (!row[j].split)
-						row[j] += '';
-
-					row[j] = row[j].split(',');
+					if (!row[j].split) {
+						row[j] += "";
+					}
+					row[j] = row[j].split(",");
 				}
 			}
 
 			this.clean();
 			spritePool.clean();
 
-			this.stage.filters = [new PIXI.filters.AlphaFilter()];
+			this.stage.filters = [new PIXI.AlphaFilter()];
 			this.stage.filterArea = new PIXI.Rectangle(0, 0, Math.max(w * scale, this.width), Math.max(h * scale, this.height));
 
 			this.hiddenRooms = msg.hiddenRooms;
 
-			this.sprites = _.get2dArray(w, h, 'array');
+			this.sprites = _.get2dArray(w, h, "array");
 
 			this.stage.children.sort((a, b) => {
-				if (a.layer === 'tiles')
+				if (a.layer === "tiles") {
 					return -1;
-				else if (b.layer === 'tiles')
+				} else if (b.layer === "tiles") {
 					return 1;
+				}
 				return 0;
 			});
 
 			if (this.zoneId !== null) {
-				events.emit('onRezone', {
-					oldZoneId: this.zoneId,
-					newZoneId: msg.zoneId
+				events.emit("onRezone", {
+					oldZoneId: this.zoneId
+					, newZoneId: msg.zoneId
 				});
 			}
 
 			this.zoneId = msg.zoneId;
 
-			msg.clientObjects.forEach(c => {
+			msg.clientObjects.forEach((c) => {
 				c.zoneId = this.zoneId;
-				events.emit('onGetObject', c);
+				events.emit("onGetObject", c);
 			});
 
 			//Normally, the mounts mod queues this event when unmounting.
 			// If we rezone, our effects are destroyed, so the event is queued,
 			// but flushForTarget clears the event right after and the event is never received.
 			// We emit it again here to make sure the speed is reset after entering the new zone.
-			events.emit('onMoveSpeedChange', 0);
-		},
+			events.emit("onMoveSpeedChange", 0);
+		}
 
-		setPosition: function (pos, instant) {
+		, setPosition: function (pos, instant) {
 			pos.x += 16;
 			pos.y += 16;
 
@@ -350,33 +334,34 @@ define([
 				let hLen = hiddenRooms.length;
 				for (let i = 0; i < hLen; i++) {
 					let h = hiddenRooms[i];
-					if (!h.discoverable)
+					if (!h.discoverable) {
 						continue;
+					}
 					if (
 						px < h.x ||
 						px >= h.x + h.width ||
 						py < h.y ||
 						py >= h.y + h.height ||
 						!physics.isInPolygon(px, py, h.area)
-					)
+					) {
 						continue;
+					}
 
 					h.discovered = true;
 				}
 			}
-
 			if (instant) {
 				this.moveTo = null;
 				this.pos = pos;
-				this.stage.x = -~~this.pos.x;
-				this.stage.y = -~~this.pos.y;
-			} else
+				this.stage.x = -Math.floor(this.pos.x);
+				this.stage.y = -Math.floor(this.pos.y);
+			} else {
 				this.moveTo = pos;
-
+			}
 			this.updateSprites();
-		},
+		}
 
-		isVisible: function (x, y) {
+		, isVisible: function (x, y) {
 			let stage = this.stage;
 			let sx = -stage.x;
 			let sy = -stage.y;
@@ -385,13 +370,14 @@ define([
 			let sh = this.height;
 
 			return (!(x < sx || y < sy || x >= sx + sw || y >= sy + sh));
-		},
+		}
 
-		isHidden: function (x, y) {
+		, isHidden: function (x, y) {
 			let hiddenRooms = this.hiddenRooms;
 			let hLen = hiddenRooms.length;
-			if (!hLen)
+			if (!hLen) {
 				return false;
+			}
 
 			const { player: { x: px, y: py } } = window;
 
@@ -401,7 +387,7 @@ define([
 			const fnTileInArea = physics.isInArea.bind(physics, x, y);
 			const fnPlayerInArea = physics.isInArea.bind(physics, px, py);
 
-			hiddenRooms.forEach(h => {
+			hiddenRooms.forEach((h) => {
 				const { discovered, layer, interior } = h;
 
 				/*
@@ -428,34 +414,37 @@ define([
 					return;
 				}
 
-				if (!tileInHider)
+				if (!tileInHider) {
 					return;
+				}
 
 				foundVisibleLayer = layer;
 			});
 
 			//We compare hider layers to cater for hiders inside hiders
 			return (
-				foundHiddenLayer > foundVisibleLayer || 
+				foundHiddenLayer > foundVisibleLayer ||
 				(
 					foundHiddenLayer === 0 &&
 					foundVisibleLayer === null
 				)
 			);
-		},
+		}
 
-		updateSprites: function () {
-			if (this.titleScreen)
+		, updateSprites: function () {
+			if (this.titleScreen) {
 				return;
+			}
 
 			const player = window.player;
-			if (!player)
+			if (!player) {
 				return;
+			}
 
 			const { w, h, width, height, stage, map, sprites } = this;
 
-			const x = ~~((-stage.x / scale) + (width / (scale * 2)));
-			const y = ~~((-stage.y / scale) + (height / (scale * 2)));
+			const x = Math.floor((-stage.x / scale) + (width / (scale * 2)));
+			const y = Math.floor((-stage.y / scale) + (height / (scale * 2)));
 
 			this.lastUpdatePos.x = stage.x;
 			this.lastUpdatePos.y = stage.y;
@@ -484,18 +473,20 @@ define([
 
 				for (let j = lowY; j < highY; j++) {
 					const cell = mapRow[j];
-					if (!cell)
+					if (!cell) {
 						continue;
+					}
 
 					const cLen = cell.length;
-					if (!cLen)
+					if (!cLen) {
 						return;
+					}
 
 					const rendered = spriteRow[j];
 					const isHidden = checkHidden(i, j);
 
 					if (isHidden) {
-						const nonFakeRendered = rendered.filter(r => !r.isFake);
+						const nonFakeRendered = rendered.filter((r) => !r.isFake);
 
 						const rLen = nonFakeRendered.length;
 						for (let k = 0; k < rLen; k++) {
@@ -503,26 +494,28 @@ define([
 
 							sprite.visible = false;
 							spritePool.store(sprite);
-							rendered.spliceWhere(s => s === sprite);
+							rendered.spliceWhere((s) => s === sprite);
 						}
 
 						if (cell.visible) {
 							cell.visible = false;
 							newHidden.push({
-								x: i,
-								y: j
+								x: i
+								, y: j
 							});
 						}
 
-						const hasFake = cell.some(c => c[0] === '-');
+						const hasFake = cell.some((c) => c[0] === "-");
 						if (hasFake) {
-							const isFakeRendered = rendered.some(r => r.isFake);
-							if (isFakeRendered)
+							const isFakeRendered = rendered.some((r) => r.isFake);
+							if (isFakeRendered) {
 								continue;
-						} else
+							}
+						} else {
 							continue;
+						}
 					} else {
-						const fakeRendered = rendered.filter(r => r.isFake);
+						const fakeRendered = rendered.filter((r) => r.isFake);
 
 						const rLen = fakeRendered.length;
 						for (let k = 0; k < rLen; k++) {
@@ -530,46 +523,52 @@ define([
 
 							sprite.visible = false;
 							spritePool.store(sprite);
-							rendered.spliceWhere(s => s === sprite);
+							rendered.spliceWhere((s) => s === sprite);
 						}
 
 						if (!cell.visible) {
 							cell.visible = true;
 							newVisible.push({
-								x: i,
-								y: j
+								x: i
+								, y: j
 							});
 						}
 
-						const hasNonFake = cell.some(c => c[0] !== '-');
+						const hasNonFake = cell.some((c) => c[0] !== "-");
 						if (hasNonFake) {
-							const isNonFakeRendered = rendered.some(r => !r.isFake);
-							if (isNonFakeRendered)
+							const isNonFakeRendered = rendered.some((r) => !r.isFake);
+							if (isNonFakeRendered) {
 								continue;
-						} else
+							}
+						} else {
 							continue;
+						}
 					}
 
 					for (let k = 0; k < cLen; k++) {
 						let c = cell[k];
-						if (c === '0' || c === '')
+						if (c === "0" || c === "") {
 							continue;
+						}
 
 						const isFake = +c < 0;
-						if (isFake && !isHidden)
+						if (isFake && !isHidden) {
 							continue;
-						else if (!isFake && isHidden)
+						} else if (!isFake && isHidden) {
 							continue;
+						}
 
-						if (isFake)
+						if (isFake) {
 							c = -c;
+						}
 
 						c--;
 
-						let flipped = '';
+						let flipped = "";
 						if (tileOpacity.canFlip(c)) {
-							if (mRandom() < 0.5)
-								flipped = 'flip';
+							if (mRandom() < 0.5) {
+								flipped = "flip";
+							}
 						}
 
 						let tile = spritePool.getSprite(flipped + c);
@@ -582,13 +581,15 @@ define([
 						} else {
 							tile.position.x = i * scale;
 							tile.position.y = j * scale;
-							if (flipped !== '')
+							if (flipped !== "") {
 								tile.position.x += scale;
+							}
 							tile.visible = true;
 						}
 
-						if (isFake)
+						if (isFake) {
 							tile.isFake = isFake;
+						}
 
 						tile.z = k;
 
@@ -607,8 +608,9 @@ define([
 				let spriteRow = sprites[i];
 				let outside = ((i >= x - sw) && (i < x + sw));
 				for (let j = lowY; j < highY; j++) {
-					if ((outside) && (j >= y - sh) && (j < y + sh))
+					if ((outside) && (j >= y - sh) && (j < y + sh)) {
 						continue;
+					}
 
 					const cell = mapRow[j];
 
@@ -627,13 +629,13 @@ define([
 					spriteRow[j] = [];
 				}
 			}
-			events.emit('onTilesVisible', { visible: newVisible, hidden: newHidden });
-
-			if (addedSprite)
+			events.emit("onTilesVisible", { visible: newVisible, hidden: newHidden });
+			if (addedSprite) {
 				container.children.sort((a, b) => a.z - b.z);
-		},
+			}
+		}
 
-		update: function () {
+		, update: function () {
 			const time = Date.now();
 			if (this.moveTo) {
 				let deltaX = this.moveTo.x - this.pos.x;
@@ -643,20 +645,18 @@ define([
 					let distance = Math.max(Math.abs(deltaX), Math.abs(deltaY));
 
 					let moveSpeedMax = this.moveSpeedMax;
-					if (this.moveSpeed < moveSpeedMax)
+					if (this.moveSpeed < moveSpeedMax) {
 						this.moveSpeed += this.moveSpeedInc;
-
+					}
 					let moveSpeed = this.moveSpeed;
-
-					if (moveSpeedMax < 1.6)
+					if (moveSpeedMax < 1.6) {
 						moveSpeed *= 1 + (distance / 200);
-
+					}
 					let elapsed = time - this.lastTick;
 					moveSpeed *= (elapsed / 15);
-
-					if (moveSpeed > distance)
+					if (moveSpeed > distance) {
 						moveSpeed = distance;
-
+					}
 					deltaX = (deltaX / distance) * moveSpeed;
 					deltaY = (deltaY / distance) * moveSpeed;
 
@@ -666,48 +666,44 @@ define([
 					this.moveSpeed = 0;
 					this.moveTo = null;
 				}
-
 				let stage = this.stage;
 				if (window.staticCamera !== true) {
-					stage.x = -~~this.pos.x;
-					stage.y = -~~this.pos.y;
+					stage.x = -Math.floor(this.pos.x);
+					stage.y = -Math.floor(this.pos.y);
 				}
-
 				let halfScale = scale / 2;
-				if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale)
+				if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale) {
 					this.updateSprites();
-
-				events.emit('onSceneMove');
+				}
+				events.emit("onSceneMove");
 			}
-
 			this.lastTick = time;
-		},
+		}
 
-		buildContainer: function (obj) {
-			let container = new PIXI.Container();
+		, buildContainer: function (obj) {
+			const container = new PIXI.Container();
 			this.layers[obj.layerName || obj.sheetName].addChild(container);
-
 			return container;
-		},
+		}
 
-		buildRectangle: function (obj) {
-			let graphics = new PIXI.Graphics();
+		, buildRectangle: function (obj) {
+			const graphics = new PIXI.Graphics();
 
 			let alpha = obj.alpha;
-			if (obj.has('alpha'))
+			if (obj.has("alpha")) {
 				graphics.alpha = alpha;
+			}
 
 			let fillAlpha = obj.fillAlpha;
-			if (obj.has('fillAlpha'))
+			if (obj.has("fillAlpha")) {
 				fillAlpha = 1;
+			}
+			graphics.beginFill(obj.color || "0x48edff", fillAlpha);
 
-			graphics.beginFill(obj.color || '0x48edff', fillAlpha);
-
-			if (obj.strokeColor)
+			if (obj.strokeColor) {
 				graphics.lineStyle(scaleMult, obj.strokeColor);
-
+			}
 			graphics.drawRect(0, 0, obj.w, obj.h);
-
 			graphics.endFill();
 
 			(obj.parent || this.layers[obj.layerName || obj.sheetName]).addChild(graphics);
@@ -716,16 +712,16 @@ define([
 			graphics.position.y = obj.y;
 
 			return graphics;
-		},
+		}
 
-		moveRectangle: function (obj) {
+		, moveRectangle: function (obj) {
 			obj.sprite.position.x = obj.x;
 			obj.sprite.position.y = obj.y;
 			obj.sprite.width = obj.w;
 			obj.sprite.height = obj.h;
-		},
+		}
 
-		buildObject: function (obj) {
+		, buildObject: function (obj) {
 			const { sheetName, parent: container, layerName, visible = true } = obj;
 
 			const sprite = new PIXI.Sprite();
@@ -742,38 +738,41 @@ define([
 			obj.h = sprite.height;
 
 			return sprite;
-		},
+		}
 
-		addFilter: function (sprite, config) {
+		, addFilter: function (sprite, config) {
 			const filter = new shaderOutline(config);
 
-			if (!sprite.filters)
+			if (!sprite.filters) {
 				sprite.filters = [filter];
-			else
+			} else {
 				sprite.filters.push(filter);
+			}
 
 			return filter;
-		},
+		}
 
-		removeFilter: function (sprite, filter) {
-			if (sprite.filters)
+		, removeFilter: function (sprite, filter) {
+			if (sprite.filters) {
 				sprite.filters = null;
-		},
+			}
+		}
 
-		buildText: function (obj) {
+		, buildText: function (obj) {
 			const { text, visible, x, y, parent: spriteParent, layerName } = obj;
 			const { fontSize = 14, color = 0xF2F5F5 } = obj;
 
 			const textSprite = new PIXI.Text(text, {
-				fontFamily: 'bitty',
-				fontSize: fontSize,
-				fill: color,
-				stroke: 0x2d2136,
-				strokeThickness: 4
+				fontFamily: "bitty"
+				, fontSize: fontSize
+				, fill: color
+				, stroke: 0x2d2136
+				, strokeThickness: 4
 			});
 
-			if (visible === false)
+			if (visible === false) {
 				textSprite.visible = false;
+			}
 
 			textSprite.x = x - (textSprite.width / 2);
 			textSprite.y = y;
@@ -782,22 +781,22 @@ define([
 			parentSprite.addChild(textSprite);
 
 			return textSprite;
-		},
+		}
 
-		buildEmitter: function (config) {
-			const { layerName = 'particles' } = config;
+		, buildEmitter: function (config) {
+			const { layerName = "particles" } = config;
 			const particleEngine = particleEngines[layerName];
 
 			return particleEngine.buildEmitter(config);
-		},
+		}
 
-		destroyEmitter: function (emitter) {
+		, destroyEmitter: function (emitter) {
 			const particleEngine = emitter.particleEngine;
 
 			particleEngine.destroyEmitter(emitter);
-		},
+		}
 
-		setSprite: function (obj) {
+		, setSprite: function (obj) {
 			//console.log("Building sprite", obj);
 			const { sprite, sheetName, cell } = obj;
 
@@ -813,9 +812,9 @@ define([
 				sprite.size = newSize;
 				this.setSpritePosition(obj);
 			}
-		},
+		}
 
-		setSpritePosition: function (obj) {
+		, setSpritePosition: function (obj) {
 			const { sprite, x, y, flipX, offsetX = 0, offsetY = 0 } = obj;
 
 			sprite.x = (x * scale) + (flipX ? scale : 0) + offsetX;
@@ -823,28 +822,31 @@ define([
 			sprite.y = (y * scale) + offsetY;
 
 			if (sprite.width > scale) {
-				if (flipX)
+				if (flipX) {
 					sprite.x += scale;
-				else
+				} else {
 					sprite.x -= scale;
+				}
 
 				sprite.y -= (scale * 2);
 			}
 
-			if (oldY !== sprite.y)
+			if (oldY !== sprite.y) {
 				this.reorder();
+			}
 
 			sprite.scale.x = flipX ? -scaleMult : scaleMult;
-		},
+		}
 
-		reorder: function () {
+		, reorder: function () {
 			this.layers.mobs.children.sort((a, b) => b.y - a.y);
-		},
+		}
 
-		destroyObject: function (obj) {
-			if (obj.sprite.parent)
+		, destroyObject: function (obj) {
+			if (obj.sprite.parent) {
 				obj.sprite.parent.removeChild(obj.sprite);
-		},
+			}
+		}
 
 		//Changes the moveSpeedMax and moveSpeedInc variables
 		// moveSpeed changes when mounting and unmounting
@@ -852,35 +854,37 @@ define([
 		// moveSpeed: 200	|	moveSpeedMax: 5.5		|		moveSpeedInc: 0.2
 		//  Between these values we should follow an exponential curve for moveSpeedInc since
 		//   a higher chance will proc more often, meaning the buildup in distance becomes greater
-		adaptCameraMoveSpeed: function (moveSpeed) {
+		, adaptCameraMoveSpeed: function (moveSpeed) {
 			const factor = Math.sqrt(moveSpeed);
 			const maxValue = Math.sqrt(200);
 
 			this.moveSpeedMax = 1.5 + ((moveSpeed / 200) * 3.5);
 			this.moveSpeedInc = 0.2 + (((maxValue - factor) / maxValue) * 0.3);
-		},
+		}
 
-		updateMapAtPosition: function (x, y, mapCellString) {
+		, updateMapAtPosition: function (x, y, mapCellString) {
 			const { map, sprites, layers: { tileSprites: container } } = this;
 
 			const row = sprites[x];
-			if (!row)
+			if (!row) {
 				return;
+			}
 
 			const cell = row[y];
-			if (!cell)
+			if (!cell) {
 				return;
+			}
 
-			cell.forEach(c => {
+			cell.forEach((c) => {
 				c.visible = false;
 				spritePool.store(c);
 			});
 
 			cell.length = 0;
 
-			map[x][y] = mapCellString.split(',');
+			map[x][y] = mapCellString.split(",");
 
-			map[x][y].forEach(m => {
+			map[x][y].forEach((m) => {
 				m--;
 
 				let tile = spritePool.getSprite(m);
@@ -898,16 +902,14 @@ define([
 				cell.push(tile);
 				cell.visible = true;
 			});
-		},
+		}
 
-		render: function () {
-			if (!this.stage)
+		, render: function () {
+			if (!this.stage) {
 				return;
-
+			}
 			effects.render();
-
-			particleLayers.forEach(p => particleEngines[p].update());
-
+			particleLayers.forEach((p) => particleEngines[p].update());
 			this.renderer.render(this.stage);
 		}
 	};

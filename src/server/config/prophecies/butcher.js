@@ -1,15 +1,15 @@
 module.exports = {
-	type: 'butcher',
+	type: "butcher"
 
-	init: function () {
-		
-	},
+	, init: function () {
 
-	simplify: function () {
+	}
+
+	, simplify: function () {
 		return this.type;
-	},
+	}
 
-	events: {
-		
+	, events: {
+
 	}
 };

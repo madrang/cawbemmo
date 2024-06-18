@@ -1,48 +1,51 @@
-const mobBuilder = require('./mobBuilder');
-const animations = require('../config/animations');
-const scheduler = require('../misc/scheduler');
+const mobBuilder = require("./mobBuilder");
+const animations = require("../config/animations");
+const scheduler = require("../misc/scheduler");
 
 module.exports = {
-	list: [],
-	mobTypes: {},
+	list: []
+	, mobTypes: {}
 
-	init: function (msg) {
+	, init: function (msg) {
 		this.objects = msg.objects;
 		this.syncer = msg.syncer;
 		this.zoneConfig = msg.zoneConfig;
-	},
+	}
 
-	reset: function () {
+	, reset: function () {
 		this.list = [];
 		this.mobTypes = {};
-	},
+	}
 
-	register: function (blueprint, cdMax) {
+	, register: function (blueprint, cdMax) {
 		const spawner = extend({
-			cdMax: cdMax || 171,
-			cron: blueprint.cron,
-			lifetime: blueprint.lifetime,
-			blueprint: blueprint,
-			amountLeft: blueprint.amount || -1
+			cdMax: cdMax || 171
+			, cron: blueprint.cron
+			, lifetime: blueprint.lifetime
+			, blueprint: blueprint
+			, amountLeft: blueprint.amount || -1
 		});
 
 		this.list.push(spawner);
 
-		if (blueprint.layerName !== 'mobs')
+		if (blueprint.layerName !== "mobs") {
 			return;
+		}
 
 		const name = blueprint.name.toLowerCase();
-		if (!this.mobTypes[name])
+		if (!this.mobTypes[name]) {
 			this.mobTypes[name] = 1;
-		else
+		} else {
 			this.mobTypes[name]++;
+		}
 
 		spawner.zonePrint = extend({}, this.zoneConfig.mobs.default, this.zoneConfig.mobs[name] || {});
-	},
+	}
 
-	spawn: function (spawner) {
-		if (spawner.amountLeft === 0)
+	, spawn: function (spawner) {
+		if (spawner.amountLeft === 0) {
 			return;
+		}
 
 		const blueprint = spawner.blueprint;
 		const obj = this.objects.buildObjects([blueprint]);
@@ -50,37 +53,38 @@ module.exports = {
 		let customSpawn = false;
 
 		const sheetName = blueprint.sheetName;
-		if ((sheetName) && (blueprint.sheetName.indexOf('/'))) {
-			const spawnAnimation = _.getDeepProperty(animations, ['mobs', sheetName, blueprint.cell, 'spawn']);
+		if ((sheetName) && (blueprint.sheetName.indexOf("/"))) {
+			const spawnAnimation = _.getDeepProperty(animations, ["mobs", sheetName, blueprint.cell, "spawn"]);
 			if (spawnAnimation) {
 				customSpawn = true;
 
-				this.syncer.queue('onGetObject', {
-					id: obj.id,
-					components: [spawnAnimation]
+				this.syncer.queue("onGetObject", {
+					id: obj.id
+					, components: [spawnAnimation]
 				}, -1);
 			}
 		}
 
 		if (!customSpawn) {
-			this.syncer.queue('onGetObject', {
-				x: obj.x,
-				y: obj.y,
-				components: [{
-					type: 'attackAnimation',
-					row: 0,
-					col: 4
+			this.syncer.queue("onGetObject", {
+				x: obj.x
+				, y: obj.y
+				, components: [{
+					type: "attackAnimation"
+					, row: 0
+					, col: 4
 				}]
 			}, -1);
 		}
 
-		if (spawner.amountLeft !== -1)
+		if (spawner.amountLeft !== -1) {
 			spawner.amountLeft--;
+		}
 
 		return obj;
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		const spawners = this.list;
 		let count = spawners.length;
 
@@ -96,19 +100,20 @@ module.exports = {
 			}
 
 			if (l.lifetime && l.mob) {
-				if (!l.age)
+				if (!l.age) {
 					l.age = 1;
-				else
+				} else {
 					l.age++;
+				}
 
 				if (l.age >= l.lifetime) {
-					this.syncer.queue('onGetObject', {
-						x: l.mob.x,
-						y: l.mob.y,
-						components: [{
-							type: 'attackAnimation',
-							row: 0,
-							col: 4
+					this.syncer.queue("onGetObject", {
+						x: l.mob.x
+						, y: l.mob.y
+						, components: [{
+							type: "attackAnimation"
+							, row: 0
+							, col: 4
 						}]
 					}, -1);
 
@@ -117,10 +122,11 @@ module.exports = {
 			}
 
 			if (!l.cron) {
-				if (l.cd > 0) 
+				if (l.cd > 0) {
 					l.cd--;
-				else if (l.mob && l.mob.destroyed)
+				} else if (l.mob && l.mob.destroyed) {
 					l.cd = l.cdMax;
+				}
 			}
 
 			if (l.mob && l.mob.destroyed) {
@@ -129,8 +135,8 @@ module.exports = {
 			}
 
 			const cronInfo = {
-				cron: l.cron,
-				lastRun: l.lastRun
+				cron: l.cron
+				, lastRun: l.lastRun
 			};
 
 			const doSpawn = (
@@ -145,36 +151,39 @@ module.exports = {
 			);
 
 			if (doSpawn) {
-				if (!l.cron)
+				if (!l.cron) {
 					l.cd = -1;
-				else
+				} else {
 					l.lastRun = cronInfo.lastRun;
+				}
 
 				const mob = this.spawn(l);
-				if (!mob)
+				if (!mob) {
 					continue;
+				}
 
 				const name = (l.blueprint.objZoneName || l.blueprint.name).toLowerCase();
 
-				if (l.blueprint.layerName === 'mobs') 
+				if (l.blueprint.layerName === "mobs") {
 					this.setupMob(mob, l.zonePrint);
-				else {
+				} else {
 					const blueprint = extend({}, this.zoneConfig.objects.default, this.zoneConfig.objects[name] || {});
 					this.setupObj(mob, blueprint);
 				}
 
-				if (l.blueprint.objZoneName)
+				if (l.blueprint.objZoneName) {
 					mob.objZoneName = l.blueprint.objZoneName;
+				}
 
 				l.mob = mob;
 			}
 		}
-	},
+	}
 
-	setupMob: function (mob, blueprint) {
-		let type = 'regular';
+	, setupMob: function (mob, blueprint) {
+		let type = "regular";
 		if (blueprint.rare.count > 0) {
-			const rareCount = this.list.filter(l => (
+			const rareCount = this.list.filter((l) => (
 				(l.mob) &&
 				(!l.mob.destroyed) &&
 				(l.mob.isRare) &&
@@ -182,38 +191,42 @@ module.exports = {
 			));
 			if (rareCount.length < blueprint.rare.count) {
 				const roll = Math.random() * 100;
-				if (roll < blueprint.rare.chance)
-					type = 'rare';
+				if (roll < blueprint.rare.chance) {
+					type = "rare";
+				}
 			}
 		}
 
 		this.setupObj(mob, blueprint);
 
 		mobBuilder.build(mob, blueprint, type, this.zoneConfig.name);
-	},
+	}
 
-	setupObj: function (obj, blueprint) {
+	, setupObj: function (obj, blueprint) {
 		const cpns = blueprint.components;
-		if (!cpns)
+		if (!cpns) {
 			return;
+		}
 
 		for (let c in cpns) {
 			const cpn = cpns[c];
 
-			let cType = c.replace('cpn', '');
+			let cType = c.replace("cpn", "");
 			cType = cType[0].toLowerCase() + cType.substr(1);
 
 			const builtCpn = obj.addComponent(cType, cpn);
 
-			if (cpn.simplify)
+			if (cpn.simplify) {
 				builtCpn.simplify = cpn.simplify.bind(builtCpn);
+			}
 		}
-	},
+	}
 
-	destroySpawnerForObject: function (obj) {
-		const spawner = this.list.find(l => l.mob === obj);
+	, destroySpawnerForObject: function (obj) {
+		const spawner = this.list.find((l) => l.mob === obj);
 
-		if (spawner)
+		if (spawner) {
 			spawner.destroyed = true;
+		}
 	}
 };

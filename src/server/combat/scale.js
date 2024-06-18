@@ -6,15 +6,16 @@ const max = Math.max.bind(Math);
 const scaleStatType = (config, result) => {
 	const { statType, statMult = 1, srcValues, scaleConfig } = config;
 
-	if (!statType || scaleConfig?.statMult === false)
+	if (!statType || scaleConfig?.statMult === false) {
 		return;
-	
+	}
+
 	let statValue = 0;
 
-	if (!statType.push)
+	if (!statType.push) {
 		statValue = srcValues[statType];
-	else {
-		statType.forEach(s => {
+	} else {
+		statType.forEach((s) => {
 			statValue += srcValues[s];
 		});
 	}
@@ -25,27 +26,31 @@ const scaleStatType = (config, result) => {
 };
 
 const scalePercentMultipliers = ({ isAttack, elementName, srcValues, scaleConfig }, result) => {
-	if (scaleConfig?.percentMult === false)
+	if (scaleConfig?.percentMult === false) {
 		return;
+	}
 
 	const { dmgPercent = 0, physicalPercent = 0, spellPercent = 0 } = srcValues;
 
-	let totalPercent = 100 + dmgPercent;	
+	let totalPercent = 100 + dmgPercent;
 
-	if (isAttack)
+	if (isAttack) {
 		totalPercent += physicalPercent;
-	else
+	} else {
 		totalPercent += spellPercent;
+	}
 
-	if (elementName)
-		totalPercent += (srcValues[elementName + 'Percent'] || 0);
+	if (elementName) {
+		totalPercent += (srcValues[elementName + "Percent"] || 0);
+	}
 
 	result.amount *= (totalPercent / 100);
 };
 
 const scaleCrit = ({ noCrit, isAttack, crit: forceCrit, srcValues, scaleConfig }, result) => {
-	if (noCrit || scaleConfig?.critMult === false)
+	if (noCrit || scaleConfig?.critMult === false) {
 		return;
+	}
 
 	const { critChance, attackCritChance, spellCritChance } = srcValues;
 	const { critMultiplier, attackCritMultiplier, spellCritMultiplier } = srcValues;
@@ -71,10 +76,11 @@ const scaleCrit = ({ noCrit, isAttack, crit: forceCrit, srcValues, scaleConfig }
 
 //Method
 const scale = (config, result) => {
-	const { blocked, dodged } = result; 
+	const { blocked, dodged } = result;
 
-	if (blocked || dodged || config.noScale)
+	if (blocked || dodged || config.noScale) {
 		return;
+	}
 
 	scaleStatType(config, result);
 	scalePercentMultipliers(config, result);

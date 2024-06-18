@@ -1,5 +1,5 @@
 const cloneRecursive = function (o, newO) {
-	if (typeof o !== 'object') {
+	if (typeof o !== "object") {
 		return o;
 	}
 	if (!o) {

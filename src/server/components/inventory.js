@@ -1,47 +1,49 @@
 //System
-const events = require('../misc/events');
+const events = require("../misc/events");
 
 //External Helpers
-let generator = require('../items/generator');
-let salvager = require('../items/salvager');
-let classes = require('../config/spirits');
-let factions = require('../config/factions');
-let itemEffects = require('../items/itemEffects');
+let generator = require("../items/generator");
+let salvager = require("../items/salvager");
+let classes = require("../config/spirits");
+let factions = require("../config/factions");
+let itemEffects = require("../items/itemEffects");
 
 //Helpers
-const simplifyItem = require('./inventory/simplifyItem');
-const getItem = require('./inventory/getItem');
-const dropBag = require('./inventory/dropBag');
-const useItem = require('./inventory/useItem');
-const { isItemStackable } = require('./inventory/helpers');
+const simplifyItem = require("./inventory/simplifyItem");
+const getItem = require("./inventory/getItem");
+const dropBag = require("./inventory/dropBag");
+const useItem = require("./inventory/useItem");
+const { isItemStackable } = require("./inventory/helpers");
 
 //Component
 module.exports = {
-	type: 'inventory',
+	type: "inventory"
 
-	inventorySize: 50,
-	items: [],
+	, inventorySize: 50
+	, items: []
 
-	blueprint: null,
+	, blueprint: null
 
-	init: function (blueprint, isTransfer) {
+	, init: function (blueprint, isTransfer) {
 		let items = blueprint.items || [];
 		let iLen = items.length;
 
 		//Spells should be sorted so they're EQ'd in the right order
 		items.sort(function (a, b) {
-			let aId = a.has('spellId') ? ~~a.spellId : 9999;
-			let bId = b.has('spellId') ? ~~b.spellId : 9999;
+			let aId = a.has("spellId") ? ~~a.spellId : 9999;
+			let bId = b.has("spellId") ? ~~b.spellId : 9999;
 			return (aId - bId);
 		});
 
 		for (let i = 0; i < iLen; i++) {
 			let item = items[i];
-			if ((item.pos >= this.inventorySize) || (item.eq))
+			if ((item.pos >= this.inventorySize) || (item.eq)) {
 				delete item.pos;
+			}
 
-			while (item.name.indexOf('\'\'') > -1) 
-				item.name = item.name.replace('\'\'', '\'');
+			while (item.name.indexOf("''") > -1) {
+				item.name = item.name.replace("''", "'");
+			}
 		}
 
 		this.hookItemEvents(items);
@@ -49,12 +51,12 @@ module.exports = {
 		//Hack to skip attr checks on equip
 		let oldFn = this.canEquipItem;
 		this.canEquipItem = () => {
-			return true; 
+			return true;
 		};
 
 		for (let i = 0; i < iLen; i++) {
 			let item = items[i];
-			let pos = item.has('pos') ? item.pos : null;
+			let pos = item.has("pos") ? item.pos : null;
 
 			let newItem = this.getItem(item, true, true);
 			newItem.pos = pos;
@@ -63,64 +65,68 @@ module.exports = {
 		//Hack to skip attr checks on equip
 		this.canEquipItem = oldFn.bind(this);
 
-		if ((this.obj.player) && (!isTransfer) && (this.obj.stats.values.level === 1))
+		if ((this.obj.player) && (!isTransfer) && (this.obj.stats.values.level === 1)) {
 			this.getDefaultAbilities();
+		}
 
 		delete blueprint.items;
 
 		this.blueprint = blueprint;
 
-		if (this.obj.equipment)
+		if (this.obj.equipment) {
 			this.obj.equipment.unequipAttrRqrGear();
-	},
+		}
+	}
 
-	transfer: function () {
+	, transfer: function () {
 		this.hookItemEvents();
-	},
+	}
 
-	save: function () {
+	, save: function () {
 		return {
-			type: 'inventory',
-			items: this.items.map(this.simplifyItem.bind(this))
+			type: "inventory"
+			, items: this.items.map(this.simplifyItem.bind(this))
 		};
-	},
+	}
 
-	simplify: function (self) {
-		if (!self)
+	, simplify: function (self) {
+		if (!self) {
 			return null;
+		}
 
 		return {
-			type: 'inventory',
-			items: this.items.map(this.simplifyItem.bind(this))
+			type: "inventory"
+			, items: this.items.map(this.simplifyItem.bind(this))
 		};
-	},
+	}
 
-	simplifyItem: function (item) {
+	, simplifyItem: function (item) {
 		return simplifyItem(this, item);
-	},
+	}
 
-	update: function () {
+	, update: function () {
 		let items = this.items;
 		let iLen = items.length;
 		for (let i = 0; i < iLen; i++) {
 			let item = items[i];
-			if (!item.cd)
+			if (!item.cd) {
 				continue;
+			}
 
 			item.cd--;
 
-			this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
+			this.obj.syncer.setArray(true, "inventory", "getItems", item);
 		}
-	},
+	}
 
 	//forceEq is set by the equipment component to force the ability to be learnt since the item is already EQd
 	// otherwise the first if check would fail
-	learnAbility: function ({ itemId, slot, bypassEqCheck = false }) {
+	, learnAbility: function ({ itemId, slot, bypassEqCheck = false }) {
 		let item = this.findItem(itemId);
 		let statValues = this.obj.stats.values;
-		if (!item || (item.eq && !bypassEqCheck))
+		if (!item || (item.eq && !bypassEqCheck)) {
 			return;
-		else if (!item.spell) {
+		} else if (!item.spell) {
 			item.eq = false;
 			return;
 		} else if (item.level > statValues.level) {
@@ -129,12 +135,12 @@ module.exports = {
 		}
 
 		let learnMsg = {
-			success: true,
-			item: item
+			success: true
+			, item: item
 		};
-		this.obj.fireEvent('beforeLearnAbility', learnMsg);
+		this.obj.fireEvent("beforeLearnAbility", learnMsg);
 		if (!learnMsg.success) {
-			const message = learnMsg.msg || 'you cannot learn that ability';
+			const message = learnMsg.msg || "you cannot learn that ability";
 			this.obj.social.notifySelf({ message });
 
 			return;
@@ -142,25 +148,25 @@ module.exports = {
 
 		let spellbook = this.obj.spellbook;
 
-		if ((item.slot === 'twoHanded') || (item.slot === 'oneHanded'))
+		if ((item.slot === "twoHanded") || (item.slot === "oneHanded")) {
 			slot = 0;
-		else if (!slot) {
+		} else if (!slot) {
 			slot = 4;
 			for (let i = 1; i <= 4; i++) {
-				if (!this.items.some(j => (j.runeSlot === i))) {
+				if (!this.items.some((j) => (j.runeSlot === i))) {
 					slot = i;
 					break;
 				}
 			}
 		}
 
-		let currentEq = this.items.find(i => (i.runeSlot === slot));
+		let currentEq = this.items.find((i) => (i.runeSlot === slot));
 		if (currentEq) {
 			spellbook.removeSpellById(slot);
 			delete currentEq.eq;
 			delete currentEq.runeSlot;
 			this.setItemPosition(currentEq.id);
-			this.obj.syncer.setArray(true, 'inventory', 'getItems', currentEq);
+			this.obj.syncer.setArray(true, "inventory", "getItems", currentEq);
 		}
 
 		item.eq = true;
@@ -168,16 +174,17 @@ module.exports = {
 		delete item.pos;
 
 		spellbook.addSpellFromRune(item.spell, slot);
-		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
-	},
+		this.obj.syncer.setArray(true, "inventory", "getItems", item);
+	}
 
-	splitStack: function (msg) {
+	, splitStack: function (msg) {
 		let { stackSize = 1 } = msg;
 		stackSize = ~~stackSize;
 
 		let item = this.findItem(msg.itemId);
-		if (!item || !item.quantity || item.quantity <= stackSize || stackSize < 1 || item.quest)
+		if (!item || !item.quantity || item.quantity <= stackSize || stackSize < 1 || item.quest) {
 			return;
+		}
 
 		const hasSpace = this.hasSpace(item, true);
 		if (!hasSpace) {
@@ -191,10 +198,10 @@ module.exports = {
 
 		this.getItem(newItem, true, true);
 
-		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
-	},
+		this.obj.syncer.setArray(true, "inventory", "getItems", item);
+	}
 
-	combineStacks: function (msg) {
+	, combineStacks: function (msg) {
 		let fromItem = this.findItem(msg.fromId);
 		let toItem = this.findItem(msg.toId);
 
@@ -206,26 +213,28 @@ module.exports = {
 			!isItemStackable(toItem)
 		);
 
-		if (failure)
+		if (failure) {
 			return;
+		}
 
 		toItem.quantity += fromItem.quantity;
-		this.obj.syncer.setArray(true, 'inventory', 'getItems', toItem);
+		this.obj.syncer.setArray(true, "inventory", "getItems", toItem);
 		this.destroyItem({ itemId: fromItem.id }, null, true);
-	},
+	}
 
-	useItem: function ({ itemId }) {
+	, useItem: function ({ itemId }) {
 		useItem(this, itemId);
-	},
+	}
 
-	unlearnAbility: function (itemId) {
-		if (itemId.has('itemId'))
+	, unlearnAbility: function (itemId) {
+		if (itemId.has("itemId")) {
 			itemId = itemId.itemId;
+		}
 
 		let item = this.findItem(itemId);
-		if (!item)
+		if (!item) {
 			return;
-		else if (!item.spell) {
+		} else if (!item.spell) {
 			item.eq = false;
 			return;
 		}
@@ -234,88 +243,96 @@ module.exports = {
 		spellbook.removeSpellById(item.runeSlot);
 		delete item.eq;
 		delete item.runeSlot;
-		if (!item.slot)
+		if (!item.slot) {
 			this.setItemPosition(itemId);
-		this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
-	},
+		}
+		this.obj.syncer.setArray(true, "inventory", "getItems", item);
+	}
 
-	stashItem: async function ({ itemId }) {
+	, stashItem: async function ({ itemId }) {
 		const item = this.findItem(itemId);
-		if (!item || item.quest || item.noStash)
+		if (!item || item.quest || item.noStash) {
 			return;
+		}
 
 		delete item.pos;
 
 		const stash = this.obj.stash;
 		const clonedItem = extend({}, item);
 		const success = await stash.deposit(clonedItem);
-		if (!success)
+		if (!success) {
 			return;
+		}
 
 		this.destroyItem({ itemId: itemId }, null, true);
-	},
+	}
 
-	salvageItem: function ({ itemId }) {
+	, salvageItem: function ({ itemId }) {
 		let item = this.findItem(itemId);
-		if ((!item) || (item.material) || (item.quest) || (item.noSalvage) || (item.eq))
+		if ((!item) || (item.material) || (item.quest) || (item.noSalvage) || (item.eq)) {
 			return;
-			
+		}
+
 		let messages = [];
-			
+
 		let items = salvager.salvage(item);
-			
+
 		this.destroyItem({ itemId: itemId });
-		
+
 		for (const material of items) {
 			this.getItem(material, true, false, false, true);
-				
+
 			messages.push({
-				className: 'q' + material.quality,
-				message: 'salvage (' + material.name + ' x' + material.quantity + ')'
+				className: "q" + material.quality
+				, message: "salvage (" + material.name + " x" + material.quantity + ")"
 			});
 		}
 
 		this.obj.social.notifySelfArray(messages);
-	},
+	}
 
-	destroyItem: function ({ itemId }, amount, force) {
+	, destroyItem: function ({ itemId }, amount, force) {
 		let item = this.findItem(itemId);
-		if (!item || (item.noDestroy && !force))
+		if (!item || (item.noDestroy && !force)) {
 			return;
+		}
 
 		amount = amount || item.quantity;
 
-		if (item.eq)
+		if (item.eq) {
 			this.obj.equipment.unequip({ itemId });
+		}
 
 		if ((item.quantity) && (amount)) {
 			item.quantity -= amount;
 			if (item.quantity <= 0) {
-				this.items.spliceWhere(i => i.id === itemId);
-				this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
-			} else
-				this.obj.syncer.setArray(true, 'inventory', 'getItems', item);
+				this.items.spliceWhere((i) => i.id === itemId);
+				this.obj.syncer.setArray(true, "inventory", "destroyItems", itemId);
+			} else {
+				this.obj.syncer.setArray(true, "inventory", "getItems", item);
+			}
 		} else {
-			this.items.spliceWhere(i => i.id === itemId);
-			this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
-			this.obj.syncer.deleteFromArray(true, 'inventory', 'getItems', i => i.id === itemId);
+			this.items.spliceWhere((i) => i.id === itemId);
+			this.obj.syncer.setArray(true, "inventory", "destroyItems", itemId);
+			this.obj.syncer.deleteFromArray(true, "inventory", "getItems", (i) => i.id === itemId);
 		}
 
-		this.obj.fireEvent('afterDestroyItem', item, amount);
-		events.emit('afterPlayerDestroyItem', this.obj, item, amount);
+		this.obj.fireEvent("afterDestroyItem", item, amount);
+		events.emit("afterPlayerDestroyItem", this.obj, item, amount);
 
 		return item;
-	},
+	}
 
-	dropItem: function ({ itemId }) {
+	, dropItem: function ({ itemId }) {
 		let item = this.findItem(itemId);
-		if ((!item) || (item.noDrop) || (item.quest))
+		if ((!item) || (item.noDrop) || (item.quest)) {
 			return;
+		}
 
-		if (item.has('quickSlot')) {
+		if (item.has("quickSlot")) {
 			this.obj.equipment.setQuickSlot({
-				itemId: null,
-				slot: item.quickSlot
+				itemId: null
+				, slot: item.quickSlot
 			});
 
 			delete item.quickSlot;
@@ -327,35 +344,39 @@ module.exports = {
 		let x = this.obj.x;
 		let y = this.obj.y;
 		let dropCell = this.obj.instance.physics.getOpenCellInArea(x - 1, y - 1, x + 1, y + 1);
-		if (!dropCell)
+		if (!dropCell) {
 			return;
+		}
 
-		if (item.eq)
+		if (item.eq) {
 			this.obj.equipment.unequip(itemId);
+		}
 
-		this.items.spliceWhere(i => i.id === itemId);
+		this.items.spliceWhere((i) => i.id === itemId);
 
-		this.obj.syncer.setArray(true, 'inventory', 'destroyItems', itemId);
+		this.obj.syncer.setArray(true, "inventory", "destroyItems", itemId);
 
 		this.createBag(dropCell.x, dropCell.y, [item]);
 
-		events.emit('afterPlayerDropItem', this.obj, item);
-	},
+		events.emit("afterPlayerDropItem", this.obj, item);
+	}
 
-	moveItem: function ({ moveMsgs }) {
+	, moveItem: function ({ moveMsgs }) {
 		moveMsgs.forEach(({ itemId, targetPos }) => {
 			let item = this.findItem(itemId);
-			if (!item)
+			if (!item) {
 				return;
+			}
 
 			item.pos = targetPos;
 		});
-	},
+	}
 
-	hookItemEvents: function (items) {
+	, hookItemEvents: function (items) {
 		items = items || this.items;
-		if (!items.push)
+		if (!items.push) {
 			items = [ items ];
+		}
 		let iLen = items.length;
 		for (let i = 0; i < iLen; i++) {
 			let item = items[i];
@@ -369,7 +390,7 @@ module.exports = {
 					} else {
 						let effectUrl = itemEffects.get(e.type);
 						try {
-							let effectModule = require('../' + effectUrl);
+							let effectModule = require("../" + effectUrl);
 							e.events = effectModule.events;
 
 							const { rolls } = e;
@@ -377,7 +398,7 @@ module.exports = {
 							if (rolls.textTemplate) {
 								let text = rolls.textTemplate;
 
-								while (text.includes('((')) {
+								while (text.includes("((")) {
 									Object.entries(rolls).forEach(([k, v]) => {
 										text = text.replaceAll(`((${k}))`, v);
 									});
@@ -411,25 +432,25 @@ module.exports = {
 								e.text = effectModule.events.onGetText(item, e);
 							}
 						} catch (error) {
-							_.error(`Effect not found: ${e.type}`, error);
+							_.log.inventory.error(`Effect not found: ${e.type}`, error);
 						}
 					}
 				});
-				item.effects.spliceWhere(e => !e.events);
+				item.effects.spliceWhere((e) => !e.events);
 			}
-			if (!item.has('pos') && !item.eq) {
+			if (!item.has("pos") && !item.eq) {
 				let pos = i;
 				for (let j = 0; j < iLen; j++) {
-					if (!items.some(fj => (fj.pos === j))) {
+					if (!items.some((fj) => (fj.pos === j))) {
 						pos = j;
 						break;
 					}
 				}
 				item.pos = pos;
-			} else if ((!item.eq) && (items.some(ii => ((ii !== item) && (ii.pos === item.pos))))) {
+			} else if ((!item.eq) && (items.some((ii) => ((ii !== item) && (ii.pos === item.pos))))) {
 				let pos = item.pos;
 				for (let j = 0; j < iLen; j++) {
-					if (!items.some(fi => ((fi !== item) && (fi.pos === j)))) {
+					if (!items.some((fi) => ((fi !== item) && (fi.pos === j)))) {
 						pos = j;
 						break;
 					}
@@ -437,89 +458,93 @@ module.exports = {
 				item.pos = pos;
 			}
 		}
-	},
+	}
 
-	setItemPosition: function (id) {
+	, setItemPosition: function (id) {
 		let item = this.findItem(id);
-		if (!item)
+		if (!item) {
 			return;
+		}
 
 		let iSize = this.inventorySize;
 		for (let i = 0; i < iSize; i++) {
-			if (!this.items.some(j => (j.pos === i))) {
+			if (!this.items.some((j) => (j.pos === i))) {
 				item.pos = i;
 				break;
 			}
 		}
-	},
+	}
 
-	sortInventory: function () {
+	, sortInventory: function () {
 		this.items
-			.filter(i => !i.eq)
-			.map(i => {
+			.filter((i) => !i.eq)
+			.map((i) => {
 				//If we don't do this, [waist] goes before [undefined]
-				const useSlot = i.slot ? i.slot : 'z';
+				const useSlot = i.slot ? i.slot : "z";
 
 				return {
-					item: i,
-					sortId: `${useSlot}${i.material}${i.quest}${i.spell}${i.quality}${i.level}${i.sprite}${i.id}`
+					item: i
+					, sortId: `${useSlot}${i.material}${i.quest}${i.spell}${i.quality}${i.level}${i.sprite}${i.id}`
 				};
 			})
 			.sort((a, b) => {
-				if (a.sortId < b.sortId)
+				if (a.sortId < b.sortId) {
 					return 1;
-				else if (a.sortId > b.sortId)
+				} else if (a.sortId > b.sortId) {
 					return -1;
+				}
 				return 0;
 			})
 			.forEach((i, index) => {
 				i.item.pos = index;
-				this.obj.syncer.setArray(true, 'inventory', 'getItems', this.simplifyItem(i.item));
+				this.obj.syncer.setArray(true, "inventory", "getItems", this.simplifyItem(i.item));
 			});
-	},
+	}
 
-	resolveCallback: function (msg, result) {
-		let callbackId = msg.has('callbackId') ? msg.callbackId : msg;
+	, resolveCallback: function (msg, result) {
+		let callbackId = msg.has("callbackId") ? msg.callbackId : msg;
 		result = result || [];
 
-		if (!callbackId)
+		if (!callbackId) {
 			return;
+		}
 
 		process.send({
-			module: 'atlas',
-			method: 'resolveCallback',
-			msg: {
-				id: callbackId,
-				result: result
+			module: "atlas"
+			, method: "resolveCallback"
+			, msg: {
+				id: callbackId
+				, result: result
 			}
 		});
-	},
+	}
 
-	findItem: function (id) {
-		if (id === null)
+	, findItem: function (id) {
+		if (id === null) {
 			return null;
+		}
 
-		return this.items.find(i => i.id === id);
-	},
+		return this.items.find((i) => i.id === id);
+	}
 
-	getDefaultAbilities: function () {
-		let hasWeapon = this.items.some(i => {
+	, getDefaultAbilities: function () {
+		let hasWeapon = this.items.some((i) => {
 			return (
 				i.spell &&
 				i.spell.rolls &&
-				i.spell.rolls.has('damage') &&
+				i.spell.rolls.has("damage") &&
 				(
-					i.slot === 'twoHanded' || 
-					i.slot === 'oneHanded'
+					i.slot === "twoHanded" ||
+					i.slot === "oneHanded"
 				)
 			);
 		});
 
 		if (!hasWeapon) {
 			let item = generator.generate({
-				type: classes.weapons[this.obj.class],
-				quality: 0,
-				spellQuality: 0
+				type: classes.weapons[this.obj.class]
+				, quality: 0
+				, spellQuality: 0
 			});
 			item.worth = 0;
 			item.eq = true;
@@ -527,8 +552,8 @@ module.exports = {
 			this.getItem(item);
 		}
 
-		classes.spells[this.obj.class].forEach(spellName => {
-			let hasSpell = this.items.some(i => {
+		classes.spells[this.obj.class].forEach((spellName) => {
+			let hasSpell = this.items.some((i) => {
 				return (
 					i.spell &&
 					i.spell.name.toLowerCase() === spellName
@@ -537,9 +562,9 @@ module.exports = {
 
 			if (!hasSpell) {
 				let item = generator.generate({
-					spell: true,
-					quality: 0,
-					spellName: spellName
+					spell: true
+					, quality: 0
+					, spellName: spellName
 				});
 				item.worth = 0;
 				item.eq = true;
@@ -547,9 +572,9 @@ module.exports = {
 				this.getItem(item);
 			}
 		});
-	},
+	}
 
-	createBag: function (x, y, items, ownerName) {
+	, createBag: function (x, y, items, ownerName) {
 		let bagCell = 50;
 
 		let topQuality = 0;
@@ -557,44 +582,46 @@ module.exports = {
 		for (let i = 0; i < iLen; i++) {
 			let quality = items[i].quality;
 			items[i].fromMob = Boolean(this.obj.mob);
-			if (quality > topQuality)
+			if (quality > topQuality) {
 				topQuality = ~~quality;
+			}
 		}
 
-		if (topQuality === 0)
+		if (topQuality === 0) {
 			bagCell = 50;
-		else if (topQuality === 1)
+		} else if (topQuality === 1) {
 			bagCell = 51;
-		else if (topQuality === 2)
+		} else if (topQuality === 2) {
 			bagCell = 128;
-		else if (topQuality === 3)
+		} else if (topQuality === 3) {
 			bagCell = 52;
-		else
+		} else {
 			bagCell = 53;
+		}
 
 		const createBagMsg = {
-			ownerName,
-			x,
-			y,
-			sprite: {
-				sheetName: 'objects',
-				cell: bagCell
-			},
-			dropSource: this.obj
+			ownerName
+			, x
+			, y
+			, sprite: {
+				sheetName: "objects"
+				, cell: bagCell
+			}
+			, dropSource: this.obj
 		};
-		this.obj.instance.eventEmitter.emit('onBeforeCreateBag', createBagMsg);
+		this.obj.instance.eventEmitter.emit("onBeforeCreateBag", createBagMsg);
 
 		let obj = this.obj.instance.objects.buildObjects([{
-			sheetName: createBagMsg.sprite.sheetName,
-			cell: createBagMsg.sprite.cell,
-			x: createBagMsg.x,
-			y: createBagMsg.y,
-			properties: {
+			sheetName: createBagMsg.sprite.sheetName
+			, cell: createBagMsg.sprite.cell
+			, x: createBagMsg.x
+			, y: createBagMsg.y
+			, properties: {
 				cpnChest: {
-					ownerName,
-					ttl: 1710
-				},
-				cpnInventory: {
+					ownerName
+					, ttl: 1710
+				}
+				, cpnInventory: {
 					items: extend([], items)
 				}
 			}
@@ -603,39 +630,41 @@ module.exports = {
 		obj.canBeSeenBy = ownerName;
 
 		return obj;
-	},
+	}
 
-	hasSpace: function (item, noStack) {
+	, hasSpace: function (item, noStack) {
 		const itemArray = item ? [item] : [];
 		return this.hasSpaceList(itemArray, noStack);
-	},
+	}
 
-	hasSpaceList: function (items, noStack) {
-		if (this.inventorySize === -1)
+	, hasSpaceList: function (items, noStack) {
+		if (this.inventorySize === -1) {
 			return true;
-		
-		let slots = this.inventorySize - this.obj.inventory.items.filter(f => !f.eq).length;
+		}
+
+		let slots = this.inventorySize - this.obj.inventory.items.filter((f) => !f.eq).length;
 		for (const item of items) {
 			if (isItemStackable(item) && (!noStack)) {
-				let exists = this.items.find(owned => (owned.name === item.name) && (isItemStackable(owned)));
-				if (exists)
+				let exists = this.items.find((owned) => (owned.name === item.name) && (isItemStackable(owned)));
+				if (exists) {
 					continue;
+				}
 			}
 			slots--;
 		}
 
 		return (slots >= 0);
-	},
+	}
 
-	getItem: function (item, hideMessage, noStack, hideAlert, createBagIfFull) {
+	, getItem: function (item, hideMessage, noStack, hideAlert, createBagIfFull) {
 		return getItem.call(this, this, ...arguments);
-	},
+	}
 
-	dropBag: function (ownerName, killSource) {
+	, dropBag: function (ownerName, killSource) {
 		dropBag(this, ownerName, killSource);
-	},
+	}
 
-	giveItems: function (obj, hideMessage) {
+	, giveItems: function (obj, hideMessage) {
 		let objInventory = obj.inventory;
 
 		let items = this.items;
@@ -651,66 +680,73 @@ module.exports = {
 		}
 
 		return !iLen;
-	},
+	}
 
-	fireEvent: function (event, args) {
+	, fireEvent: function (event, args) {
 		let items = this.items;
 		let iLen = items.length;
 		for (let i = 0; i < iLen; i++) {
 			let item = items[i];
 
 			if (!item.eq && !item.active) {
-				if (event !== 'afterUnequipItem' || item !== args[0])
+				if (event !== "afterUnequipItem" || item !== args[0]) {
 					continue;
+				}
 			}
 
 			let effects = item.effects;
-			if (!effects)
+			if (!effects) {
 				continue;
+			}
 
 			let eLen = effects.length;
 			for (let j = 0; j < eLen; j++) {
 				let effect = effects[j];
 
 				let effectEvent = effect.events[event];
-				if (!effectEvent)
+				if (!effectEvent) {
 					continue;
+				}
 
 				effectEvent.apply(this.obj, [item, ...args]);
 			}
 		}
-	},
+	}
 
-	clear: function () {
+	, clear: function () {
 		delete this.items;
 		this.items = [];
-	},
+	}
 
-	equipItemErrors: function (item) {
+	, equipItemErrors: function (item) {
 		const { obj: { player, stats: { values: statValues }, reputation } } = this;
 
 		const errors = [];
 
-		if (!player)
+		if (!player) {
 			return errors;
+		}
 
-		if (item.level > statValues.level)
-			errors.push('level');
+		if (item.level > statValues.level) {
+			errors.push("level");
+		}
 
-		if (item.requires && statValues[item.requires[0].stat] < item.requires[0].value)
+		if (item.requires && statValues[item.requires[0].stat] < item.requires[0].value) {
 			errors.push(item.requires[0].stat);
+		}
 
-		if (item.factions?.some(f => reputation.getTier(f.id) < f.tier))
-			errors.push('faction');
+		if (item.factions?.some((f) => reputation.getTier(f.id) < f.tier)) {
+			errors.push("faction");
+		}
 
 		return errors;
-	},
+	}
 
-	canEquipItem: function (item) {
+	, canEquipItem: function (item) {
 		return (this.equipItemErrors(item).length === 0);
-	},
+	}
 
-	notifyNoBagSpace: function (message = 'Your bags are too full to loot any more items') {
+	, notifyNoBagSpace: function (message = "Your bags are too full to loot any more items") {
 		this.obj.social.notifySelf({ message });
 	}
 };

@@ -1,5 +1,5 @@
-const drawRoom = require('./drawRoom');
-const spawnObjects = require('./spawnObjects');
+const drawRoom = require("./drawRoom");
+const spawnObjects = require("./spawnObjects");
 
 module.exports = (scope, instance, startRoom) => {
 	const { bounds } = scope;
@@ -15,8 +15,8 @@ module.exports = (scope, instance, startRoom) => {
 
 	let startTemplate = startRoom.template;
 	map.spawn = [{
-		x: startRoom.x + Math.floor(startTemplate.width / 2),
-		y: startRoom.y + Math.floor(startTemplate.height / 2)
+		x: startRoom.x + Math.floor(startTemplate.width / 2)
+		, y: startRoom.y + Math.floor(startTemplate.height / 2)
 	}];
 
 	drawRoom(scope, instance, startRoom);

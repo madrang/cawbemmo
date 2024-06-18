@@ -1,7 +1,7 @@
 {
-  "name": "isleward_client",
-  "version": "0.14.0",
-  "description": "isleward",
+  "name": "cawbemmo_client",
+  "version": "0.0.1",
+  "description": "Browser client for CawbeMMO",
   "devDependencies": {
 
   }

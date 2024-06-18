@@ -4,10 +4,10 @@ define([
 
 ) {
 	return {
-		lineWidth: 5,
-		blockSize: 20,
-		gridSize: 30,
+		lineWidth: 5
+		, blockSize: 20
+		, gridSize: 30
 
-		scrollSpeed: 0.75
+		, scrollSpeed: 0.75
 	};
 });
