@@ -4,7 +4,7 @@ const events = require("../misc/events");
 //Internals
 const mapList = [
 	{
-		name: "cave"
+		name: "depanneur"
 		, path: "config/maps"
 	}
 	, {
