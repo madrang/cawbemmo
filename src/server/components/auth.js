@@ -10,6 +10,8 @@ const eventEmitter = require("../misc/events");
 
 const checkLoginRewards = require("./auth/checkLoginRewards");
 
+const serverConfig = require("../config/serverConfig");
+
 //This section of code is in charge of ensuring that we only ever create one account at a time,
 // since we don't have a read/write lock on the characters table, we have to address it in code
 const createLockBuffer = [];
@@ -78,7 +80,6 @@ module.exports = {
 			, value: this.accountInfo
 			, serialize: true
 		});
-
 		this.obj.player.sessionStart = Date.now();
 		this.obj.player.spawn(character, data.callback);
 
@@ -100,7 +101,6 @@ module.exports = {
 			, clean: true
 			, serialize: true
 		});
-
 		await this.doSaveStash();
 
 		if (callback) {
@@ -128,7 +128,6 @@ module.exports = {
 		if (!stash.changed) {
 			return;
 		}
-
 		await io.setAsync({
 			key: username
 			, table: "stash"
@@ -142,7 +141,6 @@ module.exports = {
 		if (!self) {
 			return;
 		}
-
 		return {
 			type: "auth"
 			, username: this.username
@@ -155,28 +153,24 @@ module.exports = {
 		if (!this.username) {
 			return;
 		}
-
 		this.characterList = await io.getAsync({
 			key: this.username
 			, table: "characterList"
 			, isArray: true
 		});
-
 		let res = this.characterList.map((c) => ({
 			name: c.name ? c.name : c
 			, level: leaderboard.getLevel(c.name ? c.name : c)
 		}));
-
 		data.callback(res);
 	}
 
 	, getCharacter: async function (data) {
-		let charName = data.data.name;
+		const charName = data.data.name;
 		if (!this.characterList.some((c) => (c.name === charName || c === charName))) {
 			return;
 		}
-
-		let character = await io.getAsync({
+		const character = await io.getAsync({
 			key: charName
 			, table: "character"
 			, clean: true
@@ -207,8 +201,7 @@ module.exports = {
 			, table: "customChannels"
 			, isArray: true
 		});
-
-		let social = character.components.find((c) => (c.type === "social"));
+		const social = character.components.find((c) => (c.type === "social"));
 		this.customChannels = fixes.fixCustomChannels(this.customChannels);
 		if (social) {
 			social.customChannels = this.customChannels;
@@ -217,13 +210,10 @@ module.exports = {
 
 	, verifySkin: async function (character) {
 		const doesOwn = await this.doesOwnSkin(character.skinId);
-
 		if (doesOwn) {
 			return;
 		}
-
 		const defaultTo = "wizard";
-
 		character.skinId = defaultTo;
 		character.cell = skins.getCell(defaultTo);
 		character.sheetName = skins.getSpritesheet(defaultTo);
@@ -395,7 +385,6 @@ module.exports = {
 
 		if (exists) {
 			msg.callback(messages.login.exists);
-
 			return;
 		}
 
@@ -620,6 +609,9 @@ module.exports = {
 	}
 
 	, getAccountLevel: function () {
+		if (serverConfig.includes(this.username)) {
+			return Number.POSITIVE_INFINITY;
+		}
 		return this.accountInfo.level;
 	}
 };

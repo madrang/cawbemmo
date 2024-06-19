@@ -1,11 +1,15 @@
 /* eslint-disable no-process-env */
 
 module.exports = {
-	version: "0"
+	version: "0.0.2"
+	, nodeEnv: process.env.NODE_ENV
 	, port: process.env.SRV_PORT || 4000
 	, startupMessage: "Server: ready"
 
-	, nodeEnv: process.env.NODE_ENV
+	, admins: [
+		"levikingman"
+		, "madrang"
+	]
 
 	//Options:
 	// sqlite
