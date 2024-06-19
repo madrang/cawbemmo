@@ -92,7 +92,7 @@ module.exports = {
 			}]
 		}
 
-		, "crystal whelk": {
+		, "rat": {
 			level: 12
 
 			, regular: {
@@ -166,7 +166,7 @@ module.exports = {
 			}]
 		}
 
-		, radulos: {
+		, gaetan: {
 			level: 13
 			, spawnCd: 1714
 
@@ -271,7 +271,7 @@ module.exports = {
 			}]
 		}
 
-		, "akarei scout": {
+		, "pti bum": {
 			level: 20
 			, faction: "akarei"
 			, attackable: false
@@ -292,7 +292,7 @@ module.exports = {
 			, deathRep: -3
 		}
 
-		, "akarei artificer": {
+		, "moyen bum": {
 			level: 20
 			, attackable: false
 			, faction: "akarei"
