@@ -1,4 +1,4 @@
-let events = require("../misc/events");
+const events = require("../misc/events");
 
 const routerConfig = {
 	signatures: {
@@ -271,7 +271,10 @@ const routerConfig = {
 					callback: false
 					, data: []
 				}
-
+				, getPlayerList: {
+					callback: true
+					, data: []
+				}
 			}
 		}
 		, threadCpnMethods: {

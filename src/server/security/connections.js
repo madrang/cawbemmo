@@ -8,9 +8,7 @@ const { route, routeGlobal } = require("./connections/route");
 //Module
 module.exports = {
 	players: []
-
 	, sockets: null
-	, playing: 0
 
 	, onHandshake: function (socket) {
 		if (this.players.some((f) => f.socket.id === socket.id)) {
@@ -23,51 +21,53 @@ module.exports = {
 		p.addComponent("player");
 
 		objects.pushObjectToList(p);
-
 		this.players.push(p);
+
+		const clientIp = socket.request.connection.remoteAddress;
+		_.log.connections.debug("%s completed handshake. --> Now known as Player(%s)", clientIp, p.id);
 	}
 
 	, onDisconnect: async function (socket) {
+		const clientIp = socket.request.connection.remoteAddress;
 		const player = this.players.find((p) => p.socket.id === socket.id);
 		if (!player) {
+			_.log.connections.debug("%s closed WebSocked without completing handshake.", clientIp);
 			return;
 		}
-
+		if (!player.has("id")) {
+			this.players.spliceWhere((p) => p.socket.id === socket.id);
+			_.log.connections.warn("Player %s disconnected with a missing object id.", clientIp);
+			return;
+		}
+		// Disconnect player and remove object from other clients.
+		if (player.social) {
+			player.social.dc();
+		}
 		const sessionDuration = (typeof player?.player?.sessionStart === "number"
 			? Math.floor((Date.now() - player.player.sessionStart) / 1000)
 			: 0
 		);
-		if (player.has("id")) {
-			if (player.social) {
-				player.social.dc();
-			}
-
-			atlas.updateObject(player, {
-				components: [{
-					type: "stats"
-					, sessionDuration
-				}]
+		atlas.updateObject(player, {
+			components: [{
+				type: "stats"
+				, sessionDuration
+			}]
+		});
+		//If the player doesn't have a 'social' component, they are no longer in a threat
+		// Likely due to unzoning (character select screen)
+		// Also, rezoning is set to true while rezoning so we don't try to remove objects
+		// from zones if they are currently rezoning
+		if (player.components.some((c) => c.type === "social") && player.rezoning !== true) {
+			await new Promise((res) => {
+				atlas.removeObject(player, false, res);
 			});
-
-			//If the player doesn't have a 'social' component, they are no longer in a threat
-			// Likely due to unzoning (character select screen)
-			// Also, rezoning is set to true while rezoning so we don't try to remove objects
-			// from zones if they are currently rezoning
-			if (player.components.some((c) => c.type === "social") && player.rezoning !== true) {
-				await new Promise((res) => {
-					atlas.removeObject(player, false, res);
-				});
-			}
 		}
 		if (player.name) {
 			eventEmitter.emit("playerObjRemoved", {
 				id: player.id
 			});
-			if (player.has("id")) {
-				this.modifyPlayerCount(-1);
-				_.log.connections.info("Player %s disconnected after %s seconds", player.name, sessionDuration);
-			}
 		}
+		_.log.connections.info("Player %s disconnected after %s seconds", player.name || player.id, sessionDuration);
 		this.players.spliceWhere((p) => p.socket.id === socket.id);
 	}
 
@@ -120,8 +120,6 @@ module.exports = {
 		player.permadead = false;
 		delete player.auth.charname;
 
-		this.modifyPlayerCount(-1);
-
 		msg.callback();
 	}
 
@@ -138,7 +136,6 @@ module.exports = {
 				if (p.name && p.zoneId) {
 					await atlas.forceSavePlayer(p.id, p.zoneId);
 				}
-
 				if (p.socket?.connected) {
 					p.socket.emit("dc", {});
 				} else {
@@ -163,7 +160,6 @@ module.exports = {
 			if (!p.name) {
 				continue;
 			}
-
 			result.push({
 				zoneName: p.zoneName
 				, zoneId: p.zoneId
@@ -173,7 +169,6 @@ module.exports = {
 				, id: p.id
 			});
 		}
-
 		return result;
 	}
 
@@ -189,17 +184,10 @@ module.exports = {
 							callbackId: atlas.registerCallback(res)
 						}
 					};
-
 					atlas.performAction(p, msg);
 				});
-
 				return promise;
 			});
-
 		await Promise.all(promises);
-	}
-
-	, modifyPlayerCount: function (delta) {
-		this.playing += delta;
 	}
 };

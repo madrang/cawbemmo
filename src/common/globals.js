@@ -62,6 +62,26 @@
 			return padString.slice(0, targetLength) + String(this);
 		};
 	}
+	Object.defineProperties(String.prototype, {
+		indexOfAny: {
+			enumerable: false
+			, value: function (charsArr) {
+				const sLen = this.length;
+				for (let i = 0; i < sLen; ++i) {
+					if (charsArr.includes(this[i])) {
+						return i;
+					}
+				}
+				return -1;
+			}
+		}
+		, isAlphanumeric: {
+			enumerable: false
+			, value: function () {
+				return /^[0-9a-zA-Z]+$/.test(this);
+			}
+		}
+	});
 	const tmpExport = {
 		CONSTANTS: (params, obj, enumerable = true) => {
 			const properties = {};

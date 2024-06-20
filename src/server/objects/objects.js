@@ -267,9 +267,7 @@ module.exports = {
 
 		if (obj.level) {
 			await leaderboard.setLevel(player.name, obj.level);
-
 			player.components.find((c) => c.type === "stats").values.level = obj.level;
-
 			cons.emit("events", {
 				onGetMessages: [{
 					messages: [{
@@ -278,11 +276,10 @@ module.exports = {
 					}]
 				}]
 			});
-
-			eventEmitter.emit("playerObjChanged", {
-				obj: player
-			});
 		}
+		eventEmitter.emit("playerObjChanged", {
+			obj: player
+		});
 	}
 
 	, notifyCollisionChange: function (x, y, collides) {

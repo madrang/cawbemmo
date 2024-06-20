@@ -26,12 +26,10 @@ module.exports = {
 
 	, simplify: function (self) {
 		const { party, customChannels, blockedPlayers, actions } = this;
-
 		const res = {
 			type: "social"
 			, party
 		};
-
 		if (self) {
 			Object.assign(res, {
 				actions
@@ -39,7 +37,6 @@ module.exports = {
 				, blockedPlayers
 			});
 		}
-
 		return res;
 	}
 
@@ -142,6 +139,7 @@ module.exports = {
 				});
 		}, this);
 	}
+
 	, declineInvite: function (msg) {
 		let targetId = msg.data.targetId;
 		let target = cons.players.find((c) => c.id === targetId);
@@ -221,7 +219,6 @@ module.exports = {
 				});
 			}, this);
 		}
-
 		this.party = null;
 		this.updateMainThread("party", this.party);
 	}
@@ -324,5 +321,13 @@ module.exports = {
 			id
 			, messages
 		}, [serverId]);
+	}
+
+	, getPlayerList: function(data) {
+		const currentPlayers = cons.players.map((p) => p.getSimple(false, false, true));
+		if (data.callback) {
+			data.callback(currentPlayers);
+		}
+		return currentPlayers;
 	}
 };
