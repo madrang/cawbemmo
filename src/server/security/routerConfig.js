@@ -1,7 +1,10 @@
 const events = require("../misc/events");
 
 const routerConfig = {
-	signatures: {
+	forwardEvents: [
+		"playerObjAdded", "playerObjChanged", "playerObjRemoved"
+	]
+	, signatures: {
 		global: {
 			clientConfig: {
 				getClientConfig: {
@@ -664,6 +667,7 @@ module.exports = {
 		routerConfig.secondaryAllowed = {};
 		routerConfig.secondaryAllowTargetId = {};
 		routerConfig.globalAllowed = {};
+		cons.setupEventForwarder(routerConfig.forwardEvents);
 
 		events.emit("onBeforeGetRouterSignatureConfig", routerConfig);
 	}

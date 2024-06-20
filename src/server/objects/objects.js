@@ -245,18 +245,17 @@ module.exports = {
 
 		for (let p in store) {
 			const { obj: { socket }, events } = store[p];
-
 			socket.emit("events", events);
 		}
 	}
 
 	, updateObject: async function (msg) {
-		let player = this.objects.find((p) => p.id === msg.serverId);
+		const player = this.objects.find((p) => p.id === msg.serverId);
 		if (!player) {
 			return;
 		}
 
-		let obj = msg.obj;
+		const obj = msg.obj;
 		for (let p in obj) {
 			player[p] = obj[p];
 		}

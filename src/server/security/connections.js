@@ -79,6 +79,25 @@ module.exports = {
 		routeGlobal.call(this, msg);
 	}
 
+	, setupEventForwarder: function(forwardEvents) {
+		for (const eName of forwardEvents) {
+			eventEmitter.on(eName, (function(msg) {
+				for (const propName in msg) {
+					if (!msg.hasOwnProperty(propName)) {
+						continue;
+					}
+					if (typeof msg[propName].getSimple === "function") {
+						msg[propName] = msg[propName].getSimple(false, false, true);
+					}
+				}
+				this.emit("event", {
+					event: eName
+					, data: msg
+				});
+			}).bind(this));
+		}
+	}
+
 	, unzone: async function (msg) {
 		let socket = msg.socket;
 		let player = this.players.find((p) => p.socket.id === socket.id);
