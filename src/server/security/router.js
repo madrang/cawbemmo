@@ -1,5 +1,72 @@
 const { routerConfig: { signatures, allowed, allowTargetId, secondaryAllowed, globalAllowed, secondaryAllowTargetId } } = require("./routerConfig");
 
+const DATA_TYPES_VALIDATORS = {
+	"boolean": (value) => typeof value === "boolean"
+	, "string": (value) => typeof value === "string"
+	, "stringOrNull": (value) => value === null || typeof(value) === "string"
+
+	, "number": (value) => Number.isFinite(value)
+	, "numberOrString": (value) => typeof value === "string" || Number.isFinite(value)
+
+	, "integer": (value) => Number.isInteger(value)
+	, "integerOrString": (value) => typeof value === "string" || Number.isInteger(value)
+
+	, "arrayOfStrings": (value) => Array.isArray(value) && value.every((v) => typeof(v) === "string")
+	, "arrayOfIntegers": (value) => Array.isArray(value) && value.every((v) => Number.isInteger(v))
+};
+
+const keysCorrect = function (obj, specs) {
+	const specsValid = specs.every(({ key, dataType, optional, spec }) => {
+		if (!Object.hasOwnProperty.call(obj, key)) {
+			return optional;
+		}
+		if (!dataType) {
+			_.log.router.error("Property %s is missing it's dataType.", key);
+			return false;
+		}
+		const validatorFn = DATA_TYPES_VALIDATORS[dataType];
+		if (!validatorFn) {
+			_.log.router.error(`Property ${key} has an unknown dataType "${dataType}"`);
+			return false;
+		}
+		return validatorFn(obj[key], spec);
+	});
+	if (!specsValid) {
+		return false;
+	}
+	// Check if obj has extra unallowed properties.
+	const foundInvalid = Object.keys(obj).some((o) => !specs.some((k) => k.key === o));
+	return !foundInvalid;
+}
+
+DATA_TYPES_VALIDATORS.arrayOfObjects = (value, spec) => (
+	Array.isArray(value)
+	&& value.every((v) =>
+		v !== null
+		&& typeof v === "object"
+		&& (!spec || keysCorrect(v, spec))
+	)
+);
+
+DATA_TYPES_VALIDATORS.object = (value, spec) => (
+	value !== null
+	&& typeof(value) === "object"
+	&& (!spec || keysCorrect(value, spec))
+);
+
+DATA_TYPES_VALIDATORS.integerNullOrObject = (value, spec) => (
+	Number.isInteger(value)
+	|| value === null
+	|| (typeof value === "object" && keysCorrect(value, spec))
+);
+
+DATA_TYPES_VALIDATORS.integerNullObjectOrString = (value, spec) => (
+	Number.isInteger(value)
+	|| typeof value === "string"
+	|| value === null
+	|| (typeof value === "object" && keysCorrect(value, spec))
+);
+
 module.exports = {
 	allowedCpn: function (msg) {
 		const { cpn, method, data: { cpn: secondaryCpn, method: secondaryMethod, targetId } } = msg;
@@ -37,80 +104,7 @@ module.exports = {
 		return globalAllowed[threadModule] && globalAllowed[threadModule].includes(method);
 	}
 
-	, keysCorrect: function (obj, keys) {
-		const foundIncorrect = keys.some(({ key, dataType, optional, spec }) => {
-			if (!Object.hasOwnProperty.call(obj, key)) {
-				if (optional) {
-					return false;
-				}
-				return true;
-			}
-			const value = obj[key];
-			if (dataType === "string" || dataType === "boolean") {
-				return dataType !== typeof(value);
-			} else if (dataType === "numberOrString") {
-				return (typeof(value) !== "string" && !Number.isFinite(value));
-			} else if (dataType === "integerOrString") {
-				return (typeof(value) !== "string" && !Number.isInteger(value));
-			} else if (dataType === "integer") {
-				return !Number.isInteger(value);
-			} else if (dataType === "integerNullOrObject") {
-				const isCorrect = (
-					Number.isInteger(value) ||
-					value === null ||
-					(
-						typeof(value) === "object" &&
-						this.keysCorrect(value, spec)
-					)
-				);
-				return !isCorrect;
-			} else if (dataType === "integerNullObjectOrString") {
-				const isCorrect = (
-					Number.isInteger(value) ||
-					typeof(dataType) === "string" ||
-					value === null ||
-					(
-						typeof(value) === "object" &&
-						this.keysCorrect(value, spec)
-					)
-				);
-				return !isCorrect;
-			} else if (dataType === "arrayOfStrings") {
-				return (!Array.isArray(value) || value.some((v) => typeof(v) !== "string"));
-			} else if (dataType === "arrayOfIntegers") {
-				return (!Array.isArray(value) || value.some((v) => !Number.isInteger(v)));
-			} else if (dataType === "arrayOfObjects") {
-				if (!Array.isArray(value) || value.some((v) => v === null || typeof(v) !== "object")) {
-					return true;
-				}
-				const foundIncorrectObject = value.some((v) => !this.keysCorrect(v, spec));
-				if (foundIncorrectObject) {
-					return true;
-				}
-				return foundIncorrectObject;
-			} else if (dataType === "object") {
-				if (typeof(value) !== "object" || value === null) {
-					return true;
-				}
-				if (!spec) {
-					return false;
-				}
-				const foundIncorrectObject = !this.keysCorrect(value, spec);
-				if (foundIncorrectObject) {
-					return true;
-				}
-				return foundIncorrectObject;
-			} else if (dataType === "stringOrNull") {
-				return (typeof(value) !== "string" && value !== null);
-			}
-			return true;
-		});
-		if (foundIncorrect) {
-			return false;
-		}
-		const foundInvalid = Object.keys(obj).some((o) => !keys.some((k) => k.key === o));
-		return !foundInvalid;
-	}
+	, keysCorrect
 
 	, signatureCorrect: function (msg, config) {
 		if (config.callback !== "deferred") {
