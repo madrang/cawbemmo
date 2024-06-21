@@ -290,7 +290,7 @@
 	}
 
 	GridNode.prototype.toString = function() {
-		return "[" + this.x + " " + this.y + "]";
+		return `[${this.x} ${this.y}]`;
 	};
 
 	GridNode.prototype.getCost = function(fromNeighbor) {

@@ -5,6 +5,7 @@ define([
 ], function (
 	pixiParticles,
 	particleDefaults,
+	//TODO Fix shader outline.
 	shaderOutline
 ) {
 	return {

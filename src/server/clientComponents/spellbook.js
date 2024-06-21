@@ -28,7 +28,7 @@ define([
 		, reticleCdMax: 10
 		, reticleSprite: null
 
-		, groundTargetSpell: false
+		, groundTargetSpell: null
 
 		, init: function (blueprint) {
 			this.targetSprite = renderer.buildObject({
@@ -56,33 +56,31 @@ define([
 		}
 
 		, extend: function (blueprint) {
+			let listChanged = false;
 			if (blueprint.removeSpells) {
+				listChanged = true;
 				blueprint.removeSpells.forEach((r) => this.spells.spliceWhere((s) => s.id === r));
-				events.emit("onGetSpells", this.spells);
 			}
-
 			if (blueprint.getSpells) {
+				listChanged = true;
 				blueprint.getSpells.forEach(function (s) {
-					let existIndex = this.spells.findIndex((f) => f.id === s.id);
-
+					const existIndex = this.spells.findIndex((f) => f.id === s.id);
 					if (existIndex > -1) {
 						this.spells.splice(existIndex, 1, s);
 						return;
 					}
-
 					this.spells.push(s);
 					this.spells.sort((a, b) => a.id - b.id);
 				}, this);
-
+			}
+			if (listChanged) {
 				events.emit("onGetSpells", this.spells);
 			}
 		}
 
 		, getSpell: function (number) {
-			let spellNumber = (number === " ") ? 0 : number;
-			let spell = this.spells.find((s) => s.id === spellNumber);
-
-			return spell;
+			const spellNumber = (number === " ") ? 0 : number;
+			return this.spells.find((s) => s.id === spellNumber);
 		}
 
 		, onMobHover: function (target) {
@@ -91,38 +89,42 @@ define([
 
 		, onMouseDown: function (e, target) {
 			if (isMobile && this.groundTargetSpell) {
+				// Allow attacking ground on mobile.
 				this.groundTarget = {
 					x: Math.floor(e.worldX / scale)
 					, y: Math.floor(e.worldY / scale)
 				};
-
 				this.onKeyDown(this.groundTargetSpell);
-
 				this.groundTargetSpell = null;
 			}
-
-			if (!target && this.target && (!this.hoverTarget || this.hoverTarget.id !== this.target.id)) {
+			// Allow attack with mouse.
+			if (this.target
+				&& (
+					target?.id === this.target.id
+					|| this.hoverTarget?.id === this.target.id
+				)
+			) {
 				client.request({
 					cpn: "player"
 					, method: "castSpell"
 					, data: {
 						priority: true
-						, target: null
+						, spell: 0
+						, target: this.target.id
 					}
 				});
+				return;
 			}
-
+			// Update current target
 			this.target = target || this.hoverTarget;
-
+			// Update target sprite
 			if (this.target) {
 				this.targetSprite.x = this.target.x * scale;
 				this.targetSprite.y = this.target.y * scale;
-
 				this.targetSprite.visible = true;
 			} else {
 				this.targetSprite.visible = false;
 			}
-
 			events.emit("onSetTarget", this.target, e);
 		}
 
@@ -171,33 +173,25 @@ define([
 			} else if (spell.targetPlayerPos) {
 				isShiftDown = true;
 			}
-
 			if (isShiftDown) {
 				this.target = oldTarget;
 			}
-
 			if (target === this.obj && spell.noTargetSelf) {
 				return;
 			} else if (isMobile && spell.targetGround && !spell.targetPlayerPos && !this.groundTarget) {
 				if (this.groundTargetSpell === key) {
 					this.groundTargetSpell = null;
-
 					events.emit("onGetAnnouncement", {
 						msg: `Cancelled casting ${spell.name}`
 					});
-
 					return;
 				}
-
 				this.groundTargetSpell = key;
-
 				events.emit("onGetAnnouncement", {
 					msg: `Pick a location to cast ${spell.name}`
 				});
-
 				return;
 			}
-
 			client.request({
 				cpn: "player"
 				, method: "castSpell"
@@ -208,7 +202,6 @@ define([
 					, self: isShiftDown
 				}
 			});
-
 			if (isMobile) {
 				this.groundTarget = null;
 			}

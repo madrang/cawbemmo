@@ -38,11 +38,8 @@ define([
 
 				let hotkey = (spell.id === 0) ? "space" : spells[i].id;
 
-				let html = templateSpell
-					.replace("$HOTKEY$", hotkey);
-
-				let el = $(html)
-					.appendTo(this.el);
+				const html = templateSpell.replace("$HOTKEY$", hotkey);
+				let el = $(html).appendTo(this.el);
 				el
 					.on("dblclick", this.onDblClickSpell.bind(this, hotkey))
 					.on("click", this.onClickSpell.bind(this, hotkey))
@@ -52,7 +49,7 @@ define([
 				let spritesheet = spell.spritesheet || "../../../images/abilityIcons.png";
 				el
 					.find(".icon").css({
-						background: "url(\"" + spritesheet + "\") " + x + "px " + y + "px"
+						background: `url("${spritesheet}") ${x}px ${y}px`
 					})
 					.next().html(hotkey);
 
@@ -66,7 +63,6 @@ define([
 						spell: spell.id
 						, cd: spell.cd * 350
 					});
-
 					delete spell.cd;
 				}
 			}
@@ -75,10 +71,8 @@ define([
 		, onClickSpell: function (hotkey, e) {
 			e.preventDefault();
 
-			let key = (hotkey === "space") ? " " : hotkey;
-
+			const key = (hotkey === "space") ? " " : hotkey;
 			window.player.spellbook.onKeyDown(key);
-
 			return false;
 		}
 
@@ -118,13 +112,10 @@ define([
 				.replace("$ELEMENT$", spell.element ? "element: " + spell.element : "");
 
 			if (spell.range) {
-				tooltip = tooltip
-					.replace("$RANGE$", spell.range);
+				tooltip = tooltip.replace("$RANGE$", spell.range);
 			} else {
-				tooltip = tooltip
-					.replace("range", "range hidden");
+				tooltip = tooltip.replace("range", "range hidden");
 			}
-
 			events.emit("onShowTooltip", tooltip, el[0], pos, 250, false, true, this.el.css("z-index"));
 		}
 		, onHideTooltip: function (el) {
@@ -177,24 +168,20 @@ define([
 
 			const time = Date.now();
 			for (let i = 0; i < spells.length; i++) {
-				let spell = spells[i];
-
+				const spell = spells[i];
 				if (!spell.ttl) {
 					this.el.children("div").eq(i).find(".cooldown").css({
 						width: "0%"
 					});
 					continue;
 				}
-
-				let elapsed = time - spell.ttlStart;
+				const elapsed = time - spell.ttlStart;
 				let width = 1 - (elapsed / spell.ttl);
 				if (width <= 0) {
 					delete spell.ttl;
 					width = 0;
 				}
-
 				width = Math.ceil((width * 100) / 4) * 4;
-
 				this.el.children("div").eq(i).find(".cooldown").css({
 					width: width + "%"
 				});

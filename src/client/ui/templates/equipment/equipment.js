@@ -13,6 +13,79 @@ define([
 	input,
 	renderItem
 ) {
+	const getStatsAsStrings = function(stats, section) {
+		switch (section) {
+			case "info": return {
+				"niveau": stats.level
+				, "prochain niveau": (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "xp"
+				, gap1: ""
+				, "Argent": window.player.trade.gold
+				, gap2: ""
+				, "hp": `${Math.floor(stats.hp)}/${Math.floor(stats.hpMax)}`
+				, "mana": `${Math.floor(stats.mana)}/${Math.floor(stats.manaMax)}`
+				, "hp regen": stats.regenHp
+				, "mana regen": Math.floor(stats.regenMana) + "%"
+				, gap3: ""
+				, "str": stats.str
+				, "int": stats.int
+				, "dex": stats.dex
+				, "vit": stats.vit
+			}
+			case "offense": return {
+				"global crit chance": stats.critChance.toFixed(1) + "%"
+				, "global crit multiplier": stats.critMultiplier.toFixed(1) + "%"
+				, "attack crit chance": (stats.critChance + stats.attackCritChance).toFixed(1) + "%"
+				, "attack crit multiplier": (stats.critMultiplier + stats.attackCritMultiplier).toFixed(1) + "%"
+				, "spell crit chance": (stats.critChance + stats.spellCritChance).toFixed(1) + "%"
+				, "spell crit multiplier": (stats.critMultiplier + stats.spellCritMultiplier).toFixed(1) + "%"
+				, gap1: ""
+				, "arcane increase": stats.elementArcanePercent + "%"
+				, "fire increase": stats.elementFirePercent + "%"
+				, "frost increase": stats.elementFrostPercent + "%"
+				, "holy increase": stats.elementHolyPercent + "%"
+				, "poison increase": stats.elementPoisonPercent + "%"
+				, "physical increase": stats.physicalPercent + "%"
+				, gap2: ""
+				, "spell increase": stats.spellPercent + "%"
+				, gap3: ""
+				, "attack speed": (100 + stats.attackSpeed) + "%"
+				, "cast speed": (100 + stats.castSpeed) + "%"
+			}
+			case "défense": return {
+				armor: stats.armor
+				, "chance to block attacks": stats.blockAttackChance + "%"
+				, "chance to block spells": stats.blockSpellChance + "%"
+				, gap1: ""
+				, "chance to dodge attacks": stats.dodgeAttackChance.toFixed(1) + "%"
+				, "chance to dodge spells": stats.dodgeSpellChance.toFixed(1) + "%"
+				, gap2: ""
+				, "arcane resist": stats.elementArcaneResist
+				, "fire resist": stats.elementFireResist
+				, "frost resist": stats.elementFrostResist
+				, "holy resist": stats.elementHolyResist
+				, "poison resist": stats.elementPoisonResist
+				, gap3: ""
+				, "all resist": stats.elementAllResist
+				, gap4: ""
+				, "life gained on hit": stats.lifeOnHit
+			}
+			case "autres": return {
+				"item quality": stats.magicFind + "%"
+				, "item quantity": stats.itemQuantity + "%"
+				, gap1: ""
+				, "sprint chance": (stats.sprintChance?.toFixed(2) || 0) + "%"
+				, gap2: ""
+				, "xp increase": stats.xpIncrease + "%"
+				, gap3: ""
+				, "chance to catch a fish": stats.catchChance + "%"
+				, "fishing speed": stats.catchSpeed + "%"
+				, "increased fish rarity": stats.fishRarity + "%"
+				, "increased fish weight": stats.fishWeight + "%"
+				, "chance to fish items": stats.fishItems + "%"
+			}
+			default: throw new Error(`Unknown or missing section "${section}"`);
+		}
+	};
 	return {
 		tpl: template
 
@@ -159,15 +232,13 @@ define([
 		}
 
 		, showContext: function (item, e) {
-			let menuItems = {
+			const menuItems = {
 				unequip: {
 					text: "unequip"
 					, callback: this.unequipItem.bind(this, item)
 				}
 			};
-
-			let config = [];
-
+			const config = [];
 			config.push(menuItems.unequip);
 
 			events.emit("onContextMenu", config, e);
@@ -207,25 +278,22 @@ define([
 			if (e && e.button !== 0) {
 				return;
 			}
-
 			if (this.isInspecting) {
 				return;
 			}
-
 			if (el.target) {
 				el = $(el.target).parent();
 			}
 
-			let slot = el.attr("slot");
-			let isRune = (slot.indexOf("rune") === 0);
+			const slot = el.attr("slot");
+			const isRune = (slot.indexOf("rune") === 0);
 			const isConsumable = (slot.indexOf("quick") === 0);
 
-			let container = this.find(".itemList")
+			const container = this.find(".itemList")
 				.empty()
 				.show();
 
-			let hoverCompare = this.hoverCompare = el.data("item");
-
+			const hoverCompare = this.hoverCompare = el.data("item");
 			let items = this.items
 				.filter((item) => {
 					if (isRune) {
@@ -233,12 +301,10 @@ define([
 					} else if (isConsumable) {
 						return (item.type === "consumable" && !item.has("quickSlot"));
 					}
-
-					let checkSlot = (slot.indexOf("finger") === 0) ? "finger" : slot;
+					const checkSlot = (slot.indexOf("finger") === 0) ? "finger" : slot;
 					if (slot === "oneHanded") {
 						return (!item.eq && (item.slot === "oneHanded" || item.slot === "twoHanded"));
 					}
-
 					return (item.slot === checkSlot && !item.eq);
 				});
 
@@ -386,116 +452,37 @@ define([
 			}
 		}
 
-		, onGetStats: function (stats ) {
+		, onGetStats: function (stats) {
 			if (stats && !this.isInspecting) {
 				this.stats = stats;
 			}
-
 			stats = stats || this.stats;
 
 			if (!this.shown) {
 				return;
 			}
-
-			let container = this.el.find(".stats");
-
+			const container = this.el.find(".stats");
 			container
 				.children("*:not(.tabs)")
 				.remove();
 
-			let xpRemaining = (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-			let newStats = {
-				info: {
-					niveau: stats.level
-					, "prochain niveau": xpRemaining + "xp"
-					, gap1: ""
-					, Argent: window.player.trade.gold
-					, gap2: ""
-					, hp: ~~stats.hp + "/" + ~~stats.hpMax
-					, mana: ~~stats.mana + "/" + ~~stats.manaMax
-					, "hp regen": stats.regenHp
-					, "mana regen": ~~stats.regenMana + "%"
-					, gap3: ""
-					, str: stats.str
-					, int: stats.int
-					, dex: stats.dex
-					, vit: stats.vit
+			const newStats = getStatsAsStrings(stats, this.find(".tab.selected").html());
+			for (const statName in newStats) {
+				let label = "";
+				let value = "";
+				const isGap = statName.startsWith("gap");
+				if (!isGap) {
+					label = statName + ": ";
+					value = newStats[statName];
 				}
-				, offense: {
-					"global crit chance": (~~(stats.critChance * 10) / 10) + "%"
-					, "global crit multiplier": (~~(stats.critMultiplier * 10) / 10) + "%"
-					, "attack crit chance": (~~((stats.critChance + stats.attackCritChance) * 10) / 10) + "%"
-					, "attack crit multiplier": (~~((stats.critMultiplier + stats.attackCritMultiplier) * 10) / 10) + "%"
-					, "spell crit chance": (~~((stats.critChance + stats.spellCritChance) * 10) / 10) + "%"
-					, "spell crit multiplier": (~~((stats.critMultiplier + stats.spellCritMultiplier) * 10) / 10) + "%"
-					, gap1: ""
-					, "arcane increase": stats.elementArcanePercent + "%"
-					, "fire increase": stats.elementFirePercent + "%"
-					, "frost increase": stats.elementFrostPercent + "%"
-					, "holy increase": stats.elementHolyPercent + "%"
-					, "poison increase": stats.elementPoisonPercent + "%"
-					, "physical increase": stats.physicalPercent + "%"
-					, gap2: ""
-					, "spell increase": stats.spellPercent + "%"
-					, gap3: ""
-					, "attack speed": (100 + stats.attackSpeed) + "%"
-					, "cast speed": (100 + stats.castSpeed) + "%"
-				}
-				, défense: {
-					armor: stats.armor
-					, "chance to block attacks": stats.blockAttackChance + "%"
-					, "chance to block spells": stats.blockSpellChance + "%"
-					, gap1: ""
-					, "chance to dodge attacks": (~~(stats.dodgeAttackChance * 10) / 10) + "%"
-					, "chance to dodge spells": (~~(stats.dodgeSpellChance * 10) / 10) + "%"
-					, gap2: ""
-					, "arcane resist": stats.elementArcaneResist
-					, "fire resist": stats.elementFireResist
-					, "frost resist": stats.elementFrostResist
-					, "holy resist": stats.elementHolyResist
-					, "poison resist": stats.elementPoisonResist
-					, gap3: ""
-					, "all resist": stats.elementAllResist
-					, gap4: ""
-					, "life gained on hit": stats.lifeOnHit
-				}
-				, autres: {
-					"item quality": stats.magicFind + "%"
-					, "item quantity": stats.itemQuantity + "%"
-					, gap1: ""
-					, "sprint chance": ((~~(stats.sprintChance * 100) / 100) || 0) + "%"
-					, gap2: ""
-					, "xp increase": stats.xpIncrease + "%"
-					, gap3: ""
-					, "chance to catch a fish": stats.catchChance + "%"
-					, "fishing speed": stats.catchSpeed + "%"
-					, "increased fish rarity": stats.fishRarity + "%"
-					, "increased fish weight": stats.fishWeight + "%"
-					, "chance to fish items": stats.fishItems + "%"
-				}
-			}[this.find(".tab.selected").html()];
-
-			for (let s in newStats) {
-				let label = s + ": ";
-				let value = newStats[s];
-
-				let isGap = false;
-				if (label.indexOf("gap") === 0) {
-					isGap = true;
-					label = "";
-					value = "";
-				}
-
-				let row = $("<div class=\"stat\"><font class=\"q0\">" + label + "</font><font color=\"#999\">" + value + "</font></div>")
+				const row = $(`<div class=\"stat\"><font class=\"q0\">${label}</font><font color=\"#999\">${value}</font></div>`)
 					.appendTo(container);
 
-				if (s === "gold") {
+				if (statName === "gold") {
 					row.addClass("gold");
-				} else if ((s === "level") || (s === "next level")) {
+				} else if (statName === "level" || statName === "next level") {
 					row.addClass("blueText");
 				}
-
 				if (isGap) {
 					row.addClass("empty");
 				}

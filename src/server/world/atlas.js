@@ -20,7 +20,7 @@ module.exports = {
 		//While rezoning, this is set to true. So we remove it
 		delete serverObj.rezoning;
 
-		events.emit("onBeforePlayerEnterWorld", obj);
+		await events.emit("onBeforePlayerEnterWorld", obj);
 
 		let { zoneName, zoneId } = obj;
 
@@ -59,13 +59,11 @@ module.exports = {
 				}
 			});
 		}
-
 		const { thread, resetObjPosition } = await getThread(eGetThread);
 
 		//Perhaps the player disconnected while waiting for the thread to spawn
 		if (!serverObj.socket.connected) {
 			await killThreadIfEmpty(thread);
-
 			return;
 		}
 
@@ -85,7 +83,6 @@ module.exports = {
 		});
 
 		const simpleObj = obj.getSimple ? obj.getSimple(true, true) : obj;
-
 		sendMessageToThread({
 			threadId: obj.zoneId
 			, msg: {

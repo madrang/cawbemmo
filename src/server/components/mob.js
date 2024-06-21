@@ -104,7 +104,7 @@ module.exports = {
 
 	/* eslint-disable-next-line max-lines-per-function */
 	, update: function () {
-		let obj = this.obj;
+		const obj = this.obj;
 		let target = null;
 		if (obj.aggro) {
 			target = obj.aggro.getHighest();

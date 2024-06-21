@@ -38,22 +38,20 @@ define([
 			this.onTogglePartyView(config.partyView);
 		}
 
-		, globalObjectListUpdated: function ({ list }) {
-			if (!window.player) {
+		, globalObjectListUpdated: function ({ onlineList }) {
+			if (!window.player || !onlineList) {
 				return;
 			}
-
 			const { party } = this;
 			const { player: { serverId: playerId } } = window;
 
-			const player = list.find((l) => l.id === playerId);
+			const player = onlineList.find((l) => l.id === playerId);
 			const { zoneId: playerZone } = player;
 
 			if (!party) {
 				return;
 			}
-
-			list.forEach((l) => {
+			onlineList.forEach((l) => {
 				const { id: mId, zoneId: mZone, level: mLevel } = l;
 
 				if (!party.includes(mId)) {

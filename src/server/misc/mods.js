@@ -5,38 +5,32 @@ module.exports = {
 	mods: []
 
 	, init: async function () {
-		const modList = fileLister.getFolderList("mods");
-
 		//Load all mods
-		let loadList = modList.map((m) => {
-			const path = `../mods/${m}/index`;
-
+		const modList = fileLister.getFolderList("mods");
+		const loadList = modList.map((modName) => {
+			const path = `../mods/${modName}/index`;
 			const mod = require(path);
-			const id = mod.id ? mod.id : m.replace("iwd-", "");
-
+			const id = mod.id ? mod.id : modName.replace("iwd-", "");
 			return {
 				id
-				, folderName: m
+				, folderName: modName
 				, path
 				, mod
 			};
 		});
-
+		// Enable mods
 		while (loadList.length) {
 			for (const m of loadList) {
 				const { id, folderName, mod } = m;
 				const { dependsOn = [] } = mod;
-
+				// Check if all dependencies are loaded.
 				const wait = dependsOn.some((d) => loadList.some((l) => l.id === d));
-
 				if (wait) {
 					continue;
 				}
-
 				await this.onGetMod(folderName, mod);
-
 				this.mods.push(mod);
-
+				// Remove from loadList.
 				loadList.spliceWhere((l) => l.id === id);
 			}
 		}
@@ -58,7 +52,7 @@ module.exports = {
 		let lLen = list.length;
 
 		for (let i = 0; i < lLen; i++) {
-			let extra = require("../mods/" + name + "/" + list[i]);
+			const extra = require(`../mods/${name}/${list[i]}`);
 			this.onGetExtra(name, mod, extra);
 		}
 

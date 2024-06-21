@@ -325,6 +325,7 @@ module.exports = {
 
 		if ((this.list.length === 0) && (this.obj.mob) && (!this.obj.follower)) {
 			this.obj.stats.resetHp();
+			this.obj.stats.resetMana();
 		}
 	}
 
