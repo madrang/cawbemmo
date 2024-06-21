@@ -33,20 +33,18 @@ define([
 		}
 
 		, build: function () {
-			let stats = this.stats;
-
-			let boxes = this.find(".statBox");
-
+			const stats = this.stats;
+			const boxes = this.find(".statBox");
 			[
 				stats.hp / stats.hpMax
 				, stats.mana / stats.manaMax
 				, stats.xp / stats.xpMax
-			].forEach((s, i) => boxes.eq(i).find("div:first-child").width(Math.max(0, Math.min(100, ~~(s * 100))) + "%"));
+			].forEach((s, i) => boxes.eq(i).find("div:first-child").width(Math.max(0, Math.min(100, Math.floor(s * 100))) + "%"));
 
-			this.find(".statManaReserve").width(Math.max(0, Math.min(100, ~~(stats.manaReservePercent * 100))) + "%");
+			this.find(".statManaReserve").width(Math.max(0, Math.min(100, Math.floor(stats.manaReservePercent * 100))) + "%");
 
-			boxes.eq(0).find(".text").html(Math.floor(stats.hp) + "/" + ~~stats.hpMax);
-			boxes.eq(1).find(".text").html(Math.floor(stats.mana) + "/" + ~~stats.manaMax);
+			boxes.eq(0).find(".text").html(Math.floor(stats.hp) + "/" + Math.floor(stats.hpMax));
+			boxes.eq(1).find(".text").html(Math.floor(stats.mana) + "/" + Math.floor(stats.manaMax));
 			boxes.eq(2).find(".text").html("level: " + stats.level);
 		}
 
@@ -55,7 +53,6 @@ define([
 			if (!quickItem) {
 				return;
 			}
-
 			events.emit("onHideItemTooltip", quickItem);
 			events.emit("onUseQuickItem", quickItem);
 
@@ -74,7 +71,6 @@ define([
 
 		, showQuickItemTooltip: function (show, e) {
 			const item = this.quickItem;
-
 			if (show) {
 				let ttPos = null;
 				if (e) {
@@ -83,7 +79,6 @@ define([
 						, y: Math.floor(e.clientY)
 					};
 				}
-
 				events.emit("onShowItemTooltip", item, ttPos);
 			} else {
 				events.emit("onHideItemTooltip", item);
@@ -97,16 +92,13 @@ define([
 			}
 
 			, onGetPortrait: function (portrait) {
-				let spritesheet = portrait.spritesheet || "../../../images/portraitIcons.png";
-
-				let x = portrait.x * -64;
-				let y = portrait.y * -64;
-
-				this.find(".portrait")
-					.css({
-						background: "url(\"" + spritesheet + "\") " + x + "px " + y + "px"
-						, visibility: "visible"
-					});
+				const spritesheet = portrait.spritesheet || "../../../images/portraitIcons.png";
+				const x = portrait.x * -64;
+				const y = portrait.y * -64;
+				this.find(".portrait").css({
+					background: `url("${spritesheet}") ${x}px ${y}px`
+					, visibility: "visible"
+				});
 			}
 
 			, onDestroyItems: function (itemIds) {
@@ -125,7 +117,6 @@ define([
 
 			, onGetItems: function (items) {
 				this.items = items;
-
 				const quickItem = items.find((f) => f.has("quickSlot"));
 				this.quickItem = quickItem;
 				if (!quickItem) {
@@ -141,14 +132,11 @@ define([
 						.css("background", "");
 					return;
 				}
-
 				const itemContainer = this.find(".quickItem").show();
 				const itemEl = renderItem(null, quickItem, itemContainer);
-
 				if (itemEl.data("item") && itemEl.data("item").id === quickItem.id) {
 					return;
 				}
-
 				itemEl.data("item", quickItem);
 			}
 

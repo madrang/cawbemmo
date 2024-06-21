@@ -10,5 +10,6 @@ module.exports = {
 	}
 	, createCharacter: {
 		nameLength: "name must be between 3 and 12 characters"
+		, notConnected: "must be connected to create a character"
 	}
 };

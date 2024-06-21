@@ -78,20 +78,16 @@ module.exports = {
 		if (!self) {
 			return null;
 		}
-
-		let s = {
+		const s = {
 			type: this.type
 			, closestRange: this.closestRange
 			, furthestRange: this.furthestRange
 		};
-
 		let spells = this.spells;
 		if (spells.length && spells[0].obj) {
 			spells = spells.map((f) => f.simplify());
 		}
-
 		s.spells = spells;
-
 		return s;
 	}
 
@@ -355,15 +351,11 @@ module.exports = {
 		if (!action.has("spell")) {
 			return false;
 		}
-
-		let spell = this.spells.find((s) => (s.id === action.spell));
-
+		const spell = this.spells.find((s) => (s.id === action.spell));
 		if (!spell) {
 			return false;
 		}
-
-		let target = this.getTarget(spell, action);
-
+		const target = this.getTarget(spell, action);
 		return spell.canCast(target);
 	}
 

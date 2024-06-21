@@ -16,24 +16,34 @@ define([
 	return {
 		tpl: template
 		, centered: true
-
-		, onlineList: []
-
 		, modal: true
 		, hasClose: true
 
 		, actions: []
 
 		, postRender: function () {
-			globals.onlineList = this.onlineList;
+			globals.onlineList = null;
 
-			this.onEvent("onGetConnectedPlayer", this.onGetConnectedPlayer.bind(this));
-			this.onEvent("onGetDisconnectedPlayer", this.onGetDisconnectedPlayer.bind(this));
+			this.onEvent("playerObjAdded", this.playerObjAddedOrChanged.bind(this));
+			this.onEvent("playerObjChanged", this.playerObjAddedOrChanged.bind(this));
+			this.onEvent("playerObjRemoved", this.playerObjRemoved.bind(this));
 
 			this.onEvent("onGetSocialActions", this.onGetSocialActions.bind(this));
-
-			this.onEvent("onKeyDown", this.onKeyDown.bind(this));
 			this.onEvent("onShowOnline", this.toggle.bind(this));
+			this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+
+			_.log.online.debug("Requesting PlayerList");
+			client.request({
+				cpn: "social"
+				, method: "getPlayerList"
+				, callback: this.onGetList.bind(this)
+			});
+		}
+
+		, onGetList: function (list) {
+			globals.onlineList = list;
+			_.log.online.debug("PlayerList updated", list);
+			events.emit("globalObjectListUpdated", { onlineList: list });
 		}
 
 		, onGetSocialActions: function (actions) {
@@ -47,65 +57,32 @@ define([
 		}
 
 		, onAfterShow: function () {
-			this.build();
-		}
-
-		, onGetConnectedPlayer: function (list) {
-			if (!list.length) {
-				list = [list];
-			}
-
-			let onlineList = this.onlineList;
-
-			list.forEach(function (l) {
-				let exists = onlineList.find(function (o) {
-					return (o.name === l.name);
-				});
-				if (exists) {
-					$.extend(true, exists, l);
-				} else {
-					onlineList.push(l);
-				}
-			});
-
-			onlineList
-				.sort(function (a, b) {
-					if (a.level === b.level) {
-						if (a.name > b.name) {
-							return 1;
-						}
-						return -1;
-					} return b.level - a.level;
-				});
-
-			if (this.shown) {
-				this.build();
-			}
-		}
-
-		, onGetDisconnectedPlayer: function (playerName) {
-			let onlineList = this.onlineList;
-
-			onlineList.spliceWhere(function (o) {
-				return (o.name === playerName);
-			});
-
-			if (this.shown) {
-				this.build();
-			}
-		}
-
-		, build: function () {
-			let headingText = this.el.find(".heading-text");
-			let playerCount = this.onlineList.length;
-			headingText.html(`online players (${playerCount})`);
-
-			let container = this.el.find(".list");
+			const container = this.el.find(".list");
+			// Empty old list.
 			container
 				.children(":not(.heading)")
 				.remove();
 
-			this.onlineList.forEach(function (l) {
+			// Update title.
+			const headingText = this.el.find(".heading-text");
+			const onlineList = globals.onlineList;
+			const playerCount = onlineList?.length || 0;
+			if (playerCount > 0) {
+				headingText.html(`online players (${playerCount})`);
+			} else {
+				headingText.html(`online players list missing`);
+				return;
+			}
+			onlineList.sort((a, b) => {
+				if (a.level === b.level) {
+					if (a.name > b.name) {
+						return 1;
+					}
+					return -1;
+				} return b.level - a.level;
+			});
+
+			onlineList.forEach(function (l) {
 				let html = templateListItem
 					.replace("$NAME$", l.name)
 					.replace("$LEVEL$", l.level)
@@ -119,6 +96,31 @@ define([
 					el.on("mousedown", this.showContext.bind(this, l));
 				}
 			}, this);
+		}
+
+		, playerObjAddedOrChanged: function ({ obj }) {
+			const onlineList = globals.onlineList;
+			if (!onlineList) {
+				return;
+			}
+			_.log.online.debug("Player changed", obj);
+			onlineList.spliceWhere((o) => o.id === obj.id);
+			onlineList.push(obj);
+			events.emit("globalObjectListUpdated", { onlineList });
+			if (this.shown) {
+				this.onAfterShow();
+			}
+		}
+
+		, playerObjRemoved: function ({ id }) {
+			const onlineList = globals.onlineList;
+			if (!onlineList) {
+				return;
+			}
+			onlineList.spliceWhere((o) => o.id === id);
+			if (this.shown) {
+				this.onAfterShow();
+			}
 		}
 
 		, showContext: function (char, e) {

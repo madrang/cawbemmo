@@ -35,7 +35,9 @@ module.exports = {
 					}]
 				}
 			}
-
+			, rare: {
+				name: "Canette Frette"
+			}
 			, spells: [{
 				type: "melee"
 			}, {

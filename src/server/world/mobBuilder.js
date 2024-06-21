@@ -184,9 +184,12 @@ const build = (mob, blueprint, type, zoneName) => {
 		, mob
 	});
 
+	// Set Initial spawn values.
 	const statValues = mob.stats.values;
 	statValues.hp = statValues.hpMax;
-
+	if (statValues.has("manaMax")) {
+		statValues.mana = statValues.manaMax;
+	}
 	syncStats.forEach((s) => mob.syncer.setObject(false, "stats", "values", s, statValues[s]));
 };
 

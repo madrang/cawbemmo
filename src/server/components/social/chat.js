@@ -3,8 +3,6 @@ const profanities = require("../../language/profanities");
 const canChat = require("./canChat");
 
 const sendRegularMessage = async ({ obj }, msg) => {
-	const charname = obj.auth.charname;
-
 	const msgEvent = {
 		username: obj.account
 		, tagPrefix: null
@@ -16,7 +14,6 @@ const sendRegularMessage = async ({ obj }, msg) => {
 		, msgStyle: null
 		, obj
 	};
-
 	await events.emit("onBeforeGetChatStyles", msgEvent);
 
 	const { emojiTag } = msgEvent;
@@ -26,25 +23,20 @@ const sendRegularMessage = async ({ obj }, msg) => {
 		const imgX = (-emojiTag.sprite[0] * emojiTag.spriteSize);
 		const imgY = (-emojiTag.sprite[1] * emojiTag.spriteSize);
 		const backgroundPosition = `${imgX}px ${imgY}px`;
-
 		usePrefix = `<div class='emojiTag' style='background: url("${emojiTag.spritesheet}")  no-repeat scroll ${backgroundPosition} / auto;'></div>`;
 	} else if (msgEvent.tags.length > 0) {
 		usePrefix = `${msgEvent.tagPrefix}${msgEvent.tags.join(" ")}${msgEvent.tagSuffix} `;
 	}
-
-	let useCharName = charname;
+	let useCharName = obj.auth.charname;
 	if (msgEvent.namePrefix) {
 		useCharName = `${msgEvent.namePrefix}${useCharName}`;
 	}
 	if (msgEvent.nameSuffix) {
 		useCharName = `${useCharName}${msgEvent.nameSuffix}`;
 	}
-
 	const finalMessage = `${usePrefix}${useCharName}: ${msg.data.message}`;
-
 	const item = msg.data.item ? JSON.parse(JSON.stringify(msg.data.item).replace(/(<([^>]+)>)/ig, "")) : undefined;
-
-	const eventMsg = {
+	cons.emit("event", {
 		event: "onGetMessages"
 		, data: {
 			messages: [{
@@ -55,9 +47,7 @@ const sendRegularMessage = async ({ obj }, msg) => {
 				, source: obj.name
 			}]
 		}
-	};
-
-	cons.emit("event", eventMsg);
+	});
 };
 
 const sendPartyMessage = ({ party, obj }, msg) => {

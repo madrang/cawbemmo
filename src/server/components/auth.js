@@ -8,7 +8,11 @@ const spirits = require("../config/spirits");
 const ga = require("../security/ga");
 const eventEmitter = require("../misc/events");
 
-const checkLoginRewards = require("./auth/checkLoginRewards");
+const playFunctions = require("./auth/onPlay");
+
+const LOGIN_ILLEGAL_CHARS = [
+	"'", "\"", "/", "\\", "(", ")", "[", "]", "{", "}", ":", ";", "<", ">", "+", "?", "*"
+];
 
 //This section of code is in charge of ensuring that we only ever create one account at a time,
 // since we don't have a read/write lock on the characters table, we have to address it in code
@@ -16,14 +20,12 @@ const createLockBuffer = [];
 const getCreateLock = async () => {
 	const releaseLock = (lockEntry) => {
 		createLockBuffer.spliceWhere((c) => c === lockEntry);
-
 		const nextEntry = createLockBuffer[0];
 		if (!nextEntry) {
 			return;
 		}
 		nextEntry.takeLock();
 	};
-
 	const promise = new Promise(async (res) => {
 		let lockEntry = {};
 		lockEntry.takeLock = res.bind(null, releaseLock.bind(null, lockEntry));
@@ -55,23 +57,17 @@ module.exports = {
 		if (!this.username || this.charname) {
 			return;
 		}
-		let character = this.characters[data.data.name];
-		if (!character) {
-			return;
-		} else if (character.permadead) {
+		const character = this.characters[data.data.name];
+		if (!character || character.permadead) {
 			return;
 		}
 		character.stash = this.stash;
 		character.account = this.username;
-
 		this.charname = character.name;
 
-		checkLoginRewards(this, data, character, this.onSendRewards.bind(this, data, character));
+		playFunctions.updateStatus(this, character);
+		await playFunctions.checkLoginRewards(this, character);
 
-		cons.modifyPlayerCount(1);
-	}
-
-	, onSendRewards: async function (data, character) {
 		await io.setAsync({
 			key: this.username
 			, table: "accountInfo"
@@ -81,6 +77,12 @@ module.exports = {
 
 		this.obj.player.sessionStart = Date.now();
 		this.obj.player.spawn(character, data.callback);
+		_.log.auth.info("Player(%s) %s - Joined game as %s!", this.obj.id, this.username, character.name);
+		eventEmitter.emit("playerObjAdded", {
+			obj: {
+				id: this.obj.id
+			}
+		});
 
 		let prophecies = this.obj.prophecies ? this.obj.prophecies.simplify().list : [];
 		await leaderboard.setLevel(character.name, this.obj.stats.values.level, prophecies);
@@ -100,7 +102,6 @@ module.exports = {
 			, clean: true
 			, serialize: true
 		});
-
 		await this.doSaveStash();
 
 		if (callback) {
@@ -128,7 +129,6 @@ module.exports = {
 		if (!stash.changed) {
 			return;
 		}
-
 		await io.setAsync({
 			key: username
 			, table: "stash"
@@ -142,7 +142,6 @@ module.exports = {
 		if (!self) {
 			return;
 		}
-
 		return {
 			type: "auth"
 			, username: this.username
@@ -155,28 +154,24 @@ module.exports = {
 		if (!this.username) {
 			return;
 		}
-
 		this.characterList = await io.getAsync({
 			key: this.username
 			, table: "characterList"
 			, isArray: true
 		});
-
 		let res = this.characterList.map((c) => ({
 			name: c.name ? c.name : c
 			, level: leaderboard.getLevel(c.name ? c.name : c)
 		}));
-
 		data.callback(res);
 	}
 
 	, getCharacter: async function (data) {
-		let charName = data.data.name;
+		const charName = data.data.name;
 		if (!this.characterList.some((c) => (c.name === charName || c === charName))) {
 			return;
 		}
-
-		let character = await io.getAsync({
+		const character = await io.getAsync({
 			key: charName
 			, table: "character"
 			, clean: true
@@ -207,8 +202,7 @@ module.exports = {
 			, table: "customChannels"
 			, isArray: true
 		});
-
-		let social = character.components.find((c) => (c.type === "social"));
+		const social = character.components.find((c) => (c.type === "social"));
 		this.customChannels = fixes.fixCustomChannels(this.customChannels);
 		if (social) {
 			social.customChannels = this.customChannels;
@@ -217,13 +211,10 @@ module.exports = {
 
 	, verifySkin: async function (character) {
 		const doesOwn = await this.doesOwnSkin(character.skinId);
-
 		if (doesOwn) {
 			return;
 		}
-
 		const defaultTo = "wizard";
-
 		character.skinId = defaultTo;
 		character.cell = skins.getCell(defaultTo);
 		character.sheetName = skins.getSpritesheet(defaultTo);
@@ -238,12 +229,9 @@ module.exports = {
 			, allSkins
 			, filteredSkins
 		};
-
 		await eventEmitter.emit("onBeforeGetAccountSkins", msgSkinList);
 
-		const result = filteredSkins.some((f) => f.id === skinId);
-
-		return result;
+		return filteredSkins.some((f) => f.id === skinId);
 	}
 
 	, getSkinList: async function ({ callback }) {
@@ -271,13 +259,11 @@ module.exports = {
 			msg.callback(messages.login.maxUsernameLength);
 			return;
 		}
-
-		let storedPassword = await io.getAsync({
+		const storedPassword = await io.getAsync({
 			key: credentials.username
 			, table: "login"
 			, noParse: true
 		});
-
 		bcrypt.compare(credentials.password, storedPassword, this.onLogin.bind(this, msg, storedPassword));
 	}
 
@@ -286,10 +272,11 @@ module.exports = {
 
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
-			_.log.auth.notice("User %s - Login denied! Invalid password.", username);
+			const clientIp = this.obj?.socket.request.connection.remoteAddress;
+			_.log.auth.notice("Player(%s) from %s - Login denied! Invalid password for %s", this.obj.id, clientIp, username);
 			return;
 		}
-		_.log.auth.info("User %s - Connected!", username);
+		_.log.auth.info("Player(%s) %s - Connected!", this.obj.id, username);
 
 		const emBeforeLogin = {
 			obj: this.obj
@@ -300,10 +287,8 @@ module.exports = {
 		await eventEmitter.emit("onBeforeLogin", emBeforeLogin);
 		if (!emBeforeLogin.success) {
 			msg.callback(emBeforeLogin.msg);
-
 			return;
 		}
-
 		this.username = username;
 		await cons.logOut(this.obj);
 
@@ -317,18 +302,14 @@ module.exports = {
 			loginStreak: 0
 			, level: 0
 		};
-
 		const msgAccountInfo = {
 			username
 			, accountInfo
 		};
-
 		await eventEmitter.emit("onBeforeGetAccountInfo", msgAccountInfo);
-
 		await eventEmitter.emit("onAfterLogin", { username });
 
 		this.accountInfo = msgAccountInfo.accountInfo;
-
 		msg.callback();
 	}
 
@@ -350,24 +331,17 @@ module.exports = {
 	}
 
 	, register: async function (msg) {
-		let credentials = msg.data;
-
+		const credentials = msg.data;
 		if (credentials.username === "" || credentials.password === "") {
 			msg.callback(messages.login.allFields);
-
 			return;
 		} else if (credentials.username.length > 32) {
 			msg.callback(messages.login.maxUsernameLength);
-
 			return;
 		}
-
-		let illegal = ["'", "\"", "/", "\\", "(", ")", "[", "]", "{", "}", ":", ";", "<", ">", "+", "?", "*"];
-		for (let i = 0; i < illegal.length; i++) {
-			if (credentials.username.indexOf(illegal[i]) > -1) {
-				msg.callback(messages.login.illegal);
-				return;
-			}
+		if (credentials.username.indexOfAny(LOGIN_ILLEGAL_CHARS) >= 0) {
+			msg.callback(messages.login.illegal);
+			return;
 		}
 
 		const emBeforeRegisterAccount = {
@@ -376,29 +350,24 @@ module.exports = {
 			, msg: null
 			, username: msg.data.username
 		};
-
 		await eventEmitter.emit("onBeforeRegisterAccount", emBeforeRegisterAccount);
 
 		if (!emBeforeRegisterAccount.success) {
 			msg.callback(emBeforeRegisterAccount.msg);
-
 			return;
 		}
 
-		let exists = await io.getAsync({
+		const exists = await io.getAsync({
 			key: credentials.username
 			, ignoreCase: true
 			, table: "login"
 			, noDefault: true
 			, noParse: true
 		});
-
 		if (exists) {
 			msg.callback(messages.login.exists);
-
 			return;
 		}
-
 		bcrypt.hash(credentials.password, null, null, this.onHashGenerated.bind(this, msg));
 	}
 
@@ -428,58 +397,39 @@ module.exports = {
 	}
 
 	, createCharacter: async function (msg) {
-		let data = msg.data;
-		let name = data.name;
+		const data = msg?.data;
+		const name = data?.name || "";
 
 		let error = null;
-
-		if (name.length < 3 || name.length > 12) {
+		if (!this.username) {
+			error = messages.createCharacter.notConnected;
+		} else if (typeof name !== "string" || name.length < 3 || name.length > 12) {
 			error = messages.createCharacter.nameLength;
-		} else if (!profanities.isClean(name)) {
+		} else if (name.indexOf("  ") >= 0 || !name.isAlphanumeric() || !profanities.isClean(name)) {
 			error = messages.login.invalid;
-		} else if (name.indexOf("  ") > -1) {
-			msg.callback(messages.login.invalid);
 		} else if (!spirits.list.includes(data.class)) {
-			return;
+			error = "invalid or missing class";
 		}
-
-		let nLen = name.length;
-		for (let i = 0; i < nLen; i++) {
-			let char = name[i].toLowerCase();
-			let valid = [
-				"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
-			];
-
-			if (!valid.includes(char)) {
-				error = messages.login.invalid;
-				break;
-			}
-		}
-
 		if (error) {
-			msg.callback(error);
+			if (typeof msg?.callback === "function") {
+				msg.callback(error);
+			}
 			return;
 		}
-
 		const releaseCreateLock = await getCreateLock();
-
-		let exists = await io.getAsync({
+		const exists = await io.getAsync({
 			key: name
 			, ignoreCase: true
 			, table: "character"
 			, noDefault: true
 		});
-
 		if (exists) {
 			releaseCreateLock();
 			msg.callback(messages.login.charExists);
-
 			return;
 		}
-
-		let obj = this.obj;
-
-		extend(obj, {
+		// Create new character
+		extend(this.obj, {
 			name: name
 			, skinId: data.skinId
 			, class: data.class
@@ -488,13 +438,10 @@ module.exports = {
 			, x: null
 			, y: null
 		});
-
-		let simple = this.obj.getSimple(true);
-
+		const simple = this.obj.getSimple(true);
 		await this.verifySkin(simple);
 
-		let prophecies = (data.prophecies || []).filter((p) => p);
-
+		const prophecies = (data.prophecies || []).filter((p) => p);
 		simple.components.push({
 			type: "prophecies"
 			, list: prophecies
@@ -507,8 +454,7 @@ module.exports = {
 			obj: simple
 			, config: data
 		};
-
-		eventEmitter.emit("beforeSaveCharacter", eBeforeSaveCharacter);
+		await eventEmitter.emit("beforeSaveCharacter", eBeforeSaveCharacter);
 
 		await io.setAsync({
 			key: name
@@ -540,24 +486,21 @@ module.exports = {
 	}
 
 	, deleteCharacter: async function (msg) {
-		let data = msg.data;
-
+		const data = msg.data;
 		if ((!data.name) || (!this.username)) {
 			return;
 		}
-
-		if (!this.characterList.some((c) => ((c.name === data.name) || (c === data.name)))) {
+		const name = data.name;
+		if (!this.characterList.some((c) => ((c.name === name) || (c === name)))) {
 			msg.callback([]);
 			return;
 		}
-
 		const msgBeforeDeleteCharacter = {
 			obj: this
-			, name: data.name
+			, name
 			, success: true
 			, msg: null
 		};
-
 		await eventEmitter.emit("beforeDeleteCharacter", msgBeforeDeleteCharacter);
 
 		if (!msgBeforeDeleteCharacter.success) {
@@ -565,16 +508,12 @@ module.exports = {
 				success: false
 				, msg: msgBeforeDeleteCharacter.msg
 			});
-
 			return;
 		}
-
 		await io.deleteAsync({
-			key: data.name
+			key: name
 			, table: "character"
 		});
-
-		let name = data.name;
 
 		this.characterList.spliceWhere((c) => (c.name === name || c === name));
 		let characterList = this.characterList
@@ -592,7 +531,7 @@ module.exports = {
 
 		await leaderboard.deleteCharacter(name);
 
-		let result = this.characterList
+		const result = this.characterList
 			.map((c) => ({
 				name: c.name ? c.name : c
 				, level: leaderboard.getLevel(c.name ? c.name : c)

@@ -12,18 +12,15 @@ define([
 
 		, postRender: function () {
 			this.onEvent("onGetSelfCasting", this.onGetCasting.bind(this));
-
 			if (isMobile) {
 				this.onEvent("onGetServerActions", this.onGetServerActions.bind(this));
-
 				this.find(".btnGather").on("click", this.gather.bind(this));
 			}
 		}
 
 		, onGetCasting: function (casting) {
-			let el = this.find(".casting");
-
-			if ((casting === 0) || (casting === 1)) {
+			const el = this.find(".casting");
+			if (casting === 0 || casting === 1) {
 				el.hide();
 			} else {
 				el
@@ -34,8 +31,8 @@ define([
 		}
 
 		, gather: function () {
-			let btn = this.find(".btnGather");
-			let action = btn.data("action");
+			const btn = this.find(".btnGather");
+			const action = btn.data("action");
 			if (action) {
 				//Server actions use keyUp
 				events.emit("onKeyUp", action.key);
@@ -45,13 +42,11 @@ define([
 		}
 
 		, onGetServerActions: function (actions) {
-			let btn = this.find(".btnGather").hide().data("action", null);
-
-			let firstAction = actions[0];
+			const firstAction = actions[0];
 			if (!firstAction) {
 				return;
 			}
-
+			const btn = this.find(".btnGather").hide().data("action", null);
 			btn
 				.data("action", firstAction)
 				.show();

@@ -21,6 +21,25 @@ const compileLessOnce = nodeEnv === "production";
 const onConnection = require("./onConnection");
 const { appRoot, appFile } = require("./requestHandlers");
 
+const sharedFolders = [
+	"/common"
+	, "/server"
+	, "/mods"
+];
+
+const onNewLogEvent = function(req, entry) {
+	if (typeof entry !== "object") {
+		_.log.UserLog[req.ip].info(entry);
+		return;
+	}
+	if (!Array.isArray(entry) || typeof entry[0] !== "number") {
+		_.log.UserLog[req.ip].info(JSON.stringify(entry, undefined, 4));
+		return;
+	}
+	const logLevel = entry.shift();
+	_.log.UserLog[req.ip].print(logLevel, entry);
+}
+
 //Methods
 const init = async () => {
 	const app = express();
@@ -30,24 +49,23 @@ const init = async () => {
 	});
 	global.cons.sockets = socketServer.sockets;
 
+	app.use(compression());
+	app.use(minify());
+
 	app.use(express.json());
 	app.post("/log", (req, res) => {
-		if (typeof req.body === "string") {
-			_.log.UserLog.info(`${req.ip} -> ${req.body}`);
+		if (Array.isArray(req.body)) {
+			for (const entry of req.body) {
+				onNewLogEvent(req, entry);
+			}
 		} else {
-			_.log.UserLog.info(`${req.ip} -> ${JSON.stringify(req.body, undefined, 4)}`);
+			onNewLogEvent(req, req.body);
 		}
 		res.send({ response: "ok" });
 	});
 
-	app.use(compression());
-	app.use(minify());
 	app.use((req, res, next) => {
-		if (
-			!rest.willHandle(req.url) &&
-			req.url.indexOf("/server") !== 0 &&
-			req.url.indexOf("/mods") !== 0
-		) {
+		if (!rest.willHandle(req.url) && !sharedFolders.some((s) => req.url.startsWith(s))) {
 			req.url = `/client/${req.url}`;
 		}
 		next();
