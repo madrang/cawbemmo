@@ -355,36 +355,29 @@ module.exports = {
 	}
 
 	, fireEvent: function (event) {
-		let args = [].slice.call(arguments, 1);
-
-		let cpns = this.components;
-		let cLen = cpns.length;
+		const args = Array.prototype.slice.call(arguments, 1);
+		const cpns = this.components;
+		const cLen = cpns.length;
 		for (let i = 0; i < cLen; i++) {
-			let cpn = cpns[i];
-
+			const cpn = cpns[i];
 			if (cpn.fireEvent) {
 				cpn.fireEvent(event, args);
 			}
-
-			let events = cpn.events;
+			const events = cpn.events;
 			if (!events) {
 				continue;
 			}
-
-			let callback = events[event];
+			const callback = events[event];
 			if (!callback) {
 				continue;
 			}
-
 			callback.apply(cpn, args);
 		}
-
 		this.eventListeners.forEach((l) => {
 			const { eventName, callback } = l;
 			if (eventName !== event) {
 				return;
 			}
-
 			callback.apply(null, args);
 		});
 	}

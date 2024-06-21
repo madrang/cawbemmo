@@ -21,23 +21,18 @@ module.exports = {
 				lLen--;
 			}
 		}
-
 		if (lLen === 0) {
 			delete this.events[event];
 		}
 	}
 
 	, emit: async function (event) {
-		let args = [].slice.call(arguments, 1);
-
-		let list = this.events[event];
+		const args = Array.prototype.slice.call(arguments, 1);
+		const list = this.events[event];
 		if (!list) {
 			return;
 		}
-
-		for (let l of list) {
-			const { isAsync, callback } = l;
-
+		for (const { isAsync, callback } of list) {
 			if (isAsync) {
 				await callback.apply(null, args);
 			} else {

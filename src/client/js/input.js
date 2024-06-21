@@ -50,13 +50,13 @@ define([
 		}
 
 		, mouse: {
-			button: null
+			buttons: []
 			, x: 0
 			, y: 0
 		}
-		, mouseRaw: null
 
-		, keys: {}
+		, pressedKeys: {}
+		, pressedMouseButtons: []
 
 		, enabled: true
 
@@ -109,18 +109,16 @@ define([
 		}
 
 		, resetKeys: function () {
-			for (let k in this.keys) {
+			for (let k in this.pressedKeys) {
 				events.emit("onKeyUp", k);
 			}
-
-			this.keys = {};
+			this.pressedKeys = {};
 		}
 
 		, getMapping: function (charCode) {
 			if (charCode >= 97) {
 				return (charCode - 96).toString();
 			}
-
 			return (
 				this.mappings[charCode] ||
 				String.fromCharCode(charCode).toLowerCase()
@@ -128,39 +126,46 @@ define([
 		}
 
 		, isKeyDown: function (key, noConsume) {
-			if (this.keys.has(key)) {
+			const down = this.pressedKeys[key];
+			if (down) {
 				if (noConsume) {
 					return true;
 				}
-
-				let down = this.keys[key];
-
-				this.keys[key] = 2;
+				this.pressedKeys[key] = 2;
 				return (down === 1);
 			} return false;
 		}
+
+		, isMouseDown: function (button, noConsume) {
+			const down = this.pressedMouseButtons[button];
+			if (down) {
+				if (noConsume) {
+					return true;
+				}
+				this.pressedMouseButtons[key] = 2;
+				return (down === 1);
+			}
+			return false;
+		}
+
 		, getAxis: function (axisName) {
 			let axis = this.axes[axisName];
 			if (!axis) {
 				return 0;
 			}
-
 			let result = 0;
-
 			for (let i = 0; i < axis.negative.length; i++) {
-				if (this.keys[axis.negative[i]]) {
+				if (this.pressedKeys[axis.negative[i]]) {
 					result--;
 					break;
 				}
 			}
-
 			for (let i = 0; i < axis.positive.length; i++) {
-				if (this.keys[axis.positive[i]]) {
+				if (this.pressedKeys[axis.positive[i]]) {
 					result++;
 					break;
 				}
 			}
-
 			return result;
 		}
 
@@ -184,30 +189,25 @@ define([
 					if (!this.enabled) {
 						return;
 					}
-
-					let code = this.numericalKeyCodeMappings[e.code] || e.which;
-					let key = this.getMapping(code);
-					let isModifier = this.modifiers.indexOf(key) > -1;
-					let isBody = e.target === document.body;
-
+					const code = this.numericalKeyCodeMappings[e.code] || e.which;
+					const key = this.getMapping(code);
+					const isModifier = this.modifiers.indexOf(key) > -1;
+					const isBody = e.target === document.body;
 					if (!isModifier && !isBody) {
 						return true;
 					}
 					if ((e.keyCode === 9) || (e.keyCode === 8) || (e.keyCode === 122)) {
 						e.preventDefault();
 					}
-
 					if (!this.isKeyAllowed(key)) {
 						return;
 					}
-
-					if (this.keys.has(key)) {
-						this.keys[key] = 2;
+					if (this.pressedKeys[key]) {
+						this.pressedKeys[key] = 2;
 					} else {
-						this.keys[key] = 1;
-
+						this.pressedKeys[key] = 1;
 						if (isBody || isModifier) {
-							let keyEvent = {
+							const keyEvent = {
 								key: key
 								, consumed: false
 							};
@@ -218,7 +218,6 @@ define([
 							events.emit("onKeyDown", key);
 						}
 					}
-
 					if (key === "backspace") {
 						return false;
 					} else if (e.key === "F11") {
@@ -229,68 +228,56 @@ define([
 					if (!this.enabled) {
 						return;
 					}
-
-					let key = this.getMapping(e.which);
-					let isModifier = this.modifiers.indexOf(key) > -1;
-					let isBody = e.target === document.body;
-
+					const key = this.getMapping(e.which);
+					const isModifier = this.modifiers.indexOf(key) > -1;
+					const isBody = e.target === document.body;
 					if (!isModifier && !isBody) {
 						return;
 					}
-
-					delete this.keys[key];
-
+					delete this.pressedKeys[key];
 					events.emit("onKeyUp", key);
 				}
 			}
 
 			, mouse: {
 				mouseDown: function (e) {
-					let el = $(e.target);
+					const el = $(e.target);
 					if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
 						return;
 					}
-
-					let button = e.button;
-					this.mouse.button = button;
-					this.mouse.down = true;
+					this.mouse.button = e.button;
 					this.mouse.event = e;
-
+					this.pressedMouseButtons[e.button] = 1;
+					this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
 					//This is needed for casting targetted spells on Mobile...it's hacky.
 					this.mouse.worldX = e.pageX + renderer.pos.x;
 					this.mouse.worldY = e.pageY + renderer.pos.y;
-
 					events.emit("mouseDown", this.mouse);
 				}
 				, mouseUp: function (e) {
-					let el = $(e.target);
+					const el = $(e.target);
 					if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
 						return;
 					}
-
-					this.mouse.button = null;
-					this.mouse.down = false;
-
+					delete this.pressedMouseButtons[e.button];
+					this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
+					this.mouse.button = e.button;
 					events.emit("mouseUp", this.mouse);
 				}
 				, mouseMove: function (e) {
-					if (e) {
-						this.mouseRaw = e;
-					} else {
-						e = this.mouseRaw;
-					}
-
 					if (!e) {
 						return;
 					}
-
-					let el = $(e.target);
+					const el = $(e.target);
 					if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
 						return;
 					}
-
 					this.mouse.x = e.offsetX + renderer.pos.x;
 					this.mouse.y = e.offsetY + renderer.pos.y;
+					if (this.mouse.has("button") && !this.mouse.buttons.includes(this.mouse.button)) {
+						delete this.mouse.button;
+					}
+					events.emit("mouseMove", this.mouse);
 				}
 			}
 

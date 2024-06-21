@@ -5,7 +5,7 @@ define([
 	io,
 	events
 ) {
-	let client = {
+	return {
 		doneConnect: false
 
 		, init: function (onReady) {
@@ -125,6 +125,4 @@ define([
 			}
 		}
 	};
-
-	return client;
 });
