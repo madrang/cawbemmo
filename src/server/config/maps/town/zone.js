@@ -86,7 +86,7 @@ module.exports = {
 				}
 			}
 			, rare: {
-				name: "Crazed Seagull"
+				name: "Ronald"
 			}
 			, questItem: {
 				name: "Gull Feather"
@@ -102,7 +102,7 @@ module.exports = {
 				}
 			}
 			, rare: {
-				count: 0
+				name: "Vidange de luxe"
 			}
 			, questItem: {
 				name: "Hamburger usagée"
@@ -136,7 +136,7 @@ module.exports = {
 				}
 			}
 			, rare: {
-				name: "Ironhorn"
+				name: "Un fou"
 			}
 			, questItem: {
 				name: "Cagoule"
@@ -162,7 +162,7 @@ module.exports = {
 				name: "Squiggles"
 			}
 			, questItem: {
-				name: "Severed Pincer"
+				name: "Pince de crabe"
 				, sprite: [0, 3]
 			}
 		}
@@ -170,6 +170,20 @@ module.exports = {
 			level: 7
 			, rare: {
 				name: "Le roi des homard"
+			}
+			, regular: {
+				drops: {
+					rolls: 6
+					, noRandom: true
+					, alsoRandom: true
+					, blueprints: [{
+						chance: 35
+						, name: "Lettre d'admiratrice"
+						, quality: 2
+						, quest: true
+						, sprite: [0, 4]
+					}]
+				}
 			}
 		}
 		, "truite à panache": {
@@ -189,7 +203,7 @@ module.exports = {
 				}
 			}
 			, rare: {
-				name: "Fleshripper"
+				name: "Yollande"
 				, drops: {
 					rolls: 1
 					, noRandom: true
@@ -252,6 +266,46 @@ module.exports = {
 					, markup: {
 						buy: 0.50
 						, sell: 2.5
+					}
+				}
+			}
+		}, gislain: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 3
+						, max: 10
+					}
+					, forceItems: [{
+						name: "Canne a pêche a spring"
+						, type: "Fishing Rod"
+						, slot: "tool"
+						, quality: 0
+						, worth: 500
+						, sprite: [11, 1]
+						, infinite: true
+						, noSalvage: true
+					}, {
+						name: "Skewering Stick"
+						, material: true
+						, sprite: [11, 7]
+						, worth: 2
+						, quality: 0
+						, infinite: true
+					}]
+					, level: {
+						min: 8
+						, max: 14
+					}
+					, markup: {
+						buy: 0.52
+						, sell: 2.52
 					}
 				}
 			}

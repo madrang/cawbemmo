@@ -710,7 +710,7 @@
          "name":"hiddenTiles",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":195,
          "x":0,
          "y":0
