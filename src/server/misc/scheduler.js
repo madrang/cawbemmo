@@ -99,8 +99,7 @@ module.exports = {
 	}
 
 	, getTime: function () {
-		let time = new Date();
-
+		const time = new Date();
 		return {
 			minute: time.getMinutes()
 			, hour: time.getHours()

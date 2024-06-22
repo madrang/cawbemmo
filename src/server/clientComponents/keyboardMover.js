@@ -59,13 +59,10 @@ define([
 			if (this.obj.pather.path.length > 0) {
 				return;
 			}
-
 			if (this.obj.bumpAnimation) {
 				return;
 			}
-
 			events.emit("onObjCollideBump", this.obj);
-
 			this.obj.addComponent("bumpAnimation", {
 				deltaX: dx
 				, deltaY: dy
@@ -78,20 +75,17 @@ define([
 				, y: input.getAxis("vertical")
 			};
 
-			if ((!delta.x) && (!delta.y)) {
+			if (!delta.x && !delta.y) {
 				return;
 			}
 
-			let newX = this.obj.pather.pathPos.x + delta.x;
-			let newY = this.obj.pather.pathPos.y + delta.y;
-
-			if (physics.isTileBlocking(~~newX, ~~newY)) {
+			const newX = Math.floor(this.obj.pather.pathPos.x + delta.x);
+			const newY = Math.floor(this.obj.pather.pathPos.y + delta.y);
+			if (physics.isTileBlocking(newX, newY)) {
 				this.bump(delta.x, delta.y);
 				return;
 			}
-
 			this.moveCd = this.moveCdMax;
-
 			this.obj.pather.add(newX, newY);
 		}
 

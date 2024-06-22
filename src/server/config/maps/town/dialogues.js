@@ -111,4 +111,65 @@ module.exports = {
 			}]
 		}
 	}
+	, gislain: {
+		1: {
+			msg: [{
+				msg: "Bonjour bienvenue dans ce magasin de disque"
+				, options: [1.1, 1.2, 1.3, 1.4]
+			}]
+			, options: {
+				1.1: {
+					msg: "Quelque choses ?"
+					, goto: 2
+				}
+				, 1.2: {
+					msg: "des choses a vendre?"
+					, goto: "tradeBuy"
+				}
+				, 1.3: {
+					msg: "J'ai peut être de quoi qui vas t'intéressé."
+					, goto: "tradeSell"
+				}
+				, 1.4: {
+					msg: "J'ai une lettre pour toi."
+					, prereq: function (obj) {
+						let crystals = obj.inventory.items.find((i) => (i.name === "Lettre d'admiratrice"));
+						return Boolean(crystals);
+					}
+					, goto: "giveLetter"
+				}
+			}
+		}
+		, tradeBuy: {
+			cpn: "trade"
+			, method: "startBuy"
+			, args: [{
+				targetName: "gislain"
+			}]
+		}
+		, tradeSell: {
+			cpn: "trade"
+			, method: "startSell"
+			, args: [{
+				targetName: "gislain"
+			}]
+		}
+		, giveLetter: {
+			msg: [{
+				msg: "Merci Pour ses lettres."
+				, options: [1.1, 1.2, 1.3]
+			}]
+			, method: function (obj) {
+				let inventory = obj.inventory;
+
+				let crystals = inventory.items.find((i) => (i.name === "Lettre d'admiratrice"));
+				if (!crystals) {
+					return;
+				}
+				obj.reputation.getReputation("akarei", (crystals.quantity || 1) * 15);
+
+				inventory.destroyItem({ itemId: crystals.id });
+			}
+		}
+	}
 };

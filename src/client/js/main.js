@@ -75,7 +75,6 @@ define([
 			await components.init();
 
 			events.emit("onResourcesLoaded");
-
 			this.start();
 		}
 
@@ -104,7 +103,6 @@ define([
 		, onFocus: function (hasFocus) {
 			//Hack: Later we might want to make it not render when out of focus
 			this.hasFocus = true;
-
 			if (!hasFocus) {
 				input.resetKeys();
 			}
@@ -122,7 +120,6 @@ define([
 			const time = Date.now();
 			if (time - this.lastRender < this.msPerFrame - 1) {
 				fnQueueTick();
-
 				return;
 			}
 
