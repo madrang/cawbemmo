@@ -710,7 +710,7 @@
          "name":"hiddenTiles",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":195,
          "x":0,
          "y":0
@@ -2940,6 +2940,18 @@
                  "width":8,
                  "x":960,
                  "y":752
+                }, 
+                {
+                 "gid":598,
+                 "height":8,
+                 "id":1068,
+                 "name":"Gislain",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":696,
+                 "y":728
                 }],
          "opacity":1,
          "properties":[
@@ -4005,7 +4017,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1068,
+ "nextobjectid":1070,
  "orientation":"orthogonal",
  "properties":[
         {
