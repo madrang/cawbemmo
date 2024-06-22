@@ -131,9 +131,7 @@ define([
 		, tabTarget: function (ignoreIfSet) {
 			let compareAgainst = ignoreIfSet ? null : this.target;
 
-			let closest = objects.getClosest(window.player.x, window.player.y, 10, input.isKeyDown("shift"), compareAgainst);
-
-			this.target = closest;
+			this.target = objects.getClosest(window.player.x, window.player.y, 10, input.isKeyDown("shift"), compareAgainst);
 			this.targetSprite.visible = Boolean(this.target);
 
 			events.emit("onSetTarget", this.target, null);
@@ -164,8 +162,7 @@ define([
 				return;
 			}
 
-			let hoverTile = this.groundTarget || (this.obj.mouseMover || this.obj.touchMover).hoverTile;
-			let target = hoverTile;
+			let target = this.groundTarget || (this.obj.mouseMover || this.obj.touchMover).hoverTile;
 			if (spell.autoTargetFollower && !this.target) {
 				target = null;
 			} else if (!spell.targetGround && this.target) {
@@ -178,7 +175,8 @@ define([
 			}
 			if (target === this.obj && spell.noTargetSelf) {
 				return;
-			} else if (isMobile && spell.targetGround && !spell.targetPlayerPos && !this.groundTarget) {
+			}
+			if (isMobile && spell.targetGround && !spell.targetPlayerPos && !this.groundTarget) {
 				if (this.groundTargetSpell === key) {
 					this.groundTargetSpell = null;
 					events.emit("onGetAnnouncement", {
@@ -192,16 +190,18 @@ define([
 				});
 				return;
 			}
-			client.request({
-				cpn: "player"
-				, method: "castSpell"
-				, data: {
-					priority: input.isKeyDown("ctrl")
-					, spell: spell.id
-					, target: target
-					, self: isShiftDown
-				}
-			});
+			if (target) {
+				client.request({
+					cpn: "player"
+					, method: "castSpell"
+					, data: {
+						priority: input.isKeyDown("ctrl")
+						, spell: spell.id
+						, target: target
+						, self: isShiftDown
+					}
+				});
+			}
 			if (isMobile) {
 				this.groundTarget = null;
 			}

@@ -9,13 +9,14 @@ const startEvent = require("../social/startEvent");
 const stopEvent = require("../social/stopEvent");
 const teleport = require("../social/teleport");
 
-let commandRoles = {
+const commandRoles = {
 	//Regular players
 	join: 0
 	, leave: 0
 	, block: 0
 	, unblock: 0
 	, help: 0
+	, die: 0
 
 	//Super Mods
 	, broadcast: 8
@@ -30,7 +31,6 @@ let commandRoles = {
 	, getReputation: 10
 	, loseReputation: 10
 	, setStat: 10
-	, die: 10
 	, getXp: 10
 	, setPassword: 10
 	, giveSkin: 10
@@ -68,32 +68,25 @@ module.exports = {
 
 	, init: function (blueprint) {
 		if (this.customChannels) {
-			this.customChannels = this.customChannels
-				.filter((c, i) => (this.customChannels.indexOf(c) === i));
+			this.customChannels = this.customChannels.filter((c, i) => (this.customChannels.indexOf(c) === i));
 		}
-
 		this.calculateActions();
 	}
 
-	, calculateActions: function () {
+	, calculateActions: async function () {
 		const chatCommandConfig = {
 			localCommands
 			, contextActions: extend([], contextActions)
 			, commandRoles
 			, commandActions
 		};
-
-		events.emit("onBeforeGetChatCommands", chatCommandConfig);
-
-		events.emit("onBeforeGetCommandRoles", commandRoles, commandActions);
+		await events.emit("onBeforeGetChatCommands", chatCommandConfig);
+		await events.emit("onBeforeGetCommandRoles", commandRoles, commandActions);
 		Object.entries(commandActions).forEach((a) => {
 			const [ actionName, actionHandler ] = a;
-
 			this[actionName] = actionHandler.bind(this);
 		});
-
-		this.actions = chatCommandConfig.contextActions
-			.filter((c) => this.obj.auth.getAccountLevel() >= commandRoles[c.command]);
+		this.actions = chatCommandConfig.contextActions.filter((c) => this.obj.auth.getAccountLevel() >= commandRoles[c.command]);
 	}
 
 	, onBeforeChat: function (msg) {
@@ -118,7 +111,8 @@ module.exports = {
 				}]
 			});
 			return;
-		} else if (this.obj.auth.getAccountLevel() < commandRoles[actionName]) {
+		}
+		if (this.obj.auth.getAccountLevel() < commandRoles[actionName]) {
 			this.obj.socket.emit("events", {
 				onGetMessages: [{
 					messages: [{
@@ -158,16 +152,12 @@ module.exports = {
 		if (typeof (value) !== "string") {
 			return;
 		}
-
-		value = value
-			.trim()
-			.split(" ").join("");
-
-		let obj = this.obj;
-
-		if (value.length === 0) {
+		value = value.trim().replaceAll(" ", "");
+		if (!value) {
 			return;
-		} else if (!value.match(/^[0-9a-zA-Z]+$/)) {
+		}
+		const obj = this.obj;
+		if (!value.match(/^[0-9a-zA-Z]+$/)) {
 			obj.socket.emit("events", {
 				onGetMessages: [{
 					messages: [{
@@ -178,7 +168,8 @@ module.exports = {
 				}]
 			});
 			return;
-		} else if (value.length > 15) {
+		}
+		if (value.length > 15) {
 			obj.socket.emit("events", {
 				onGetMessages: [{
 					messages: [{
@@ -190,17 +181,15 @@ module.exports = {
 			});
 			return;
 		}
-
-		let channels = obj.auth.customChannels;
+		const channels = obj.auth.customChannels;
 		if (!channels.some((c) => (c === value))) {
 			channels.push(value);
 		} else {
 			return;
 		}
-
 		channels.push(value);
 
-		let charname = obj.auth.charname;
+		const charname = obj.auth.charname;
 		await io.setAsync({
 			key: charname
 			, table: "customChannels"
@@ -225,13 +214,11 @@ module.exports = {
 	}
 
 	, leave: async function (value) {
-		if (typeof (value) !== "string") {
+		if (typeof value !== "string") {
 			return;
 		}
-
-		let obj = this.obj;
-
-		let channels = obj.auth.customChannels;
+		const obj = this.obj;
+		const channels = obj.auth.customChannels;
 		if (!channels.some((c) => (c === value))) {
 			obj.socket.emit("events", {
 				onGetMessages: [{
@@ -242,10 +229,8 @@ module.exports = {
 					}]
 				}]
 			});
-
 			return;
 		}
-
 		channels.spliceWhere((c) => (c === value));
 
 		let charname = obj.auth.charname;
@@ -278,17 +263,13 @@ module.exports = {
 
 		if (blockedPlayers.includes(target)) {
 			social.notifySelf({ message: "That player has already been blocked" });
-
 			return;
 		} else if (target === name) {
 			social.notifySelf({ message: "You cannot block yourself" });
-
 			return;
 		}
-
 		blockedPlayers.push(target);
 		syncer.set(true, "social", "blockedPlayers", blockedPlayers);
-
 		social.notifySelf({
 			message: `Successfully blocked ${target}`
 			, className: "color-yellowB"
@@ -301,7 +282,6 @@ module.exports = {
 
 		if (!blockedPlayers.includes(target)) {
 			social.notifySelf({ message: "That player is not blocked" });
-
 			return;
 		}
 

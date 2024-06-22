@@ -27,7 +27,6 @@ define([
 
 		, onTouchStart: function (e) {
 			this.lastNode = e;
-
 			const tileX = Math.floor(e.worldX / scale);
 			const tileY = Math.floor(e.worldY / scale);
 			this.hoverTile = {
@@ -39,14 +38,12 @@ define([
 
 		, onTouchMove: function (e) {
 			const lastNode = this.lastNode;
-
-			let sqrDistance = Math.pow(lastNode.x - e.x, 2) + Math.pow(lastNode.y - e.y, 2);
+			let dx = e.x - lastNode.x;
+			let dy = e.y - lastNode.y;
+			const sqrDistance = Math.pow(dx, 2) + Math.pow(dy, 2);
 			if (sqrDistance < this.minSqrDistance) {
 				return;
 			}
-			let dx = e.x - lastNode.x;
-			let dy = e.y - lastNode.y;
-
 			if (e.touches > 1) {
 				dx = Math.floor(dx / Math.abs(dx));
 				dy = Math.floor(dy / Math.abs(dy));
@@ -59,9 +56,9 @@ define([
 			}
 			this.lastNode = e;
 
-			const newX = this.obj.pather.pathPos.x + dx;
-			const newY = this.obj.pather.pathPos.y + dy;
-			if (physics.isTileBlocking(Math.floor(newX), Math.floor(newY))) {
+			const newX = Math.floor(this.obj.pather.pathPos.x + dx);
+			const newY = Math.floor(this.obj.pather.pathPos.y + dy);
+			if (physics.isTileBlocking(newX, newY)) {
 				this.bump(dx, dy);
 				return;
 			}
@@ -98,7 +95,10 @@ define([
 			if (this.obj.pather.path.length > 0) {
 				return;
 			}
-
+			if (this.obj.bumpAnimation) {
+				return;
+			}
+			events.emit("onObjCollideBump", this.obj);
 			this.obj.addComponent("bumpAnimation", {
 				deltaX: dx
 				, deltaY: dy

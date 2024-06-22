@@ -15,33 +15,25 @@ define([
 
 		, getSheetName: function (tile) {
 			const { clientConfig: { atlasTextures } } = globals;
-
 			const sheetNum = this.getSheetNum(tile);
 			const sheetName = atlasTextures[sheetNum];
-
 			return sheetName;
 		}
 
 		, getOffsetAndSheet: function (tile) {
 			const { clientConfig: { atlasTextureDimensions, atlasTextures } } = globals;
-
 			let offset = 0;
 			let sheetName = null;
-
 			let aLen = atlasTextures.length;
 			for (let i = 0; i < aLen; i++) {
 				sheetName = atlasTextures[i];
-
 				const dimensions = atlasTextureDimensions[sheetName];
 				const spriteCount = dimensions.w * dimensions.h;
-
 				if (offset + spriteCount > tile) {
 					break;
 				}
-
 				offset += spriteCount;
 			}
-
 			return {
 				offset
 				, sheetName

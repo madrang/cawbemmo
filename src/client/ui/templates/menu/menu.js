@@ -31,9 +31,7 @@ define([
 			if (isMobile) {
 				this.el.removeClass("active");
 			}
-
 			events.emit(e);
-
 			return false;
 		}
 
