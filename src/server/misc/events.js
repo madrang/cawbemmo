@@ -1,20 +1,23 @@
 module.exports = {
 	events: {}
 
-	//The only supported option right now is isAsync: boolean
-	, on: function (event, callback, options) {
-		let list = this.events[event] || (this.events[event] = []);
-		list.push({ callback, ...options });
-
+	, on: function (eventName, callback) {
+		if (typeof eventName !== "string") {
+			throw new Error("eventName must be a string.");
+		}
+		if (typeof callback !== "function") {
+			throw new Error("callback must be a function.");
+		}
+		const list = this.events[eventName] || (this.events[eventName] = []);
+		list.push(callback);
 		return callback;
 	}
 
-	, off: function (event, callback) {
-		let list = this.events[event] || [];
+	, off: function (eventName, callback) {
+		const list = this.events[eventName] || [];
 		let lLen = list.length;
 		for (let i = 0; i < lLen; i++) {
 			const { callback: lCallback } = list[i];
-
 			if (lCallback === callback) {
 				list.splice(i, 1);
 				i--;
@@ -22,22 +25,27 @@ module.exports = {
 			}
 		}
 		if (lLen === 0) {
-			delete this.events[event];
+			delete this.events[eventName];
 		}
 	}
 
-	, emit: async function (event) {
-		const args = Array.prototype.slice.call(arguments, 1);
-		const list = this.events[event];
+	, emit: function (eventName, ...args) {
+		if (typeof eventName !== "string") {
+			throw new Error("eventName must be a string.");
+		}
+		const list = this.events[eventName];
 		if (!list) {
 			return;
 		}
-		for (const { isAsync, callback } of list) {
-			if (isAsync) {
-				await callback.apply(null, args);
-			} else {
-				callback.apply(null, args);
+		const promises = [];
+		for (const callback of list) {
+			const r = callback.apply(null, args);
+			if (typeof r === "object" && r instanceof Promise) {
+				promises.push(r);
 			}
+		}
+		if (promises.length > 0) {
+			return Promise.all(promises);
 		}
 	}
 };

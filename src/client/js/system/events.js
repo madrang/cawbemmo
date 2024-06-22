@@ -3,7 +3,7 @@ define([
 ], function (
 
 ) {
-	let events = {
+	const eventsModule = {
 		events: {}
 		// Keep a map of the latest missed event.
 		// Duplicate events will replace older ones to avoid growing the buffer forever.
@@ -55,10 +55,8 @@ define([
 			}
 		}
 	};
-
 	if (window.addons) {
-		window.addons.init(events);
+		window.addons.init(eventsModule);
 	}
-
-	return events;
+	return eventsModule;
 });

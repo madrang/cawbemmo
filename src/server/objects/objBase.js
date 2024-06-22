@@ -354,8 +354,7 @@ module.exports = {
 		this.eventListeners.spliceWhere((e) => e === entry);
 	}
 
-	, fireEvent: function (event) {
-		const args = Array.prototype.slice.call(arguments, 1);
+	, fireEvent: function (event, ...args) {
 		const cpns = this.components;
 		const cLen = cpns.length;
 		for (let i = 0; i < cLen; i++) {
