@@ -41,7 +41,7 @@ define([
 		}
 
 		, onMouseInput: function (e) {
-			if (!e || (e.button !== 0 && !e.buttons.includes(0))) {
+			if (!e || !e.buttons.includes(0)) {
 				return;
 			}
 			if (!this.obj.pather) {
