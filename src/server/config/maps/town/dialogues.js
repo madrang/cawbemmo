@@ -114,7 +114,7 @@ module.exports = {
 	, gislain: {
 		1: {
 			msg: [{
-				msg: "Bonjour bienvenue dans ce magasin de disque"
+				msg: "Bonjour bienvenue humble magasin"
 				, options: [1.1, 1.2, 1.3, 1.4]
 			}]
 			, options: {
@@ -138,6 +138,39 @@ module.exports = {
 					}
 					, goto: "giveLetter"
 				}
+			}
+		}
+		, 2 : {
+			msg: [{
+				msg: "Oui j'ai perdu mon courrier avec plein de lettre d'admiratrice."
+				, options: [2.1]
+			}]
+			, options: {
+				2.1: {
+					msg: "ou les a tu perdu ?"
+					, goto: 3
+				}
+			}
+		}
+		, 3 : {
+			msg: [{
+				msg: "Je lai ai perdu pres de la track de train au sud du village"
+				, options: [3.1, 3.2, 3.3]
+			}]
+			, options: {
+				3.1: {
+					msg: "ou les a tu perdu ?"
+					, goto: 3
+				}
+				, 3.2: {
+					msg: "des choses a vendre?"
+					, goto: "tradeBuy"
+				}
+				, 3.3: {
+					msg: "J'ai peut être de quoi qui vas t'intéressé."
+					, goto: "tradeSell"
+				}
+				,
 			}
 		}
 		, tradeBuy: {
