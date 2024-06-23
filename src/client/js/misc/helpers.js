@@ -183,6 +183,16 @@ define([
 		}
 	};
 
+	window.addEventListener("unhandledrejection", (event) => {
+		bufferedLogEvents.push([ EventLevels.ERROR, "Unhandled promise rejection: %o", event ]);
+		processLogBuffer();
+	});
+
+	window.addEventListener("error", (event) => {
+		bufferedLogEvents.push([ EventLevels.FATAL, "Unhandled error encountered: %o", event ]);
+		processLogBuffer();
+	});
+
 	window._ = {
 		toggleFullScreen: function () {
 			const doc = window.document;
