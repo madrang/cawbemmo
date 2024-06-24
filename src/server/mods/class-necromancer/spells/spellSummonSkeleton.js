@@ -171,9 +171,8 @@ module.exports = {
 				m.destroyed = true;
 				this.minions.length = 0;
 
-				let animations = require("../../../config/animations");
-
-				let deathAnimation = _.getDeepProperty(animations, ["mobs", m.sheetName, m.cell, "death"]);
+				const animations = require("../../../config/animations");
+				const deathAnimation = animations.mobs?.[m.sheetName]?.[m.cell]?.death;
 				if (deathAnimation) {
 					this.obj.instance.syncer.queue("onGetObject", {
 						x: m.x

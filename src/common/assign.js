@@ -2,10 +2,7 @@
  */
 (function() {
 	const assignRecursive = function (objSrc, newObj) {
-		if (typeof objSrc !== "object") {
-			return objSrc;
-		}
-		if (!objSrc) {
+		if (!objSrc || typeof objSrc !== "object") {
 			return objSrc;
 		}
 		if (Array.isArray(objSrc)) {

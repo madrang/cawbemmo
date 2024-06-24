@@ -27,10 +27,7 @@ define([
 			const obj = config.obj;
 			delete config.obj;
 			const options = $.extend(true, {}, particleDefaults, config);
-			//FIXME remove upgradeConfig after updating the particle configuration.
-			const newCfg = PIXI.particles.upgradeConfig(options, ["images/particles.png"]);
-			console.warn("Legacy Emitter config updated from %o to %o", options, newCfg);
-			const emitter = new PIXI.particles.Emitter(this.stage, newCfg);
+			const emitter = new PIXI.particles.Emitter(this.stage, options);
 			emitter.obj = obj;
 			emitter.emit = true;
 			emitter.particleEngine = this;

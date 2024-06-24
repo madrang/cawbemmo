@@ -16,7 +16,6 @@ module.exports = {
 					type: type
 				}, blueprint || {});
 			}
-
 			cpn = extend({}, template);
 			cpn.obj = this;
 
@@ -41,7 +40,7 @@ module.exports = {
 	}
 
 	, removeComponent: function (type) {
-		let cpn = this[type];
+		const cpn = this[type];
 		if (!cpn) {
 			return;
 		}
@@ -49,8 +48,8 @@ module.exports = {
 	}
 
 	, extendComponent: function (ext, type, blueprint) {
-		let template = require("../components/extensions/" + type);
-		let cpn = this[ext];
+		const template = require("../components/extensions/" + type);
+		const cpn = this[ext];
 		extend(cpn, template);
 		if (template.init) {
 			cpn.init(blueprint);
@@ -95,7 +94,7 @@ module.exports = {
 	}
 
 	, simplify: function (o, self, isSave, isTransfer) {
-		let result = {};
+		const result = {};
 		if (!o) {
 			result.components = [];
 			o = this;
@@ -212,11 +211,11 @@ module.exports = {
 		if (action.instanceModule) {
 			return;
 		}
-		let cpn = this[action.cpn];
+		const cpn = this[action.cpn];
 		if (!cpn) {
 			return;
 		}
-		cpn[action.method](action.data);
+		return cpn[action.method](action.data);
 	}
 
 	, performQueue: function () {
@@ -289,7 +288,6 @@ module.exports = {
 				return false;
 			}
 		}
-
 		this.x = xNew;
 		this.y = yNew;
 
@@ -298,7 +296,6 @@ module.exports = {
 		} else {
 			this.x = xOld;
 			this.y = yOld;
-
 			return false;
 		}
 
@@ -309,30 +306,23 @@ module.exports = {
 		if (aggro) {
 			aggro.move();
 		}
-
 		this.fireEvent("afterMove");
-
 		return true;
 	}
 
 	, collisionEnter: function (obj) {
-		let cpns = this.components;
-		let cLen = cpns.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = cpns[i];
-			if (c.collisionEnter) {
-				if (c.collisionEnter(obj)) {
-					return true;
-				}
+		for (const c of this.components) {
+			if (!c.collisionEnter) {
+				continue;
+			}
+			if (c.collisionEnter(obj)) {
+				return true;
 			}
 		}
 	}
 
 	, collisionExit: function (obj) {
-		let cpns = this.components;
-		let cLen = cpns.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = cpns[i];
+		for (const c of this.components) {
 			if (c.collisionExit) {
 				c.collisionExit(obj);
 			}
@@ -340,13 +330,7 @@ module.exports = {
 	}
 
 	, onEvent: function (eventName, callback) {
-		const entry = {
-			eventName
-			, callback
-		};
-
-		this.eventListeners.push(entry);
-
+		this.eventListeners.push({ eventName, callback });
 		return this.offEvent.bind(this, entry);
 	}
 
@@ -355,10 +339,7 @@ module.exports = {
 	}
 
 	, fireEvent: function (event, ...args) {
-		const cpns = this.components;
-		const cLen = cpns.length;
-		for (let i = 0; i < cLen; i++) {
-			const cpn = cpns[i];
+		for (const cpn of this.components) {
 			if (cpn.fireEvent) {
 				cpn.fireEvent(event, args);
 			}
@@ -382,10 +363,7 @@ module.exports = {
 	}
 
 	, destroy: function () {
-		let cpns = this.components;
-		let len = cpns.length;
-		for (let i = 0; i < len; i++) {
-			let c = cpns[i];
+		for (const c of this.components) {
 			if (c.destroy) {
 				c.destroy();
 			}
@@ -393,29 +371,18 @@ module.exports = {
 	}
 
 	, toString: function () {
-		let res = {};
-
-		for (let p in this) {
+		const res = {};
+		for (const p in this) {
 			if (["components", "syncer"].includes(p)) {
 				continue;
 			}
-
-			let val = this[p];
-
-			let stringVal = (val && val.toString) ? val.toString() : val;
+			const val = this[p];
+			const stringVal = (val && val.toString) ? val.toString() : val;
 			const type = typeof(val);
-
-			if (
-				type !== "function" &&
-				(
-					type !== "object" ||
-					val.type
-				)
-			) {
+			if (type !== "function" && (type !== "object" || val.type)) {
 				res[p] = stringVal;
 			}
 		}
-
-		return JSON.stringify(res, null, 4).split("\"").join("") + "\r\n";
+		return JSON.stringify(res, null, 4).replaceAll("\"", "") + "\r\n";
 	}
 };

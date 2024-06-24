@@ -362,8 +362,8 @@ define([
 			events.emit("onBeforeChat", msgConfig);
 
 			let val = msgConfig.message
-				.split("<").join("&lt;")
-				.split(">").join("&gt;");
+				.replaceAll("<", "&lt;")
+				.replaceAll(">", "&gt;");
 
 			if (!msgConfig.success) {
 				this.toggle(false);

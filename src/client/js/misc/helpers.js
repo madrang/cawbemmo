@@ -82,7 +82,7 @@ define([
 			const sp = sendLogBuffer(tmpEventsArray);
 			sendingPromise = _.makeQuerablePromise(sp);
 			sp.then(processLogBuffer, () => bufferedLogEvents.unshift(...tmpEventsArray));
-			sp.then(console.log, console.error);
+			sp.catch(console.error);
 		} catch (err) {
 			console.error(err);
 		}
@@ -184,11 +184,12 @@ define([
 	};
 
 	window.addEventListener("unhandledrejection", (event) => {
-		bufferedLogEvents.push([ EventLevels.ERROR, "Unhandled promise rejection: %o", event ]);
+		bufferedLogEvents.push([ EventLevels.ERROR, "Unhandled promise rejection.", String(event.reason.stack) ]);
 		processLogBuffer();
 	});
 
 	window.addEventListener("error", (event) => {
+		console.log(event);
 		bufferedLogEvents.push([ EventLevels.FATAL, "Unhandled error encountered: %o", event ]);
 		processLogBuffer();
 	});

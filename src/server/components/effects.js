@@ -12,17 +12,13 @@ module.exports = {
 	}
 
 	, init: function (blueprint) {
-		let effects = blueprint.effects || [];
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let e = effects[i];
-			if (!e.type) {
+		const effects = blueprint.effects || [];
+		for (const e of effects) {
+			if (!e || !e.type) {
 				continue;
 			}
-
 			this.addEffect(e);
 		}
-
 		delete blueprint.effects;
 	}
 
@@ -47,19 +43,14 @@ module.exports = {
 	}
 
 	, simplify: function (self) {
-		let e = {
-			type: "effects"
-		};
-
 		let effects = this.effects;
-		if ((effects.length > 0) && (effects[0].obj)) {
-			effects = effects
-				.map((f) => f.simplify())
-				.filter((f) => Boolean(f));
+		if (effects.length > 0 && effects[0].obj) {
+			effects = effects.map((f) => f.simplify()).filter((f) => Boolean(f));
 		}
-		e.effects = effects;
-
-		return e;
+		return {
+			type: "effects"
+			, effects
+		};
 	}
 
 	, destroy: function () {
@@ -73,11 +64,7 @@ module.exports = {
 	}
 
 	, reset: function () {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-
+		for (const effect of this.effects) {
 			if (effect.reset) {
 				effect.reset();
 			}
@@ -85,11 +72,7 @@ module.exports = {
 	}
 
 	, reapply: function () {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let effect = effects[i];
-
+		for (const effect of this.effects) {
 			if (effect.reapply) {
 				effect.reapply();
 			}
@@ -177,8 +160,8 @@ module.exports = {
 	, getTypeTemplate: function (type) {
 		let typeTemplate = null;
 		if (type) {
-			let capitalizedType = type[0].toUpperCase() + type.substr(1);
-			let result = {
+			const capitalizedType = type[0].toUpperCase() + type.substr(1);
+			const result = {
 				type: type
 				, url: "config/effects/effect" + capitalizedType + ".js"
 			};
@@ -186,65 +169,42 @@ module.exports = {
 
 			typeTemplate = require("../" + result.url);
 		}
-
-		let builtEffect = extend({}, effectTemplate, typeTemplate);
-		return builtEffect;
+		return extend({}, effectTemplate, typeTemplate);
 	}
 
 	, buildEffect: function (options) {
-		let builtEffect = this.getTypeTemplate(options.type);
-
-		for (let p in options) {
+		const builtEffect = this.getTypeTemplate(options.type);
+		for (const p in options) {
 			builtEffect[p] = options[p];
 		}
-
 		builtEffect.obj = this.obj;
 		builtEffect.id = this.nextId++;
 		builtEffect.silent = options.silent;
-
 		if (builtEffect.init) {
 			builtEffect.init(options.source);
 		}
-
 		this.effects.push(builtEffect);
-
 		if (!options.silent) {
 			this.obj.syncer.setArray(false, "effects", "addEffects", builtEffect.simplify());
 		}
-
 		this.obj.instance.eventEmitter.emit("onAddEffect", this.obj, builtEffect);
-
 		return builtEffect;
 	}
 
 	, syncExtend: function (id, data) {
-		let effect = this.effects.find((e) => e.id === id);
-		if (!effect) {
+		const effect = this.effects.find((e) => e.id === id);
+		if (!effect || effect.silent) {
+			//Never sync silent effects
 			return;
 		}
-
-		//Never sync silent effects
-		if (effect.silent) {
-			return;
-		}
-
-		this.obj.syncer.setArray(false, "effects", "extendEffects", {
-			id
-			, data
-		});
+		this.obj.syncer.setArray(false, "effects", "extendEffects", { id, data });
 	}
 
 	, syncRemove: function (id) {
-		let effect = this.effects.find((e) => e.id === id);
-
-		if (!effect) {
+		const effect = this.effects.find((e) => e.id === id);
+		if (!effect || effect.silent) {
 			return;
 		}
-
-		if (effect.silent) {
-			return;
-		}
-
 		this.obj.syncer.setArray(false, "effects", "removeEffects", id);
 	}
 
@@ -276,51 +236,35 @@ module.exports = {
 	}
 
 	, fireEvent: function (event, args) {
-		let effects = this.effects;
-		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
-			let e = effects[i];
-
-			//Maybe the effect killed us?
-			if (!e) {
-				i--;
-				eLen--;
+		for (const e of this.effects) {
+			if (!e || e.ttl === 0) {
 				continue;
 			}
-
-			if (e.ttl === 0) {
-				continue;
-			}
-			let events = e.events;
+			const events = e.events;
 			if (!events) {
 				continue;
 			}
-
-			let callback = events[event];
+			const callback = events[event];
 			if (!callback) {
 				continue;
 			}
-
 			callback.apply(e, args);
 		}
 	}
 
 	, update: function () {
-		let effects = this.effects;
+		const effects = this.effects;
 		let eLen = effects.length;
 		for (let i = 0; i < eLen; i++) {
-			let e = effects[i];
-
+			const e = effects[i];
 			if (e.ttl > 0) {
 				e.ttl--;
 			} else if (e.ttl === 0) {
 				e.destroyed = true;
 			}
-
 			if (e.update) {
 				e.update();
 			}
-
 			if (e.destroyed) {
 				this.destroyEffect(e);
 
@@ -331,7 +275,6 @@ module.exports = {
 				i--;
 			}
 		}
-
 		for (let p in this.ccResistances) {
 			if (this.ccResistances[p] > 0) {
 				this.ccResistances[p]--;

@@ -14,7 +14,7 @@ const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 	mobBuilder.build(mob, mobConfig);
 
 	if (id) {
-		mob.id = id.split("$").join(mobIndex);
+		mob.id = id.replaceAll("$", mobIndex);
 	}
 	if (originX) {
 		mob.mob.originX = originX;

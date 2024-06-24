@@ -12,8 +12,8 @@ module.exports = {
 	}
 
 	, obtain: function (obj, template) {
-		let zoneName = template?.zoneName ?? obj.zoneName;
-		let zone = mapList.find((m) => m.name === zoneName);
+		const zoneName = template?.zoneName ?? obj.zoneName;
+		const zone = mapList.find((m) => m.name === zoneName);
 		if (!zone) { // Zone doesn't exist any more. Probably been renamed
 			return;
 		}

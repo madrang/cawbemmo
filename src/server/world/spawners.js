@@ -53,8 +53,8 @@ module.exports = {
 		let customSpawn = false;
 
 		const sheetName = blueprint.sheetName;
-		if ((sheetName) && (blueprint.sheetName.indexOf("/"))) {
-			const spawnAnimation = _.getDeepProperty(animations, ["mobs", sheetName, blueprint.cell, "spawn"]);
+		if (sheetName && blueprint.sheetName.indexOf("/")) {
+			const spawnAnimation = animations.mobs?.[sheetName]?.[blueprint.cell]?.spawn;
 			if (spawnAnimation) {
 				customSpawn = true;
 

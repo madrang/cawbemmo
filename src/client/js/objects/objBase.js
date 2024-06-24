@@ -20,6 +20,7 @@ define([
 			if (!c || options.new) {
 				const template = components.getTemplate(type);
 				if (!template) {
+					_.log.addComponent.error("Template missing for component '%s'.", type);
 					return;
 				}
 				c = $.extend(true, {}, template);

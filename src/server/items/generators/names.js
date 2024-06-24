@@ -37,8 +37,8 @@ module.exports = {
 			let pick = list[Math.floor(Math.random() * list.length)];
 			item.name = pick[0].toUpperCase() + pick.substr(1);
 			if (item.name.indexOf("%") > -1) {
-				let replacer = (Math.random() < 0.5) ? "'s" : "";
-				item.name = item.name.split("%").join(replacer);
+				const replacer = (Math.random() < 0.5) ? "'s" : "";
+				item.name = item.name.replaceAll("%", replacer);
 			}
 		}
 

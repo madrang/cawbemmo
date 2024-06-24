@@ -7,11 +7,9 @@ module.exports = {
 			if (!spell.auto || !spell.isAttack) {
 				return;
 			}
-
 			if (Math.random() * 100 >= this.chance) {
 				return;
 			}
-
 			msg.cd = this.newCd;
 		}
 	}

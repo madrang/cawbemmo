@@ -6,34 +6,36 @@
 		"spliceWhere": {
 			enumerable: false
 			, value: function (callback, thisArg) {
-				let T = thisArg;
-				let O = Object(this);
-				let len = O.length >>> 0;
-				for (let k = 0; k < len; ++k) {
-					if (k in O) {
-						const kValue = O[k];
-						if (callback.call(T, kValue, k, O)) {
-							O.splice(k, 1);
-							k--;
-						}
+				const arrObj = Object(this);
+				let len = arrObj.length || 0;
+				for (let idx = 0; idx < len; ++idx) {
+					if (!(idx in arrObj)) {
+						continue;
 					}
+					if (!callback.call(thisArg, arrObj[idx], idx, arrObj)) {
+						continue;
+					}
+					arrObj.splice(idx, 1);
+					idx--;
+					len--;
 				}
 			}
 		}
 		, "spliceFirstWhere": {
 			enumerable: false
 			, value: function (callback, thisArg) {
-				let T = thisArg;
-				let O = Object(this);
-				let len = O.length >>> 0;
-				for (let k = 0; k < len; ++k) {
-					if (k in O) {
-						const kValue = O[k];
-						if (callback.call(T, kValue, k, O)) {
-							O.splice(k, 1);
-							return kValue;
-						}
+				const arrObj = Object(this);
+				let len = arrObj.length || 0;
+				for (let idx = 0; idx < len; ++idx) {
+					if (!(idx in arrObj)) {
+						continue;
 					}
+					const kValue = arrObj[idx];
+					if (!callback.call(thisArg, kValue, idx, arrObj)) {
+						continue;
+					}
+					arrObj.splice(idx, 1);
+					return kValue;
 				}
 			}
 		}
@@ -245,22 +247,6 @@
 				result.push(inner);
 			}
 			return result;
-		}
-
-		, getDeepProperty: function (obj, path) {
-			if (!obj) {
-				return;
-			}
-			if (typeof path === "string") {
-				path = path.split(".");
-			}
-			for (let propName of path) {
-				obj = obj[propName];
-				if (!obj) {
-					return;
-				}
-			}
-			return obj;
 		}
 
 		, getGuid: function () {
