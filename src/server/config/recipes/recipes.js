@@ -4,12 +4,14 @@ const recipesAlchemy = require("./alchemy");
 const recipesCooking = require("./cooking");
 const recipesEtching = require("./etching");
 const recipesEnchanting = require("./enchanting");
+const recipesTable = require("./table");
 
 let recipes = {
 	alchemy: [ ...recipesAlchemy ]
 	, cooking: [ ...recipesCooking ]
 	, etching: [ ...recipesEtching ]
 	, enchanting: [ ...recipesEnchanting ]
+	, table: [ ...recipesTable ]
 };
 
 module.exports = {
