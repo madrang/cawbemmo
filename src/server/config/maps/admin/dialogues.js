@@ -37,6 +37,45 @@ module.exports = {
 		}
 
 	}
+	, quest: {
+		1: {
+			msg: [{
+				msg: "Questator !!!!"
+				, options: [1.1,1.2]
+			}]
+			, options: {
+				1.1: {
+					msg: "Ville"
+					, goto: "questToTown"
+				}
+				,1.2: {
+					msg: "Depanneur"
+					, goto: "questToDep"
+				}
+
+			}
+		}
+		, questToTown: {
+			cpn: "questBuilder"
+			, method: "init"
+			, args: [{
+				name: "Conso"
+				, type: "killx"
+				, subType: "kazou"
+				, quantity: [1, 2]
+				, zoneName: "admin"
+			}]
+
+		}
+		, questToDep: {
+			cpn: "dialogue"
+			, method: "teleport"
+			, args: [{
+				toZone: "depanneur"
+
+			}]
+		}
+	}
 	, gislain: {
 		1: {
 			msg: [{
@@ -120,7 +159,7 @@ module.exports = {
 			}]
 			, method: function (obj) {
 				let inventory = obj.inventory;
-
+				console.log(inventory)
 				let crystals = inventory.items.find((i) => (i.name === "Lettre d'admiratrice"));
 				if (!crystals) {
 					return;

@@ -156,6 +156,17 @@ module.exports = {
 
 			}
 		}
+		, quest: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+
+			}
+		}
 		, gislain: {
 			level: 10
 			, walkDistance: 0
@@ -183,6 +194,14 @@ module.exports = {
 						, material: true
 						, sprite: [11, 7]
 						, worth: 2
+						, quality: 0
+						, infinite: true
+					}, {
+						name: "Papier a roulé"
+						, material: true
+						, sprite: [1, 3]
+						, worth: 50
+						, quantity: 2
 						, quality: 0
 						, infinite: true
 					}]

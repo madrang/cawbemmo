@@ -927,7 +927,24 @@
          "draworder":"topdown",
          "id":7,
          "name":"notices",
-         "objects":[],
+         "objects":[
+                {
+                 "height":56,
+                 "id":1075,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"cpnNotice",
+                         "type":"string",
+                         "value":"{\"msg\":\"Quest giver\"}"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":80,
+                 "x":616,
+                 "y":680
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1087,6 +1104,18 @@
                  "width":8,
                  "x":760,
                  "y":736
+                }, 
+                {
+                 "gid":514,
+                 "height":8,
+                 "id":1074,
+                 "name":"Quest",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":648,
+                 "y":712
                 }],
          "opacity":1,
          "properties":[
@@ -1780,7 +1809,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1074,
+ "nextobjectid":1076,
  "orientation":"orthogonal",
  "properties":[
         {
