@@ -3,13 +3,13 @@ define([
 	, "js/system/events"
 	, "js/system/client"
 	, "js/system/globals"
-	, "js/misc/tosAcceptanceValid"
+	, "js/system/browserStorage"
 ], function (
-	uiBase,
-	events,
-	client,
-	globals,
-	tosAcceptanceValid
+	uiBase
+	, events
+	, client
+	, globals
+	, browserStorage
 ) {
 	const setUiTypes = (list) => {
 		list.forEach((l, i) => {
@@ -27,6 +27,18 @@ define([
 				l.path = `ui/templates/${l.type}`;
 			}
 		});
+	};
+
+	const tosAcceptanceValid = () => {
+		const acceptedVersion = browserStorage.get("tos_accepted_version");
+		const currentVersion = globals.clientConfig.tos.version;
+		return acceptedVersion === currentVersion;
+	};
+
+	const hasNewContent = () => {
+		const logVersion = browserStorage.get("changelog_version");
+		const currentVersion = globals.clientConfig.tos.version;
+		return logVersion !== currentVersion;
 	};
 
 	return {
@@ -157,11 +169,15 @@ define([
 		}
 
 		, afterPreload: function () {
-			if (globals.clientConfig.tos.required && !tosAcceptanceValid()) {
+			if (!tosAcceptanceValid()) {
 				this.build("terms");
-			} else {
-				this.build("characters");
+				return;
 			}
+			if (hasNewContent()) {
+				this.build("changeLog");
+				return;
+			}
+			this.build("characters");
 		}
 
 		, update: function () {

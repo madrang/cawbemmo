@@ -36,7 +36,6 @@ define([
 		, onAcceptClick: function (version) {
 			browserStorage.set("tos_accepted_version", version);
 			this.destroy();
-
 			uiFactory.build("characters");
 		}
 	};

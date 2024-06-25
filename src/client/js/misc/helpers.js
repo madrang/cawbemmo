@@ -189,8 +189,7 @@ define([
 	});
 
 	window.addEventListener("error", (event) => {
-		console.log(event);
-		bufferedLogEvents.push([ EventLevels.FATAL, "Unhandled error encountered: %o", event ]);
+		bufferedLogEvents.push([ EventLevels.FATAL, "Unhandled error encountered.", String(event.error.stack) ]);
 		processLogBuffer();
 	});
 
