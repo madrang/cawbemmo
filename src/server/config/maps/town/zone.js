@@ -305,6 +305,14 @@ module.exports = {
 						, worth: 2
 						, quality: 0
 						, infinite: true
+					}, {
+						name: "Papier a roulé"
+						, material: true
+						, sprite: [1, 3]
+						, worth: 50
+						, quantity: 2
+						, quality: 0
+						, infinite: true
 					}]
 					, level: {
 						min: 8
