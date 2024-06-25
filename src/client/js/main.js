@@ -92,7 +92,7 @@ define([
 
 			numbers.init();
 
-			uiFactory.init(null);
+			uiFactory.init();
 
 			fnQueueTick = getQueueTick(this.update.bind(this));
 			fnQueueTick();

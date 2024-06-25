@@ -193,6 +193,15 @@ const config = {
 		, "middleHud"
 		, "options"
 		, "announcements"
+		, { type: "createCharacter"
+			, autoLoadOnPlay: false
+		}
+		, { type: "characters"
+			, autoLoadOnPlay: false
+		}
+		, { type: "terms"
+			, autoLoadOnPlay: false
+		}
 	]
 	, contextMenuActions: {
 		player: []

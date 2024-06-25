@@ -234,7 +234,7 @@ module.exports = {
 				let physics = this.instance.physics;
 				let sprintChance = moveEvent.sprintChance;
 				do {
-					if ((Math.floor(Math.random() * 100) < sprintChance) && (!physics.isTileBlocking(q.data.x, q.data.y))) {
+					if ((Math.floor(Math.random() * 100) < sprintChance) && !physics.isTileBlocking(q.data.x, q.data.y)) {
 						q = this.dequeue();
 						maxDistance++;
 					}

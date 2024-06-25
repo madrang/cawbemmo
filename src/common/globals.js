@@ -84,6 +84,7 @@
 			}
 		}
 	});
+
 	const tmpExport = {
 		CONSTANTS: (params, obj, enumerable = true) => {
 			const properties = {};
