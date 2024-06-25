@@ -11,6 +11,10 @@ const mapList = [
 		name: "town"
 		, path: "config/maps"
 	}
+	, {
+		name: "admin"
+		, path: "config/maps"
+	}
 ];
 
 //Helpers

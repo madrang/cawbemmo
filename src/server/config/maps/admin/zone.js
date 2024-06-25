@@ -1,5 +1,5 @@
 module.exports = {
-	name: "town"
+	name: "admin"
 	, level: [1, 20]
 	, resources: {
 		champignon: {
@@ -13,26 +13,7 @@ module.exports = {
 		}
 	}
 	, objects: {
-		shophermit: {
-			properties: {
-				cpnNotice: {
-					actions: {
-						enter: {
-							cpn: "dialogue"
-							, method: "talk"
-							, args: [{
-								targetName: "hermit"
-							}]
-						}
-						, exit: {
-							cpn: "dialogue"
-							, method: "stopTalk"
-						}
-					}
-				}
-			}
-		}
-		, mrBoner: {
+		mrBoner: {
 			properties: {
 				cpnNotice: {
 					actions: {
@@ -55,13 +36,6 @@ module.exports = {
 			max: 9
 			, type: "fish"
 			, quantity: [6, 12]
-		}
-		, table: {
-			components: {
-				cpnWorkbench: {
-					type: "table"
-				}
-			}
 		}
 		, fireplace: {
 			components: {
@@ -100,22 +74,7 @@ module.exports = {
 				, sprite: [0, 0]
 			}
 		}
-		, vidange: {
-			level: 3
-			, regular: {
-				drops: {
-					chance: 50
-					, rolls: 1
-				}
-			}
-			, rare: {
-				name: "Vidange de luxe"
-			}
-			, questItem: {
-				name: "Hamburger usagée"
-				, sprite: [0, 1]
-			}
-		}
+
 		, "grosse vidange": {
 			level: 5
 			, cron: "0 * * * *"
@@ -132,45 +91,6 @@ module.exports = {
 			}
 			, rare: {
 				chance: 100
-			}
-		}
-		, sbire: {
-			level: 4
-			, regular: {
-				drops: {
-					chance: 45
-					, rolls: 1
-				}
-			}
-			, rare: {
-				name: "Un fou"
-			}
-			, questItem: {
-				name: "Cagoule"
-				, sprite: [0, 2]
-			}
-		}
-		, "45 tours": {
-			level: 5
-			, regular: {
-				drops: {
-					rolls: 1
-				}
-
-			}
-			, rare: {
-				name: "Evan Joanes"
-			}
-		}
-		, crab: {
-			level: 6
-
-			, rare: {
-				name: "Squiggles"
-			}
-			, questItem: {
-				name: "Pince de crabe"
-				, sprite: [0, 3]
 			}
 		}
 		, kazou: {
@@ -225,7 +145,7 @@ module.exports = {
 				}
 			}
 		}
-		, binary: {
+		, teleport: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -236,7 +156,7 @@ module.exports = {
 
 			}
 		}
-		, hermit: {
+		, quest: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -244,39 +164,10 @@ module.exports = {
 				count: 0
 			}
 			, properties: {
-				cpnTrade: {
-					items: {
-						min: 3
-						, max: 10
-					}
-					, forceItems: [{
-						name: "Flimsy Fishing Rod"
-						, type: "Fishing Rod"
-						, slot: "tool"
-						, quality: 0
-						, worth: 5
-						, sprite: [11, 0]
-						, infinite: true
-						, noSalvage: true
-					}, {
-						name: "Skewering Stick"
-						, material: true
-						, sprite: [11, 7]
-						, worth: 2
-						, quality: 0
-						, infinite: true
-					}]
-					, level: {
-						min: 1
-						, max: 10
-					}
-					, markup: {
-						buy: 0.50
-						, sell: 2.5
-					}
-				}
+
 			}
-		}, gislain: {
+		}
+		, gislain: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
