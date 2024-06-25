@@ -4,10 +4,7 @@ define([
 
 ) {
 	return {
-		lifetime: {
-			min: 1
-			, max: 3
-		}
+		lifetime: { min: 1, max: 3 }
 		, frequency: 1
 		, emitterLifetime: -1
 		, addAtBack: false
@@ -32,8 +29,8 @@ define([
 				, config: {
 					alpha: {
 						list: [
-							{ time: 0, value: 0.5 }
-							, { time: 1, value: 0 }
+							{ time: 0, value: 0.9 }
+							, { time: 1, value: 0.2 }
 						]
 					}
 				}
@@ -42,6 +39,16 @@ define([
 				, config: { blendMode: "add" }
 			}
 
+			, { type: "scale"
+				, config: {
+					scale: {
+						list: [
+							{ time: 0, value: { min: 16, max: 30 } }
+							, { time: 1, value: { min: 8, max: 14 } }
+						]
+					}
+				}
+			}
 			, { type: "moveSpeed",
 				config: {
 					speed: {
@@ -52,21 +59,9 @@ define([
 					}
 				}
 			}
-			, { type: "scale"
-				, config: {
-					scale: {
-						list: [
-							{ time: 0, value: { min: 16, max: 30 } }
-							, { time: 1, value: { min: 8, max: 14 } }
-						]
-					}
-					, minMult: 1
-				}
-			}
 			, { type: "rotationStatic",
 				config: { min: 0, max: 360 }
 			}
-
 
 			, { type: "spawnShape"
 				, config: {

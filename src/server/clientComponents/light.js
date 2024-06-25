@@ -11,7 +11,7 @@ define([
 				min: 1
 				, max: 4
 			}
-			, frequency: 0.9 + Math.random().toFixed(1)
+			, frequency: 0.9 + Math.random()
 			, emitterLifetime: -1
 			, addAtBack: false
 			, pos
@@ -95,7 +95,7 @@ define([
 		, range: 3
 
 		, init: function (blueprint) {
-			this.blueprint = $.extend(true, this.blueprint || {}, blueprint);
+			this.blueprint = _.assignWith("particles", this.blueprint || {}, blueprint);
 			const range = this.range;
 			const halfRange = (range - 1) / 2;
 			for (let i = 0; i < range; i++) {
@@ -113,7 +113,6 @@ define([
 		}
 
 		, update: function () {
-
 		}
 
 		, setVisible: function (visible) {

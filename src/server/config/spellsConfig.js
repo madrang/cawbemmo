@@ -1,6 +1,6 @@
-let events = require("../misc/events");
+const events = require("../misc/events");
 
-let spells = {
+const spells = {
 	melee: {
 		auto: true
 		, cdMax: 10
@@ -238,7 +238,7 @@ let spells = {
 };
 
 module.exports = {
-	spells: spells
+	spells
 	, init: function () {
 		events.emit("onBeforeGetSpellsConfig", spells);
 	}

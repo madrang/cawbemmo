@@ -309,50 +309,59 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								color: {
-									start: ["fc66f7", "802343"]
-									, end: ["393268", "de43ae"]
-								}
-								, scale: {
-									start: {
-										min: 10
-										, max: 18
+								behaviors: [
+									{ type: "color"
+										, config: {
+											color: {
+												list: [
+													{ time: 0, value: ["fc66f7", "802343"] }
+													, { time: 1, value: ["393268", "de43ae"] }
+												]
+											}
+										}
 									}
-									, end: {
-										min: 4
-										, max: 8
+									, { type: "alpha"
+										, config: {
+											alpha: {
+												list: [
+													{ time: 0, value: 0.25 }
+													, { time: 1, value: 0 }
+												]
+											}
+										}
 									}
-								}
-								, speed: {
-									start: {
-										min: 6
-										, max: 12
+									, { type: "blendMode"
+										, config: { blendMode: "add" }
 									}
-									, end: {
-										min: 2
-										, max: 4
+									, { type: "scale"
+										, config: {
+											scale: {
+												list: [
+													{ time: 0, value: { min: 10, max: 18 } }
+													, { time: 1, value: { min: 4, max: 8 } }
+												]
+											}
+										}
 									}
-								}
-								, lifetime: {
-									min: 5
-									, max: 12
-								}
-								, alpha: {
-									start: 0.25
-									, end: 0
-								}
-								, randomScale: true
-								, randomSpeed: true
-								, chance: 0.06
-								, randomColor: true
-								, spawnType: "rect"
-								, blendMode: "add"
-								, spawnRect: {
-									x: -24
-									, y: -24
-									, w: 48
-									, h: 48
-								}
+									, { type: "moveSpeed",
+										config: {
+											speed: {
+												list: [
+													{ time: 0, value: { min: 6, max: 12 } }
+													, { time: 1, value: { min: 2, max: 4 } }
+												]
+											}
+										}
+									}
+									, { type: "spawnShape"
+										, config: {
+											type: "rect"
+											, data: { x: -24, y: -24, w: 48, h: 48 }
+										}
+									}
+								]
+								, lifetime: { min: 5, max: 12 }
+								, spawnChance: 0.06
 							}
 						};
 					}

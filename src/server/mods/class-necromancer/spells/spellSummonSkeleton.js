@@ -81,7 +81,7 @@ module.exports = {
 			obj.fireEvent("beforeSummonMinion", blueprint);
 
 			//Spawn a mob
-			let mob = obj.instance.spawners.spawn({
+			const mob = obj.instance.spawners.spawn({
 				amountLeft: 1
 				, blueprint: blueprint
 			});
@@ -126,7 +126,6 @@ module.exports = {
 					mob.aggro.tryEngage(currentTarget);
 				}
 			}
-
 			minions.push(mob);
 		});
 
@@ -144,21 +143,11 @@ module.exports = {
 				}]
 			}, -1);
 		}
-
 		return true;
 	}
 
 	, update: function () {
-		let minions = this.minions;
-		let mLen = minions.length;
-		for (let i = 0; i < mLen; i++) {
-			let m = minions[i];
-			if (m.destroyed) {
-				minions.splice(i, 1);
-				i--;
-				mLen--;
-			}
-		}
+		this.minions.spliceWhere((m) => m.destroyed);
 	}
 
 	, onAfterSimplify: function (simple) {

@@ -60,7 +60,7 @@ define([
 		, buildEffect: function (data) {
 			let template = this.templates[data.type] || {};
 
-			let effect = $.extend(true, {}, effectBase, template, data);
+			let effect = _.assign({}, effectBase, template, data);
 
 			effect.self = Boolean(this.obj.self);
 			effect.obj = this.obj;

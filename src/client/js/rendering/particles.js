@@ -26,7 +26,8 @@ define([
 		, buildEmitter: function (config) {
 			const obj = config.obj;
 			delete config.obj;
-			const options = $.extend(true, {}, particleDefaults, config);
+			const options = _.assignWith("particles", {}, particleDefaults, config);
+			console.log("Particles emitter created", options);
 			const emitter = new PIXI.particles.Emitter(this.stage, options);
 			emitter.obj = obj;
 			emitter.emit = true;
@@ -47,7 +48,7 @@ define([
 			for (let i = 0; i < eLen; i++) {
 				const e = emitters[i];
 				let visible = null;
-				let destroy = ((!e.emit) && (e.obj.destroyed));
+				let destroy = (!e.emit && e.obj.destroyed);
 				if (destroy) {
 					if (e.particleCount > 0) {
 						visible = renderer.isVisible(e.spawnPos.x, e.spawnPos.y);
