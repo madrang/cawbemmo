@@ -56,6 +56,13 @@ module.exports = {
 			, type: "fish"
 			, quantity: [6, 12]
 		}
+		, table: {
+			components: {
+				cpnWorkbench: {
+					type: "table"
+				}
+			}
+		}
 		, fireplace: {
 			components: {
 				cpnWorkbench: {
