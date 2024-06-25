@@ -1335,22 +1335,16 @@
                  "y":752
                 }, 
                 {
-                 "gid":690,
+                 "gid":1120,
                  "height":8,
-                 "id":1070,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"admin\",\"pos\":{\"x\":100,\"y\":100}}"
-                        }],
+                 "id":1073,
+                 "name":"Table",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":808,
-                 "y":624
+                 "x":928,
+                 "y":704
                 }],
          "opacity":1,
          "properties":[
@@ -1561,18 +1555,6 @@
                  "width":79,
                  "x":800,
                  "y":688
-                }, 
-                {
-                 "gid":1120,
-                 "height":8,
-                 "id":1072,
-                 "name":"Table",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":928,
-                 "y":712
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -4075,7 +4057,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1073,
+ "nextobjectid":1074,
  "orientation":"orthogonal",
  "properties":[
         {
