@@ -43,8 +43,15 @@
 	const REMAPPERS = {
 		particles: function(target, value, path, property) {
 			if (Array.isArray(target) && path.endsWith("behaviors") && value.has("type")) {
-				// Replace index using matching type entry.
-				return { index: target.findIndex((v) => v.type === value.type) };
+				const result = {
+					// Replace index using matching type entry.
+					index: target.findIndex((v) => v.type === value.type)
+				};
+				if (value.type === "spawnShape") {
+					// Replace old spawnShape with new one instead of merging.
+					result.value = value;
+				}
+				return result;
 			}
 			if (property === "list" && Array.isArray(value) && value[0].has("time")) {
 				// Replace all values using a copy of the current array.

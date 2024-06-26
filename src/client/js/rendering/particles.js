@@ -73,17 +73,9 @@ define([
 				let r;
 				try {
 					//FIXME, Negative color crash in pixi.particles.js when tab is hidden for too long.
-					r = e.update((now - this.lastTick) * 0.001);
+					e.update((now - this.lastTick) * 0.001);
 				} catch (error) {
 					console.error(error);
-				}
-				if (r) {
-					console.log("Particles", r);
-					r.forEach(function (rr) {
-						if (e.blendMode === "overlay") {
-							rr.pluginName = "picture";
-						}
-					}, this);
 				}
 			}
 			this.lastTick = now;

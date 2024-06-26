@@ -75,7 +75,7 @@ define([
 						type: "torus"
 						, data: {
 							x: 0, y: 0
-							, radius: 0.1
+							, radius: 1
 							, innerRadius: 0
 							, affectRotation: false
 						}
