@@ -49,7 +49,7 @@ define([
 	const buildComponents = () => {
 		templates.forEach((t) => {
 			const extensions = extenders.filter((e) => e.extends === t.type);
-			extensions.forEach((e) => $.extend(true, t, e.tpl));
+			extensions.forEach((e) => _.assign(t, e.tpl));
 			t.eventList = {};
 			t.hookEvent = hookEvent;
 			t.unhookEvents = unhookEvents;

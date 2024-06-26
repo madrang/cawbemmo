@@ -1,5 +1,4 @@
 //Globals
-global.extend = require("../../common/assign");
 global.io = require("../db/io");
 global._ = require("../misc/helpers");
 global.consts = require("../config/consts");

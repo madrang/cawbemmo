@@ -12,7 +12,7 @@ module.exports = (obj, [item]) => {
 	generatorSpells.generate(item, {
 		spellName: spellName
 	});
-	item.spell = extend(oldSpell, item.spell);
+	item.spell = _.assign(oldSpell, item.spell);
 
 	const damage = item.spell.values.damage;
 	const msg = `Reforged weapon to damage: ${damage}`;

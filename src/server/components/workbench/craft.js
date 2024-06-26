@@ -78,7 +78,7 @@ module.exports = (cpnWorkbench, msg) => {
 			if (itemBpt.generate) {
 				item = generator.generate(itemBpt);
 			} else {
-				item = extend({}, itemBpt);
+				item = _.assign({}, itemBpt);
 			}
 
 			if (item.description) {

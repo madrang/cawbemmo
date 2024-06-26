@@ -118,7 +118,7 @@ module.exports = {
 			materialGenerators.forEach((g) => g.generate(item, blueprint));
 		} else if (blueprint.type === "mtx" || blueprint.type === "toy") {
 			//TODO: MTXs have been moved to a mod so we shouldn't have this any more
-			extend(item, blueprint);
+			_.assign(item, blueprint);
 			delete item.chance;
 		} else if (blueprint.type === "recipe") {
 			recipeGenerators.forEach((g) => g.generate(item, blueprint));

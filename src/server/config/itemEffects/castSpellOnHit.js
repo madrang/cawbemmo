@@ -55,7 +55,7 @@ const handler = (obj, item, event, firedEventName) => {
 
 	const { rolls: { castSpell, castTarget } } = itemEffect;
 
-	const spellConfig = extend({}, castSpell);
+	const spellConfig = _.assign({}, castSpell);
 	spellConfig.noEvents = true;
 
 	const scaleDamage = spellConfig.scaleDamage;
@@ -83,7 +83,7 @@ const handler = (obj, item, event, firedEventName) => {
 		typeTemplate.template = require("../spells/spell" + typeTemplate.type);
 	}
 
-	const builtSpell = extend({ obj }, spellBaseTemplate, typeTemplate.template, spellConfig);
+	const builtSpell = _.assign({ obj }, spellBaseTemplate, typeTemplate.template, spellConfig);
 
 	let target = event.target;
 	if (castTarget === "self") {
@@ -93,7 +93,7 @@ const handler = (obj, item, event, firedEventName) => {
 	}
 	//Need to write a generic way to apply these
 	else if (castTarget === "{{event.oldPos}}") {
-		target = extend({}, event.oldPos);
+		target = _.assign({}, event.oldPos);
 	} else if (JSON.stringify(castTarget) === "{\"x\":\"{{event.follower.x}}\",\"y\":\"{{event.follower.y}}\"}") {
 		target = {
 			x: event.follower.x

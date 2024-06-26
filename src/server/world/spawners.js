@@ -18,7 +18,7 @@ module.exports = {
 	}
 
 	, register: function (blueprint, cdMax) {
-		const spawner = extend({
+		const spawner = _.assign({
 			cdMax: cdMax || 171
 			, cron: blueprint.cron
 			, lifetime: blueprint.lifetime
@@ -39,7 +39,7 @@ module.exports = {
 			this.mobTypes[name]++;
 		}
 
-		spawner.zonePrint = extend({}, this.zoneConfig.mobs.default, this.zoneConfig.mobs[name] || {});
+		spawner.zonePrint = _.assign({}, this.zoneConfig.mobs.default, this.zoneConfig.mobs[name] || {});
 	}
 
 	, spawn: function (spawner) {
@@ -167,7 +167,7 @@ module.exports = {
 				if (l.blueprint.layerName === "mobs") {
 					this.setupMob(mob, l.zonePrint);
 				} else {
-					const blueprint = extend({}, this.zoneConfig.objects.default, this.zoneConfig.objects[name] || {});
+					const blueprint = _.assign({}, this.zoneConfig.objects.default, this.zoneConfig.objects[name] || {});
 					this.setupObj(mob, blueprint);
 				}
 

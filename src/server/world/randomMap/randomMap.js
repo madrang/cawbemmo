@@ -33,7 +33,7 @@ module.exports = {
 
 		this.loadMapProperties(map.mapFile.properties);
 
-		this.templates = extend([], map.rooms);
+		this.templates = _.assign([], map.rooms);
 		setupTemplates(this, map);
 		generateMappings(this, map);
 	}

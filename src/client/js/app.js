@@ -25,12 +25,14 @@ require.config({
 		}
 		, helpers: {
 			deps: [
-				"jquery"
+				"common/assign"
 			]
+			, exports: "_"
 		}
 		, main: {
 			deps: [
-				"helpers"
+				"jquery"
+				, "helpers"
 				, "js/input"
 			]
 		}

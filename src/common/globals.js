@@ -85,57 +85,6 @@
 		}
 	});
 
-	const assignRecursive = function (objSrc, newObj, remapCallback, path) {
-		if (!objSrc || typeof objSrc !== "object") {
-			return objSrc;
-		}
-		if (Array.isArray(objSrc)) {
-			if (!newObj || !newObj.push) {
-				newObj = [];
-			}
-			for (let i = 0; i < objSrc.length; i++) {
-				if (!remapCallback) {
-					newObj[i] = assignRecursive(objSrc[i], newObj[i]);
-					continue;
-				}
-				const result = remapCallback(newObj, objSrc[i], path, i);
-				if (result?.has("index") && result.index < 0) {
-					result.index = newObj.length;
-				}
-				newObj[result?.index || i] = result?.value || assignRecursive(objSrc[i], newObj[result?.index || i], remapCallback, `${path}[${i}]`);
-			}
-			return newObj;
-		}
-		if (!newObj) {
-			newObj = {};
-		}
-		for (const propName in objSrc) {
-			if (!objSrc.hasOwnProperty(propName)) {
-				continue;
-			}
-			if (!remapCallback) {
-				newObj[propName] = assignRecursive(objSrc[propName], newObj[propName]);
-				continue;
-			}
-			const result = remapCallback(newObj, objSrc[propName], path, propName);
-			newObj[result?.index || propName] = result?.value || assignRecursive(objSrc[propName], newObj[result?.index || propName], remapCallback, `${path}.${propName}`);
-		}
-		return newObj;
-	};
-
-	const REMAPPERS = {
-		particles: function(target, value, path, property) {
-			if (Array.isArray(target) && path.endsWith("behaviors") && value.has("type")) {
-				return {
-					index: target.findIndex((v) => v.type === value.type)
-				};
-			}
-			if (property === "list" && Array.isArray(value) && value[0].has("time")) {
-				return { value };
-			}
-		}
-	};
-
 	const tmpExport = {
 		CONSTANTS: (params, obj, enumerable = true) => {
 			const properties = {};
@@ -284,28 +233,6 @@
 			}
 		}
 
-		/** Recursively assign all sources properties to the target object.
-		 * @param {*} target object
-		 * @param  {...any} srcArgs source objects
-		 * @returns target
-		 */
-		, assign: function (target, ...srcArgs) {
-			for (const srcA of srcArgs) {
-				assignRecursive(srcA, target);
-			}
-			return target;
-		}
-
-		, assignWith: function (remapCallback, target, ...srcArgs) {
-			if (typeof remapCallback === "string") {
-				remapCallback = REMAPPERS[remapCallback];
-			}
-			for (const srcA of srcArgs) {
-				assignRecursive(srcA, target, remapCallback);
-			}
-			return target;
-		}
-
 		, get2dArray: function (w, h, def) {
 			def = def || 0;
 			const result = [];
@@ -336,9 +263,21 @@
 			return keys[Math.floor(Math.random() * keys.length)];
 		}
 	};
-	if (typeof define === "function") {
-		define([], tmpExport);
-	} else {
+
+	if (typeof define === "function" && define.amd) {
+		define([
+			"common/assign"
+		], function(
+			assignModule
+		) {
+			assignModule.assign(tmpExport, assignModule);
+			return tmpExport;
+		});
+	} else if (typeof module === "object" && module.exports) {
+		const assignModule = require("./assign");
+		assignModule.assign(tmpExport, assignModule);
 		module.exports = tmpExport;
+	} else {
+		throw new Error("Can't load globals.js in current env.");
 	}
 })();

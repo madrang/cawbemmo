@@ -143,7 +143,7 @@ module.exports = {
 		const { obj, tickParticles } = this;
 		const { x, y, instance: { objects } } = obj;
 
-		const particleBlueprint = extend({}, tickParticles.blueprint, {
+		const particleBlueprint = _.assign({}, tickParticles.blueprint, {
 			frequency: particleFrequency
 		});
 

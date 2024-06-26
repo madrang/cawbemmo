@@ -87,7 +87,7 @@ module.exports = {
 		let useMsg = stateConfig.msg;
 		if (stateConfig.cpn) {
 			let cpn = sourceObj[stateConfig.cpn];
-			let newArgs = extend([], stateConfig.args);
+			let newArgs = _.assign([], stateConfig.args);
 			newArgs.push(this.obj);
 			result = cpn[stateConfig.method].apply(cpn, newArgs);
 
@@ -98,7 +98,7 @@ module.exports = {
 				return await this.getState(sourceObj, stateConfig.goto.failure);
 			}
 			if (result) {
-				useMsg = extend([], useMsg);
+				useMsg = _.assign([], useMsg);
 				useMsg[0].msg = result;
 			} else {
 				return null;
@@ -106,7 +106,7 @@ module.exports = {
 		} else if (stateConfig.method) {
 			let methodResult = await stateConfig.method.call(this.obj, sourceObj);
 			if (methodResult) {
-				useMsg = extend([], useMsg);
+				useMsg = _.assign([], useMsg);
 				useMsg[0].msg = methodResult;
 			}
 			if (!useMsg) {
@@ -181,7 +181,7 @@ module.exports = {
 	, teleport: function (msg) {
 		this.obj.syncer.set(true, "dialogue", "state", null);
 
-		let portal = extend({}, require("./portal"), msg);
+		let portal = _.assign({}, require("./portal"), msg);
 		portal.collisionEnter(this.obj);
 	}
 

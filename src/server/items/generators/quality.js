@@ -15,13 +15,13 @@ module.exports = {
 			return;
 		}
 
-		let qualities = extend([], this.qualities);
+		let qualities = _.assign([], this.qualities);
 
 		let magicFind = (blueprint.magicFind || 0);
 		if (!(magicFind instanceof Array)) {
 			magicFind = [magicFind];
 		} else {
-			magicFind = extend([], magicFind);
+			magicFind = _.assign([], magicFind);
 		}
 
 		let bonusMagicFind = blueprint.bonusMagicFind || 0;

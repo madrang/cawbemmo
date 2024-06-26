@@ -11,7 +11,7 @@ a-1))break}else if(d<=Math.exp(-h))break;return h*c}};Random.prototype.normal=fu
 Random.prototype.triangular=function(a,c,b){var f=(b-a)/(c-a),e=this.random();return e<=f?a+Math.sqrt(e*(c-a)*(b-a)):c-Math.sqrt((1-e)*(c-a)*(c-b))};Random.prototype.uniform=function(a,c){return a+this.random()*(c-a)};Random.prototype.weibull=function(a,c){var b=1-this.random();return a*Math.pow(-Math.log(b),1/c)};
 
 global.random = new Random();
-extend(random, {
+_.assign(random, {
 	norm: function(low, high) {
 		var mid = low + ((high - low) / 2);
 		var range = mid - low;

@@ -19,7 +19,7 @@ const getFactionBlueprint = (factionId) => {
 	if (!res) {
 		return;
 	}
-	res = extend({}, factionBase, res);
+	res = _.assign({}, factionBase, res);
 	cache[factionId] = res;
 	return res;
 };

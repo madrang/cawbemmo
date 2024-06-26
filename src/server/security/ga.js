@@ -27,7 +27,7 @@ module.exports = {
 			return fakeTracker;
 		}
 
-		const builtTracker = extend({}, tracker);
+		const builtTracker = _.assign({}, tracker);
 		builtTracker.init(id);
 
 		return builtTracker;

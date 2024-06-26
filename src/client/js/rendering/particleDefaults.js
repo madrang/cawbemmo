@@ -5,7 +5,7 @@ define([
 ) {
 	return {
 		lifetime: { min: 1, max: 3 }
-		, frequency: 1
+		, frequency: 0.03
 		, emitterLifetime: -1
 		, addAtBack: false
 		, pos: { x: 0, y: 0 }

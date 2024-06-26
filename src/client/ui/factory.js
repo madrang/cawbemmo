@@ -113,7 +113,7 @@ define([
 			}
 			const fullPath = `${path}/${type}`;
 			const template = await new Promise((res) => require([fullPath], res));
-			const ui = $.extend(true, { type }, uiBase, template);
+			const ui = _.assign({ type }, uiBase, template);
 			requestAnimationFrame(this.renderUi.bind(this, ui));
 			return ui;
 		}

@@ -17,6 +17,6 @@ module.exports = {
 			pick = Object.keys(configCurrencies.currencies).find((c) => (c.toLowerCase().indexOf(blueprint.name.toLowerCase()) > -1));
 		}
 		item.name = pick;
-		extend(item, configCurrencies.currencies[pick]);
+		_.assign(item, configCurrencies.currencies[pick]);
 	}
 };

@@ -9,7 +9,7 @@ module.exports = {
 
 	, addStates: function (dialogue, states) {
 		for (let s in states) {
-			let source = extend({}, states[s]);
+			let source = _.assign({}, states[s]);
 			let target = dialogue[s];
 			if (!target) {
 				dialogue[s] = source;

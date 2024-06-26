@@ -55,7 +55,7 @@ module.exports = {
 			spellName = spellList[Math.floor(Math.random() * spellList.length)];
 		}
 
-		let spell = extend({}, spellsConfig.spells[spellName], blueprint.spellConfig);
+		let spell = _.assignWith("particles", {}, spellsConfig.spells[spellName], blueprint.spellConfig);
 		let spellAesthetic = spells.spells.find((s) => s.name.toLowerCase() === spellName) || {};
 
 		if (!item.slot) {
@@ -81,7 +81,7 @@ module.exports = {
 		}
 
 		if (blueprint.spellConfig) {
-			spellAesthetic = extend({}, spellAesthetic, blueprint.spellConfig);
+			spellAesthetic = _.assign({}, spellAesthetic, blueprint.spellConfig);
 		}
 
 		item.spell = {
@@ -92,13 +92,13 @@ module.exports = {
 		};
 
 		if (blueprint.spellConfig) {
-			extend(item.spell, blueprint.spellConfig);
+			_.assign(item.spell, blueprint.spellConfig);
 		}
 
 		if (item.type) {
 			let typeConfig = configTypes.types[item.slot][item.type];
 			if (typeConfig) {
-				extend(spell, typeConfig.spellConfig);
+				_.assign(spell, typeConfig.spellConfig);
 			}
 		}
 
@@ -107,7 +107,7 @@ module.exports = {
 		if (item.slot) {
 			const tempItem = {};
 
-			const tempBlueprint = extend({}, blueprint);
+			const tempBlueprint = _.assign({}, blueprint);
 			delete tempBlueprint.quality;
 			tempBlueprint.quality = blueprint.spellQuality;
 

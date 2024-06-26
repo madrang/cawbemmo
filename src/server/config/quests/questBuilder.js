@@ -32,7 +32,7 @@ module.exports = {
 		if (!zoneTemplate) {
 			zoneTemplate = globalQuests;
 		}
-		const config = extend({}, zoneTemplate);
+		const config = _.assign({}, zoneTemplate);
 		this.instance.eventEmitter.emit("onBeforeGetQuests", {
 			obj
 			, config
@@ -59,7 +59,7 @@ module.exports = {
 		}
 		const pickType = pickQuest.type[0].toUpperCase() + pickQuest.type.substr(1);
 		const questClass = require(`../../config/quests/templates/quest${pickType}`);
-		const quest = extend({}, pickQuest, questTemplate, questClass, template);
+		const quest = _.assign({}, pickQuest, questTemplate, questClass, template);
 		if (template) {
 			quest.xp = template.xp;
 		}

@@ -16,7 +16,7 @@ module.exports = {
 	}
 
 	, build: function (isClientObj, id) {
-		let o = extend({}, objBase);
+		let o = _.assign({}, objBase);
 		if (isClientObj) {
 			o.update = null;
 		} else {
@@ -79,7 +79,7 @@ module.exports = {
 			}
 			//Add components (certain ones need to happen first)
 			//TODO: Clean this part up
-			let properties = extend({}, l.properties);
+			let properties = _.assign({}, l.properties);
 			["cpnMob"].forEach(function (c) {
 				let blueprint = properties[c] || null;
 				if ((blueprint) && (typeof (blueprint) === "string")) {
@@ -175,7 +175,7 @@ module.exports = {
 		for (let i = 0; i < len; i++) {
 			const c = components[i];
 			const newC = newO.addComponent(c.type, c);
-			extend(newC, c);
+			_.assign(newC, c);
 		}
 		this.pushObjectToList(newO);
 		if (!newO.dead) {

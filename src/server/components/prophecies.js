@@ -15,7 +15,7 @@ module.exports = {
 			} else if (this.list.some((l) => (l.type === p))) {
 				return;
 			}
-			const prophecy = extend({}, template);
+			const prophecy = _.assign({}, template);
 			prophecy.obj = this.obj;
 			prophecy.init();
 			this.list.push(prophecy);

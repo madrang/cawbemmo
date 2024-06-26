@@ -9,7 +9,7 @@ const buildRoom = (scope, template, connectTo, templateExit, connectToExit, isHa
 		, y: 0
 		, distance: 0
 		, isHallway: isHallway
-		, template: extend({}, template)
+		, template: _.assign({}, template)
 		, connections: []
 	};
 

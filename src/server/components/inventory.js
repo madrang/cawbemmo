@@ -192,7 +192,7 @@ module.exports = {
 			return;
 		}
 
-		let newItem = extend({}, item);
+		let newItem = _.assign({}, item);
 		item.quantity -= stackSize;
 		newItem.quantity = stackSize;
 
@@ -258,7 +258,7 @@ module.exports = {
 		delete item.pos;
 
 		const stash = this.obj.stash;
-		const clonedItem = extend({}, item);
+		const clonedItem = _.assign({}, item);
 		const success = await stash.deposit(clonedItem);
 		if (!success) {
 			return;
@@ -622,7 +622,7 @@ module.exports = {
 					, ttl: 1710
 				}
 				, cpnInventory: {
-					items: extend([], items)
+					items: _.assign([], items)
 				}
 			}
 		}]);

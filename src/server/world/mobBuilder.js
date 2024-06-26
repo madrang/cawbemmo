@@ -29,7 +29,7 @@ const syncStats = ["hp", "hpMax", "mana", "manaMax", "level"];
 const buildCpnMob = (mob, blueprint, typeDefinition) => {
 	const { walkDistance, grantRep, deathRep, patrol, needLos } = blueprint;
 	const cpnMob = mob.addComponent("mob");
-	extend(cpnMob, {
+	_.assign(cpnMob, {
 		walkDistance
 		, grantRep
 		, deathRep
@@ -92,7 +92,7 @@ const buildCpnInventory = (mob, blueprint, { drops, hasNoItems = false }, prefer
 const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
 	const dmgMult = 4.5 * typeDefinition.dmgMult * dmgMults[blueprint.level - 1];
 
-	const spells = extend([], blueprint.spells);
+	const spells = _.assign([], blueprint.spells);
 	spells.forEach((s) => {
 		if (!s.animation && mob.sheetName === "mobs" && animations.mobs[mob.cell]) {
 			s.animation = "basic";

@@ -41,7 +41,7 @@ module.exports = {
 		}
 
 		item.type = type;
-		item.sprite = extend([], blueprint.sprite || typeBlueprint.sprite);
+		item.sprite = _.assign([], blueprint.sprite || typeBlueprint.sprite);
 		if (typeBlueprint.spritesheet && !blueprint.spritesheet) {
 			item.spritesheet = typeBlueprint.spritesheet;
 		}

@@ -58,10 +58,7 @@ module.exports = {
 
 	, objBlueprints: []
 
-	, spawn: {
-		x: 0
-		, y: 0
-	}
+	, spawn: { x: 0, y: 0 }
 
 	, rooms: []
 	, hiddenRooms: []
@@ -81,7 +78,7 @@ module.exports = {
 		const chats = _.safeRequire(`../${this.path}/${this.name}/chats`);
 		if (chats) {
 			if (this.zoneConfig.chats) {
-				extend(this.zoneConfig.chats, chats);
+				_.assign(this.zoneConfig.chats, chats);
 			} else {
 				this.zoneConfig.chats = chats;
 			}
@@ -93,7 +90,7 @@ module.exports = {
 			this.zoneConfig.dialogues = dialogues;
 		}
 
-		this.zoneConfig = extend({}, globalZone, this.zoneConfig);
+		this.zoneConfig = _.assign({}, globalZone, this.zoneConfig);
 
 		const resources = this.zoneConfig.resources || {};
 		for (let r in resources) {
@@ -133,10 +130,10 @@ module.exports = {
 	, getMapFile: function () {
 		this.build();
 
-		this.randomMap = extend({}, randomMap);
-		this.oldMap = extend([], this.layers);
+		this.randomMap = _.assign({}, randomMap);
+		this.oldMap = _.assign([], this.layers);
 
-		this.randomMap.templates = extend([], this.rooms);
+		this.randomMap.templates = _.assign([], this.rooms);
 		generateMappings(this.randomMap, this);
 
 		if (!mapFile.properties.isRandom) {
@@ -416,9 +413,9 @@ module.exports = {
 			}
 			if (this.zoneConfig) {
 				if ((this.zoneConfig.objects) && (this.zoneConfig.objects[objZoneName.toLowerCase()])) {
-					extend(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
+					_.assign(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
 				} else if ((this.zoneConfig.objects) && (this.zoneConfig.mobs[objZoneName.toLowerCase()])) {
-					extend(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
+					_.assign(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
 				}
 			}
 			if (blueprint.blocking) {

@@ -54,7 +54,7 @@ module.exports = {
 		let currencies = this.currencies;
 		let pick = Object.keys(currencies).find((o) => (currencies[o].action === action));
 
-		return extend({
+		return _.assign({
 			name: pick
 		}, currencies[pick]);
 	}

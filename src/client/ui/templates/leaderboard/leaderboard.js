@@ -101,8 +101,8 @@ define([
 
 			if (!this.prophecyFilter) {
 				let prophecies = window.player.prophecies;
-				this.prophecyFilter = prophecies ? prophecies.list : [];
-				this.prophecyFilter = $.extend(true, [], this.prophecyFilter);
+				this.prophecyFilter = (prophecies ? prophecies.list : []);
+				this.prophecyFilter = _.assign([], this.prophecyFilter);
 			}
 
 			client.request({

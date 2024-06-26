@@ -122,7 +122,7 @@ define([
 
 		, buildObject: function (template) {
 			//console.log("Building object from template", template);
-			let obj = $.extend(true, {}, objBase);
+			let obj = _.assign({}, objBase);
 
 			let components = template.components || [];
 			delete template.components;

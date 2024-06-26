@@ -96,7 +96,7 @@ module.exports = {
 
 	, completeGathering: function (gathering, isFish) {
 		let resourceNode = gathering.resourceNode;
-		let gatherResult = extend({
+		let gatherResult = _.assign({
 			obj: gathering
 			, source: this.obj
 		}, {
@@ -206,7 +206,7 @@ module.exports = {
 	, enter: function (node) {
 		const { obj } = this;
 
-		let gatherResult = extend({
+		let gatherResult = _.assign({
 			nodeName: node.name
 		});
 		obj.instance.eventEmitter.emit("beforeEnterPool", gatherResult, obj);

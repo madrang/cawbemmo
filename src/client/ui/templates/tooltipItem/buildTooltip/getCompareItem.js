@@ -26,7 +26,7 @@ define([
 						compare = equippedOneHanded;
 					} else {
 						// compare against oneHanded and offHand combined by creating a virtual item that is the sum of the two
-						compare = $.extend(true, {}, equippedOneHanded);
+						compare = _.assign({}, equippedOneHanded);
 						compare.refItem = equippedOneHanded;
 
 						for (let s in equippedOffhand.stats) {
@@ -64,11 +64,11 @@ define([
 					// since we're comparing an offhand to an equipped Twohander, we need to clone the 'spell' values over (setting damage to zero) so that we can properly display how much damage
 					// the player would lose by switching to the offhand (which would remove the twoHander)
 					// keep a reference to the original item for use in onHideToolTip
-					let spellClone = $.extend(true, {}, equippedTwoHanded.spell);
+					let spellClone = _.assign({}, equippedTwoHanded.spell);
 					spellClone.name = "";
 					spellClone.values.damage = 0;
 
-					let clone = $.extend(true, {}, item, {
+					let clone = _.assign({}, item, {
 						spell: spellClone
 					});
 					clone.refItem = item;

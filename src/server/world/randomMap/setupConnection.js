@@ -59,7 +59,7 @@ module.exports = (scope, fromRoom, isHallway, buildRoom) => {
 		return false;
 	}
 
-	let template = extend({}, allowedTemplates[randInt(0, allowedTemplates.length)]);
+	let template = _.assign({}, allowedTemplates[randInt(0, allowedTemplates.length)]);
 
 	let templateExit = template.exits.filter((e) => {
 		let direction = JSON.parse(e.properties.exit);

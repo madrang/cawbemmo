@@ -46,7 +46,7 @@ module.exports = {
 			if (e.disabled) {
 				continue;
 			}
-			this.configs.push(extend({}, e));
+			this.configs.push(_.assign({}, e));
 		}
 		this.instance.eventEmitter.emit("afterGetEventList", {
 			eventConfigs: this.configs
@@ -199,7 +199,7 @@ module.exports = {
 		}
 		const event = {
 			id: this.nextId++
-			, config: extend({}, config)
+			, config: _.assign({}, config)
 			, eventManager: this
 			, variables: {}
 			, rewards: {}
@@ -299,8 +299,7 @@ module.exports = {
 			o.destroyed = true;
 
 			this.instance.syncer.queue("onGetObject", {
-				x: o.x
-				, y: o.y
+				x: o.x, y: o.y
 				, components: [{
 					type: "attackAnimation"
 					, row: 0
@@ -428,7 +427,7 @@ module.exports = {
 			if (!phase) {
 				const phaseFile = "phase" + p.type[0].toUpperCase() + p.type.substr(1);
 				const typeTemplate = require("./phases/" + phaseFile);
-				phase = extend({
+				phase = _.assign({
 					instance: this.instance
 					, event: event
 				}, phaseTemplate, typeTemplate, p);

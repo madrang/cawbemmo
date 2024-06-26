@@ -30,7 +30,7 @@ module.exports = (obj, [item]) => {
 	delete item.range;
 	delete item.requires;
 
-	extend(item, newItem);
+	_.assign(item, newItem);
 
 	const msg = `Reslotted item to slot: ${item.slot}`;
 

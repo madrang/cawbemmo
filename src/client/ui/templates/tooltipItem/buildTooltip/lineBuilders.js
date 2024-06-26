@@ -57,7 +57,7 @@ define([
 			if (!item.implicitStats) {
 				return null;
 			}
-			const tempImplicitStats = $.extend(true, [], item.implicitStats);
+			const tempImplicitStats = _.assign([], item.implicitStats);
 			if (compare && shiftDown && !item.eq) {
 				const compareImplicitStats = (compare.implicitStats || []);
 				tempImplicitStats.forEach((s) => {
@@ -110,7 +110,7 @@ define([
 		}
 
 		, stats: () => {
-			const tempStats = $.extend(true, {}, item.stats);
+			const tempStats = _.assign({}, item.stats);
 			const enchantedStats = item.enchantedStats || {};
 			if (compare && shiftDown) {
 				if (!item.eq) {

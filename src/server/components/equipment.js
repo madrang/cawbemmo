@@ -316,7 +316,7 @@ module.exports = {
 		const targetStats = targetPlayer.stats.values;
 
 		const mappedEq = targetEq.map((m) => targetPlayer.inventory.simplifyItem(m));
-		const mappedStats = extend({}, targetStats);
+		const mappedStats = _.assign({}, targetStats);
 
 		let result = {
 			equipment: mappedEq
