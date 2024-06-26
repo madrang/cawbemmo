@@ -304,66 +304,66 @@ module.exports = {
 				}
 			}
 		}
-
 		return null;
 	}
 
 	, getPath: function (from, to) {
-		let graph = this.graph;
-		let grid = graph.grid;
-
+		const graph = this.graph;
+		const grid = graph.grid;
 		if (!to) {
 			to = {
 				x: Math.floor(mathRand() * grid.length)
 				, y: Math.floor(mathRand() * grid[0].length)
 			};
 		}
-
-		let fromX = Math.floor(from.x);
-		let fromY = Math.floor(from.y);
-
-		if ((!grid[fromX]) || (grid[fromX].length <= fromY) || (fromX < 0) || (fromY < 0)) {
+		const fromX = Math.floor(from.x);
+		const fromY = Math.floor(from.y);
+		if (!grid[fromX]
+			|| grid[fromX].length <= fromY
+			|| fromX < 0 || fromY < 0
+		) {
 			return [];
 		}
-
-		let toX = Math.floor(to.x);
-		let toY = Math.floor(to.y);
-
-		if ((!grid[toX]) || (grid[toX].length <= toY) || (toX < 0) || (toY < 0)) {
+		const toX = Math.floor(to.x);
+		const toY = Math.floor(to.y);
+		if (!grid[toX]
+			|| grid[toX].length <= toY
+			|| toX < 0 || toY < 0
+		) {
 			return [];
 		}
-
-		let path = pathfinder.astar.search(graph, {
-			x: fromX
-			, y: fromY
-		}, {
-			x: toX
-			, y: toY
-		}, {
-			closest: true
-		});
-
-		return path;
+		return pathfinder.astar.search(graph
+			, { x: fromX, y: fromY }
+			, { x: toX, y: toY }
+			, { closest: true }
+		);
 	}
-	, isTileBlocking: function (x, y) {
-		if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height)) {
-			return true;
-		}
 
+	, isTileBlocking: function (x, y) {
 		x = Math.floor(x);
 		y = Math.floor(y);
-
-		let node = this.graph.grid[x][y];
+		if (x < 0 || y < 0
+			|| x >= this.width
+			|| y >= this.height
+		) {
+			return true;
+		}
+		const node = this.graph.grid[x][y];
 		if (node) {
 			return (node.weight === 0);
 		}
 		return true;
 	}
+
 	, isCellOpen: function (x, y) {
-		if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height)) {
+		x = Math.floor(x);
+		y = Math.floor(y);
+		if (x < 0 || y < 0
+			|| x >= this.width
+			|| y >= this.height
+		) {
 			return true;
 		}
-
 		let cells = this.cells[x][y];
 		let cLen = cells.length;
 		for (let i = 0; i < cLen; i++) {
@@ -372,9 +372,9 @@ module.exports = {
 				return false;
 			}
 		}
-
 		return true;
 	}
+
 	, hasLos: function (fromX, fromY, toX, toY) {
 		// Fix modules passings invalid floats as args. No effect on integers.
 		fromX = Math.round(fromX);
@@ -383,16 +383,19 @@ module.exports = {
 		toY = Math.round(toY);
 
 		// Check if out of range.
-		if ((fromX < 0) || (fromY < 0) || (fromX >= this.width) | (fromY >= this.height) || (toX < 0) || (toY < 0) || (toX >= this.width) | (toY >= this.height)) {
+		if (fromX < 0 || fromY < 0
+			|| fromX >= this.width
+			|| fromY >= this.height
+			|| toX < 0 || toY < 0
+			|| toX >= this.width
+			|| toY >= this.height
+		) {
 			return false;
 		}
-
-		let graphGrid = this.graph.grid;
-
-		if ((!graphGrid[fromX][fromY]) || (!graphGrid[toX][toY])) {
+		const graphGrid = this.graph.grid;
+		if (!graphGrid[fromX][fromY] || !graphGrid[toX][toY]) {
 			return false;
 		}
-
 		let dx = toX - fromX;
 		let dy = toY - fromY;
 
@@ -424,7 +427,6 @@ module.exports = {
 				return true;
 			}
 		}
-
 		return true;
 	}
 

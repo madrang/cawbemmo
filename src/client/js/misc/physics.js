@@ -35,10 +35,15 @@ define([
 		}
 
 		, isTileBlocking: function (x, y, mob, obj) {
-			if ((x < 0) || (y < 0) || (x >= this.width) | (y >= this.height)) {
+			x = Math.floor(x);
+			y = Math.floor(y);
+			if (x < 0 || y < 0
+				|| x >= this.width
+				|| y >= this.height
+			) {
 				return true;
 			}
-			return this.grid[Math.floor(x)][Math.floor(y)];
+			return this.grid[x][y];
 		}
 
 		, setCollision: function (config) {
