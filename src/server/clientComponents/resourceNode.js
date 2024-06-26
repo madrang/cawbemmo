@@ -12,8 +12,8 @@ define([
 					, config: {
 						color: {
 							list: [
-								{ time: 0, value: [ "f2f5f5" ] }
-								, { time: 1, value: [ "f2f5f5" ] }
+								{ time: 0, value: "f2f5f5" }
+								, { time: 1, value: "f1f4f4" }
 							]
 						}
 					}
@@ -68,8 +68,8 @@ define([
 									, config: {
 										color: {
 											list: [
-												{ time: 0, value: [ "48edff" ] }
-												, { time: 1, value: [ "48edff" ] }
+												{ time: 0, value: "48edff" }
+												, { time: 1, value: "47ecfe" }
 											]
 										}
 									}

@@ -61,8 +61,11 @@ const particles = {
 			, config: {
 				color: {
 					list: [
-						{ time: 0, value: [ "fcfcfc", "80f643" ] }
-						, { time: 1, value: [ "c0c3cf", "2b4b3e" ] }
+						{ time: 0, value: "80f643" }
+						, { time: 0.33, value: "fcfcfc" }
+						, { time: 0.5, value: "80f643" }
+						, { time: 0.66, value: "c0c3cf" }
+						, { time: 1, value: "2b4b3e" }
 					]
 				}
 			}
@@ -81,10 +84,11 @@ const particles = {
 			, config: {
 				scale: {
 					list: [
-						{ time: 0, value: { min: 16, max: 30 } }
-						, { time: 1, value: { min: 8, max: 14 } }
+						{ time: 0, value: 30 }
+						, { time: 1, value: 14 }
 					]
 				}
+				, minMult: 0.5
 			}
 		}
 		, { type: "moveSpeed",
@@ -176,7 +180,7 @@ module.exports = {
 						continue;
 					}
 
-					let patch = objects.buildObjects([{
+					const patch = objects.buildObjects([{
 						x: i
 						, y: j
 						, properties: {
@@ -201,7 +205,6 @@ module.exports = {
 							}
 						}
 					}]);
-
 					patches.push(patch);
 				}
 			}

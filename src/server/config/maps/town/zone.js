@@ -417,8 +417,11 @@ module.exports = {
 										, config: {
 											color: {
 												list: [
-													{ time: 0, value: ["fc66f7", "802343"] }
-													, { time: 1, value: ["393268", "de43ae"] }
+													{ time: 0, value: "802343" }
+													, { time: 0.33, value: "fc66f7" }
+													, { time: 0.5, value: "802343" }
+													, { time: 0.66, value: "de43ae" }
+													, { time: 1, value: "393268" }
 												]
 											}
 										}
@@ -440,20 +443,22 @@ module.exports = {
 										, config: {
 											scale: {
 												list: [
-													{ time: 0, value: { min: 10, max: 18 } }
-													, { time: 1, value: { min: 4, max: 8 } }
+													{ time: 0, value: 18 }
+													, { time: 1, value: 8 }
 												]
 											}
+											, minMult: 0.5
 										}
 									}
 									, { type: "moveSpeed",
 										config: {
 											speed: {
 												list: [
-													{ time: 0, value: { min: 6, max: 12 } }
-													, { time: 1, value: { min: 2, max: 4 } }
+													{ time: 0, value: 12 }
+													, { time: 1, value: 4 }
 												]
 											}
+											, minMult: 0.5
 										}
 									}
 									, { type: "spawnShape"

@@ -27,38 +27,52 @@ module.exports = {
 
 	, tickParticles: {
 		ttl: 5
-		, blueprint: { color: {
-			start: ["a24eff", "7a3ad3"]
-			, end: ["533399", "393268"]
+		, blueprint: {
+			lifetime: { min: 1, max: 2 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 12 }
+								, { time: 1, value: 6 }
+							]
+						}
+						, minMult: 0.1
+					}
+				}
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "a24eff" }
+								, { time: 0.33, value: "7a3ad3" }
+								, { time: 0.5, value: "a24eff" }
+								, { time: 0.66, value: "533399" }
+								, { time: 1, value: "393268" }
+							]
+						}
+					}
+				}
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.9 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
+				}
+				, { type: "spawnShape"
+					, config: {
+						type: "rect"
+						, data: { x: -12, y: -12, w: 24, h: 24 }
+					}
+				}
+			]
+			, frequency: 0.25
 		}
-		, scale: {
-			start: {
-				min: 2
-				, max: 12
-			}
-			, end: {
-				min: 0
-				, max: 6
-			}
-		}
-		, lifetime: {
-			min: 1
-			, max: 2
-		}
-		, alpha: {
-			start: 0.8
-			, end: 0
-		}
-		, spawnType: "rect"
-		, spawnRect: {
-			x: -12
-			, y: -12
-			, w: 24
-			, h: 24
-		}
-		, randomScale: true
-		, randomColor: true
-		, frequency: 0.25 }
 	}
 
 	, cast: function (action) {

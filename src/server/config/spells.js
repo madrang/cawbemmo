@@ -16,29 +16,44 @@ const spells = [
 		, col: 4
 		, speed: 110
 		, particles: {
-			color: {
-				start: ["ffeb38", "ff6942"]
-				, end: ["ff6942", "d43346"]
-			}
-			, scale: {
-				start: {
-					min: 2
-					, max: 14
+			lifetime: { min: 1, max: 1 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 14 }
+								, { time: 1, value: 8 }
+							]
+						}
+						, minMult: 0.1
+					}
 				}
-				, end: {
-					min: 0
-					, max: 8
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "ff6942" }
+								, { time: 0.33, value: "ffeb38" }
+								, { time: 0.5, value: "ff6942" }
+								, { time: 0.66, value: "d43346" }
+								, { time: 1, value: "ff6942" }
+							]
+						}
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 1
-			}
-			, alpha: {
-				start: 0.5
-				, end: 0
-			}
-			, chance: 0.25
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.6 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
+				}
+			]
+			, spawnChance: 0.25
 		}
 	}
 
@@ -48,29 +63,44 @@ const spells = [
 		, icon: [1, 0]
 		, animation: "hitStaff"
 		, particles: {
-			color: {
-				start: ["7a3ad3", "3fa7dd"]
-				, end: ["3fa7dd", "7a3ad3"]
-			}
-			, scale: {
-				start: {
-					min: 2
-					, max: 14
+			lifetime: { min: 1, max: 3 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 14 }
+								, { time: 1, value: 8 }
+							]
+						}
+						, minMult: 0.1
+					}
 				}
-				, end: {
-					min: 0
-					, max: 8
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "3fa7dd" }
+								, { time: 0.33, value: "7a3ad3" }
+								, { time: 0.5, value: "3fa7dd" }
+								, { time: 0.66, value: "7a3ad3" }
+								, { time: 1, value: "3fa7dd" }
+							]
+						}
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 3
-			}
-			, alpha: {
-				start: 0.7
-				, end: 0
-			}
-			, chance: 0.6
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.8 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
+				}
+			]
+			, spawnChance: 0.6
 		}
 	}
 
@@ -80,28 +110,43 @@ const spells = [
 		, icon: [1, 1]
 		, animation: "hitStaff"
 		, particles: {
-			color: {
-				start: ["51fc9a", "48edff"]
-				, end: ["48edff", "44cb95"]
-			}
-			, scale: {
-				start: {
-					min: 2
-					, max: 12
+			lifetime: { min: 1, max: 2 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 12 }
+								, { time: 1, value: 6 }
+							]
+						}
+						, minMult: 0.1
+					}
 				}
-				, end: {
-					min: 0
-					, max: 6
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "48edff" }
+								, { time: 0.33, value: "51fc9a" }
+								, { time: 0.5, value: "48edff" }
+								, { time: 0.66, value: "44cb95" }
+								, { time: 1, value: "48edff" }
+							]
+						}
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 2
-			}
-			, alpha: {
-				start: 0.8
-				, end: 0
-			}
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.9 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
+				}
+			]
 			, frequency: 0.2
 		}
 	}
@@ -112,42 +157,56 @@ const spells = [
 		, icon: [1, 2]
 		, animation: "raiseStaff"
 		, particles: {
-			color: {
-				start: ["d43346", "faac45"]
-				, end: ["c0c3cf", "929398"]
-			}
-			, scale: {
-				start: {
-					min: 4
-					, max: 24
+			emitterLifetime: 0.15
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 24 }
+								, { time: 1, value: 12 }
+							]
+						}
+						, minMult: 0.1
+					}
 				}
-				, end: {
-					min: 0
-					, max: 12
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "d43346" }
+								, { time: 0.33, value: "faac45" }
+								, { time: 0.5, value: "d43346" }
+								, { time: 0.66, value: "929398" }
+								, { time: 1, value: "c0c3cf" }
+							]
+						}
+					}
 				}
-			}
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.9 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
+				}
+				, { type: "moveSpeed",
+					config: {
+						speed: {
+							list: [
+								{ time: 0, value: 24 }
+								, { time: 1, value: 12 }
+							]
+						}
+						, minMult: 0.2
+					}
+				}
+			]
 			, frequency: 0.02
-			, emitterLifetime: 0.15
-			, spawnType: "circle"
-			, lifetime: {
-				min: 1
-				, max: 2
-			}
-			, spawnCircle: {
-				x: 0
-				, y: 0
-				, r: 8
-			}
-			, speed: {
-				start: {
-					min: 4
-					, max: 24
-				}
-				, end: {
-					min: 0
-					, max: 12
-				}
-			}
+			, lifetime: { min: 1, max: 2 }
 		}
 	}
 
@@ -166,45 +225,55 @@ const spells = [
 		, icon: [0, 1]
 		, animation: "raiseStaff"
 		, particles: {
-			scale: {
-				start: {
-					min: 6
-					, max: 16
+			lifetime: { min: 1, max: 3 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 16 }
+								, { time: 1, value: 4 }
+							]
+						}
+						, minMult: 0.33
+					}
 				}
-				, end: {
-					min: 0
-					, max: 4
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "fcfcfc" }
+								, { time: 0.33, value: "ffeb38" }
+								, { time: 0.5, value: "fcfcfc" }
+								, { time: 0.66, value: "faac45" }
+								, { time: 1, value: "fcfcfc" }
+							]
+						}
+					}
 				}
-			}
-			, speed: {
-				start: {
-					min: 2
-					, max: 12
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.55 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
 				}
-				, end: {
-					min: 0
-					, max: 4
+				, { type: "moveSpeed",
+					config: {
+						speed: {
+							list: [
+								{ time: 0, value: 12 }
+								, { time: 1, value: 4 }
+							]
+						}
+						, minMult: 0.2
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 3
-			}
-			, alpha: {
-				start: 0.45
-				, end: 0
-			}
-			, color: {
-				start: ["ffeb38", "fcfcfc"]
-				, end: ["fcfcfc", "faac45"]
-			}
-			, spawnType: "circle"
-			, spawnCircle: {
-				x: 0
-				, y: 0
-				, r: 12
-			}
-			, chance: 0.02
+			]
+			, spawnChance: 0.02
 		}
 	}
 
@@ -215,45 +284,55 @@ const spells = [
 		, icon: [0, 3]
 		, animation: "raiseStaff"
 		, particles: {
-			scale: {
-				start: {
-					min: 6
-					, max: 16
+			lifetime: { min: 1, max: 3 }
+			, behaviors: [
+				{ type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 16 }
+								, { time: 1, value: 4 }
+							]
+						}
+						, minMult: 0.33
+					}
 				}
-				, end: {
-					min: 0
-					, max: 4
+				, { type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "fcfcfc" }
+								, { time: 0.33, value: "ffeb38" }
+								, { time: 0.5, value: "fcfcfc" }
+								, { time: 0.66, value: "faac45" }
+								, { time: 1, value: "fcfcfc" }
+							]
+						}
+					}
 				}
-			}
-			, speed: {
-				start: {
-					min: 2
-					, max: 12
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.55 }
+								, { time: 1, value: 0.1 }
+							]
+						}
+					}
 				}
-				, end: {
-					min: 0
-					, max: 4
+				, { type: "moveSpeed",
+					config: {
+						speed: {
+							list: [
+								{ time: 0, value: 12 }
+								, { time: 1, value: 4 }
+							]
+						}
+						, minMult: 0.2
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 3
-			}
-			, alpha: {
-				start: 0.45
-				, end: 0
-			}
-			, color: {
-				start: ["ffeb38", "fcfcfc"]
-				, end: ["fcfcfc", "faac45"]
-			}
-			, spawnType: "circle"
-			, spawnCircle: {
-				x: 0
-				, y: 0
-				, r: 12
-			}
-			, chance: 0.02
+			]
+			, spawnChance: 0.02
 		}
 	}
 
@@ -308,8 +387,11 @@ const spells = [
 					, config: {
 						color: {
 							list: [
-								{ time: 0, value: [ "fcfcfc", "80f643" ] }
-								, { time: 1, value: [ "c0c3cf", "2b4b3e" ] }
+								{ time: 0, value: "80f643" }
+								, { time: 0.33, value: "fcfcfc" }
+								, { time: 0.5, value: "80f643" }
+								, { time: 0.66, value: "c0c3cf" }
+								, { time: 1, value: "2b4b3e" }
 							]
 						}
 					}
@@ -318,8 +400,8 @@ const spells = [
 					, config: {
 						alpha: {
 							list: [
-								{ time: 0, value: 0.2 }
-								, { time: 1, value: 0 }
+								{ time: 0, value: 0.3 }
+								, { time: 1, value: 0.1 }
 							]
 						}
 					}
@@ -328,10 +410,11 @@ const spells = [
 					, config: {
 						scale: {
 							list: [
-								{ time: 0, value: { min: 16, max: 30 } }
-								, { time: 1, value: { min: 8, max: 14 } }
+								{ time: 0, value: 30 }
+								, { time: 1, value: 14 }
 							]
 						}
+						, minMult: 0.5
 					}
 				}
 				, { type: "blendMode"
@@ -381,41 +464,55 @@ const spells = [
 		, animation: "raiseHands"
 		, icon: [0, 7]
 		, particles: {
-			color: {
-				start: ["c0c3cf", "929398"]
-				, end: ["929398", "c0c3cf"]
-			}
-			, scale: {
-				start: {
-					min: 4
-					, max: 10
+			lifetime: { min: 1, max: 1 }
+			, behaviors: [
+				{ type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "c0c3cf" }
+								, { time: 0.33, value: "929398" }
+								, { time: 0.5, value: "c0c3cf" }
+								, { time: 0.66, value: "929398" }
+								, { time: 1, value: "c0c3cf" }
+							]
+						}
+					}
 				}
-				, end: {
-					min: 0
-					, max: 4
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.2 }
+								, { time: 1, value: 0 }
+							]
+						}
+					}
 				}
-			}
-			, speed: {
-				start: {
-					min: 2
-					, max: 16
+				, { type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 10 }
+								, { time: 1, value: 4 }
+							]
+						}
+						, minMult: 0.33
+					}
 				}
-				, end: {
-					min: 0
-					, max: 8
+				, { type: "moveSpeed",
+					config: {
+						speed: {
+							list: [
+								{ time: 0, value: 16 }
+								, { time: 1, value: 8 }
+							]
+						}
+						, minMult: 0.1
+					}
 				}
-			}
-			, lifetime: {
-				min: 1
-				, max: 1
-			}
-			, spawnType: "circle"
-			, spawnCircle: {
-				x: 0
-				, y: 0
-				, r: 12
-			}
-			, chance: 0.075
+			]
+			, spawnChance: 0.075
 		}
 	}
 

@@ -118,7 +118,7 @@ module.exports = {
 					cpn.init();
 				}
 			}
-			if ((this.physics) && (!obj.dead)) {
+			if (this.physics && !obj.dead) {
 				if (!obj.width) {
 					this.physics.addObject(obj, obj.x, obj.y);
 				} else {

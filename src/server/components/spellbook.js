@@ -109,7 +109,7 @@ module.exports = {
 			typeTemplate.template = require("../config/spells/spell" + type);
 		}
 
-		let builtSpell = _.assign({}, spellTemplate, typeTemplate.template, options);
+		let builtSpell = _.assignWith("particles", {}, spellTemplate, typeTemplate.template, options);
 		builtSpell.obj = this.obj;
 		builtSpell.baseDamage = builtSpell.damage || 0;
 		builtSpell.damage += (options.damageAdd || 0);

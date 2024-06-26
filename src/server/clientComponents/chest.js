@@ -44,8 +44,8 @@ define([
 							, config: {
 								color: {
 									list: [
-										{ time: 0, value: [ colors[index] ] }
-										, { time: 1, value: [ colors[index] ] }
+										{ time: 0, value: colors[index] }
+										, { time: 1, value: "f5b830" }
 									]
 								}
 							}
@@ -55,7 +55,7 @@ define([
 								alpha: {
 									list: [
 										{ time: 0, value: 0.75 }
-										, { time: 1, value: 0.2 }
+										, { time: 1, value: 0 }
 									]
 								}
 							}

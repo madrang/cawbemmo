@@ -16,17 +16,15 @@ define([
 			, addAtBack: false
 			, pos
 			, behaviors: [
-				{ type: "textureRandom"
-					, config: {
-						textures: [ "images/particles.png" ]
-					}
+				{ type: "textureSingle"
+					, config: { texture: "images/particle.png" }
 				}
 				, { type: "color"
 					, config: {
 						color: {
 							list: blueprint.color || [
-								{ time: 0, value: [ "ffeb38" ] }
-								, { time: 1, value: [ "ffeb38", "ff6942", "d43346" ] }
+								{ time: 0, value: "ffeb38" }
+								, { time: 1, value: _.randomObj("ff6942", "d43346") }
 							]
 						}
 					}
@@ -59,11 +57,11 @@ define([
 					, config: {
 						scale: {
 							list: [
-								{ time: 0, value: { min: 24, max: 32 } }
-								, { time: 1, value: { min: 12, max: 22 } }
+								{ time: 0, value: 32 }
+								, { time: 1, value: 22 }
 							]
 						}
-						, minMult: 1
+						, minMult: 0.5
 					}
 				}
 				, { type: "rotationStatic",
@@ -75,8 +73,8 @@ define([
 						type: "torus"
 						, data: {
 							x: 0, y: 0
-							, radius: 0.1
-							, innerRadius: 0
+							, radius: 30
+							, innerRadius: 10
 							, affectRotation: false
 						}
 					}

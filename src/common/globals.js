@@ -258,9 +258,25 @@
 			});
 		}
 
+		, randomInt: function (min, max) {
+			//The maximum is exclusive and the minimum is inclusive
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
 		, randomKey: function (o) {
 			const keys = Object.keys(o);
 			return keys[Math.floor(Math.random() * keys.length)];
+		}
+		, randomObj: function (...args) {
+			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
+				return undefined;
+			}
+			if (args.length === 1 && Array.isArray(args[0])) {
+				// If single item array at pos zero.
+				args = args[0];
+			}
+			return args[Math.floor(Math.random() * args.length)];
 		}
 	};
 

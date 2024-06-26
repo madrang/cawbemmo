@@ -18,8 +18,11 @@ define([
 							, config: {
 								color: {
 									list: [
-										{ time: 0, value: ["fcfcfc", "929398"] }
-										, { time: 1, value: ["505360", "3c3f4c"] }
+										{ time: 0, value: "929398" }
+										, { time: 0.33, value: "fcfcfc" }
+										, { time: 0.5, value: "929398" }
+										, { time: 0.66, value: "3c3f4c" }
+										, { time: 1, value: "505360" }
 									]
 								}
 							}
@@ -28,10 +31,11 @@ define([
 							, config: {
 								scale: {
 									list: [
-										{ time: 0, value: { min: 8, max: 18 } }
-										, { time: 1, value: { min: 4, max: 12 } }
+										{ time: 0, value: 18 }
+										, { time: 1, value: 12 }
 									]
 								}
+								, minMult: 0.3
 							}
 						}
 					]
@@ -42,20 +46,22 @@ define([
 							config: {
 								speed: {
 									list: [
-										{ time: 0, value: { min: 4, max: 24 } }
-										, { time: 1, value: { min: 2 , max: 18 } }
+										{ time: 0, value: 24 }
+										, { time: 1, value: 18 }
 									]
 								}
+								, minMult: 0.11
 							}
 						}
 						, { type: "scale"
 							, config: {
 								scale: {
 									list: [
-										{ time: 0, value: { min: 6, max: 16 } }
-										, { time: 1, value: { min: 0, max: 10 } }
+										{ time: 0, value: 16 }
+										, { time: 1, value: 10 }
 									]
 								}
+								, minMult: 0.1
 							}
 						}
 						, { type: "spawnBurst"

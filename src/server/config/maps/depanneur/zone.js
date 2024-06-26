@@ -53,43 +53,63 @@ module.exports = {
 				, element: "arcane"
 				, cdMax: 5
 				, particles: {
-					scale: {
-						start: {
-							min: 10
-							, max: 25
+					lifetime: { min: 1, max: 2 }
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: "a24eff" }
+										, { time: 0.33, value: "fc66f7" }
+										, { time: 0.5, value: "a24eff" }
+										, { time: 0.66, value: "933159" }
+										, { time: 1, value: "393268" }
+									]
+								}
+							}
 						}
-						, end: {
-							min: 10
-							, max: 0
+						, { type: "alpha"
+							, config: {
+								alpha: {
+									list: [
+										{ time: 0, value: 0.4 }
+										, { time: 1, value: 0.1 }
+									]
+								}
+							}
 						}
-					}
-					, opacity: {
-						start: 0.3
-						, end: 0
-					}
-					, lifetime: {
-						min: 1
-						, max: 2
-					}
-					, speed: {
-						start: 3
-						, end: 0
-					}
-					, color: {
-						start: ["fc66f7", "a24eff"]
-						, end: ["933159", "393268"]
-					}
-					, chance: 0.125
-					, randomColor: true
-					, randomScale: true
-					, blendMode: "add"
-					, spawnType: "rect"
-					, spawnRect: {
-						x: -10
-						, y: -10
-						, w: 20
-						, h: 20
-					}
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 25 }
+										, { time: 1, value: 10 }
+									]
+								}
+								, minMult: 0.25
+							}
+						}
+						, { type: "blendMode"
+							, config: { blendMode: "add" }
+						}
+						, { type: "moveSpeed",
+							config: {
+								speed: {
+									list: [
+										{ time: 0, value: 3 }
+										, { time: 1, value: 0 }
+									]
+								}
+							}
+						}
+						, { type: "spawnShape"
+							, config: {
+								type: "rect"
+								, data: { x: -10, y: -10, w: 20, h: 20 }
+							}
+						}
+					]
+					, spawnChance: 0.125
 				}
 			}]
 		}
@@ -127,43 +147,63 @@ module.exports = {
 				, element: "arcane"
 				, cdMax: 5
 				, particles: {
-					scale: {
-						start: {
-							min: 4
-							, max: 14
+					lifetime: { min: 1, max: 2 }
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: "ffeb38" }
+										, { time: 0.33, value: "ff6942" }
+										, { time: 0.5, value: "ffeb38" }
+										, { time: 0.66, value: "953f36" }
+										, { time: 1, value: "9a5a3c" }
+									]
+								}
+							}
 						}
-						, end: {
-							min: 2
-							, max: 8
+						, { type: "alpha"
+							, config: {
+								alpha: {
+									list: [
+										{ time: 0, value: 0.3 }
+										, { time: 1, value: 0.1 }
+									]
+								}
+							}
 						}
-					}
-					, opacity: {
-						start: 0.2
-						, end: 0
-					}
-					, lifetime: {
-						min: 1
-						, max: 2
-					}
-					, speed: {
-						start: 2
-						, end: 0
-					}
-					, color: {
-						start: ["ff6942", "ffeb38"]
-						, end: ["953f36", "9a5a3c"]
-					}
-					, chance: 0.125
-					, randomColor: true
-					, randomScale: true
-					, blendMode: "add"
-					, spawnType: "rect"
-					, spawnRect: {
-						x: -10
-						, y: -10
-						, w: 20
-						, h: 20
-					}
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 14 }
+										, { time: 1, value: 8 }
+									]
+								}
+								, minMult: 0.25
+							}
+						}
+						, { type: "blendMode"
+							, config: { blendMode: "add" }
+						}
+						, { type: "moveSpeed",
+							config: {
+								speed: {
+									list: [
+										{ time: 0, value: 2 }
+										, { time: 1, value: 0 }
+									]
+								}
+							}
+						}
+						, { type: "spawnShape"
+							, config: {
+								type: "rect"
+								, data: { x: -10, y: -10, w: 20, h: 20 }
+							}
+						}
+					]
+					, spawnChance: 0.125
 				}
 			}]
 		}

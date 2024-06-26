@@ -36,11 +36,9 @@ define([
 				if ((source.sprite) && (source.sprite.scale.x < 0)) {
 					blueprint.projectileOffset.x *= -1;
 				}
-
 				this.x += (blueprint.projectileOffset.x || 0);
 				this.y += (blueprint.projectileOffset.y || 0);
 			}
-
 			this.obj.x = this.x;
 			this.obj.y = this.y;
 
@@ -54,8 +52,11 @@ define([
 							, config: {
 								color: {
 									list: [
-										{ time: 0, value: [ "7a3ad3", "3fa7dd" ] }
-										, { time: 1, value: [ "3fa7dd", "7a3ad3" ] }
+										{ time: 0, value: "7a3ad3" }
+										, { time: 0.33, value: "3fa7dd" }
+										, { time: 0.5, value: "7a3ad3" }
+										, { time: 0.66, value: "3fa7dd" }
+										, { time: 1, value: "3c3f4c" }
 									]
 								}
 							}
@@ -74,10 +75,11 @@ define([
 							, config: {
 								scale: {
 									list: [
-										{ time: 0, value: { min: 2, max: 14 } }
-										, { time: 1, value: { min: 1, max: 8 } }
+										{ time: 0, value: 14 }
+										, { time: 1, value: 8 }
 									]
 								}
+								, minMult: 0.1
 							}
 						}
 					]

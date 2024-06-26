@@ -28,8 +28,8 @@ define([
 						, config: {
 							color: {
 								list: [
-									{ time: 0, value: [ "fcfcfc" ] }
-									, { time: 1, value: [ "c0c3cf" ] }
+									{ time: 0, value: "fcfcfc" }
+									, { time: 1, value: "c0c3cf" }
 								]
 							}
 						}
@@ -49,20 +49,22 @@ define([
 						, config: {
 							scale: {
 								list: [
-									{ time: 0, value: { min: 6, max: 16 } }
-									, { time: 1, value: { min: 1, max: 10 } }
+									{ time: 0, value: 16 }
+									, { time: 1, value: 10 }
 								]
 							}
+							, minMult: 0.2
 						}
 					}
 					, { type: "moveSpeed",
 						config: {
 							speed: {
 								list: [
-									{ time: 0, value: { min: 2, max: 20 } }
-									, { time: 1, value: { min: 0, max: 8 } }
+									{ time: 0, value: 20 }
+									, { time: 1, value: 8 }
 								]
 							}
+							, minMult: 0.1
 						}
 					}
 				]

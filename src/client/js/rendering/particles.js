@@ -27,7 +27,7 @@ define([
 			const obj = config.obj;
 			delete config.obj;
 			const options = _.assignWith("particles", {}, particleDefaults, config);
-			console.log("Particles emitter created", options);
+			//console.log("Particles emitter created", options);
 			const emitter = new PIXI.particles.Emitter(this.stage, options);
 			emitter.obj = obj;
 			emitter.emit = true;
@@ -70,20 +70,11 @@ define([
 				if (!visible) {
 					continue;
 				}
-				let r;
 				try {
-					//FIXME, Negative color crash in pixi.particles.js when tab is hidden for too long.
-					r = e.update((now - this.lastTick) * 0.001);
+					//FIXME - Negative color crash in pixi.particles.js when tab is hidden for too long.
+					e.update((now - this.lastTick) * 0.001);
 				} catch (error) {
 					console.error(error);
-				}
-				if (r) {
-					console.log("Particles", r);
-					r.forEach(function (rr) {
-						if (e.blendMode === "overlay") {
-							rr.pluginName = "picture";
-						}
-					}, this);
 				}
 			}
 			this.lastTick = now;
