@@ -637,46 +637,49 @@ define([
 
 		, update: function () {
 			const time = Date.now();
-			if (this.moveTo) {
-				let deltaX = this.moveTo.x - this.pos.x;
-				let deltaY = this.moveTo.y - this.pos.y;
-
-				if (deltaX !== 0 || deltaY !== 0) {
-					let distance = Math.max(Math.abs(deltaX), Math.abs(deltaY));
-
-					let moveSpeedMax = this.moveSpeedMax;
-					if (this.moveSpeed < moveSpeedMax) {
-						this.moveSpeed += this.moveSpeedInc;
-					}
-					let moveSpeed = this.moveSpeed;
-					if (moveSpeedMax < 1.6) {
-						moveSpeed *= 1 + (distance / 200);
-					}
-					let elapsed = time - this.lastTick;
-					moveSpeed *= (elapsed / 15);
-					if (moveSpeed > distance) {
-						moveSpeed = distance;
-					}
-					deltaX = (deltaX / distance) * moveSpeed;
-					deltaY = (deltaY / distance) * moveSpeed;
-
-					this.pos.x = this.pos.x + deltaX;
-					this.pos.y = this.pos.y + deltaY;
-				} else {
-					this.moveSpeed = 0;
-					this.moveTo = null;
-				}
-				let stage = this.stage;
-				if (window.staticCamera !== true) {
-					stage.x = -Math.floor(this.pos.x);
-					stage.y = -Math.floor(this.pos.y);
-				}
-				let halfScale = scale / 2;
-				if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale) {
-					this.updateSprites();
-				}
-				events.emit("onSceneMove");
+			if (!this.moveTo) {
+				this.lastTick = time;
+				return;
 			}
+			let deltaX = this.moveTo.x - this.pos.x;
+			let deltaY = this.moveTo.y - this.pos.y;
+			if (deltaX === 0 && deltaY === 0) {
+				this.moveSpeed = 0;
+				this.moveTo = null;
+				this.lastTick = time;
+				return;
+			}
+
+			const distance = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+			if (this.moveSpeed < this.moveSpeedMax) {
+				this.moveSpeed += this.moveSpeedInc;
+			}
+			let moveSpeed = this.moveSpeed;
+			if (this.moveSpeedMax < 1.6) {
+				moveSpeed *= 1 + (distance / 200);
+			}
+			let elapsed = time - this.lastTick;
+			moveSpeed *= (elapsed / 15);
+			if (moveSpeed > distance) {
+				moveSpeed = distance;
+			}
+			deltaX = (deltaX / distance) * moveSpeed;
+			deltaY = (deltaY / distance) * moveSpeed;
+
+			this.pos.x = this.pos.x + deltaX;
+			this.pos.y = this.pos.y + deltaY;
+
+			let stage = this.stage;
+			if (window.staticCamera !== true) {
+				stage.x = -Math.floor(this.pos.x);
+				stage.y = -Math.floor(this.pos.y);
+			}
+			let halfScale = scale / 2;
+			if (Math.abs(stage.x - this.lastUpdatePos.x) > halfScale || Math.abs(stage.y - this.lastUpdatePos.y) > halfScale) {
+				this.updateSprites();
+			}
+
+			events.emit("onSceneMove", { x: deltaX, y: deltaY });
 			this.lastTick = time;
 		}
 

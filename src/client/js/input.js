@@ -66,7 +66,7 @@ define([
 		, init: function () {
 			$(window).on("keydown", this.events.keyboard.keyDown.bind(this));
 			$(window).on("keyup", this.events.keyboard.keyUp.bind(this));
-			events.on("onSceneMove", this.events.mouse.mouseMove.bind(this));
+			events.on("onSceneMove", this.events.mouse.sceneMove.bind(this));
 
 			$(".ui-container")
 				.on("mousedown", this.events.mouse.mouseDown.bind(this))
@@ -269,13 +269,20 @@ define([
 						return;
 					}
 					const el = $(e.target);
-					if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
+					if (!el.hasClass("ui-container") || el.hasClass("blocking")) {
 						return;
 					}
 					this.mouse.x = e.offsetX + renderer.pos.x;
 					this.mouse.y = e.offsetY + renderer.pos.y;
 					if (this.mouse.has("button") && !this.mouse.buttons.includes(this.mouse.button)) {
 						delete this.mouse.button;
+					}
+					events.emit("mouseMove", this.mouse);
+				}
+				, sceneMove: function(e) {
+					if (e) {
+						this.mouse.x += e.x;
+						this.mouse.y += e.y;
 					}
 					events.emit("mouseMove", this.mouse);
 				}
