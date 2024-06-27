@@ -163,18 +163,25 @@ const config = {
 		, "announcements"
 	]
 	, uiList: [
-		"inventory"
-		, "equipment"
-		, "hud"
-		, "target"
+		"mainMenu"
 		, "menu"
+		, "help"
+		, "options"
+		, "progressBar"
+
+		, "announcements"
+		, "hud"
+		, "middleHud"
+		, "map"
+
+		, "inventory"
+		, "equipment"
+		, "target"
 		, "spells"
 		, "messages"
 		, "online"
-		, "mainMenu"
 		, "context"
 		, "party"
-		, "help"
 		, "dialogue"
 		, "effects"
 		, "tooltips"
@@ -182,7 +189,6 @@ const config = {
 		, "tooltipItem"
 		, "quests"
 		, "events"
-		, "progressBar"
 		, "stash"
 		, "talk"
 		, "trade"
@@ -194,9 +200,7 @@ const config = {
 		, "wardrobe"
 		, "passives"
 		, "workbench"
-		, "middleHud"
-		, "options"
-		, "announcements"
+
 		, { type: "createCharacter"
 			, autoLoadOnPlay: false
 		}

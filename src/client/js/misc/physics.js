@@ -17,7 +17,7 @@ define([
 			this.width = collisionMap.length;
 			this.height = collisionMap[0].length;
 
-			let grid = this.grid = _.get2dArray(this.width, this.height, false);
+			const grid = this.grid = _.get2dArray(this.width, this.height, false);
 			for (let i = 0; i < this.width; i++) {
 				let row = grid[i];
 				let collisionRow = collisionMap[i];
