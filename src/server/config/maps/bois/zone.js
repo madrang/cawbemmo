@@ -134,7 +134,7 @@ module.exports = {
 				}
 			}
 		}
-		, "truite à panache": {
+		, Steeeveess: {
 			level: 16
 			, regular: {
 				drops: {
@@ -151,7 +151,9 @@ module.exports = {
 				}
 			}
 			, rare: {
-				name: "Yollande"
+				name: "Keveune"
+				, hpMult: 3
+				, dmgMult: 3
 				, drops: {
 					rolls: 1
 					, noRandom: true
@@ -175,66 +177,6 @@ module.exports = {
 			}
 			, properties: {
 
-			}
-		}
-		, quest: {
-			level: 10
-			, walkDistance: 0
-			, attackable: false
-			, rare: {
-				count: 0
-			}
-			, properties: {
-
-			}
-		}
-		, gislain: {
-			level: 10
-			, walkDistance: 0
-			, attackable: false
-			, rare: {
-				count: 0
-			}
-			, properties: {
-				cpnTrade: {
-					items: {
-						min: 3
-						, max: 10
-					}
-					, forceItems: [{
-						name: "Canne a pêche a spring"
-						, type: "Fishing Rod"
-						, slot: "tool"
-						, quality: 0
-						, worth: 500
-						, sprite: [11, 1]
-						, infinite: true
-						, noSalvage: true
-					}, {
-						name: "Skewering Stick"
-						, material: true
-						, sprite: [11, 7]
-						, worth: 2
-						, quality: 0
-						, infinite: true
-					}, {
-						name: "Papier a roulé"
-						, material: true
-						, sprite: [1, 3]
-						, worth: 50
-						, quantity: 2
-						, quality: 0
-						, infinite: true
-					}]
-					, level: {
-						min: 8
-						, max: 14
-					}
-					, markup: {
-						buy: 0.52
-						, sell: 2.52
-					}
-				}
 			}
 		}
 		, rodriguez: {
