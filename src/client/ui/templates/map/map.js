@@ -1,16 +1,19 @@
 define([
 	"html!ui/templates/map/template"
+	, "css!ui/templates/map/styles"
 	, "js/misc/physics"
 	, "js/objects/objects"
 ], function (
 	template
+	, styles
 	, physics
 	, objectsModule
 ) {
+	const CANVAS_SCALE = 4;
 	return {
 		tpl: template
 
-		, mapScale: 4
+		, mapScale: CANVAS_SCALE
 		, itemColors: {
 			default:  "#FF00FF" // Purple
 			, mobs: {
@@ -37,15 +40,20 @@ define([
 				this.onEvent(eventName, this.events[eventName].bind(this));
 			}
 			this.uiContainer = $(".ui-container");
+
+			this.el.addClass("uiMapMini");
+			this.el.css("display", "block");
 		}
 
 		, toggleMap: function() {
-			if (this.el.css("display") == "block") {
+			if (this.el.hasClass("uiMapBig")) {
 				this.uiContainer.removeClass("blocking");
-				this.el.css("display", "none");
+				this.el.removeClass("uiMapBig");
+				this.el.addClass("uiMapMini");
 				return;
 			}
-			this.el.css("display", "block");
+			this.el.removeClass("uiMapMini");
+			this.el.addClass("uiMapBig");
 			this.uiContainer.addClass("blocking");
 			this.drawMap();
 		}
@@ -54,18 +62,12 @@ define([
 			if (!physics.grid) {
 				return;
 			}
-			const mapScale = this.mapScale;
-			const elWidth = physics.grid.length * mapScale;
-			const elHeight = physics.grid[0].length * mapScale;
-
 			const canvasElement = this.el[0];
-			canvasElement.width = elWidth;
-			canvasElement.height = elHeight;
-
-			const ctx = canvasElement.getContext('2d');
-			ctx.scale(mapScale, mapScale);
-			ctx.clearRect(0, 0, elWidth, elHeight);
-
+			canvasElement.width = physics.grid[0].length * CANVAS_SCALE;
+			canvasElement.height = physics.grid.length * CANVAS_SCALE;
+			const ctx = canvasElement.getContext("2d");
+			ctx.scale(this.mapScale, this.mapScale);
+			ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 			for (let i = 0; i < physics.grid.length; i++) {
 				for (let j = 0; j < physics.grid[i].length; j++) {
 					if (physics.grid[i][j]) {
@@ -88,14 +90,8 @@ define([
 				// Draw player again on top of other objects.
 				this.drawMapItem(ctx, window.player);
 			}
-			this.el.css({
-				"position": "absolute"
-				, "left": (this.uiContainer[0].clientWidth / 2) - (elWidth / 2)
-				, "top": (this.uiContainer[0].clientHeight / 2) - (elHeight / 2)
-				, "background-color": "transparent"
-				, "border": "4px solid #505360"
-			});
-		}, 150, true, true)
+		// 250ms - 4FPS
+		}, 250, true, true)
 
 		, getItemType: function(obj) {
 			if (obj.isVisible && obj.sprite) {
@@ -145,12 +141,12 @@ define([
 				if (!key) {
 					return;
 				}
-				if (key == "m") {
-					this.toggleMap();
-					return;
-				}
 				if (this.el.css("display") != "block") {
 					// Map hidden...
+					return;
+				}
+				if (key == "m") {
+					this.toggleMap();
 					return;
 				}
 				if (key == "13" && this.mapScale > 1) {
