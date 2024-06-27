@@ -348,7 +348,7 @@ module.exports = {
 		) {
 			return true;
 		}
-		const node = this.graph.grid[x][y];
+		const node = this.graph.grid[x]?.[y];
 		if (node) {
 			return (node.weight === 0);
 		}
