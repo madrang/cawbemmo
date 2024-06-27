@@ -85,6 +85,68 @@
 		}
 	});
 
+	const makeQuerablePromise = function (promise) {
+		if (typeof promise !== 'object') {
+			throw new Error('promise is not an object.')
+		}
+		if (!(promise instanceof Promise)) {
+			throw new Error('Argument is not a promise.')
+		}
+		// Don't modify a promise that's been already modified.
+		if ('isResolved' in promise || 'isRejected' in promise || 'isPending' in promise) {
+			return promise
+		}
+		let isPending = true
+		let isRejected = false
+		let rejectReason = undefined
+		let isResolved = false
+		let resolvedValue = undefined
+		const qurPro = promise.then(
+			function(val){
+				isResolved = true
+				isPending = false
+				resolvedValue = val
+				return val
+			}
+			, function(reason) {
+				rejectReason = reason
+				isRejected = true
+				isPending = false
+				throw reason
+			}
+		)
+		Object.defineProperties(qurPro, {
+			'isResolved': {
+				get: () => isResolved
+			}
+			, 'resolvedValue': {
+				get: () => resolvedValue
+			}
+			, 'isPending': {
+				get: () => isPending
+			}
+			, 'isRejected': {
+				get: () => isRejected
+			}
+			, 'rejectReason': {
+				get: () => rejectReason
+			}
+		})
+		return qurPro
+	};
+
+	const PromiseSource = function () {
+		const srcPromise = new Promise((resolve, reject) => {
+			Object.defineProperties(this, {
+				resolve: { value: resolve, writable: false }
+				, reject: { value: reject, writable: false }
+			})
+		})
+		Object.defineProperties(this, {
+			promise: {value: makeQuerablePromise(srcPromise), writable: false}
+		})
+	};
+
 	const tmpExport = {
 		CONSTANTS: (params, obj, enumerable = true) => {
 			const properties = {};
@@ -111,67 +173,8 @@
 			})
 		}
 
-		, makeQuerablePromise: function (promise) {
-			if (typeof promise !== 'object') {
-				throw new Error('promise is not an object.')
-			}
-			if (!(promise instanceof Promise)) {
-				throw new Error('Argument is not a promise.')
-			}
-			// Don't modify a promise that's been already modified.
-			if ('isResolved' in promise || 'isRejected' in promise || 'isPending' in promise) {
-				return promise
-			}
-			let isPending = true
-			let isRejected = false
-			let rejectReason = undefined
-			let isResolved = false
-			let resolvedValue = undefined
-			const qurPro = promise.then(
-				function(val){
-					isResolved = true
-					isPending = false
-					resolvedValue = val
-					return val
-				}
-				, function(reason) {
-					rejectReason = reason
-					isRejected = true
-					isPending = false
-					throw reason
-				}
-			)
-			Object.defineProperties(qurPro, {
-				'isResolved': {
-					get: () => isResolved
-				}
-				, 'resolvedValue': {
-					get: () => resolvedValue
-				}
-				, 'isPending': {
-					get: () => isPending
-				}
-				, 'isRejected': {
-					get: () => isRejected
-				}
-				, 'rejectReason': {
-					get: () => rejectReason
-				}
-			})
-			return qurPro
-		}
-
-		, PromiseSource: function () {
-			const srcPromise = new Promise((resolve, reject) => {
-				Object.defineProperties(this, {
-					resolve: { value: resolve, writable: false }
-					, reject: { value: reject, writable: false }
-				})
-			})
-			Object.defineProperties(this, {
-				promise: {value: makeQuerablePromise(srcPromise), writable: false}
-			})
-		}
+		, makeQuerablePromise
+		, PromiseSource
 
 		/** A debounce is a higher-order function, which is a function that returns another function
 		* that, as long as it continues to be invoked, will not be triggered.
