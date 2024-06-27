@@ -905,7 +905,19 @@
          "draworder":"topdown",
          "id":5,
          "name":"objects",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":1120,
+                 "height":8,
+                 "id":1076,
+                 "name":"Table",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":576,
+                 "y":664
+                }],
          "opacity":1,
          "properties":[
                 {
@@ -1809,7 +1821,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1076,
+ "nextobjectid":1077,
  "orientation":"orthogonal",
  "properties":[
         {
