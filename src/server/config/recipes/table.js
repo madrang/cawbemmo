@@ -63,7 +63,7 @@ module.exports = [
 		, {
 			rolls: {
 					stat: "hp"  //stat mp hp
-					, amount: "50" // montant de base
+					, amount: 10 // montant de base
 				}
 		})
 	, buildRecipe({
@@ -86,8 +86,8 @@ module.exports = [
 			}
 		], {
 			rolls: {
-					stat: "mp"  //stat mp hp
-					, amount: "50" // montant de base
+					stat: "mana"  //stat mp hp
+					, amount: 50  // montant de base
 				}
 		})
 
