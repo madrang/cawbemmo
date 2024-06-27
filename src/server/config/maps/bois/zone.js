@@ -1,6 +1,6 @@
 module.exports = {
-	name: "admin"
-	, level: [1, 20]
+	name: "Bois"
+	, level: [13, 16]
 	, resources: {
 		champignon: {
 			type: "herb"
@@ -54,36 +54,42 @@ module.exports = {
 	}
 	, mobs: {
 		default: {
-			regular: {
+			level: 13
+			, regular: {
 				drops: {
 					chance: 40
 					, rolls: 1
 				}
 			}
 		}
-		, "crazed seagull": {
-			level: 1
-			, attackable: false
-		}
-		, mouette: {
-			level: 1
+		, "renard-garous": {
+			level: 13
 			, regular: {
 				drops: {
 					chance: 55
 					, rolls: 1
 				}
 			}
-			, rare: {
-				name: "Ronald"
-			}
 			, questItem: {
-				name: "Gull Feather"
+				name: "Cd de boys band"
 				, sprite: [0, 0]
 			}
 		}
-
+		, "papillion": {
+			level: 14
+			, regular: {
+				drops: {
+					chance: 55
+					, rolls: 1
+				}
+			}
+			, questItem: {
+				name: "papillion mort"
+				, sprite: [0, 0]
+			}
+		}
 		, "grosse vidange": {
-			level: 5
+			level: 14
 			, cron: "0 * * * *"
 
 			, regular: {
@@ -100,10 +106,18 @@ module.exports = {
 				chance: 100
 			}
 		}
-		, kazou: {
-			level: 7
+		, wezo: {
+			level: 15
 			, rare: {
-				name: "Le roi des homard"
+				name: "Boss des wézo"
+				,hpMult: 3
+				, dmgMult: 3
+
+				, drops: {
+					chance: 100
+					, rolls: 2
+					, magicFind: [1300]
+				}
 			}
 			, regular: {
 				drops: {
@@ -121,7 +135,7 @@ module.exports = {
 			}
 		}
 		, "truite à panache": {
-			level: 10
+			level: 16
 			, regular: {
 				drops: {
 					rolls: 1
@@ -310,64 +324,50 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								behaviors: [
-									{ type: "color"
-										, config: {
-											color: {
-												list: [
-													{ time: 0, value: "802343" }
-													, { time: 0.33, value: "fc66f7" }
-													, { time: 0.5, value: "802343" }
-													, { time: 0.66, value: "de43ae" }
-													, { time: 1, value: "393268" }
-												]
-											}
-										}
+								color: {
+									start: ["fc66f7", "802343"]
+									, end: ["393268", "de43ae"]
+								}
+								, scale: {
+									start: {
+										min: 10
+										, max: 18
 									}
-									, { type: "alpha"
-										, config: {
-											alpha: {
-												list: [
-													{ time: 0, value: 0.25 }
-													, { time: 1, value: 0 }
-												]
-											}
-										}
+									, end: {
+										min: 4
+										, max: 8
 									}
-									, { type: "blendMode"
-										, config: { blendMode: "add" }
+								}
+								, speed: {
+									start: {
+										min: 6
+										, max: 12
 									}
-									, { type: "scale"
-										, config: {
-											scale: {
-												list: [
-													{ time: 0, value: 18 }
-													, { time: 1, value: 8 }
-												]
-											}
-											, minMult: 0.2
-										}
+									, end: {
+										min: 2
+										, max: 4
 									}
-									, { type: "moveSpeed",
-										config: {
-											speed: {
-												list: [
-													{ time: 0, value: 12 }
-													, { time: 1, value: 4 }
-												]
-											}
-											, minMult: 0.5
-										}
-									}
-									, { type: "spawnShape"
-										, config: {
-											type: "rect"
-											, data: { x: -24, y: -24, w: 48, h: 48 }
-										}
-									}
-								]
-								, lifetime: { min: 5, max: 12 }
-								, spawnChance: 0.06
+								}
+								, lifetime: {
+									min: 5
+									, max: 12
+								}
+								, alpha: {
+									start: 0.25
+									, end: 0
+								}
+								, randomScale: true
+								, randomSpeed: true
+								, chance: 0.06
+								, randomColor: true
+								, spawnType: "rect"
+								, blendMode: "add"
+								, spawnRect: {
+									x: -24
+									, y: -24
+									, w: 48
+									, h: 48
+								}
 							}
 						};
 					}

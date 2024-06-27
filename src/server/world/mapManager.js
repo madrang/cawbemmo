@@ -12,6 +12,10 @@ const mapList = [
 		, path: "config/maps"
 	}
 	, {
+		name: "bois"
+		, path: "config/maps"
+	}
+	, {
 		name: "admin"
 		, path: "config/maps"
 	}

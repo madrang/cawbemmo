@@ -67,7 +67,7 @@ module.exports = [
 				//stat: ( "mp" | "hp" )
 				stat: "hp"
 				// montant de base
-				, amount: "50"
+				, amount: 10
 			}
 		}
 	)
@@ -89,7 +89,7 @@ module.exports = [
 				//stat: ( "mp" | "hp" )
 				stat: "mp"
 				// montant de base
-				, amount: "50"
+				, amount: 50
 			}
 		}
 	)
