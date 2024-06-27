@@ -70,7 +70,7 @@ define([
 			if (playerCount > 0) {
 				headingText.html(`online players (${playerCount})`);
 			} else {
-				headingText.html(`online players list missing`);
+				headingText.html("online players list missing");
 				return;
 			}
 			onlineList.sort((a, b) => {
