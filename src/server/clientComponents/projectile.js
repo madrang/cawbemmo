@@ -36,46 +36,56 @@ define([
 				if ((source.sprite) && (source.sprite.scale.x < 0)) {
 					blueprint.projectileOffset.x *= -1;
 				}
-
 				this.x += (blueprint.projectileOffset.x || 0);
 				this.y += (blueprint.projectileOffset.y || 0);
 			}
-
 			this.obj.x = this.x;
 			this.obj.y = this.y;
 
-			let particlesBlueprint = this.particles ? {
+			const particlesBlueprint = (this.particles ? {
 				blueprint: this.particles
 			} : {
 				blueprint: {
-					color: {
-						start: ["7a3ad3", "3fa7dd"]
-						, end: ["3fa7dd", "7a3ad3"]
-					}
-					, scale: {
-						start: {
-							min: 2
-							, max: 14
+					lifetime: { min: 1, max: 3 }
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: "7a3ad3" }
+										, { time: 0.33, value: "3fa7dd" }
+										, { time: 0.5, value: "7a3ad3" }
+										, { time: 0.66, value: "3fa7dd" }
+										, { time: 1, value: "3c3f4c" }
+									]
+								}
+							}
 						}
-						, end: {
-							min: 0
-							, max: 8
+						, { type: "alpha"
+							, config: {
+								alpha: {
+									list: [
+										{ time: 0, value: 0.7 }
+										, { time: 1, value: 0.1 }
+									]
+								}
+							}
 						}
-					}
-					, lifetime: {
-						min: 1
-						, max: 3
-					}
-					, alpha: {
-						start: 0.7
-						, end: 0
-					}
-					, randomScale: true
-					, randomColor: true
-					, chance: 0.6
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 14 }
+										, { time: 1, value: 8 }
+									]
+								}
+								, minMult: 0.1
+							}
+						}
+					]
+					, spawnChance: 0.6
 				}
-			};
-
+			});
 			particlesBlueprint.new = this.new;
 
 			this.particles = this.obj.addComponent("particles", particlesBlueprint);

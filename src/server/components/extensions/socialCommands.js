@@ -76,7 +76,7 @@ module.exports = {
 	, calculateActions: async function () {
 		const chatCommandConfig = {
 			localCommands
-			, contextActions: extend([], contextActions)
+			, contextActions: _.assign([], contextActions)
 			, commandRoles
 			, commandActions
 		};

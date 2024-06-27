@@ -26,74 +26,71 @@ const baseRecipes = {
 };
 
 const buildRecipe = function (recipe, item, materials, effects) {
-    if (!recipe.name) {
-        throw new Error("Missing recipe name.")
-    }
-    if (!item.name) {
-        throw new Error("Missing item name.")
-    }
-    if (materials && !Array.isArray(materials)) {
-        materials = [ materials ];
-    }
-    if (effects && !Array.isArray(effects)) {
-        effects = [ effects ];
-    }
-    return extend({}, baseRecipes[recipe.name], recipe, {
-        name: item.name
-        , item: {
-            effects: effects || []
-        }
-        , materials: materials || []
-    });
+	if (!recipe?.name) {
+		throw new Error("Missing recipe name.")
+	}
+	if (!item?.name) {
+		throw new Error("Missing item name.")
+	}
+	if (materials && !Array.isArray(materials)) {
+		materials = [ materials ];
+	}
+	if (effects && !Array.isArray(effects)) {
+		effects = [ effects ];
+	}
+	return _.assign({}, baseRecipes[recipe.name], recipe, {
+		// New recipe name from the item name.
+		name: item.name
+		, item: _.assign(item, {
+			effects: effects || []
+		})
+		, materials: materials || []
+	});
 };
 
 module.exports = [
 // 	(recette, "nom de l'objet", Effets, "ingrédients", Quantité crafté)
-	buildRecipe({
-		//recette
-			name: "joint"
+	buildRecipe(
+		// recette
+		{ name: "joint"
 			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
 		}
-		,{
-		//item
-			name: "Un bon vieux joint"
+		// item
+		,{ name: "Un bon vieux joint"
 			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
 		}
+		// materials
 		, undefined
+		// effects
 		, {
 			rolls: {
-					stat: "hp"  //stat mp hp
-					, amount: 10 // montant de base
-				}
-		})
-	, buildRecipe({
-		//recette
-			name: "joint"
+				//stat: ( "mp" | "hp" )
+				stat: "hp"
+				// montant de base
+				, amount: 10
+			}
+		}
+	)
+	, buildRecipe(
+		// recette
+		{ name: "joint"
 			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Mana instant"
 		}
-		,{
-		//item
-			name: "Joint Deux papier"
+		// item
+		, { name: "Joint Deux papier"
 			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 50 Mana instant"
 		}
-		,[{
-	 		name: "Papier a roulé"
-	 		, quantity: 2
-			}
-			, {
-			name: "weed"
-			, quantity: 2
-			}
-		], {
+		// Materials
+		, [ { name: "Papier a roulé", quantity: 2 }
+			, { name: "weed", quantity: 2 }
+		]
+		, {
 			rolls: {
-					stat: "mana"  //stat mp hp
-					, amount: 50  // montant de base
-				}
-		})
-
-
-	// , buildRecipe("carp", "Big Carp on a Stick", 50, "Big Sun Carp", 2)
-	// , buildRecipe("carp", "Giant Carp on a Stick", 150, "Giant Sun Carp", 1)
-	// , buildRecipe("carp", "Trophy Carp on a Stick", 150, "Trophy Sun Carp", 2)
-	// , buildRecipe("carp", "Fabled Carp on a Stick", 200, "Fabled Sun Carp", [3, 5])
+				//stat: ( "mp" | "hp" )
+				stat: "mp"
+				// montant de base
+				, amount: 50
+			}
+		}
+	)
 ];

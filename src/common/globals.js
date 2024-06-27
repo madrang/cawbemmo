@@ -6,34 +6,36 @@
 		"spliceWhere": {
 			enumerable: false
 			, value: function (callback, thisArg) {
-				let T = thisArg;
-				let O = Object(this);
-				let len = O.length >>> 0;
-				for (let k = 0; k < len; ++k) {
-					if (k in O) {
-						const kValue = O[k];
-						if (callback.call(T, kValue, k, O)) {
-							O.splice(k, 1);
-							k--;
-						}
+				const arrObj = Object(this);
+				let len = arrObj.length || 0;
+				for (let idx = 0; idx < len; ++idx) {
+					if (!(idx in arrObj)) {
+						continue;
 					}
+					if (!callback.call(thisArg, arrObj[idx], idx, arrObj)) {
+						continue;
+					}
+					arrObj.splice(idx, 1);
+					idx--;
+					len--;
 				}
 			}
 		}
 		, "spliceFirstWhere": {
 			enumerable: false
 			, value: function (callback, thisArg) {
-				let T = thisArg;
-				let O = Object(this);
-				let len = O.length >>> 0;
-				for (let k = 0; k < len; ++k) {
-					if (k in O) {
-						const kValue = O[k];
-						if (callback.call(T, kValue, k, O)) {
-							O.splice(k, 1);
-							return kValue;
-						}
+				const arrObj = Object(this);
+				let len = arrObj.length || 0;
+				for (let idx = 0; idx < len; ++idx) {
+					if (!(idx in arrObj)) {
+						continue;
 					}
+					const kValue = arrObj[idx];
+					if (!callback.call(thisArg, kValue, idx, arrObj)) {
+						continue;
+					}
+					arrObj.splice(idx, 1);
+					return kValue;
 				}
 			}
 		}
@@ -82,6 +84,7 @@
 			}
 		}
 	});
+
 	const tmpExport = {
 		CONSTANTS: (params, obj, enumerable = true) => {
 			const properties = {};
@@ -92,7 +95,7 @@
 				);
 			}
 			if (Array.isArray(params)) {
-				params.forEach(([key, val]) => (properties)[key] = { value: val, writable: false, configurable: true, enumerable });
+				params.forEach(([key, val]) => properties[key] = { value: val, writable: false, configurable: true, enumerable });
 			} else {
 				throw new Error("Invalid params type");
 			}
@@ -247,22 +250,6 @@
 			return result;
 		}
 
-		, getDeepProperty: function (obj, path) {
-			if (!obj) {
-				return;
-			}
-			if (typeof path === "string") {
-				path = path.split(".");
-			}
-			for (let propName of path) {
-				obj = obj[propName];
-				if (!obj) {
-					return;
-				}
-			}
-			return obj;
-		}
-
 		, getGuid: function () {
 			return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
 				let r = Math.random() * 16 | 0;
@@ -271,14 +258,42 @@
 			});
 		}
 
+		, randomInt: function (min, max) {
+			//The maximum is exclusive and the minimum is inclusive
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
 		, randomKey: function (o) {
 			const keys = Object.keys(o);
 			return keys[Math.floor(Math.random() * keys.length)];
 		}
+		, randomObj: function (...args) {
+			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
+				return undefined;
+			}
+			if (args.length === 1 && Array.isArray(args[0])) {
+				// If single item array at pos zero.
+				args = args[0];
+			}
+			return args[Math.floor(Math.random() * args.length)];
+		}
 	};
-	if (typeof define === "function") {
-		define([], tmpExport);
-	} else {
+
+	if (typeof define === "function" && define.amd) {
+		define([
+			"common/assign"
+		], function(
+			assignModule
+		) {
+			assignModule.assign(tmpExport, assignModule);
+			return tmpExport;
+		});
+	} else if (typeof module === "object" && module.exports) {
+		const assignModule = require("./assign");
+		assignModule.assign(tmpExport, assignModule);
 		module.exports = tmpExport;
+	} else {
+		throw new Error("Can't load globals.js in current env.");
 	}
 })();

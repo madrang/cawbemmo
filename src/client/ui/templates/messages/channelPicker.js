@@ -205,7 +205,7 @@ define([
 
 	return {
 		init: function () {
-			$.extend(this, extensionObj);
+			_.assign(this, extensionObj);
 
 			//This whole hoverFilter business is a filthy hack
 			this.find(".channelPicker, .channelOptions, .filter:not(.channel)")

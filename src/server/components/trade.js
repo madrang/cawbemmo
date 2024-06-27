@@ -42,7 +42,7 @@ module.exports = {
 		this.regenCd = this.regenCdMax;
 
 		(blueprint.forceItems || []).forEach(function (f, i) {
-			let item = extend({}, f);
+			let item = _.assign({}, f);
 
 			let id = 0;
 			this.items.forEach(function (checkItem) {
@@ -203,7 +203,7 @@ module.exports = {
 		if (item.type !== "skin") {
 			//Some shop items have both an in-shop definition (item) as well as a definition
 			// for the item that should be given to the player (giveItem)
-			let clonedItem = extend({}, item.giveItem || item);
+			let clonedItem = _.assign({}, item.giveItem || item);
 
 			if (item.worth.currency) {
 				clonedItem.worth = 0;
@@ -300,7 +300,7 @@ module.exports = {
 		this.target = target;
 
 		let itemList = this.obj.inventory.items.filter((i) => i.worth > 0 && !i.eq && !i.noDestroy);
-		itemList = extend([], itemList);
+		itemList = _.assign([], itemList);
 		this.obj.syncer.set(true, "trade", "sellList", {
 			markup: target.trade.markup.buy
 			, items: itemList.map((i) => this.obj.inventory.simplifyItem(i))

@@ -19,36 +19,28 @@ define([
 
 		, buildIcon: function (config) {
 			let { icon, url } = config;
-
 			if (!url) {
 				url = "../../../images/statusIcons.png";
 			}
-
-			let imgX = icon[0] * -32;
-			let imgY = icon[1] * -32;
-
-			let html = templateEffect;
-			let el = $(html).appendTo(this.el)
+			const imgX = icon[0] * -32;
+			const imgY = icon[1] * -32;
+			const el = $(templateEffect).appendTo(this.el)
 				.find(".inner")
 				.css({
 					background: `url(${url}) ${imgX}px ${imgY}px`
 				});
-
 			return el.parent();
 		}
 
 		, onGetEffectIcon: function (config) {
-			let el = this.buildIcon(config);
-
-			this.icons[config.id] = el;
+			this.icons[config.id] = this.buildIcon(config);
 		}
 
 		, onRemoveEffectIcon: function (config) {
-			let el = this.icons[config.id];
+			const el = this.icons[config.id];
 			if (!el) {
 				return;
 			}
-
 			el.remove();
 			delete this.icons[config.id];
 		}

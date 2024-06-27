@@ -169,12 +169,11 @@ module.exports = {
 		if (!self) {
 			return null;
 		}
-
 		let sendList = this.list
 			.map(function (l) {
 				let result = {};
 				let blueprint = getFactionBlueprint(l.id);
-				extend(result, l, blueprint);
+				_.assign(result, l, blueprint);
 
 				return result;
 			}, this);
@@ -192,12 +191,10 @@ module.exports = {
 			, rep: l.rep
 			, tier: l.tier
 		};
-
 		if (full) {
 			let blueprint = getFactionBlueprint(factionId);
-			extend(faction, l, blueprint);
+			_.assign(faction, l, blueprint);
 		}
-
 		this.obj.syncer.setArray(true, "reputation", "modifyRep", faction);
 	}
 

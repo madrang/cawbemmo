@@ -3,8 +3,7 @@ module.exports = {
 
 	, events: {
 		beforeMove: function (targetPos) {
-			let obj = this.obj;
-
+			const obj = this.obj;
 			targetPos.x = obj.x;
 			targetPos.y = obj.y;
 		}

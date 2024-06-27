@@ -38,18 +38,15 @@ module.exports = {
 					, height: exists.blueprint.height
 				}];
 			}
-
 			exists.blueprint.positions.push({
 				x: blueprint.x
 				, y: blueprint.y
 				, width: blueprint.width
 				, height: blueprint.height
 			});
-
 			return;
 		}
-
-		blueprint = extend({}, blueprint, herbs[name], {
+		blueprint = _.assign({}, blueprint, herbs[name], {
 			name: name
 		});
 
@@ -152,13 +149,13 @@ module.exports = {
 		}
 		const nodeXp = this.zoneConfig.level[0] * 2;
 
-		let objBlueprint = extend({}, blueprint, position);
+		let objBlueprint = _.assign({}, blueprint, position);
 		objBlueprint.properties = {
 			cpnResourceNode: {
 				nodeType: blueprint.type
 				, ttl: blueprint.ttl
 				, xp: nodeXp
-				, blueprint: extend({}, blueprint)
+				, blueprint: _.assign({}, blueprint)
 				, quantity: quantity
 			}
 		};

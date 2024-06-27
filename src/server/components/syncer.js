@@ -96,7 +96,7 @@ module.exports = {
 
 		let exists = o.components.find((c) => c.type === cpnType);
 		if (exists) {
-			extend(exists, cpn);
+			_.assign(exists, cpn);
 		} else {
 			o.components.push(cpn);
 		}

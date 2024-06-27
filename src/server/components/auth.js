@@ -429,7 +429,7 @@ module.exports = {
 			return;
 		}
 		// Create new character
-		extend(this.obj, {
+		_.assign(this.obj, {
 			name: name
 			, skinId: data.skinId
 			, class: data.class

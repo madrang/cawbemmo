@@ -54,7 +54,7 @@ module.exports = {
 				}
 
 				let pick = items[Math.floor(Math.random() * items.length)];
-				items.push(extend({}, pick));
+				items.push(_.assign({}, pick));
 			}
 		}
 	}

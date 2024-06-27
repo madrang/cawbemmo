@@ -23,7 +23,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 	let magicFind = (blueprint.magicFind || 0);
 
-	let savedItems = extend([], cpnInv.items);
+	let savedItems = _.assign([], cpnInv.items);
 	cpnInv.items = [];
 
 	let dropEvent = {
@@ -70,7 +70,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 
 			let item = drop;
 			if ((!item.quest) && (item.type !== "key")) {
-				item = generator.generate(extend({}, drop));
+				item = generator.generate(_.assign({}, drop));
 			}
 			if (!item.slot) {
 				delete item.level;

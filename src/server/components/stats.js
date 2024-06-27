@@ -451,7 +451,7 @@ module.exports = {
 			obj.destroyed = true;
 			obj.destructionEvent = "death";
 
-			let deathAnimation = _.getDeepProperty(animations, ["mobs", obj.sheetName, obj.cell, "death"]);
+			const deathAnimation = animations.mobs?.[obj.sheetName]?.[obj.cell]?.death;
 			if (deathAnimation) {
 				obj.instance.syncer.queue("onGetObject", {
 					x: obj.x

@@ -8,7 +8,7 @@ module.exports = {
 	, global: false
 
 	, init: function (blueprint) {
-		this.chats = extend([], blueprint.chats);
+		this.chats = _.assign([], blueprint.chats);
 		this.cd = Math.floor(Math.random() * this.cdMax);
 		for (let p in blueprint) {
 			if (p === "chats") {

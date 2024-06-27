@@ -38,25 +38,36 @@ define([
 			this.obj.addComponent("particles", {
 				chance: chances[index]
 				, blueprint: {
-					color: {
-						start: colors[index]
-					}
-					, alpha: {
-						start: 0.75
-						, end: 0.2
-					}
-					, lifetime: {
-						min: 1
-						, max: 4
-					}
-					, chance: chances[index]
-					, spawnType: "rect"
-					, spawnRect: {
-						x: -4
-						, y: -4
-						, w: 8
-						, h: 8
-					}
+					lifetime: { min: 1, max: 4 }
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: colors[index] }
+										, { time: 1, value: "f5b830" }
+									]
+								}
+							}
+						}
+						, { type: "alpha"
+							, config: {
+								alpha: {
+									list: [
+										{ time: 0, value: 0.75 }
+										, { time: 1, value: 0 }
+									]
+								}
+							}
+						}
+						, { type: "spawnShape"
+							, config: {
+								type: "rect"
+								, data: { x: -4, y: -4, w: 8, h: 8 }
+							}
+						}
+					]
+					, spawnChance: chances[index]
 				}
 			});
 		}

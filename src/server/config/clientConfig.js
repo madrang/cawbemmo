@@ -2,6 +2,8 @@ const imageSize = require("image-size");
 
 const events = require("../misc/events");
 const fileLister = require("../misc/fileLister");
+
+const changeLog = require("./changeLog");
 const tos = require("./tos");
 
 const config = {
@@ -195,6 +197,18 @@ const config = {
 		, "middleHud"
 		, "options"
 		, "announcements"
+		, { type: "createCharacter"
+			, autoLoadOnPlay: false
+		}
+		, { type: "characters"
+			, autoLoadOnPlay: false
+		}
+		, { type: "terms"
+			, autoLoadOnPlay: false
+		}
+		, { type: "changeLog"
+			, autoLoadOnPlay: false
+		}
 	]
 	, contextMenuActions: {
 		player: []
@@ -204,6 +218,8 @@ const config = {
 	, sounds: {
 		ui: []
 	}
+
+	, changeLog
 	, tos
 };
 

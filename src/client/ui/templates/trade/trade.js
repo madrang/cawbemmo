@@ -61,7 +61,7 @@ define([
 					renderItem(container, null).on("click", uiInventory.hideTooltip.bind(uiInventory));
 					continue;
 				}
-				item = $.extend(true, {}, item);
+				item = _.assign({}, item);
 				let itemEl = renderItem(container, item);
 				itemEl.data("item", item).find(".icon").addClass(item.type);
 				if (isMobile) {

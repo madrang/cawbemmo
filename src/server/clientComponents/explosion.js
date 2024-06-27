@@ -11,55 +11,63 @@ define([
 		, init: function (blueprint) {
 			this.blueprint = {
 				new: true
-				, blueprint: $.extend(true, {
-					color: {
-						start: ["fcfcfc", "929398"]
-						, end: ["505360", "3c3f4c"]
-					}
-					, scale: {
-						start: {
-							min: 8
-							, max: 18
+				, blueprint: _.assignWith("particles", {
+					particlesPerWave: 14
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: "929398" }
+										, { time: 0.33, value: "fcfcfc" }
+										, { time: 0.5, value: "929398" }
+										, { time: 0.66, value: "3c3f4c" }
+										, { time: 1, value: "505360" }
+									]
+								}
+							}
 						}
-						, end: {
-							min: 4
-							, max: 12
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 18 }
+										, { time: 1, value: 12 }
+									]
+								}
+								, minMult: 0.3
+							}
 						}
-					}
-					, particlesPerWave: 14
-					, particleSpacing: 0
-					, randomColor: true
-					, randomScale: true
-					, randomSpeed: true
-					, frequency: 1
+					]
 				}, blueprint.blueprint, {
-					spawnType: "burst"
-					, emitterLifetime: -1
-					, chance: null
-					, scale: {
-						start: {
-							min: 6
-							, max: 16
+					spawnChance: 1
+					, behaviors: [
+						{ type: "moveSpeed",
+							config: {
+								speed: {
+									list: [
+										{ time: 0, value: 24 }
+										, { time: 1, value: 18 }
+									]
+								}
+								, minMult: 0.11
+							}
 						}
-						, end: {
-							min: 0
-							, max: 10
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 16 }
+										, { time: 1, value: 10 }
+									]
+								}
+								, minMult: 0.1
+							}
 						}
-					}
-					, speed: {
-						start: {
-							min: 4
-							, max: 24
+						, { type: "spawnBurst"
+							, config: { start: 0, spacing: 0, distance: 0 }
 						}
-						, end: {
-							min: 2
-							, max: 18
-						}
-					}
-					, lifetime: {
-						min: 1
-						, max: 3
-					}
+					]
 				})
 			};
 		}
@@ -68,9 +76,7 @@ define([
 			if (!this.obj.isVisible) {
 				return;
 			}
-
-			let particles = this.obj.addComponent("particles", this.blueprint);
-
+			const particles = this.obj.addComponent("particles", this.blueprint);
 			particles.emitter.update(0.2);
 			particles.emitter.emit = false;
 			particles.emitter.disabled = true;

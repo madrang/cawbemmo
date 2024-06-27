@@ -1,25 +1,18 @@
 const buildMob = (objects, mobConfig, i) => {
-	let { id, sheetName, cell, name, properties, pos } = mobConfig;
-
+	const { id, sheetName, cell, name, properties, pos } = mobConfig;
 	if (typeof(pos) === "function") {
 		pos = pos(i);
 	}
-
-	const { x, y } = pos;
-
-	let obj = objects.buildObjects([{
-		x
-		, y
+	const obj = objects.buildObjects([{
+		x: pos.x, y: pos.y
 		, sheetName: sheetName || "objects"
 		, cell
 		, name
 		, properties
 	}]);
-
 	if (id) {
-		obj.id = id.split("$").join(i);
+		obj.id = id.replaceAll("$", i);
 	}
-
 	return obj;
 };
 

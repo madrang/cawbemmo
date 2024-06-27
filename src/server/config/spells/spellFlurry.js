@@ -14,24 +14,20 @@ module.exports = {
 	, aura: true
 
 	, cast: function (action) {
-		let obj = this.obj;
-
+		const obj = this.obj;
 		this.sendBump(obj);
 
 		this.queueCallback(this.explode.bind(this, obj), 1, null, obj);
-
 		this.sendBump({
 			x: obj.x
 			, y: obj.y - 1
 		});
-
 		return true;
 	}
 	, explode: function (obj) {
 		if (this.obj.destroyed) {
 			return;
 		}
-
 		this.obj.spellbook.spells[0].cd = 0;
 		this.obj.effects.addEffect({
 			type: "frenzy"

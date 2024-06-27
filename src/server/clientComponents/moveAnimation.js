@@ -21,42 +21,54 @@ define([
 		, particleExplosionBlueprint: null
 
 		, init: function (blueprint) {
-			const particleBlueprint = $.extend({
-				scale: {
-					start: {
-						min: 6
-						, max: 16
+			const particleBlueprint = _.assignWith("particles", {
+				lifetime: { min: 1, max: 2 }
+				, behaviors: [
+					{ type: "color"
+						, config: {
+							color: {
+								list: [
+									{ time: 0, value: "fcfcfc" }
+									, { time: 1, value: "c0c3cf" }
+								]
+							}
+						}
 					}
-					, end: {
-						min: 0
-						, max: 10
+					, { type: "alpha"
+						, config: {
+							alpha: {
+								list: [
+									{ time: 0, value: 0.9 }
+									, { time: 1, value: 0.1 }
+								]
+							}
+						}
 					}
-				}
-				, opacity: {
-					start: 0.05
-					, end: 0
-				}
-				, lifetime: {
-					min: 1
-					, max: 2
-				}
-				, speed: {
-					start: {
-						min: 2
-						, max: 20
+
+					, { type: "scale"
+						, config: {
+							scale: {
+								list: [
+									{ time: 0, value: 16 }
+									, { time: 1, value: 10 }
+								]
+							}
+							, minMult: 0.2
+						}
 					}
-					, end: {
-						min: 0
-						, max: 8
+					, { type: "moveSpeed",
+						config: {
+							speed: {
+								list: [
+									{ time: 0, value: 20 }
+									, { time: 1, value: 8 }
+								]
+							}
+							, minMult: 0.1
+						}
 					}
-				}
-				, color: {
-					start: "fcfcfc"
-					, end: "c0c3cf"
-				}
-				, randomScale: true
-				, randomSpeed: true
-				, chance: 0.4
+				]
+				, spawnChance: 0.4
 			}, this.particleBlueprint);
 
 			this.particles = this.obj.addComponent("particles", { blueprint: particleBlueprint });

@@ -3,25 +3,42 @@ define([
 ], function (
 	physics
 ) {
-	let bptParticles = {
+	const bptParticles = {
 		chance: 0.1
 		, blueprint: {
-			color: {
-				start: "f2f5f5"
-			}
-			, alpha: {
-				start: 0.75
-				, end: 0.2
-			}
-			, scale: {
-				start: 6
-				, end: 2
-			}
-			, lifetime: {
-				min: 1
-				, max: 3
-			}
-			, chance: 0.025
+			spawnChance: 0.025
+			, behaviors: [
+				{ type: "color"
+					, config: {
+						color: {
+							list: [
+								{ time: 0, value: "f2f5f5" }
+								, { time: 1, value: "f1f4f4" }
+							]
+						}
+					}
+				}
+				, { type: "alpha"
+					, config: {
+						alpha: {
+							list: [
+								{ time: 0, value: 0.75 }
+								, { time: 1, value: 0.2 }
+							]
+						}
+					}
+				}
+				, { type: "scale"
+					, config: {
+						scale: {
+							list: [
+								{ time: 0, value: 6 }
+								, { time: 1, value: 2 }
+							]
+						}
+					}
+				}
+			]
 		}
 	};
 
@@ -29,42 +46,43 @@ define([
 		type: "resourceNode"
 
 		, init: function () {
-			let x = this.obj.x;
-			let y = this.obj.y;
-			let w = this.obj.width || 1;
-			let h = this.obj.height || 1;
-
-			let isFish = (this.nodeType === "fish");
-
+			const x = this.obj.x;
+			const y = this.obj.y;
+			const w = this.obj.width || 1;
+			const h = this.obj.height || 1;
 			for (let i = x; i < x + w; i++) {
 				for (let j = y; j < y + h; j++) {
-					let bpt = $.extend(true, {}, bptParticles, {
+					const bpt = _.assignWith("particles", {}, bptParticles, {
 						new: true
 					});
-
-					if (isFish) {
+					if (this.nodeType === "fish") {
 						if (!physics.isTileBlocking(i, j)) {
 							continue;
-						} else if (Math.random() < 0.4) {
+						}
+						if (Math.random() < 0.4) {
 							continue;
 						}
-
-						$.extend(true, bpt, {
-							blueprint: {
-								color: {
-									start: "48edff"
+						_.assignWith("particles", bpt.blueprint, {
+							behaviors: [
+								{ type: "color"
+									, config: {
+										color: {
+											list: [
+												{ time: 0, value: "48edff" }
+												, { time: 1, value: "47ecfe" }
+											]
+										}
+									}
 								}
-								, spawnType: "rect"
-								, spawnRect: {
-									x: 40 * (i - x)
-									, y: 40 * (j - y)
-									, w: 40
-									, h: 40
+								, { type: "spawnShape"
+									, config: {
+										type: "rect"
+										, data: { x: 40 * (i - x), y: 40 * (j - y), w: 40, h: 40 }
+									}
 								}
-							}
+							]
 						});
 					}
-
 					this.obj.addComponent("particles", bpt);
 				}
 			}

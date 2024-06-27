@@ -63,7 +63,7 @@ module.exports = (scope, map) => {
 						continue;
 					}
 
-					let flipped = extend({
+					let flipped = _.assign({
 						flipX: Boolean(i)
 						, flipY: Boolean(j)
 						, rotate: Boolean(k)
@@ -200,7 +200,7 @@ module.exports = (scope, map) => {
 		r.map = _.get2dArray(r.width, r.height);
 		r.tiles = _.get2dArray(r.width, r.height);
 		r.collisionMap = _.get2dArray(r.width, r.height);
-		r.oldExits = extend([], r.exits);
+		r.oldExits = _.assign([], r.exits);
 
 		for (let i = 0; i < w; i++) {
 			for (let j = 0; j < h; j++) {

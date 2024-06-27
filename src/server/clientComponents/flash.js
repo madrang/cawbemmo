@@ -25,15 +25,12 @@ define([
 			if (!this.obj.sprite) {
 				return true;
 			}
-
 			this.oldTexture = this.obj.sprite.texture;
-
 			renderer.setSprite({
 				sprite: this.obj.sprite
 				, cell: 8 + this.frame
 				, sheetName: "animChar"
 			});
-
 			this.maxState = ((Math.abs(this.lum) / this.lumDir) + (Math.abs(this.lum) / (this.lumDir))) / 5;
 		}
 
@@ -42,16 +39,13 @@ define([
 			if (hex.length < 6) {
 				hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
 			}
-
-			let rgb = "#";
-			let c = 0;
+			let rgb = "0x";
 			for (let i = 0; i < 3; i++) {
-				c = parseInt(hex.substr(i * 2, 2), 16);
+				let c = parseInt(hex.substr(i * 2, 2), 16);
 				c = Math.round(Math.min(Math.max(0, c + (c * this.lum)), 255)).toString(16);
 				rgb += ("00" + c).substr(c.length);
 			}
-
-			return rgb.replace("#", "0x");
+			return rgb;
 		}
 
 		, update: function () {
@@ -68,12 +62,11 @@ define([
 					});
 				}
 			}
-
 			this.lum += this.lumDir;
 
-			if ((this.lumDir > 0) && (this.lum >= 0)) {
+			if (this.lumDir > 0 && this.lum >= 0) {
 				this.lumDir = -Math.abs(this.lumDir);
-			} else if ((this.lumDir <= 0) && (this.lum <= -1)) {
+			} else if (this.lumDir <= 0 && this.lum <= -1) {
 				this.destroyed = true;
 			}
 		}

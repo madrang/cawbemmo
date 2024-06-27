@@ -191,7 +191,7 @@ module.exports = {
 
 		let spawnPos = map.getSpawnPos(obj);
 		let spawnEvent = {
-			spawnPos: extend({}, spawnPos)
+			spawnPos: _.assign({}, spawnPos)
 			, changed: false
 		};
 		eventEmitter.emit("onBeforePlayerSpawn", { name: obj.name, instance: { physics } }, spawnEvent);

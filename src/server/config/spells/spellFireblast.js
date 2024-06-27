@@ -61,7 +61,7 @@ module.exports = {
 
 		const particleEvent = {
 			source: this
-			, particleConfig: extend({}, this.particles)
+			, particleConfig: _.assign({}, this.particles)
 		};
 		obj.fireEvent("beforeSpawnParticles", particleEvent);
 

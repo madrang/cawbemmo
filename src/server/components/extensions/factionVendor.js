@@ -121,8 +121,7 @@ module.exports = {
 		for (let i = 0; i < eLen; i++) {
 			let e = extra[i];
 
-			let item = extend({}, e);
-
+			let item = _.assign({}, e);
 			if (item.type === "skin") {
 				let skinBlueprint = skins.getBlueprint(item.skinId);
 				item.skinId = item.skinId;

@@ -3,35 +3,59 @@ define([
 	, "js/system/events"
 	, "js/system/client"
 	, "js/system/globals"
-	, "js/misc/tosAcceptanceValid"
+	, "js/system/browserStorage"
 ], function (
-	uiBase,
-	events,
-	client,
-	globals,
-	tosAcceptanceValid
+	uiBase
+	, events
+	, client
+	, globals
+	, browserStorage
 ) {
+	const setUiTypes = (list) => {
+		list.forEach((l, i) => {
+			if (typeof l === "string") {
+				// Some UIs are strings. In these cases,
+				// the path should default to the client/ui/templates folder
+				list[i] = {
+					type: l,
+					path: `ui/templates/${l}`,
+					autoLoadOnPlay: true
+				};
+			} else if (!l.type) {
+				l.type = l.path.split("/").pop();
+			} else if (!l.path) {
+				l.path = `ui/templates/${l.type}`;
+			}
+		});
+	};
+
+	const tosAcceptanceValid = () => {
+		const acceptedVersion = browserStorage.get("tos_accepted_version");
+		const currentVersion = globals.clientConfig.tos.version;
+		return acceptedVersion === currentVersion;
+	};
+
+	const hasNewContent = () => {
+		const logVersion = browserStorage.get("changelog_version");
+		const currentVersion = globals.clientConfig.tos.version;
+		return logVersion !== currentVersion;
+	};
+
 	return {
 		uis: []
-		, root: ""
 		, ingameUisBuilt: false
 
-		, init: function (root) {
-			if (root) {
-				this.root = root + "/";
-			}
-
+		, init: function () {
 			events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
 			events.on("onUiKeyDown", this.onUiKeyDown.bind(this));
 			events.on("onResize", this.onResize.bind(this));
 
-			globals.clientConfig.uiLoginList.forEach((u) => {
-				if (u.path) {
-					this.buildModUi(u);
-				} else {
-					this.build(u);
-				}
-			});
+			setUiTypes(globals.clientConfig.uiLoginList);
+			setUiTypes(globals.clientConfig.uiList);
+
+			for (const u of globals.clientConfig.uiLoginList) {
+				this.buildFromConfig(u);
+			}
 		}
 
 		, onBuildIngameUis: async function () {
@@ -39,26 +63,26 @@ define([
 				events.clearQueue();
 
 				await Promise.all(
-					globals.clientConfig.uiList.map((u) => {
-						const uiType = u.path ? u.path.split("/").pop() : u;
+					globals.clientConfig.uiList
+						.filter(u => u.autoLoadOnPlay !== false)
+						.map(u => {
+							return new Promise(res => {
+								const doneCheck = () => {
+									const isDone = this.uis.some(ui => ui.type === u.type);
+									if (isDone) {
+										res();
 
-						return new Promise((res) => {
-							const doneCheck = () => {
-								const isDone = this.uis.some((ui) => ui.type === uiType);
-								if (isDone) {
-									res();
+										return;
+									}
 
-									return;
-								}
+									setTimeout(doneCheck, 100);
+								};
 
-								setTimeout(doneCheck, 100);
-							};
+								this.buildFromConfig(u);
 
-							this.build(uiType, { path: u.path });
-
-							doneCheck();
-						});
-					})
+								doneCheck();
+							});
+						})
 				);
 
 				this.ingameUisBuilt = true;
@@ -71,51 +95,32 @@ define([
 			});
 		}
 
-		, buildModUi: function (config) {
-			const type = config.path.split("/").pop();
-
-			this.build(type, {
-				path: config.path
-			});
+		, build: function (type) {
+			const config = globals.clientConfig.uiList.find(u => u.type === type);
+			if (!config) {
+				throw new Error(`Can't build ${type}! Missing configuration.`);
+			}
+			return this.buildFromConfig(config);
 		}
 
-		, build: function (type, options) {
-			let className = "ui" + type[0].toUpperCase() + type.substr(1);
-			let el = $("." + className);
+		, buildFromConfig: async function (config) {
+			const { type, path } = config;
+
+			const className = "ui" + type[0].toUpperCase() + type.substr(1);
+			const el = $("." + className);
 			if (el.length > 0) {
 				return;
 			}
-
-			this.getTemplate(type, options);
-		}
-
-		, getTemplate: function (type, options) {
-			let path = null;
-			if (options && options.path) {
-				path = options.path + `\\${type}.js`;
-			} else {
-				const entryInClientConfig = globals.clientConfig.uiList.find((u) => u.type === type);
-				if (entryInClientConfig) {
-					path = entryInClientConfig.path;
-				} else {
-					path = this.root + "ui/templates/" + type + "/" + type;
-				}
-			}
-
-			require([path], this.onGetTemplate.bind(this, options, type));
-		}
-
-		, onGetTemplate: function (options, type, template) {
-			let ui = $.extend(true, { type }, uiBase, template);
-			ui.setOptions(options);
-
+			const fullPath = `${path}/${type}`;
+			const template = await new Promise((res) => require([fullPath], res));
+			const ui = _.assign({ type }, uiBase, template);
 			requestAnimationFrame(this.renderUi.bind(this, ui));
+			return ui;
 		}
 
 		, renderUi: function (ui) {
 			ui.render();
 			ui.el.data("ui", ui);
-
 			this.uis.push(ui);
 		}
 
@@ -123,7 +128,7 @@ define([
 			this.uis.forEach(function (ui) {
 				if (ui.centered) {
 					ui.center();
-				} else if ((ui.centeredX) || (ui.centeredY)) {
+				} else if (ui.centeredX || ui.centeredY) {
 					ui.center(ui.centeredX, ui.centeredY);
 				}
 			}, this);
@@ -160,17 +165,19 @@ define([
 				, "quests"
 				, "reputation"
 				, "stash"
-			].map((m) => "ui/templates/" + m + "/" + m), this.afterPreload.bind(this));
+			].map((m) => `ui/templates/${m}/${m}`), this.afterPreload.bind(this));
 		}
 
 		, afterPreload: function () {
-			if (!globals.clientConfig.tos.required || tosAcceptanceValid()) {
-				this.build("characters");
-
+			if (!tosAcceptanceValid()) {
+				this.build("terms");
 				return;
 			}
-
-			this.build("terms");
+			if (hasNewContent()) {
+				this.build("changeLog");
+				return;
+			}
+			this.build("characters");
 		}
 
 		, update: function () {

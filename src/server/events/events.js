@@ -10,12 +10,9 @@ const applyVariablesToDescription = (desc, variables) => {
 	if (!variables) {
 		return desc;
 	}
-
-	Object.entries(variables).forEach((e) => {
-		const [key, value] = e;
-		desc = desc.split(`$${key}$`).join(value);
-	});
-
+	for (const [key, value] of Object.entries(variables)) {
+		desc = desc.replaceAll(`$${key}$`, value);
+	}
 	return desc;
 };
 
@@ -29,71 +26,67 @@ module.exports = {
 
 		const zoneName = this.instance.map.name;
 		const zonePath = mapList.find((z) => z.name === zoneName).path;
-		const zoneEventPath = zonePath + "/" + zoneName + "/events";
+		const zoneEventPath = `${zonePath}/${zoneName}/events`;
 
 		const paths = ["config/globalEvents", zoneEventPath];
 		const files = [];
-		paths.forEach((p) => {
+		for (const p of paths) {
 			if (!fs.existsSync(p)) {
-				return;
+				continue;
 			}
-
-			files.push(...fs.readdirSync(p).map((f) => ("../" + p + "/" + f)));
-		});
-
+			files.push(...fs.readdirSync(p).map((f) => `../${p}/${f}`));
+		}
 		this.instance.eventEmitter.emit("onBeforeGetEventList", zoneName, files);
 
-		files.forEach((f) => {
+		for (const f of files) {
 			if (!f.includes(".js")) {
-				return;
+				continue;
 			}
-
 			const e = require(f);
-			if (!e.disabled) {
-				this.configs.push(extend({}, e));
+			if (e.disabled) {
+				continue;
 			}
-		}, this);
-
+			this.configs.push(_.assign({}, e));
+		}
 		this.instance.eventEmitter.emit("afterGetEventList", {
 			eventConfigs: this.configs
 		});
 	}
 
 	, getEvent: function (name) {
-		return this.configs.find((c) => (c.name === name)).event.config;
+		const nConf = this.configs.find((c) => (c.name === name));
+		if (!nConf) {
+			return;
+		}
+		return nConf.event?.config;
 	}
 
 	, setEventDescription: function (name, desc) {
-		let config = this.getEvent(name);
-		let event = config.event;
+		const config = this.getEvent(name);
+		const event = config?.event;
 		if (!event) {
+			_.log.events.setEventDescription.error("Event '%s' isn't active. Can't update description.");
 			return;
 		}
-
 		if (!config.oldDescription) {
 			config.oldDescription = config.description;
 		}
-
-		if ((config.events) && (config.events.beforeSetDescription)) {
+		if (config.events && config.events.beforeSetDescription) {
 			config.events.beforeSetDescription(this);
 		}
-
 		if (desc) {
-			desc = applyVariablesToDescription(desc, event.variables);
-
-			config.description = desc;
+			config.description = applyVariablesToDescription(desc, event.variables);
 		}
-
 		event.participators.forEach((p) => p.events.syncList());
 	}
 
 	, setEventRewards: function (name, rewards) {
-		let config = this.getEvent(name);
-		let event = config.event;
+		const config = this.getEvent(name);
+		const event = config?.event;
 		if (!event) {
+			_.log.events.setEventRewards.error("Event '%s' isn't active. Can't update rewards.");
 			return;
 		}
-
 		event.rewards = rewards;
 		event.age = event.config.duration - 2;
 	}
@@ -117,7 +110,7 @@ module.exports = {
 			addRewards = [ addRewards ];
 		}
 
-		addRewards.forEach((r) => {
+		for (const r of addRewards) {
 			const { name, quantity = 1 } = r;
 
 			const exists = pRewards.find((f) => f.name === name);
@@ -126,82 +119,75 @@ module.exports = {
 			} else {
 				pRewards.push(r);
 			}
-		});
+		}
 	}
 
 	, setWinText: function (name, text) {
-		let config = this.getEvent(name);
-		let event = config.event;
-		if (!event) {
+		const config = this.getEvent(name);
+		if (!config?.event) {
 			return;
 		}
-
+		const event = config.event;
 		event.winText = text;
 	}
 
 	, setEventVariable: function (eventName, variableName, value) {
-		let config = this.getEvent(eventName);
-		let event = config.event;
+		const config = this.getEvent(eventName);
+		const event = config?.event;
 		if (!event) {
 			return;
 		}
-
 		event.variables[variableName] = value;
 	}
 
 	, incrementEventVariable: function (eventName, variableName, delta) {
-		let config = this.getEvent(eventName);
-		let event = config.event;
+		const config = this.getEvent(eventName);
+		const event = config?.event;
 		if (!event) {
 			return;
 		}
-
 		const currentValue = event.variables[variableName] || 0;
 		event.variables[variableName] = currentValue + delta;
 	}
 
 	, update: function () {
-		let configs = this.configs;
-		if (!configs) {
+		if (!this.configs) {
 			return;
 		}
-
-		let scheduler = this.instance.scheduler;
-
-		let cLen = configs.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = configs[i];
-
+		const scheduler = this.instance.scheduler;
+		for (const c of this.configs) {
 			if (c.event) {
+				//Event active.
 				this.updateEvent(c.event);
-
-				const shouldStop = (
-					c.event.done ||
-					(
-						c.cron &&
-						c.durationEvent &&
-						!scheduler.isActive(c)
+				if (c.event.done
+					|| (c.cron
+						&& c.durationEvent
+						&& !scheduler.isActive(c)
 					)
-				);
-
-				if (shouldStop) {
+				) {
+					// Event completed.
 					this.stopEvent(c);
 				}
-
-				continue;
-			} else if ((c.ttl) && (c.ttl > 0)) {
-				c.ttl--;
-				continue;
-			} else if (c.cron) {
-				if (c.durationEvent && !scheduler.isActive(c)) {
-					continue;
-				} else if (!c.durationEvent && !scheduler.shouldRun(c)) {
-					continue;
-				}
-			} else if (c.manualTrigger) {
 				continue;
 			}
-
+			if (c.manualTrigger) {
+				continue;
+			}
+			if (c.ttl && c.ttl > 0) {
+				c.ttl--;
+				continue;
+			}
+			if (c.cron) {
+				if (c.durationEvent) {
+					if (!scheduler.isActive(c)) {
+						continue;
+					}
+				} else {
+					if (!scheduler.shouldRun(c)) {
+						continue;
+					}
+				}
+			}
 			c.event = this.startEvent(c);
 			this.updateEvent(c.event);
 		}
@@ -211,10 +197,9 @@ module.exports = {
 		if (config.oldDescription) {
 			config.description = config.oldDescription;
 		}
-
 		const event = {
 			id: this.nextId++
-			, config: extend({}, config)
+			, config: _.assign({}, config)
 			, eventManager: this
 			, variables: {}
 			, rewards: {}
@@ -226,11 +211,10 @@ module.exports = {
 		};
 		event.config.event = event;
 
-		const onStart = _.getDeepProperty(event, ["config", "events", "onStart"]);
+		const onStart = event.config.events?.onStart;
 		if (onStart) {
 			onStart(this, event);
 		}
-
 		return event;
 	}
 
@@ -239,7 +223,6 @@ module.exports = {
 		if (!config || config.event) {
 			return;
 		}
-
 		config.event = this.startEvent(config);
 		this.updateEvent(config.event);
 
@@ -256,7 +239,6 @@ module.exports = {
 		if (!config || !config.event) {
 			return;
 		}
-
 		this.stopEvent(config);
 
 		this.instance.syncer.queue("onGetMessages", {
@@ -293,39 +275,38 @@ module.exports = {
 			}
 		});
 
-		if ((config.events) && (config.events.afterGiveRewards)) {
+		if (config.events && config.events.afterGiveRewards) {
 			config.events.afterGiveRewards(this, config);
 		}
 	}
 
 	, stopAll: function () {
-		this.configs.forEach((c) => {
-			if (c.event) {
-				c.event.done = true;
+		for (const c of this.configs) {
+			if (!c.event) {
+				// Not active...
+				continue;
 			}
-		});
+			c.event.done = true;
+		}
 	}
 
 	, stopEvent: function (config) {
-		let event = config.event;
-
-		config.event.participators.forEach(function (p) {
+		const event = config.event;
+		for (const p of event.participators) {
 			p.events.unregisterEvent(event);
-		}, this);
-
-		config.event.objects.forEach(function (o) {
+		}
+		for (const o of event.objects) {
 			o.destroyed = true;
 
 			this.instance.syncer.queue("onGetObject", {
-				x: o.x
-				, y: o.y
+				x: o.x, y: o.y
 				, components: [{
 					type: "attackAnimation"
 					, row: 0
 					, col: 4
 				}]
 			}, -1);
-		}, this);
+		}
 
 		if (event.winText) {
 			this.instance.syncer.queue("serverModule", {
@@ -345,19 +326,17 @@ module.exports = {
 				]
 			}, ["server"]);
 		}
-
-		event.phases.forEach(function (p) {
+		for (const p of event.phases) {
 			if ((p.destroy) && (!p.destroyed)) {
 				p.destroyed = true;
 				p.destroy();
 			}
-		});
+		}
 
-		const onStop = _.getDeepProperty(event, ["config", "events", "onStop"]);
+		const onStop = event.config.events?.onStop;
 		if (onStop) {
 			onStop(this, event);
 		}
-
 		delete config.event;
 	}
 
@@ -392,58 +371,42 @@ module.exports = {
 	}
 
 	, updateEvent: function (event) {
-		const onTick = _.getDeepProperty(event, ["config", "events", "onTick"]);
+		const onTick = event.config?.events?.onTick;
 		if (onTick) {
 			onTick(this, event);
 		}
+		event.objects.spliceWhere((o) => o.destroyed);
 
-		let objects = event.objects;
-		let oLen = objects.length;
-		for (let i = 0; i < oLen; i++) {
-			if (objects[i].destroyed) {
-				objects.splice(i, 1);
-				i--;
-				oLen--;
-			}
-		}
-
-		let currentPhases = event.phases;
-		let cLen = currentPhases.length;
 		let stillBusy = false;
-		for (let i = 0; i < cLen; i++) {
-			let phase = currentPhases[i];
+		for (const phase of event.phases) {
 			if (!phase.destroyed) {
 				if (phase.end || (phase.endMark !== -1 && phase.endMark <= event.age)) {
-					if ((phase.destroy) && (!phase.destroyed)) {
+					if (phase.destroy && !phase.destroyed) {
 						phase.destroy();
 					}
 					phase.destroyed = true;
 					continue;
-				} else {
-					if (phase.has("ttl")) {
-						if (phase.ttl === 0) {
-							phase.end = true;
-							continue;
-						}
-
-						phase.ttl--;
-						stillBusy = true;
-					} else if (!phase.auto) {
-						stillBusy = true;
-					}
-
-					phase.update(event);
 				}
+				if (phase.has("ttl")) {
+					if (phase.ttl === 0) {
+						phase.end = true;
+						continue;
+					}
+					phase.ttl--;
+					stillBusy = true;
+				} else if (!phase.auto) {
+					stillBusy = true;
+				}
+				phase.update(event);
 			}
 		}
 
 		const notifications = event.config.notifications || [];
-		notifications.forEach((n) => {
+		for (const n of notifications) {
 			if (n.mark === event.age) {
 				this.handleNotification(event, n);
 			}
-		});
-
+		}
 		event.age++;
 
 		if (event.age === event.config.duration) {
@@ -451,23 +414,20 @@ module.exports = {
 		} else if ((event.config.prizeTime) && (event.age === event.config.prizeTime)) {
 			this.giveRewards(event.config);
 		}
-
 		if (stillBusy) {
 			return;
 		}
 
-		let config = event.config;
-
-		let phases = config.phases;
+		const config = event.config;
+		const phases = config.phases;
 		let pLen = phases.length;
 		for (let i = event.nextPhase; i < pLen; i++) {
-			let p = phases[i];
-
+			const p = phases[i];
 			let phase = event.phases[i];
 			if (!phase) {
-				let phaseFile = "phase" + p.type[0].toUpperCase() + p.type.substr(1);
-				let typeTemplate = require("./phases/" + phaseFile);
-				phase = extend({
+				const phaseFile = "phase" + p.type[0].toUpperCase() + p.type.substr(1);
+				const typeTemplate = require("./phases/" + phaseFile);
+				phase = _.assign({
 					instance: this.instance
 					, event: event
 				}, phaseTemplate, typeTemplate, p);
@@ -475,10 +435,8 @@ module.exports = {
 				event.phases.push(phase);
 				event.currentPhase = phase;
 			}
-
 			event.nextPhase = i + 1;
 			phase.init(event);
-
 			if (!p.auto) {
 				stillBusy = true;
 				break;
@@ -489,36 +447,28 @@ module.exports = {
 			event.done = true;
 		}
 
-		let oList = this.instance.objects.objects;
-		oLen = oList.length;
-		for (let i = 0; i < oLen; i++) {
-			let o = oList[i];
+		const oList = this.instance.objects.objects;
+		for (const o of oList) {
 			if (!o.player) {
 				continue;
 			}
-
 			o.events.events.afterMove.call(o.events);
 		}
 	}
 
 	, getCloseEvents: function (obj) {
-		let x = obj.x;
-		let y = obj.y;
-
-		let configs = this.configs;
-		if (!configs) {
+		if (!this.configs) {
 			return;
 		}
 
-		let cLen = configs.length;
-		let result = [];
-		for (let i = 0; i < cLen; i++) {
-			let event = configs[i].event;
+		const result = [];
+		for (const c of this.configs) {
+			const event = c.event;
 			if (!event) {
 				continue;
 			}
 
-			let exists = event.participators.find((p) => (p.name === obj.name));
+			const exists = event.participators.find((p) => (p.name === obj.name));
 			if (exists) {
 				event.participators.spliceWhere((p) => (p === exists));
 				event.participators.push(obj);
@@ -534,21 +484,13 @@ module.exports = {
 				if (event.config.events && event.config.events.onParticipantJoin) {
 					event.config.events.onParticipantJoin(this, obj);
 				}
-
 				continue;
 			}
-
-			let objects = event.objects;
-			let oLen = objects.length;
-			for (let j = 0; j < oLen; j++) {
-				let o = objects[j];
-
-				if (
-					(distance === -1) ||
-					(!distance) ||
-					(
-						(Math.abs(x - o.x) < distance) &&
-						(Math.abs(y - o.y) < distance)
+			for (const o of event.objects) {
+				if (distance === -1
+					|| !distance
+					|| (Math.abs(obj.x - o.x) < distance
+						&& Math.abs(obj.y - o.y) < distance
 					)
 				) {
 					event.participators.push(obj);
@@ -557,12 +499,10 @@ module.exports = {
 					if (event.config.events && event.config.events.onParticipantJoin) {
 						event.config.events.onParticipantJoin(this, obj);
 					}
-
 					break;
 				}
 			}
 		}
-
 		return result;
 	}
 };

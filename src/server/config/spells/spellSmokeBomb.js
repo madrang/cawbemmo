@@ -19,11 +19,9 @@ let cpnSmokePatch = {
 		if (!o.aggro) {
 			return;
 		}
-
 		if (!this.caster.aggro.canAttack(o)) {
 			return;
 		}
-
 		this.contents.push(o);
 	}
 
@@ -57,36 +55,57 @@ let cpnSmokePatch = {
 };
 
 const particles = {
-	scale: {
-		start: {
-			min: 16
-			, max: 30
+	lifetime: { min: 1, max: 3 }
+	, behaviors: [
+		{ type: "color"
+			, config: {
+				color: {
+					list: [
+						{ time: 0, value: "80f643" }
+						, { time: 0.33, value: "fcfcfc" }
+						, { time: 0.5, value: "80f643" }
+						, { time: 0.66, value: "c0c3cf" }
+						, { time: 1, value: "2b4b3e" }
+					]
+				}
+			}
 		}
-		, end: {
-			min: 8
-			, max: 14
+		, { type: "alpha"
+			, config: {
+				alpha: {
+					list: [
+						{ time: 0, value: 0.2 }
+						, { time: 1, value: 0 }
+					]
+				}
+			}
 		}
-	}
-	, opacity: {
-		start: 0.02
-		, end: 0
-	}
-	, lifetime: {
-		min: 1
-		, max: 3
-	}
-	, speed: {
-		start: 12
-		, end: 2
-	}
-	, color: {
-		start: ["fcfcfc", "80f643"]
-		, end: ["c0c3cf", "2b4b3e"]
-	}
-	, chance: 0.03
-	, randomColor: true
-	, randomScale: true
-	, blendMode: "screen"
+		, { type: "scale"
+			, config: {
+				scale: {
+					list: [
+						{ time: 0, value: 30 }
+						, { time: 1, value: 14 }
+					]
+				}
+				, minMult: 0.5
+			}
+		}
+		, { type: "moveSpeed",
+			config: {
+				speed: {
+					list: [
+						{ time: 0, value: 12 }
+						, { time: 1, value: 2 }
+					]
+				}
+			}
+		}
+		, { type: "blendMode"
+			, config: { blendMode: "screen" }
+		}
+	]
+	, spawnChance: 0.03
 };
 
 module.exports = {
@@ -103,19 +122,16 @@ module.exports = {
 	, targetGround: true
 	, targetPlayerPos: true
 
-	, particles: particles
+	, particles
 
 	, update: function () {
-		let selfCast = this.selfCast;
-
+		const selfCast = this.selfCast;
 		if (!selfCast) {
 			return;
 		}
-
-		if ((selfCast !== true) && (Math.random() >= selfCast)) {
+		if (selfCast !== true && Math.random() >= selfCast) {
 			return;
 		}
-
 		if (this.canCast()) {
 			this.cd = this.cdMax;
 			this.cast();
@@ -131,7 +147,7 @@ module.exports = {
 
 		const particleEvent = {
 			source: this
-			, particleConfig: extend({}, this.particles)
+			, particleConfig: _.assign({}, this.particles)
 		};
 		obj.fireEvent("beforeSpawnParticles", particleEvent);
 
@@ -150,8 +166,7 @@ module.exports = {
 			let objects = this.obj.instance.objects;
 			let patches = [];
 
-			let physics = this.obj.instance.physics;
-
+			const physics = this.obj.instance.physics;
 			for (let i = x - radius; i <= x + radius; i++) {
 				let dx = Math.abs(x - i);
 				for (let j = y - radius; j <= y + radius; j++) {
@@ -165,7 +180,7 @@ module.exports = {
 						continue;
 					}
 
-					let patch = objects.buildObjects([{
+					const patch = objects.buildObjects([{
 						x: i
 						, y: j
 						, properties: {
@@ -190,7 +205,6 @@ module.exports = {
 							}
 						}
 					}]);
-
 					patches.push(patch);
 				}
 			}
@@ -202,7 +216,6 @@ module.exports = {
 				});
 			}
 		}
-
 		return true;
 	}
 };

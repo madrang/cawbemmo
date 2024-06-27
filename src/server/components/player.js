@@ -22,7 +22,7 @@ module.exports = {
 		if (character.dead) {
 			obj.dead = true;
 		}
-		extend(obj, {
+		_.assign(obj, {
 			layerName: "mobs"
 			, cell: character.cell
 			, sheetName: character.sheetName
@@ -41,7 +41,7 @@ module.exports = {
 		character.components = character.components || [];
 
 		let blueprintStats = character.components.find((c) => c.type === "stats") || {};
-		extend(blueprintStats, classes.stats[obj.class]);
+		_.assign(blueprintStats, classes.stats[obj.class]);
 		if (!blueprintStats.values.hp) {
 			blueprintStats.values.hp = blueprintStats.values.hpMax;
 		}

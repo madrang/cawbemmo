@@ -17,11 +17,11 @@ define([
 
 		, postRender: function () {
 			const { clientConfig: { tos: { content, version } } } = globals;
-			const morphedContent = content.split("\n").join("<br />");
 
 			const elHeading = this.find(".heading");
 			elHeading.html(`${elHeading.html()} (v${version})`);
 
+			const morphedContent = content.replaceAll("\n", "<br />");
 			this.find(".content").html(morphedContent);
 
 			this.find(".btnDecline").on("click", this.onDeclineClick.bind(this));
@@ -36,7 +36,6 @@ define([
 		, onAcceptClick: function (version) {
 			browserStorage.set("tos_accepted_version", version);
 			this.destroy();
-
 			uiFactory.build("characters");
 		}
 	};

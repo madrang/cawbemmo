@@ -117,7 +117,7 @@ define([
 				this.stage.addChild(layers[l]);
 			});
 			particleLayers.forEach((p) => {
-				const engine = $.extend({}, particles);
+				const engine = _.assign({}, particles);
 				engine.init({
 					r: this
 					, renderer: this.renderer

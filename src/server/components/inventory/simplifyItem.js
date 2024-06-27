@@ -6,7 +6,7 @@ const tierNames = ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Hon
 
 //Method
 const simplifyItem = (cpnInventory, item) => {
-	const result = extend({}, item);
+	const result = _.assign({}, item);
 
 	if (result.effects) {
 		result.effects = result.effects.map((e) => ({
