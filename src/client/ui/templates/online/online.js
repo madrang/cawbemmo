@@ -83,12 +83,13 @@ define([
 			});
 
 			onlineList.forEach(function (l) {
-				let html = templateListItem
+				const html = templateListItem
 					.replace("$NAME$", l.name)
 					.replace("$LEVEL$", l.level)
-					.replace("$CLASS$", l.class);
+					.replace("$CLASS$", l.class)
+					.replace("$ZONE$", l.zoneName);
 
-				let el = $(html)
+				const el = $(html)
 					.appendTo(container)
 					.on("contextmenu", this.showContext.bind(this, l));
 
