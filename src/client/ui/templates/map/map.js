@@ -36,7 +36,7 @@ define([
 		}
 
 		, postRender: function () {
-			for (const eventName of Object.keys(this.events)) {
+			for (const eventName in this.events) {
 				this.onEvent(eventName, this.events[eventName].bind(this));
 			}
 			this.el.on("click", this.toggleMap.bind(this));

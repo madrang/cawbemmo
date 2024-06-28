@@ -15,15 +15,13 @@ let mapScale = null;
 let padding = null;
 
 const objectifyProperties = (oldProperties) => {
-	if (!oldProperties || !oldProperties.push) {
+	if (!oldProperties || !Array.isArray(oldProperties)) {
 		return oldProperties || {};
 	}
-
-	let newProperties = {};
-	oldProperties.forEach((p) => {
-		newProperties[p.name] = p.value;
-	});
-
+	const newProperties = {};
+	for (const { name, value } of oldProperties) {
+		newProperties[name] = value;
+	}
 	return newProperties;
 };
 
@@ -191,25 +189,22 @@ module.exports = {
 			}
 		}
 
-		//Fix for newer versions of Tiled
-		this.randomMap.templates.forEach((r) => {
+		for (const r of this.randomMap.templates) {
+			//Fix for newer versions of Tiled
 			r.properties = objectifyProperties(r.properties);
-		});
 
-		this.randomMap.templates
-			.filter((r) => r.properties.mapping)
-			.forEach(function (m) {
-				let x = m.x;
-				let y = m.y;
-				let w = m.width;
-				let h = m.height;
-				for (let i = x; i < x + w; i++) {
-					let row = this.layers[i];
-					for (let j = y; j < y + h; j++) {
-						row[j] = "";
-					}
+			//TODO - Seems like Incomplete code from previous repo ????
+			const m = r.properties.mapping;
+			if (!m) {
+				continue;
+			}
+			for (let i = m.x; i < m.x + m.width; i++) {
+				const row = this.layers[i];
+				for (let j = m.y; j < m.y + m.height; j++) {
+					row[j] = "";
 				}
-			}, this);
+			}
+		}
 		physics.init(this.collisionMap);
 		padding = mapFile.properties.padding;
 		mapFile = null;

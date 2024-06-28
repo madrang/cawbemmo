@@ -140,13 +140,10 @@ module.exports = {
 			};
 
 			const doSpawn = (
-				(
-					!l.cron &&
-					!l.cd
-				) || (
-					l.cron &&
-					!l.mob &&
-					scheduler.shouldRun(cronInfo)
+				(!l.cron && !l.cd)
+				|| (l.cron
+					&& !l.mob
+					&& scheduler.shouldRun(cronInfo)
 				)
 			);
 

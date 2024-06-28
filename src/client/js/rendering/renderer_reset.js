@@ -4,9 +4,9 @@ define([
 	spritePool
 ) {
 	return function () {
-		let map = this.map;
-		let w = this.w = map.length;
-		let h = this.h = map[0].length;
+		const map = this.map;
+		const w = this.w = map.length;
+		const h = this.h = map[0].length;
 
 		this.stage.removeChild(this.layers.hiders);
 		this.layers.hiders = new PIXI.Container();

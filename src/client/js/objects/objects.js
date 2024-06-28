@@ -162,21 +162,18 @@ define([
 			//We need to set visibility before components kick in as they sometimes need access to isVisible
 			obj.updateVisibility();
 
-			components.forEach((c) => {
+			for (const c of components) {
 				//Map ids to objects
-				let keys = Object.keys(c).filter((k) => {
-					return (k.indexOf("id") === 0 && k.length > 2);
-				});
-				keys.forEach((k) => {
-					let value = c[k];
-					let newKey = k.substr(2, k.length).toLowerCase();
-
-					c[newKey] = this.objects.find((o) => o.id === value);
+				for (const k in c) {
+					if (!k.startsWith("id") || k.length <= 2) {
+						continue;
+					}
+					const newKey = k.substr(2, k.length).toLowerCase();
+					c[newKey] = this.objects.find((o) => o.id === c[k]);
 					delete c[k];
-				});
-
+				}
 				obj.addComponent(c.type, c);
-			});
+			}
 
 			if (obj.self) {
 				events.emit("onGetPlayer", obj);
@@ -197,30 +194,26 @@ define([
 
 		, updateObject: function (obj, template) {
 			//console.log("Updating object", obj);
-			let components = template.components || [];
-
-			components.forEach((c) => {
-				//Map ids to objects
-				let keys = Object.keys(c).filter((k) => {
-					return (k.indexOf("id") === 0 && k.length > 2);
-				});
-				keys.forEach((k) => {
-					let value = c[k];
-					let newKey = k.substr(2, k.length).toLowerCase();
-
-					c[newKey] = this.objects.find((o) => o.id === value);
-					delete c[k];
-				});
-
-				obj.addComponent(c.type, c);
-			});
-
-			delete template.components;
+			if (template.components) {
+				for (const c of template.components) {
+					//Map ids to objects
+					for (const k in c) {
+						if (!k.startsWith("id") || k.length <= 2) {
+							continue;
+						}
+						const newKey = k.substr(2, k.length).toLowerCase();
+						c[newKey] = this.objects.find((o) => o.id === c[k]);
+						delete c[k];
+					}
+					obj.addComponent(c.type, c);
+				}
+				delete template.components;
+			}
 
 			if (template.removeComponents) {
-				template.removeComponents.forEach((r) => {
+				for (const r of template.removeComponents) {
 					obj.removeComponent(r);
-				});
+				}
 				delete template.removeComponents;
 			}
 
