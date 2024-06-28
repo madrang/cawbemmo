@@ -91,6 +91,10 @@ module.exports = (cpnWorkbench, msg) => {
 			if (quantity && quantity.push) {
 				item.quantity = quantity[0] + Math.floor(Math.random() * (quantity[1] - quantity[0]));
 			}
+			// possible hook ici
+			//console.log(crafter);
+
+			crafter.social.getXp(10 * item.quantity * crafter.stats.level);
 
 			crafter.inventory.getItem(item);
 		});
