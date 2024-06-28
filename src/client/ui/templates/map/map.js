@@ -63,8 +63,8 @@ define([
 				return;
 			}
 			const canvasElement = this.el[0];
-			canvasElement.width = physics.grid[0].length * CANVAS_SCALE;
-			canvasElement.height = physics.grid.length * CANVAS_SCALE;
+			canvasElement.width = physics.grid.length * CANVAS_SCALE;
+			canvasElement.height = physics.grid[0].length * CANVAS_SCALE;
 			const ctx = canvasElement.getContext("2d");
 			ctx.scale(this.mapScale, this.mapScale);
 			ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -149,7 +149,7 @@ define([
 					this.toggleMap();
 					return;
 				}
-				if (key == "13" && this.mapScale > 1) {
+				if (key == "13" && this.mapScale > CANVAS_SCALE) {
 					this.mapScale--;
 					this.drawMap();
 					return;
