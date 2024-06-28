@@ -44,6 +44,9 @@ module.exports = {
 				promises.push(r);
 			}
 		}
+		if (promises.length === 1) {
+			return promises[0];
+		}
 		if (promises.length > 0) {
 			return Promise.all(promises);
 		}

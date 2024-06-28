@@ -13,7 +13,7 @@ define([
 	return {
 		tpl: template
 
-		, mapScale: CANVAS_SCALE
+		, mapScale: CANVAS_SCALE * 2
 		, itemColors: {
 			default:  "#FF00FF" // Purple
 			, mobs: {
@@ -63,10 +63,12 @@ define([
 				return;
 			}
 			const canvasElement = this.el[0];
-			canvasElement.width = physics.grid[0].length * CANVAS_SCALE;
-			canvasElement.height = physics.grid.length * CANVAS_SCALE;
+			canvasElement.width = physics.grid.length * CANVAS_SCALE;
+			canvasElement.height = physics.grid[0].length * CANVAS_SCALE;
 			const ctx = canvasElement.getContext("2d");
+			ctx.translate(canvasElement.width / 2, canvasElement.height / 2);
 			ctx.scale(this.mapScale, this.mapScale);
+			ctx.translate(-player.x, -player.y);
 			ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 			for (let i = 0; i < physics.grid.length; i++) {
 				for (let j = 0; j < physics.grid[i].length; j++) {
@@ -149,7 +151,7 @@ define([
 					this.toggleMap();
 					return;
 				}
-				if (key == "13" && this.mapScale > 1) {
+				if (key == "13" && this.mapScale > CANVAS_SCALE) {
 					this.mapScale--;
 					this.drawMap();
 					return;
