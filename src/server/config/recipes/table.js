@@ -64,10 +64,10 @@ module.exports = [
 		// effects
 		, {
 			rolls: {
-				//stat: ( "mp" | "hp" )
+				//stat: ( "mana" | "hp" )
 				stat: "hp"
 				// montant de base
-				, amount: 10
+				, amount: "50%"
 			}
 		}
 	)
@@ -86,10 +86,10 @@ module.exports = [
 		]
 		, {
 			rolls: {
-				//stat: ( "mp" | "hp" )
-				stat: "mp"
+				//stat: ( "mana" | "hp" )
+				stat: "mana"
 				// montant de base
-				, amount: 50
+				, amount: "50%"
 			}
 		}
 	)
