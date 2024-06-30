@@ -86,8 +86,8 @@ module.exports = [
 		]
 		, {
 			rolls: {
-				//stat: ( "mp" | "hp" )
-				stat: "mp"
+				//stat: ( "mana" | "hp" )
+				stat: "mana"
 				// montant de base
 				, amount: 50
 			}

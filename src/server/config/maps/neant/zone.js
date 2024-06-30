@@ -1,6 +1,6 @@
 module.exports = {
-	name: "Bois"
-	, level: [13, 16]
+	name: "neant"
+	, level: [1, 20]
 	, resources: {
 		champignon: {
 			type: "herb"
@@ -8,12 +8,31 @@ module.exports = {
 		}
 		, weed: {
 			type: "herb"
-			, max: 10
-			//, cdMax: 17100
+			, max: 5
+			, cdMax: 17100
 		}
 	}
 	, objects: {
-		mrBoner: {
+		shophermit: {
+			properties: {
+				cpnNotice: {
+					actions: {
+						enter: {
+							cpn: "dialogue"
+							, method: "talk"
+							, args: [{
+								targetName: "hermit"
+							}]
+						}
+						, exit: {
+							cpn: "dialogue"
+							, method: "stopTalk"
+						}
+					}
+				}
+			}
+		}
+		, mrBoner: {
 			properties: {
 				cpnNotice: {
 					actions: {
@@ -37,13 +56,6 @@ module.exports = {
 			, type: "fish"
 			, quantity: [6, 12]
 		}
-		, table: {
-			components: {
-				cpnWorkbench: {
-					type: "table"
-				}
-			}
-		}
 		, fireplace: {
 			components: {
 				cpnWorkbench: {
@@ -54,42 +66,51 @@ module.exports = {
 	}
 	, mobs: {
 		default: {
-			level: 13
-			, regular: {
+			regular: {
 				drops: {
 					chance: 40
 					, rolls: 1
 				}
 			}
 		}
-		, "renard-garous": {
-			level: 13
+		, "crazed seagull": {
+			level: 1
+			, attackable: false
+		}
+		, mouette: {
+			level: 1
 			, regular: {
 				drops: {
 					chance: 55
 					, rolls: 1
 				}
 			}
+			, rare: {
+				name: "Ronald"
+			}
 			, questItem: {
-				name: "Cd de boys band"
+				name: "Gull Feather"
 				, sprite: [0, 0]
 			}
 		}
-		, "papillion": {
-			level: 14
+		, vidange: {
+			level: 3
 			, regular: {
 				drops: {
-					chance: 55
+					chance: 50
 					, rolls: 1
 				}
 			}
+			, rare: {
+				name: "Vidange de luxe"
+			}
 			, questItem: {
-				name: "papillion mort"
-				, sprite: [0, 0]
+				name: "Hamburger usagée"
+				, sprite: [0, 1]
 			}
 		}
 		, "grosse vidange": {
-			level: 14
+			level: 5
 			, cron: "0 * * * *"
 
 			, regular: {
@@ -106,18 +127,49 @@ module.exports = {
 				chance: 100
 			}
 		}
-		, wezo: {
-			level: 15
-			, rare: {
-				name: "Boss des wézo"
-				,hpMult: 3
-				, dmgMult: 3
-
-				, drops: {
-					chance: 100
-					, rolls: 2
-					, magicFind: [1300]
+		, sbire: {
+			level: 4
+			, regular: {
+				drops: {
+					chance: 45
+					, rolls: 1
 				}
+			}
+			, rare: {
+				name: "Un fou"
+			}
+			, questItem: {
+				name: "Cagoule"
+				, sprite: [0, 2]
+			}
+		}
+		, "45 tours": {
+			level: 5
+			, regular: {
+				drops: {
+					rolls: 1
+				}
+
+			}
+			, rare: {
+				name: "Evan Joanes"
+			}
+		}
+		, crab: {
+			level: 6
+
+			, rare: {
+				name: "Squiggles"
+			}
+			, questItem: {
+				name: "Pince de crabe"
+				, sprite: [0, 3]
+			}
+		}
+		, kazou: {
+			level: 7
+			, rare: {
+				name: "Le roi des homard"
 			}
 			, regular: {
 				drops: {
@@ -134,8 +186,8 @@ module.exports = {
 				}
 			}
 		}
-		, Steeeveess: {
-			level: 16
+		, "truite à panache": {
+			level: 10
 			, regular: {
 				drops: {
 					rolls: 1
@@ -151,9 +203,7 @@ module.exports = {
 				}
 			}
 			, rare: {
-				name: "Keveune"
-				, hpMult: 3
-				, dmgMult: 3
+				name: "Yollande"
 				, drops: {
 					rolls: 1
 					, noRandom: true
@@ -168,7 +218,7 @@ module.exports = {
 				}
 			}
 		}
-		, teleport: {
+		, binary: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -177,6 +227,87 @@ module.exports = {
 			}
 			, properties: {
 
+			}
+		}
+		, hermit: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 3
+						, max: 10
+					}
+					, forceItems: [{
+						name: "Flimsy Fishing Rod"
+						, type: "Fishing Rod"
+						, slot: "tool"
+						, quality: 0
+						, worth: 5
+						, sprite: [11, 0]
+						, infinite: true
+						, noSalvage: true
+					}, {
+						name: "Skewering Stick"
+						, material: true
+						, sprite: [11, 7]
+						, worth: 2
+						, quality: 0
+						, infinite: true
+					}]
+					, level: {
+						min: 1
+						, max: 10
+					}
+					, markup: {
+						buy: 0.50
+						, sell: 2.5
+					}
+				}
+			}
+		}, gislain: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 3
+						, max: 10
+					}
+					, forceItems: [{
+						name: "Canne a pêche a spring"
+						, type: "Fishing Rod"
+						, slot: "tool"
+						, quality: 0
+						, worth: 500
+						, sprite: [11, 1]
+						, infinite: true
+						, noSalvage: true
+					}, {
+						name: "Skewering Stick"
+						, material: true
+						, sprite: [11, 7]
+						, worth: 2
+						, quality: 0
+						, infinite: true
+					}]
+					, level: {
+						min: 8
+						, max: 14
+					}
+					, markup: {
+						buy: 0.52
+						, sell: 2.52
+					}
+				}
 			}
 		}
 		, rodriguez: {
