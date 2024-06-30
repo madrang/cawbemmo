@@ -87,7 +87,7 @@ module.exports = {
 	, update: function () {
 		const spawners = this.list;
 		let count = spawners.length;
-
+		const time = scheduler.getTime();
 		for (let i = 0; i < count; i++) {
 			const l = spawners[i];
 
@@ -143,7 +143,7 @@ module.exports = {
 				(!l.cron && !l.cd)
 				|| (l.cron
 					&& !l.mob
-					&& scheduler.shouldRun(cronInfo)
+					&& scheduler.shouldRun(cronInfo, time)
 				)
 			);
 

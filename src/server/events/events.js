@@ -155,6 +155,7 @@ module.exports = {
 			return;
 		}
 		const scheduler = this.instance.scheduler;
+		const time = scheduler.getTime();
 		for (const c of this.configs) {
 			if (c.event) {
 				//Event active.
@@ -162,7 +163,7 @@ module.exports = {
 				if (c.event.done
 					|| (c.cron
 						&& c.durationEvent
-						&& !scheduler.isActive(c)
+						&& !scheduler.isActive(c, time)
 					)
 				) {
 					// Event completed.
@@ -179,11 +180,11 @@ module.exports = {
 			}
 			if (c.cron) {
 				if (c.durationEvent) {
-					if (!scheduler.isActive(c)) {
+					if (!scheduler.isActive(c, time)) {
 						continue;
 					}
 				} else {
-					if (!scheduler.shouldRun(c)) {
+					if (!scheduler.shouldRun(c, time)) {
 						continue;
 					}
 				}

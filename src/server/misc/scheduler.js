@@ -16,8 +16,11 @@ module.exports = {
 	, isTimeMatch: function (cron, time) {
 		cron = cron.split(" ");
 		if (cron.length !== 5) {
-			_.log.cron.error("Invalid cron notation '%s'.", c.cron);
+			_.log.cron.error("Invalid cron notation '%s'.", cron.join(" "));
 			return false;
+		}
+		if (!time) {
+			time = this.lastTime || this.getTime();
 		}
 		for (const i in CRON_STEPS) {
 			const t = CRON_STEPS[i];
@@ -53,19 +56,17 @@ module.exports = {
 		return true;
 	}
 
-	, isActive: function (c) {
-		let cron = c.cron.split(" ");
-		if (cron.length !== 5) {
-			return false;
+	, isActive: function (c, time) {
+		if (!time) {
+			time = this.lastTime || this.getTime();
 		}
-		const time = this.getTime();
-		return this.isTimeMatch(cron, time);
+		return this.isTimeMatch(c.cron, time);
 	}
 
 	, isPlanned: function(cron, lastTime, time) {
 		cron = cron.split(" ");
 		if (cron.length !== 5) {
-			_.log.cron.error("Invalid cron notation '%s'.", c.cron);
+			_.log.cron.error("Invalid cron notation '%s'.", cron.join(" "));
 			return false;
 		}
 		for (const i in CRON_STEPS) {
@@ -116,8 +117,10 @@ module.exports = {
 		return true;
 	}
 
-	, shouldRun: function (c) {
-		const time = this.getTime();
+	, shouldRun: function (c, time) {
+		if (!time) {
+			time = this.getTime();
+		}
 		if (c.lastRun) {
 			// If was runned before, check that time in minutes has changed since.
 			let isCurrentTime = true;
