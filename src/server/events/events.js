@@ -212,6 +212,7 @@ module.exports = {
 		};
 		event.config.event = event;
 
+		_.log.events.debug("Starting event '%s'", config.name);
 		const onStart = event.config.events?.onStart;
 		if (onStart) {
 			onStart(this, event);
@@ -292,6 +293,7 @@ module.exports = {
 	}
 
 	, stopEvent: function (config) {
+		_.log.events.debug("Event '%s' has completed.", config.name);
 		const event = config.event;
 		for (const p of event.participators) {
 			p.events.unregisterEvent(event);

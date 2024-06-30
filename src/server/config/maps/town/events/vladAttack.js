@@ -1,8 +1,8 @@
 module.exports = {
-	name: "Rodriguez Heist"
-	, description: "Rodriguez, the Hermit's only chicken companion, has been kidnapped by a band of imps. Who knows what they plan on doing with him."
-	, distance: -1
-	, cron: "0 */2 * * *"
+	name: "Vlad Vs. Igor"
+	, description: "Vlad et ses sbir attaque Igor."
+	, distance: 10
+	, cron: "*/5 * * * *"
 	, disabled: true
 	, phases: [
 		{ type: "spawnMob"
