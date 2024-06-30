@@ -3,17 +3,17 @@ module.exports = {
 	, description: "Vlad et ses sbir attaque Igor."
 	, distance: 10
 	, cron: "*/5 * * * *"
-	, disabled: true
+	, disabled: false
 	, phases: [
 		{ type: "spawnMob"
-			, spawnRect: { x: 70, y: 40 }
+			, spawnRect: { x: 120, y: 94 }
 			, mobs: [
-				{ name: "Thieving Imp"
+				{ name: "Sbire facher"
 					, amount: 4
 					, attackable: false
 					, level: 5
-					, cell: 51
-					, id: "impthief-$"
+					, cell: 548
+					, id: "sbire-$"
 					, hpMult: 5
 					, dmgMult: 1
 					, drops: {
@@ -26,45 +26,52 @@ module.exports = {
 						, { x: 4, y: 4 }
 					]
 				}
-				, { name: "Imp Kingpin"
+				, { name: "Gros Sbire"
 					, level: 8
 					, attackable: false
-					, cell: 52
-					, id: "imp-kingpin"
+					, cell: 548
+					, id: "gros-sbire"
 					, hpMult: 10
 					, dmgMult: 2
 					, pos: { x: 2, y: 2 }
 				}
-				, { name: "Rodriguez"
+				, { name: "Vlad"
 					, exists: true
 					, pos: { x: 3, y: 2 }
+				}
+				, { name: "Igor"
+					, exists: true
+					, pos: { x: 3, y: 3 }
 				}
 			]
 		}
 		, { type: "locateMob"
-			, announce: "Locate the thieves"
-			, mobs: "imp-kingpin"
-			, distance: 3
+			, announce: "Vlad et les Sbires attaques Igors!"
+			, mobs: "gros-sbire"
+			, distance: 5
 		}
 		, { type: "eventChain"
 			, config: [
 				{ type: "mobTalk"
-					, id: "impthief-1"
-					, text: "Boss! They're onto us!"
+					, id: "sbire-1"
+					, text: "Boss! Laisse moi le tuer!"
 					, delay: 10
 				}
 				, { type: "mobTalk"
-					, id: "impthief-2"
-					, text: "They'll take the chicken. We needs it!"
+					, id: "sbire-2"
+					, text: "Non! Je vais le tuer..."
 					, delay: 10
 				}
 				, { type: "mobTalk"
-					, id: "imp-kingpin"
-					, text: "They'll never have her, she's ours now! Kill them!"
+					, id: "gros-sbire"
+					, text: "Tout le monde en meme temps! Tuez le!"
 					, delay: 10
 				}
 				, { type: "addComponents"
-					, mobs: ["impthief-0", "impthief-1", "impthief-2", "impthief-3"]
+					, mobs: [
+						"gros-sbire"
+						, "sbire-0", "sbire-1", "sbire-2", "sbire-3"
+					]
 					, components: [{
 						type: "aggro"
 						, faction: "forest imps"
@@ -73,17 +80,23 @@ module.exports = {
 			]
 		}
 		, { type: "killMob"
-			, mobs: ["impthief-0", "impthief-1", "impthief-2", "impthief-3"]
+			, mobs: [
+				"gros-sbire"
+				, "sbire-0"
+				, "sbire-1"
+				, "sbire-2"
+				, "sbire-3"
+			]
 		}
 		, { type: "eventChain"
 			, config: [
 				{ type: "mobTalk"
-					, id: "imp-kingpin"
-					, text: "I have a thousand more imps. Come, I'll finish this now."
+					, id: "Vlad"
+					, text: "Des Sbires j'en ait pleins, tu va mourir!!"
 					, delay: 10
 				}
 				, { type: "addComponents"
-					, mobs: "imp-kingpin"
+					, mobs: "Vlad"
 					, components: [
 						{ type: "aggro"
 							, faction: "forest imps"
@@ -92,28 +105,89 @@ module.exports = {
 				}
 			]
 		}
+		, { type: "spawnMob"
+			, spawnRect: { x: 120, y: 94 }
+			, mobs: [
+				{ name: "Sbire facher"
+					, amount: 4
+					, attackable: false
+					, level: 5
+					, cell: 548
+					, id: "sbire-$"
+					, hpMult: 5
+					, dmgMult: 1
+					, drops: {
+						rolls: 0
+					}
+					, pos: [
+						{ x: 0, y: 0 }
+						, { x: 4, y: 0 }
+						, { x: 0, y: 4 }
+						, { x: 4, y: 4 }
+					]
+				}
+				, { name: "Gros Sbire"
+					, amount: 2
+					, level: 8
+					, attackable: false
+					, cell: 548
+					, id: "gros-sbire-$"
+					, hpMult: 10
+					, dmgMult: 2
+					, pos: { x: 2, y: 2 }
+				}
+				, { name: "Vlad"
+					, exists: true
+					, pos: { x: 3, y: 2 }
+				}
+				, { name: "Igor"
+					, exists: true
+					, pos: { x: 3, y: 3 }
+				}
+			]
+		}
 		, { type: "killMob"
-			, mobs: "imp-kingpin"
+			, mobs: "Vlad"
 			, percentage: 0.2
 		}
 		, { type: "eventChain"
 			, config: [
 				{ type: "removeComponents"
-					, mobs: "imp-kingpin"
+					, mobs: "Vlad"
 					, components: "aggro"
 				}
 				, { type: "mobTalk"
-					, id: "imp-kingpin"
-					, text: "Aargh, no! I must get to my lair!"
+					, id: "Vlad"
+					, text: "Ha non! J'ai une truite sur le feux!"
 					, delay: 10
 				}
 			]
 		}
 		, { type: "spawnMob"
 			, mobs: {
-				name: "Imp Kingpin"
+				name: "Vlad"
 				, exists: true
-				, pos: { x: 90, y: 25 }
+				, pos: { x: 122, y: 93 }
+			}
+		}
+		, { type: "eventChain"
+			, config: [
+				{ type: "removeComponents"
+					, mobs: "Vlad"
+					, components: "aggro"
+				}
+				, { type: "mobTalk"
+					, id: "Vlad"
+					, text: "Je doit partir avant que a brule!"
+					, delay: 10
+				}
+			]
+		}
+		, { type: "spawnMob"
+			, mobs: {
+				name: "Vlad"
+				, exists: true
+				, pos: { x: 122, y: 92 }
 			}
 		}
 	]

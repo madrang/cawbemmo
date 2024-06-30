@@ -2,7 +2,7 @@
 const fs = require("fs");
 
 //Imports
-const phaseTemplate = require("./phases/phaseTemplate");
+const phaseTemplate = require("./phaseTemplate");
 const { mapList } = require("../world/mapManager");
 
 //Helpers
@@ -428,13 +428,15 @@ module.exports = {
 			const p = phases[i];
 			let phase = event.phases[i];
 			if (!phase) {
-				const phaseFile = "phase" + p.type[0].toUpperCase() + p.type.substr(1);
-				const typeTemplate = require("./phases/" + phaseFile);
+				const typeTemplate = _.safeRequire("./phases/phase" + _.capitalize(p.type));
 				phase = _.assign({
-					instance: this.instance
-					, event: event
-				}, phaseTemplate, typeTemplate, p);
-
+						instance: this.instance
+						, event: event
+					}
+					, phaseTemplate
+					, typeTemplate
+					, p
+				);
 				event.phases.push(phase);
 				event.currentPhase = phase;
 			}

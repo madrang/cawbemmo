@@ -1705,7 +1705,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":927,
+                 "x":928,
                  "y":672
                 }, 
                 {
@@ -1720,7 +1720,7 @@
                  "y":632
                 }, 
                 {
-                 "height":55,
+                 "height":56,
                  "id":1022,
                  "name":"",
                  "properties":[
@@ -1732,7 +1732,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":79,
+                 "width":80,
                  "x":800,
                  "y":688
                 }],
@@ -3051,7 +3051,7 @@
                  "gid":591,
                  "height":8,
                  "id":1063,
-                 "name":"igor",
+                 "name":"Igor",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -3063,7 +3063,7 @@
                  "gid":585,
                  "height":8,
                  "id":1064,
-                 "name":"vlad",
+                 "name":"Vlad",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -4075,7 +4075,7 @@
                  "y":1200
                 }, 
                 {
-                 "height":55,
+                 "height":56,
                  "id":1021,
                  "name":"",
                  "properties":[
@@ -4087,7 +4087,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":79,
+                 "width":80,
                  "x":800,
                  "y":688
                 }, 
@@ -4130,7 +4130,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1083,
+ "nextobjectid":1084,
  "orientation":"orthogonal",
  "properties":[
         {
