@@ -70,10 +70,10 @@ module.exports = {
 		this.name = zoneName;
 		this.path = path;
 
-		this.zoneConfig = _.safeRequire(`../${this.path}/${this.name}/zone`) || globalZone;
+		this.zoneConfig = _.safeRequire(module, `../${this.path}/${this.name}/zone`) || globalZone;
 		events.emit("onAfterGetZone", this.name, this.zoneConfig);
 
-		const chats = _.safeRequire(`../${this.path}/${this.name}/chats`);
+		const chats = _.safeRequire(module, `../${this.path}/${this.name}/chats`);
 		if (chats) {
 			if (this.zoneConfig.chats) {
 				_.assign(this.zoneConfig.chats, chats);
@@ -82,7 +82,7 @@ module.exports = {
 			}
 		}
 
-		const dialogues = _.safeRequire(`../${this.path}/${this.name}/dialogues`);
+		const dialogues = _.safeRequire(module, `../${this.path}/${this.name}/dialogues`);
 		events.emit("onBeforeGetDialogue", this.name, dialogues);
 		if (dialogues) {
 			this.zoneConfig.dialogues = dialogues;

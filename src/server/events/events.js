@@ -428,7 +428,7 @@ module.exports = {
 			const p = phases[i];
 			let phase = event.phases[i];
 			if (!phase) {
-				const typeTemplate = _.safeRequire("./phases/phase" + _.capitalize(p.type));
+				const typeTemplate = _.safeRequire(module, "./phases/phase" + _.capitalize(p.type));
 				phase = _.assign({
 						instance: this.instance
 						, event: event
