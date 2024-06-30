@@ -25,7 +25,8 @@ const profanities = require("../language/profanities");
 const eventEmitter = require("../misc/events");
 
 //Worker
-instancer.mapName = process.argv[2];
+const mapName = process.argv[2];
+instancer.mapName = mapName;
 
 const onCpnsReady = async function () {
 	factions.init();
@@ -57,16 +58,21 @@ const onCrash = async (e) => {
 	if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
 		return;
 	}
-	_.log.worker.error(`Error Logged: ${e.toString()}\r\n`, e.stack);
+	_.log.worker[`Map/${mapName}`].error(`Error Logged: ${e.toString()}\r\n`, e.stack);
 	await io.setAsync({
 		key: new Date()
 		, table: "error"
 		, value: e.toString() + " | " + e.stack.toString()
 	});
-	process.send({
-		event: "onCrashed"
+	process.send({ event: "onCrashed"
+		, name: mapName
 	});
 };
+
+const onWarn = (warning) => {
+	_.log.worker[`Map/${mapName}`].warn(`Warning: ${e.toString()}\r\n`, e.stack);
+};
+process.on("warning", onWarn);
 
 const onDbReady = async function () {
 	require("../misc/random");
@@ -74,7 +80,7 @@ const onDbReady = async function () {
 	process.on("uncaughtException", onCrash);
 	process.on("unhandledRejection", onCrash);
 
-	await mods.init();
+	await mods.init({ logger: _.log.worker[`Map/${mapName}`].mods });
 
 	onModsReady();
 };

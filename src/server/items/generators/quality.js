@@ -14,16 +14,14 @@ module.exports = {
 			item.quality = ~~blueprint.quality;
 			return;
 		}
-
-		let qualities = _.assign([], this.qualities);
+		const qualities = _.assign([], this.qualities);
 
 		let magicFind = (blueprint.magicFind || 0);
-		if (!(magicFind instanceof Array)) {
-			magicFind = [magicFind];
-		} else {
+		if (Array.isArray(magicFind)) {
 			magicFind = _.assign([], magicFind);
+		} else {
+			magicFind = [magicFind];
 		}
-
 		let bonusMagicFind = blueprint.bonusMagicFind || 0;
 
 		let mLen = magicFind.length;
@@ -36,11 +34,9 @@ module.exports = {
 						qualities[i] = 0;
 					}
 				}
-
 				break;
 			}
 		}
-
 		let max = qualities.reduce((p, n) => p + n);
 		let gen = Math.floor(Math.random() * max);
 

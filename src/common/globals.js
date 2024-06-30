@@ -65,7 +65,13 @@
 		};
 	}
 	Object.defineProperties(String.prototype, {
-		indexOfAny: {
+		capitalize: {
+			enumerable: false
+			, value: function() {
+				return this[0].toUpperCase() + this.substr(1);
+			}
+		}
+		, indexOfAny: {
 			enumerable: false
 			, value: function (charsArr) {
 				const sLen = this.length;
@@ -81,6 +87,12 @@
 			enumerable: false
 			, value: function () {
 				return /^[0-9a-zA-Z]+$/.test(this);
+			}
+		}
+		, replaceAllWith: {
+			enumerable: false
+			, value: function(template) {
+				return
 			}
 		}
 	});
@@ -177,10 +189,6 @@
 			})
 		}
 
-		, capitalize: function(str) {
-			return str[0].toUpperCase() + str.substr(1);
-		}
-
 		, makeQuerablePromise
 		, PromiseSource
 
@@ -275,8 +283,10 @@
 			if (!rect) {
 				return;
 			}
-			for (let xPos = rect.x; xPos <= rect.width; ++xDir) {
-				for (let yPos = rect.y; yPos <= rect.height; ++yPos) {
+			const xEnd = rect.x + (rect.width || rect.w);
+			for (let xPos = rect.x; xPos <= xEnd; ++xDir) {
+				const yEnd = rect.y + (rect.height || rect.h);
+				for (let yPos = rect.y; yPos <= yEnd; ++yPos) {
 					yield [ xPos, yPos ];
 				}
 			}

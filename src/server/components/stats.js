@@ -227,12 +227,12 @@ module.exports = {
 			}, this);
 		} else if (stat === "elementAllResist") {
 			["arcane", "frost", "fire", "holy", "poison"].forEach(function (s) {
-				let element = "element" + (s[0].toUpperCase() + s.substr(1)) + "Resist";
+				let element = `element${s.capitalize()}Resist`;
 				this.addStat(element, value);
 			}, this);
 		} else if (stat === "elementPercent") {
 			["arcane", "frost", "fire", "holy", "poison"].forEach(function (s) {
-				let element = "element" + (s[0].toUpperCase() + s.substr(1)) + "Percent";
+				let element = `element${s.capitalize()}Percent`;
 				this.addStat(element, value);
 			}, this);
 		} else if (stat === "str") {

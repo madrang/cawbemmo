@@ -113,11 +113,11 @@ const printEvent = function (thisLogger, logLevel, args) {
 };
 
 module.exports = gExports.CONSTANTS(gExports, {
-	safeRequire: function (moduleContext, path) {
+	safeRequire: function (moduleContext, path, logger) {
 		try {
 			return moduleContext.require(path);
 		} catch (e) {
-			_.log.NodeJS.error(`Failed to import "${path}" Error:`, e);
+			(logger || _.log.NodeJS).error(`Failed to import "${path}" Error:`, e);
 		}
 	}
 

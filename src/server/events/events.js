@@ -42,7 +42,7 @@ module.exports = {
 			if (!f.includes(".js")) {
 				continue;
 			}
-			const e = require(f);
+			const e = _.safeRequire(module, f);
 			if (e.disabled) {
 				continue;
 			}
@@ -428,7 +428,7 @@ module.exports = {
 			const p = phases[i];
 			let phase = event.phases[i];
 			if (!phase) {
-				const typeTemplate = _.safeRequire(module, "./phases/phase" + _.capitalize(p.type));
+				const typeTemplate = _.safeRequire(module, "./phases/phase" + p.type.capitalize());
 				phase = _.assign({
 						instance: this.instance
 						, event: event

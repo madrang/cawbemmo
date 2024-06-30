@@ -98,18 +98,14 @@ module.exports = {
 			};
 		}
 
-		let type = options.type[0].toUpperCase() + options.type.substr(1);
-
-		let typeTemplate = {
-			type: type
-			, template: null
-		};
+		const type = options.type.capitalize();
+		const typeTemplate = { type, template: null };
 		this.obj.instance.eventEmitter.emit("onBeforeGetSpellTemplate", typeTemplate);
 		if (!typeTemplate.template) {
-			typeTemplate.template = require("../config/spells/spell" + type);
+			typeTemplate.template = _.safeRequire(module, "../config/spells/spell" + type);
 		}
 
-		let builtSpell = _.assignWith("particles", {}, spellTemplate, typeTemplate.template, options);
+		const builtSpell = _.assignWith("particles", {}, spellTemplate, typeTemplate.template, options);
 		builtSpell.obj = this.obj;
 		builtSpell.baseDamage = builtSpell.damage || 0;
 		builtSpell.damage += (options.damageAdd || 0);

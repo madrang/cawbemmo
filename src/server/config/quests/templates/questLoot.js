@@ -11,7 +11,7 @@ module.exports = {
 			.filter((s) => (s !== "tool"));
 
 		if (this.slot) {
-			if (this.slot instanceof Array) {
+			if (Array.isArray(this.slot)) {
 				if (this.slot.some((s) => !slotNames.includes(s))) {
 					this.slot = null;
 				}
@@ -65,11 +65,10 @@ module.exports = {
 				this.name = "Ramasseux d'item Rare";
 				this.quality = 0;
 				this.slot = slotNames[Math.floor(Math.random() * slotNames.length)];
-				this.slotName = this.slot[0].toUpperCase() + this.slot.substr(1);
+				this.slotName = this.slot.capitalize();
 				this.description = "Loot 1x " + this.slotName + " slot item";
 			}
 		}
-
 		return true;
 	}
 
@@ -89,25 +88,14 @@ module.exports = {
 
 	, events: {
 		afterLootMobItem: function (item) {
-			if (
-				(this.isReady) ||
-				(this.obj.zoneName !== this.zoneName) ||
-				(
-					(this.quality) &&
-					(item.quality < this.quality)
-				) ||
-				(
-					(this.slot instanceof Array) &&
-					(this.slot.indexOf(item.slot) === -1)
-				) ||
-				(
-					(typeof(this.slot) === "string") &&
-					(this.slot !== item.slot)
-				)
+			if (this.isReady
+				|| this.obj.zoneName !== this.zoneName
+				|| (this.quality && item.quality < this.quality)
+				|| (Array.isArray(this.slot) && this.slot.indexOf(item.slot) === -1)
+				|| (typeof this.slot === "string" && this.slot !== item.slot)
 			) {
 				return;
 			}
-
 			this.ready();
 		}
 	}

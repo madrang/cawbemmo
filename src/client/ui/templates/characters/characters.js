@@ -191,7 +191,7 @@ define([
 			}
 
 			this.find(".sprite")
-				.css("background", "url(\"" + spritesheet + "\") " + spirteX + "px " + spriteY + "px")
+				.css("background", `url("${spritesheet}") ${spirteX}px ${spriteY}px`)
 				.show();
 
 			this.find(".name").html(charName);
@@ -199,11 +199,7 @@ define([
 				return (c.type === "stats");
 			});
 			if (stats) {
-				this.find(".class").html(
-					"Lvl " + stats.values.level +
-					" " +
-					result.class[0].toUpperCase() + result.class.substr(1)
-				);
+				this.find(".class").html(`Lvl ${stats.values.level} ${result.class.capitalize()}`);
 			} else {
 				this.find(".class").html("");
 			}

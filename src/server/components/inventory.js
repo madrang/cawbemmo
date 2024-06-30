@@ -2,11 +2,11 @@
 const events = require("../misc/events");
 
 //External Helpers
-let generator = require("../items/generator");
-let salvager = require("../items/salvager");
-let classes = require("../config/spirits");
-let factions = require("../config/factions");
-let itemEffects = require("../items/itemEffects");
+const generator = require("../items/generator");
+const salvager = require("../items/salvager");
+const classes = require("../config/spirits");
+const factions = require("../config/factions");
+const itemEffects = require("../items/itemEffects");
 
 //Helpers
 const simplifyItem = require("./inventory/simplifyItem");
@@ -387,54 +387,55 @@ module.exports = {
 						let faction = factions.getFaction(e.factionId);
 						let statGenerator = faction.uniqueStat;
 						statGenerator.generate(item);
-					} else {
-						let effectUrl = itemEffects.get(e.type);
-						try {
-							let effectModule = require("../" + effectUrl);
-							e.events = effectModule.events;
+						return;
+					}
+					const effectModule = _.safeRequire(module, "../" + itemEffects.get(e.type));
+					if (!effectModule) {
+						_.log.inventory.error(`Effect not found: ${e.type}`);
+						return;
+					}
+					e.events = effectModule.events;
 
-							const { rolls } = e;
+					if (effectModule.events.onGetText) {
+						e.text = effectModule.events.onGetText(item, e);
+						return;
+					}
 
-							if (rolls.textTemplate) {
-								let text = rolls.textTemplate;
+					const { rolls } = e;
+					if (!rolls.textTemplate) {
+						return;
+					}
+					let text = rolls.textTemplate;
+					while (text.includes("((")) { //FIXME - Will hang !!
+						Object.entries(rolls).forEach(([k, v]) => {
+							text = text.replaceAll(`((${k}))`, v);
+						});
 
-								while (text.includes("((")) {
-									Object.entries(rolls).forEach(([k, v]) => {
-										text = text.replaceAll(`((${k}))`, v);
-									});
+						if (rolls.applyEffect) {
+							Object.entries(rolls.applyEffect).forEach(([k, v]) => {
+								text = text.replaceAll(`((applyEffect.${k}))`, v);
+							});
+						}
 
-									if (rolls.applyEffect) {
-										Object.entries(rolls.applyEffect).forEach(([k, v]) => {
-											text = text.replaceAll(`((applyEffect.${k}))`, v);
-										});
-									}
+						if (rolls.castSpell) {
+							Object.entries(rolls.castSpell).forEach(([k, v]) => {
+								text = text.replaceAll(`((castSpell.${k}))`, v);
+							});
+						}
 
-									if (rolls.castSpell) {
-										Object.entries(rolls.castSpell).forEach(([k, v]) => {
-											text = text.replaceAll(`((castSpell.${k}))`, v);
-										});
-									}
+						if (rolls.applyEffect?.scaleDamage) {
+							Object.entries(rolls.applyEffect.scaleDamage).forEach(([k, v]) => {
+								text = text.replaceAll(`((applyEffect.scaleDamage.${k}))`, v);
+							});
+						}
 
-									if (rolls.applyEffect?.scaleDamage) {
-										Object.entries(rolls.applyEffect.scaleDamage).forEach(([k, v]) => {
-											text = text.replaceAll(`((applyEffect.scaleDamage.${k}))`, v);
-										});
-									}
-
-									if (rolls.castSpell?.scaleDamage) {
-										Object.entries(rolls.castSpell.scaleDamage).forEach(([k, v]) => {
-											text = text.replaceAll(`((castSpell.scaleDamage.${k}))`, v);
-										});
-									}
-								}
-								e.text = text;
-							} else if (effectModule.events.onGetText) {
-								e.text = effectModule.events.onGetText(item, e);
-							}
-						} catch (error) {
-							_.log.inventory.error(`Effect not found: ${e.type}`, error);
+						if (rolls.castSpell?.scaleDamage) {
+							Object.entries(rolls.castSpell.scaleDamage).forEach(([k, v]) => {
+								text = text.replaceAll(`((castSpell.scaleDamage.${k}))`, v);
+							});
 						}
 					}
+					e.text = text;
 				});
 				item.effects.spliceWhere((e) => !e.events);
 			}

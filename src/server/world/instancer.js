@@ -62,7 +62,7 @@ module.exports = {
 			map.randomMap.init(fakeInstance);
 			this.startRegen();
 		} else {
-			_.log.World.notice(`(M ${map.name}): Ready`);
+			_.log.World.notice(`(Map/${map.name}): Ready`);
 		}
 		map.clientMap.zoneId = this.zoneId;
 
@@ -159,7 +159,7 @@ module.exports = {
 		this.addQueue.forEach((q) => this.addObject(q));
 		this.addQueue = [];
 
-		_.log.World.notice(`(M ${map.name}): Ready`);
+		_.log.World.notice(`(Map/${map.name}): Ready`);
 	}
 
 	, tick: function () {
