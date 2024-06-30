@@ -448,7 +448,7 @@ module.exports = {
 			}
 		}
 
-		if ((event.nextPhase >= pLen) && (!stillBusy)) {
+		if (event.nextPhase >= pLen && !stillBusy) {
 			event.done = true;
 		}
 

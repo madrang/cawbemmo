@@ -10,9 +10,10 @@ module.exports = {
 			, mobs: [
 				{ name: "Sbire facher"
 					, amount: 4
-					, attackable: false
+					, attackable: true
 					, level: 5
-					, cell: 548
+					, sheetName: "mobs"
+					, cell: 35
 					, id: "sbire-$"
 					, hpMult: 5
 					, dmgMult: 1
@@ -28,8 +29,9 @@ module.exports = {
 				}
 				, { name: "Gros Sbire"
 					, level: 8
-					, attackable: false
-					, cell: 548
+					, attackable: true
+					, sheetName: "mobs"
+					, cell: 35
 					, id: "gros-sbire"
 					, hpMult: 10
 					, dmgMult: 2
@@ -74,7 +76,7 @@ module.exports = {
 					]
 					, components: [{
 						type: "aggro"
-						, faction: "forest imps"
+						, faction: "hostile"
 					}]
 				}
 			]
@@ -99,7 +101,7 @@ module.exports = {
 					, mobs: "Vlad"
 					, components: [
 						{ type: "aggro"
-							, faction: "forest imps"
+							, faction: "hostile"
 						}
 					]
 				}
@@ -110,9 +112,10 @@ module.exports = {
 			, mobs: [
 				{ name: "Sbire facher"
 					, amount: 4
-					, attackable: false
+					, attackable: true
 					, level: 5
-					, cell: 548
+					, sheetName: "mobs"
+					, cell: 35
 					, id: "sbire-$"
 					, hpMult: 5
 					, dmgMult: 1
@@ -129,8 +132,9 @@ module.exports = {
 				, { name: "Gros Sbire"
 					, amount: 2
 					, level: 8
-					, attackable: false
-					, cell: 548
+					, attackable: true
+					, sheetName: "mobs"
+					, cell: 35
 					, id: "gros-sbire-$"
 					, hpMult: 10
 					, dmgMult: 2
@@ -172,11 +176,7 @@ module.exports = {
 		}
 		, { type: "eventChain"
 			, config: [
-				{ type: "removeComponents"
-					, mobs: "Vlad"
-					, components: "aggro"
-				}
-				, { type: "mobTalk"
+				{ type: "mobTalk"
 					, id: "Vlad"
 					, text: "Je doit partir avant que a brule!"
 					, delay: 10
