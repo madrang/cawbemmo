@@ -164,6 +164,10 @@
 			return Object.defineProperties(obj || window || global, properties);
 		}
 
+		, constrain: function(n, low, high) {
+			return Math.max(Math.min(n, high), low);
+		}
+
 		/** Pause the execution of an async function until timer elapse.
 		 * @Returns a promise that will resolve after the specified timeout.
 		 */
@@ -253,6 +257,27 @@
 			return result;
 		}
 
+		, getDirectionsDeltas: function* (rangeX = 1, rangeY) {
+			if (!rangeY) {
+				rangeY = rangeX;
+			}
+			for (let xDir = -rangeX; xDir <= rangeX; ++xDir) {
+				for (let yDir = -rangeY; yDir <= rangeY; ++yDir) {
+					yield [ xDir, yDir ];
+				}
+			}
+		}
+		, getPositions: function* (rect) {
+			if (!rect) {
+				return;
+			}
+			for (let xPos = rect.x; xPos <= rect.width; ++xDir) {
+				for (let yPos = rect.y; yPos <= rect.height; ++yPos) {
+					yield [ xPos, yPos ];
+				}
+			}
+		}
+
 		, getGuid: function () {
 			return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
 				let r = Math.random() * 16 | 0;
@@ -275,9 +300,14 @@
 			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
 				return undefined;
 			}
-			if (args.length === 1 && Array.isArray(args[0])) {
-				// If single item array at pos zero.
-				args = args[0];
+			if (args.length === 1) {
+				if (Array.isArray(args[0])) {
+					// If single item array at pos zero.
+					args = args[0];
+				} else {
+					// Only a single choice possible.
+					return args[0];
+				}
 			}
 			return args[Math.floor(Math.random() * args.length)];
 		}
