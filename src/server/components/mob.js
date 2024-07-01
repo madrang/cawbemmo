@@ -234,7 +234,8 @@ module.exports = {
 		//If the target is true, it means we can't reach the target and should wait for a new one
 		if (this.target === true) {
 			return;
-		} else if (obj.spellbook.isCasting()) {
+		}
+		if (obj.spellbook.isCasting()) {
 			return;
 		}
 		let x = obj.x;

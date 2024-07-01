@@ -1,26 +1,25 @@
 let mobBuilder = require("../../world/mobBuilder");
 
 const buildMob = (objects, mobConfig, x, y, mobIndex) => {
-	const { id, sheetName, cell, name, properties, originX, originY, maxChaseDistance, dialogue, trade, chats, events } = mobConfig;
+	const { id, sheetName="mobs", cell, name, properties, originX, originY, maxChaseDistance, dialogue, trade, chats, events } = mobConfig;
 
 	const mob = objects.buildObjects([{
-		x: x
-		, y: y
-		, sheetName: sheetName || "mobs"
-		, cell: cell
-		, name: name
-		, properties: properties
+		x, y
+		, sheetName
+		, cell
+		, name
+		, properties
 	}]);
 	mobBuilder.build(mob, mobConfig);
 
 	if (id) {
 		mob.id = id.replaceAll("$", mobIndex);
 	}
-	if (originX) {
+	if (originX && originY) {
 		mob.mob.originX = originX;
 		mob.mob.originY = originY;
 		mob.mob.goHome = true;
-		mob.mob.maxChaseDistance = maxChaseDistance;
+		mob.mob.maxChaseDistance = maxChaseDistance || 8;
 		//This is a hack to make mobs that run somewhere able to take damage
 		delete mob.mob.events.beforeTakeDamage;
 	}
@@ -135,8 +134,8 @@ module.exports = {
 				} else if (freeSpots?.length > 0) {
 					[ x, y ]  = _.randomObj(freeSpots);
 				} else if (spawnRect) {
-					x = _.randomInt(spawnRect.x, spawnRect.w);
-					y = _.randomInt(spawnRect.y, spawnRect.h);
+					x = _.randomInt(spawnRect.x, spawnRect.x + (spawnRect.w || 1));
+					y = _.randomInt(spawnRect.y, spawnRect.y + (spawnRect.h || 1));
 				} else {
 					_.log.phaseSpawnMob.error("No position for mob object '%s'!", l.name);
 					continue;
@@ -160,6 +159,12 @@ module.exports = {
 					this.event.objects.push(mob);
 					continue;
 				} else {
+					if (!l.has("originX")) {
+						l.originX = x;
+					}
+					if (!l.has("originY")) {
+						l.originY = y;
+					}
 					const mob = buildMob(objects, l, x, y, i);
 					this.event.objects.push(mob);
 					mob.event = this.event;

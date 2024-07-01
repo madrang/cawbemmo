@@ -2,7 +2,7 @@ module.exports = {
 	name: "Vlad Vs. Igor"
 	, description: "Vlad et ses sbir attaque Igor."
 	, distance: 10
-	, cron: "*/5 * * * *"
+	, cron: "34 */2 * * *"
 	, disabled: false
 	, phases: [
 		{ type: "spawnMob"
@@ -17,6 +17,7 @@ module.exports = {
 					, id: "sbire-$"
 					, hpMult: 5
 					, dmgMult: 1
+					, maxChaseDistance: 5
 					, drops: {
 						rolls: 0
 					}
@@ -25,6 +26,9 @@ module.exports = {
 						, { x: 4, y: 0 }
 						, { x: 0, y: 4 }
 						, { x: 4, y: 4 }
+					]
+					, spells: [
+						{ type: "melee" }
 					]
 				}
 				, { name: "Gros Sbire"
@@ -35,7 +39,11 @@ module.exports = {
 					, id: "gros-sbire"
 					, hpMult: 10
 					, dmgMult: 2
+					, maxChaseDistance: 5
 					, pos: { x: 2, y: 2 }
+					, spells: [
+						{ type: "melee" }
+					]
 				}
 				, { name: "Vlad"
 					, exists: true
@@ -119,6 +127,7 @@ module.exports = {
 					, id: "sbire-$"
 					, hpMult: 5
 					, dmgMult: 1
+					, maxChaseDistance: 5
 					, drops: {
 						rolls: 0
 					}
@@ -127,6 +136,9 @@ module.exports = {
 						, { x: 4, y: 0 }
 						, { x: 0, y: 4 }
 						, { x: 4, y: 4 }
+					]
+					, spells: [
+						{ type: "melee" }
 					]
 				}
 				, { name: "Gros Sbire"
@@ -138,7 +150,11 @@ module.exports = {
 					, id: "gros-sbire-$"
 					, hpMult: 10
 					, dmgMult: 2
+					, maxChaseDistance: 5
 					, pos: { x: 2, y: 2 }
+					, spells: [
+						{ type: "melee" }
+					]
 				}
 				, { name: "Vlad"
 					, exists: true

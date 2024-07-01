@@ -283,9 +283,9 @@
 			if (!rect) {
 				return;
 			}
-			const xEnd = rect.x + (rect.width || rect.w);
+			const xEnd = rect.x + (rect.width || rect.w || 1);
 			for (let xPos = rect.x; xPos <= xEnd; ++xDir) {
-				const yEnd = rect.y + (rect.height || rect.h);
+				const yEnd = rect.y + (rect.height || rect.h || 1);
 				for (let yPos = rect.y; yPos <= yEnd; ++yPos) {
 					yield [ xPos, yPos ];
 				}

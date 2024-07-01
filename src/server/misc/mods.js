@@ -48,20 +48,17 @@ module.exports = {
 			return;
 		}
 
-		const isMapThread = Boolean(global.instancer);
-		mod.isMapThread = isMapThread;
-
+		mod.isMapThread = Boolean(global.instancer);
 		mod.events = events;
 		mod.folderName = "server/mods/" + name;
 		mod.relativeFolderName = "mods/" + name;
 
-		let list = (mod.extraScripts || []);
-		let lLen = list.length;
-
-		for (let i = 0; i < lLen; i++) {
-			const extra = _.safeRequire(module, `../mods/${name}/${list[i]}`, this.logger);
-			if (extra) {
-				this.onGetExtra(name, mod, extra);
+		if (mod.has("extraScripts")) {
+			for (const exName of mod.extraScripts) {
+				const extra = _.safeRequire(module, `../mods/${name}/${exName}`, this.logger);
+				if (extra) {
+					this.onGetExtra(name, mod, extra);
+				}
 			}
 		}
 
@@ -69,9 +66,9 @@ module.exports = {
 			await mod.init();
 		}
 
-		if (isMapThread && typeof mod.initMapThread === "function") {
+		if (mod.isMapThread && typeof mod.initMapThread === "function") {
 			await mod.initMapThread();
-		} else if (!isMapThread && typeof mod.initMainThread === "function") {
+		} else if (!mod.isMapThread && typeof mod.initMainThread === "function") {
 			await mod.initMainThread();
 		}
 	}

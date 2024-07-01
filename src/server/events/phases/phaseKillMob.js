@@ -25,15 +25,12 @@ module.exports = {
 		let mobs = this.mobs;
 		let percentage = this.percentage;
 
-		let objects = this.instance.objects.objects;
-		let oLen = objects.length;
-		for (let i = 0; i < oLen; i++) {
-			let o = objects[i];
-			let index = mobs.indexOf(o.id);
+		const objects = this.instance.objects.objects;
+		for (const o of objects) {
+			const index = mobs.indexOf(o.id);
 			if (index === -1) {
 				continue;
 			}
-
 			if (percentage) {
 				let cpn = _.assign({}, cpnDeathStopper, {
 					percentage: percentage
@@ -41,7 +38,6 @@ module.exports = {
 				o.components.push(cpn);
 				cpn.obj = o;
 			}
-
 			mobs.splice(index, 1, o);
 		}
 	}
@@ -58,14 +54,14 @@ module.exports = {
 					destroyed = deathStopper.end;
 				}
 			}
-
+			// Remove destroyed mobs.
 			if (destroyed) {
 				mobs.splice(i, 1);
 				mLen--;
 				i--;
 			}
 		}
-
+		// Is completed once all tracked mobs are killed.
 		if (mobs.length === 0) {
 			this.end = true;
 		}

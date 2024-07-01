@@ -224,34 +224,29 @@ module.exports = {
 		}
 
 		let oId = source.id;
-		let list = this.list;
-
 		amount = (amount || 0);
 		let threat = (amount / obj.stats.values.hpMax) * threatMult;
 
-		let exists = list.find((l) => l.obj.id === oId);
+		let exists = this.list.find((l) => l.obj.id === oId);
 		if (!exists) {
 			exists = {
 				obj: source
 				, damage: 0
 				, threat: 0
 			};
-
-			list.push(exists);
+			this.list.push(exists);
 
 			//Cascade threat
 			if (obj.mob) {
 				this.move(source);
 			}
 		}
-
 		exists.damage += amount;
 		exists.threat += threat;
 
 		if (exists.threat > this.threatCeiling) {
 			exists.threat = this.threatCeiling;
 		}
-
 		return true;
 	}
 
