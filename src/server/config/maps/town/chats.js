@@ -30,4 +30,9 @@ module.exports = {
 	}, {
 		msg: "*crows*"
 	}]
+	, police: [{
+		msg: "* nooot nooot *"
+	}, {
+		msg: "FREEZE"
+	}]
 };

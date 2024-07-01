@@ -19,7 +19,7 @@ module.exports = {
 		}
 
 		, "canette": {
-			level: 11
+			level: 10
 
 			, regular: {
 				drops: {
@@ -28,7 +28,7 @@ module.exports = {
 					, alsoRandom: true
 					, blueprints: [{
 						chance: 30
-						, name: "Digested Crystal"
+						, name: "Canette vide"
 						, quality: 0
 						, quest: true
 						, sprite: [1, 1]
@@ -334,7 +334,7 @@ module.exports = {
 			, deathRep: -3
 		}
 
-		, "moyen bum": {
+		, "nain capable": {
 			level: 20
 			, attackable: false
 			, faction: "akarei"
