@@ -94,7 +94,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 	if (!Number.isInteger(logLevel) || (logLevel !== 0 && (logLevel & consoleLogLevel) === 0)) {
 		return;
 	}
-	for (let n in consoleFnNames) {
+	for (const n in consoleFnNames) {
 		if (consoleFnNames[n] >= logLevel) {
 			//eslint-disable-next-line no-console
 			applyLogFn(thisLogger, logLevel, console[n], args);
@@ -102,7 +102,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 		}
 		if (n == "debug") { //Last item...
 			//eslint-disable-next-line no-console
-			applyLogFn(thisLogger, logLevel, console.trace, args);
+			applyLogFn(thisLogger, logLevel, (args?.length > 0 ? console.debug : console.trace), args);
 		}
 	}
 	// Send notifications

@@ -77,12 +77,12 @@ define([
 				return;
 			}
 
-			let el = this.find(".member[memberId=\"" + id + "\"]");
+			let el = this.find(`.member[memberId="${id}"]`);
 			if (el.length === 0) {
 				return;
 			}
 
-			if ((stats.hp !== null) && (stats.hpMax !== null)) {
+			if (stats.hp !== null && stats.hpMax !== null) {
 				let hpPercentage = Math.min(100, (stats.hp / stats.hpMax) * 100);
 				el.find(".statHp").css("width", hpPercentage + "%");
 			}

@@ -114,17 +114,17 @@ module.exports = {
 
 		//Find mobs in range
 		let range = proxy ? aggro.cascadeRange : aggro.range;
-		let inRange = this.physics.getArea(x - range, y - range, x + range, y + range, (c) => (
-			c.aggro &&
-			!c.dead &&
-			(
-				!c.player ||
-				!obj.player
-			) &&
-			c.aggro.willAutoAttack(obj) &&
-			!list.some((l) => l.obj === c)
-		));
-
+		const inRange = this.physics.getArea(x - range, y - range, x + range, y + range
+			, (c) => (c.aggro
+				&& !c.dead
+				&& (
+					!c.player
+					|| !obj.player
+				)
+				&& c.aggro.willAutoAttack(obj)
+				&& !list.some((l) => l.obj === c)
+			)
+		);
 		if (!inRange.length) {
 			return;
 		}
@@ -142,27 +142,29 @@ module.exports = {
 	}
 
 	, canAttack: function (target) {
-		let obj = this.obj;
+		const obj = this.obj;
 		if (target === obj) {
 			return false;
-		} else if ((target.player) && (obj.player)) {
-			let hasButcher = (obj.prophecies.hasProphecy("butcher")) && (target.prophecies.hasProphecy("butcher"));
-
-			if ((!target.social.party) || (!obj.social.party)) {
+		}
+		if (target.player && obj.player) {
+			const hasButcher = (obj.prophecies.hasProphecy("butcher")) && (target.prophecies.hasProphecy("butcher"));
+			if (!target.social.party || !obj.social.party) {
 				return hasButcher;
 			} else if (target.social.partyLeaderId !== obj.social.partyLeaderId) {
 				return hasButcher;
 			}
 			return false;
-		} else if ((target.follower) && (target.follower.master.player) && (obj.player)) {
+		}
+		if (target.follower && target.follower.master.player && obj.player) {
 			return false;
-		} else if (obj.player) {
-			return true;
-		} else if (target.aggro.faction !== obj.aggro.faction) {
-			return true;
-		} else if (Boolean(target.player) !== Boolean(obj.player)) {
+		}
+		if (obj.player) {
 			return true;
 		}
+		if (target.aggro.faction !== obj.aggro.faction) {
+			return true;
+		}
+		return (Boolean(target.player) !== Boolean(obj.player));
 	}
 
 	, willAutoAttack: function (target) {
@@ -197,11 +199,11 @@ module.exports = {
 	}
 
 	, tryEngage: function (source, amount, threatMult = 1) {
-		let obj = this.obj;
+		const obj = this.obj;
 
 		//Don't aggro yourself, stupid
 		if (source === obj) {
-			return;
+			return false;
 		}
 
 		let result = {
@@ -279,7 +281,6 @@ module.exports = {
 				lLen--;
 			}
 		}
-
 		this.list = [];
 	}
 
@@ -323,8 +324,10 @@ module.exports = {
 			this.obj.spellbook.unregisterCallback(obj.id, true);
 		}
 
-		if ((this.list.length === 0) && (this.obj.mob) && (!this.obj.follower)) {
-			this.obj.stats.resetHp();
+		if (this.list.length === 0 && this.obj.mob && !this.obj.follower) {
+			if (this.obj.stats.resetHp()) {
+				_.log.aggro.trace("Mob %s hp/mana reset, aggro cleared.", this.obj.name || this.obj.id);
+			}
 			this.obj.stats.resetMana();
 		}
 	}
@@ -376,7 +379,6 @@ module.exports = {
 		if (highest) {
 			return highest.obj;
 		}
-
 		return null;
 	}
 
@@ -405,19 +407,18 @@ module.exports = {
 				distance = oDistance;
 			}
 		}
-
 		return furthest.obj;
 	}
 
 	, getRandom: function () {
 		let useList = this.list.filter((l) => (!this.ignoreList.some((o) => (o === l.obj))));
-		return useList[Math.floor(Math.random() * useList.length)];
+		return _.randomObj(useList);
 	}
 
 	, hasAggroOn: function (obj) {
 		return (
-			this.list.find((l) => l.obj === obj) &&
-			!this.ignoreList.find((l) => l === obj)
+			this.list.find((l) => l.obj === obj)
+			&& !this.ignoreList.find((l) => l === obj)
 		);
 	}
 

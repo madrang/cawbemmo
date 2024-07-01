@@ -19,10 +19,9 @@ module.exports = {
 	mobs: null
 
 	, init: function () {
-		if (!this.mobs.push) {
-			this.mobs = [this.mobs];
+		if (!Array.isArray(this.mobs)) {
+			this.mobs = [ this.mobs ];
 		}
-
 		let mobs = this.mobs;
 		let percentage = this.percentage;
 

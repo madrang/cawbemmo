@@ -137,16 +137,22 @@ module.exports = {
 
 	, resetHp: function () {
 		const values = this.values;
+		if (values.hp === values.hpMax) {
+			return false;
+		}
 		values.hp = values.hpMax;
-
 		this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
+		return true;
 	}
 
 	, resetMana: function () {
 		const values = this.values;
+		if (values.mana === values.manaMax) {
+			return false;
+		}
 		values.mana = values.manaMax;
-
 		this.obj.syncer.setObject(false, "stats", "values", "mana", values.mana);
+		return true;
 	}
 
 	, update: function () {
@@ -177,10 +183,13 @@ module.exports = {
 				? values.regenHp * 0.2
 				: Math.max(values.hpMax / 112, values.regenHp * 0.2)
 			);
+			_.log.stats.trace("%s regen for %s hp."
+				, this.obj.name || this.obj.id
+				, regenHp
+			);
 			values.hp += regenHp;
 			this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
-		}
-		if (values.hp > values.hpMax) {
+		} else if (values.hp > values.hpMax) {
 			values.hp = values.hpMax;
 			this.obj.syncer.setObject(false, "stats", "values", "hp", values.hp);
 		}

@@ -326,7 +326,7 @@ module.exports = {
 	}
 
 	, canChase: function (obj) {
-		//Patrol mobs can always chase if they don't have a target yet (since they don't have a home yet)
+		// Patrol mobs can always chase if they don't have a target yet (since they don't have a home yet)
 		if (this.patrol && !this.target && !this.goHome) {
 			return true;
 		}
