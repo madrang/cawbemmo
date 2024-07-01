@@ -330,7 +330,7 @@ module.exports = {
 			}, ["server"]);
 		}
 		for (const p of event.phases) {
-			if ((p.destroy) && (!p.destroyed)) {
+			if (p.destroy && !p.destroyed) {
 				p.destroyed = true;
 				p.destroy();
 			}
@@ -374,7 +374,8 @@ module.exports = {
 	}
 
 	, updateEvent: function (event) {
-		const onTick = event.config?.events?.onTick;
+		const config = event.config;
+		const onTick = config.events?.onTick;
 		if (onTick) {
 			onTick(this, event);
 		}
@@ -382,29 +383,31 @@ module.exports = {
 
 		let stillBusy = false;
 		for (const phase of event.phases) {
-			if (!phase.destroyed) {
-				if (phase.end || (phase.endMark !== -1 && phase.endMark <= event.age)) {
-					if (phase.destroy && !phase.destroyed) {
-						phase.destroy();
-					}
-					phase.destroyed = true;
+			if (phase.destroyed) {
+				continue;
+			}
+			if (phase.end || (phase.endMark !== -1 && phase.endMark <= event.age)) {
+				_.log.events.debug("%s[%s] %s has ended.", config.name, phase.step, phase.type);
+				if (phase.destroy && !phase.destroyed) {
+					phase.destroy();
+				}
+				phase.destroyed = true;
+				continue;
+			}
+			if (phase.has("ttl")) {
+				if (phase.ttl === 0) {
+					phase.end = true;
 					continue;
 				}
-				if (phase.has("ttl")) {
-					if (phase.ttl === 0) {
-						phase.end = true;
-						continue;
-					}
-					phase.ttl--;
-					stillBusy = true;
-				} else if (!phase.auto) {
-					stillBusy = true;
-				}
-				phase.update(event);
+				phase.ttl--;
+				stillBusy = true;
+			} else if (!phase.auto) {
+				stillBusy = true;
 			}
+			phase.update(event);
 		}
 
-		const notifications = event.config.notifications || [];
+		const notifications = config.notifications || [];
 		for (const n of notifications) {
 			if (n.mark === event.age) {
 				this.handleNotification(event, n);
@@ -412,16 +415,15 @@ module.exports = {
 		}
 		event.age++;
 
-		if (event.age === event.config.duration) {
+		if (event.age === config.duration) {
 			event.done = true;
-		} else if ((event.config.prizeTime) && (event.age === event.config.prizeTime)) {
-			this.giveRewards(event.config);
+		} else if (config.prizeTime && event.age === config.prizeTime) {
+			this.giveRewards(config);
 		}
 		if (stillBusy) {
 			return;
 		}
 
-		const config = event.config;
 		const phases = config.phases;
 		let pLen = phases.length;
 		for (let i = event.nextPhase; i < pLen; i++) {
@@ -432,6 +434,7 @@ module.exports = {
 				phase = _.assign({
 						instance: this.instance
 						, event: event
+						, step: i
 					}
 					, phaseTemplate
 					, typeTemplate
@@ -441,6 +444,7 @@ module.exports = {
 				event.currentPhase = phase;
 			}
 			event.nextPhase = i + 1;
+			_.log.events.debug("%s[%s] %s is starting.", config.name, phase.step, phase.type);
 			phase.init(event);
 			if (!p.auto) {
 				stillBusy = true;
