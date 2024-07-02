@@ -93,8 +93,9 @@ module.exports = (cpnWorkbench, msg) => {
 			}
 			// possible hook ici
 			//console.log(crafter);
-
-			crafter.social.getXp(10 * item.quantity * crafter.stats.level);
+			//console.log(item);
+			const gainXp = item.getXp || 1
+			crafter.social.getXp(gainXp);
 
 			crafter.inventory.getItem(item);
 		});
