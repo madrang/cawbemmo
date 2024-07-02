@@ -37,7 +37,7 @@ define([
 
 	const hasNewContent = () => {
 		const logVersion = browserStorage.get("changelog_version");
-		const currentVersion = globals.clientConfig.tos.version;
+		const currentVersion = globals.clientConfig.changeLog.version;
 		return logVersion !== currentVersion;
 	};
 
