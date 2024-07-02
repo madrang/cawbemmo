@@ -3,8 +3,7 @@
 (function() {
 	//eslint-disable-next-line no-extend-native
 	Object.defineProperties(Array.prototype, {
-		"spliceWhere": {
-			enumerable: false
+		"spliceWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -21,8 +20,7 @@
 				}
 			}
 		}
-		, "spliceFirstWhere": {
-			enumerable: false
+		, "spliceFirstWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -37,6 +35,22 @@
 					arrObj.splice(idx, 1);
 					return kValue;
 				}
+			}
+		}
+
+		, "shuffle": { enumerable: false, writable: true
+			, value: function shuffle() {
+				let currentIndex = this.length;
+				let randomIndex;
+				// While there remain elements to shuffle...
+				while (currentIndex != 0) {
+					// Pick a remaining element...
+					randomIndex = Math.floor(Math.random() * currentIndex);
+					currentIndex--;
+					// And swap it with the current element.
+					[ this[currentIndex], this[randomIndex] ] = [ this[randomIndex], this[currentIndex] ];
+				}
+				return this;
 			}
 		}
 	});
@@ -284,7 +298,7 @@
 				return;
 			}
 			const xEnd = rect.x + (rect.width || rect.w || 1);
-			for (let xPos = rect.x; xPos <= xEnd; ++xDir) {
+			for (let xPos = rect.x; xPos <= xEnd; ++xPos) {
 				const yEnd = rect.y + (rect.height || rect.h || 1);
 				for (let yPos = rect.y; yPos <= yEnd; ++yPos) {
 					yield [ xPos, yPos ];

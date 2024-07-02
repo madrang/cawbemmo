@@ -1801,7 +1801,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":927,
+                 "x":928,
                  "y":672
                 }, 
                 {
@@ -1816,7 +1816,7 @@
                  "y":552
                 }, 
                 {
-                 "height":55,
+                 "height":56,
                  "id":1022,
                  "name":"",
                  "properties":[
@@ -1828,7 +1828,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":79,
+                 "width":80,
                  "x":800,
                  "y":688
                 }],
@@ -2763,7 +2763,7 @@
                  "gid":537,
                  "height":8,
                  "id":1012,
-                 "name":"",
+                 "name":"Snaek",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -2775,7 +2775,7 @@
                  "gid":537,
                  "height":8,
                  "id":1013,
-                 "name":"",
+                 "name":"Snaek",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -3147,7 +3147,7 @@
                  "gid":591,
                  "height":8,
                  "id":1063,
-                 "name":"igor",
+                 "name":"Igor",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -3159,7 +3159,7 @@
                  "gid":585,
                  "height":8,
                  "id":1064,
-                 "name":"vlad",
+                 "name":"Vlad",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -3599,7 +3599,7 @@
                  "y":304
                 }, 
                 {
-                 "height":24,
+                 "height":56,
                  "id":641,
                  "name":"sun carp school",
                  "properties":[
@@ -3613,7 +3613,7 @@
                  "visible":true,
                  "width":48,
                  "x":1184,
-                 "y":384
+                 "y":376
                 }, 
                 {
                  "height":48,
@@ -3628,7 +3628,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":56,
+                 "width":64,
                  "x":832,
                  "y":1056
                 }, 
@@ -3645,12 +3645,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":40,
-                 "x":920,
+                 "width":64,
+                 "x":904,
                  "y":80
                 }, 
                 {
-                 "height":40,
+                 "height":56,
                  "id":646,
                  "name":"sun carp school",
                  "properties":[
@@ -3662,9 +3662,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
+                 "width":40,
                  "x":504,
-                 "y":160
+                 "y":144
                 }, 
                 {
                  "height":16,
@@ -3684,7 +3684,7 @@
                  "y":1232
                 }, 
                 {
-                 "height":24,
+                 "height":32,
                  "id":671,
                  "name":"sun carp school",
                  "properties":[
@@ -3701,7 +3701,7 @@
                  "y":640
                 }, 
                 {
-                 "height":24,
+                 "height":32,
                  "id":672,
                  "name":"sun carp school",
                  "properties":[
@@ -3715,7 +3715,7 @@
                  "visible":true,
                  "width":48,
                  "x":416,
-                 "y":616
+                 "y":608
                 }, 
                 {
                  "height":16,
@@ -3764,12 +3764,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":24,
-                 "x":600,
+                 "width":64,
+                 "x":576,
                  "y":104
                 }, 
                 {
-                 "height":40,
+                 "height":72,
                  "id":696,
                  "name":"sun carp school",
                  "properties":[
@@ -3781,8 +3781,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":24,
-                 "x":680,
+                 "width":64,
+                 "x":648,
                  "y":512
                 }, 
                 {
@@ -4177,7 +4177,7 @@
                  "y":384
                 }, 
                 {
-                 "height":24,
+                 "height":48,
                  "id":999,
                  "name":"sun carp school",
                  "properties":[
@@ -4189,12 +4189,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":48,
-                 "x":440,
+                 "width":80,
+                 "x":416,
                  "y":672
                 }, 
                 {
-                 "height":32,
+                 "height":48,
                  "id":1000,
                  "name":"sun carp school",
                  "properties":[
@@ -4206,12 +4206,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":24,
-                 "x":512,
-                 "y":424
+                 "width":56,
+                 "x":488,
+                 "y":416
                 }, 
                 {
-                 "height":40,
+                 "height":48,
                  "id":1001,
                  "name":"sun carp school",
                  "properties":[
@@ -4223,9 +4223,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":40,
-                 "x":784,
-                 "y":88
+                 "width":104,
+                 "x":744,
+                 "y":80
                 }, 
                 {
                  "height":48,
@@ -4262,7 +4262,7 @@
                  "y":320
                 }, 
                 {
-                 "height":40,
+                 "height":56,
                  "id":1004,
                  "name":"sun carp school",
                  "properties":[
@@ -4274,12 +4274,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":800,
-                 "y":1200
+                 "width":72,
+                 "x":776,
+                 "y":1192
                 }, 
                 {
-                 "height":55,
+                 "height":56,
                  "id":1021,
                  "name":"",
                  "properties":[
@@ -4291,7 +4291,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":79,
+                 "width":80,
                  "x":800,
                  "y":688
                 }, 
@@ -4326,6 +4326,23 @@
                  "width":0,
                  "x":800,
                  "y":688
+                }, 
+                {
+                 "height":48,
+                 "id":1104,
+                 "name":"sun carp school",
+                 "properties":[
+                        {
+                         "name":"resource",
+                         "type":"string",
+                         "value":"Sun Carp"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":792,
+                 "y":1208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -4334,7 +4351,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1104,
+ "nextobjectid":1105,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -4345,7 +4362,7 @@
         {
          "name":"name",
          "type":"string",
-         "value":"Test Zone"
+         "value":"Town"
         }, 
         {
          "name":"spawn",
@@ -4353,7 +4370,7 @@
          "value":"[{\"x\":120,\"y\":97}]"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.10.1",
+ "tiledversion":"1.11.0",
  "tileheight":8,
  "tilesets":[
         {
