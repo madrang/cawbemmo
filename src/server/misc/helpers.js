@@ -1,7 +1,13 @@
 const logging = require("../../common/logging");
 const gExports = require("../../common/globals");
 
-let consoleLogLevel = (process.env.NODE_ENV === "production" ? logging.EventLevels.STANDARD : logging.EventLevels.ALL);
+let consoleLogLevel = (process.env.NODE_ENV === "production"
+	? logging.EventLevels.STANDARD
+	: logging.EventLevels.DEBUG
+);
+if (process.env.LOG_LEVEL) {
+	consoleLogLevel = Number.parseInt(process.env.LOG_LEVEL);
+}
 let consoleLogFilter = function (logger, logLvl, args) {
 	return true;
 };
