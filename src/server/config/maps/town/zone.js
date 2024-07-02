@@ -325,6 +325,22 @@ module.exports = {
 				}
 			}
 		}
+		, police: {
+			level: 20
+			, walkDistance: 50
+			, walkSpeed: 1
+			, regular: {
+				hpMult: 3
+				, dmgMult: 1
+
+				, drops: {
+					chance: 100
+					, rolls: 6
+					, magicFind: [6000]
+				}
+			}
+		}
+
 		, rodriguez: {
 			attackable: false
 			, level: 10

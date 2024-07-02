@@ -7,6 +7,10 @@ module.exports = {
 		msg: "avez vous votre carte de poin?"
 	}, {
 		msg: "Bonjour, High!"
+	}, {
+		msg: "Spécial sur le soda cette semaine"
+	}, {
+		msg: "*burp*"
 	}]
 	,
 	"cultist biorn": [{
