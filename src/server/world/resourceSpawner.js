@@ -75,52 +75,43 @@ module.exports = {
 		//Get an accessible position
 		let w = this.physics.width;
 		let h = this.physics.height;
-
 		let x = blueprint.x;
 		let y = blueprint.y;
-
-		let position = null;
 
 		if (blueprint.type === "herb" && !blueprint.positions) {
 			x = Math.floor(Math.random() * w);
 			y = Math.floor(Math.random() * h);
 
 			if (this.physics.isTileBlocking(x, y)) {
-				return false;
+				return;
 			}
 
 			let spawn = this.map.spawn[0];
-
-			let path = this.physics.getPath(spawn, {
-				x: x
-				, y: y
-			});
+			let path = this.physics.getPath(spawn, { x, y });
 
 			let endTile = path[path.length - 1];
 			if (!endTile) {
-				return false;
-			} else if ((endTile.x !== x) || (endTile.y !== y)) {
-				return false;
+				return;
+			}
+			if (endTile.x !== x || endTile.y !== y) {
+				return;
 			}
 
 			//Don't spawn in rooms or on objects/other resources
 			let cell = this.physics.getCell(x, y);
 			if (cell.length > 0) {
-				return false;
+				return;
 			}
-
-			position = { x, y };
-		} else if (blueprint.positions) {
-			//Find all possible positions in which a node hasn't spawned yet
-			position = blueprint.positions.filter((f) => !node.spawns.some((s) => ((s.x === f.x) && (s.y === f.y))));
-			if (position.length === 0) {
-				return false;
-			}
-
-			position = position[Math.floor(Math.random() * position.length)];
+			return { x, y };
 		}
-
-		return position;
+		if (blueprint.positions) {
+			//Find all possible positions in which a node hasn't spawned yet
+			let position = blueprint.positions.filter((f) => !node.spawns.some((s) => ((s.x === f.x) && (s.y === f.y))));
+			if (position.length === 0) {
+				return;
+			}
+			return _.randomObj(position);
+		}
 	}
 
 	, spawn: function (node) {
@@ -138,7 +129,6 @@ module.exports = {
 		}
 
 		const { position } = eBeforeSpawnResource;
-
 		if (!position) {
 			return false;
 		}
@@ -165,8 +155,7 @@ module.exports = {
 
 		if (blueprint.type === "herb") {
 			this.syncer.queue("onGetObject", {
-				x: obj.x
-				, y: obj.y
+				x: obj.x, y: obj.y
 				, components: [{
 					type: "attackAnimation"
 					, row: 0
@@ -196,28 +185,22 @@ module.exports = {
 		if (blueprint.type === "fish") {
 			item.noStack = true;
 		}
-
 		inventory.getItem(item);
 
 		return true;
 	}
 
 	, update: function () {
-		let nodes = this.nodes;
-		let nLen = nodes.length;
-
-		for (let i = 0; i < nLen; i++) {
-			let node = nodes[i];
-
-			let spawns = node.spawns;
+		for (const node of this.nodes) {
+			const spawns = node.spawns;
 			spawns.spliceWhere((f) => f.destroyed);
-
-			if (spawns.length < node.max) {
-				if (node.cd > 0) {
-					node.cd--;
-				} else if ((!node.chance || Math.random() < node.chance) && this.spawn(node)) {
-					node.cd = node.cdMax || this.cdMax;
-				}
+			if (spawns.length >= node.max) {
+				continue;
+			}
+			if (node.cd > 0) {
+				node.cd--;
+			} else if ((!node.chance || Math.random() < node.chance) && this.spawn(node)) {
+				node.cd = node.cdMax || this.cdMax;
 			}
 		}
 	}

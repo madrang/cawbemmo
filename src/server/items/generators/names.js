@@ -16,11 +16,14 @@ module.exports = {
 			item.name = item.type;
 			return;
 		}
-		let gen = this.generators[item.quality];
-		if (!(gen instanceof Array)) {
-			gen = [gen];
+		const gen = this.generators[item.quality];
+		if (Array.isArray(gen)) {
+			for (const g of gen) {
+				this.types[g].call(this, item, blueprint);
+			}
+		} else {
+			this.types[gen].call(this, item, blueprint);
 		}
-		gen.forEach((g) => this.types[g].call(this, item, blueprint));
 	}
 	, types: {
 		basic: function (item, blueprint) {
@@ -35,7 +38,7 @@ module.exports = {
 				list = list.concat(prefixes.weapons);
 			}
 			let pick = list[Math.floor(Math.random() * list.length)];
-			item.name = pick[0].toUpperCase() + pick.substr(1);
+			item.name = pick.capitalize();
 			if (item.name.indexOf("%") > -1) {
 				const replacer = (Math.random() < 0.5) ? "'s" : "";
 				item.name = item.name.replaceAll("%", replacer);
@@ -55,7 +58,7 @@ module.exports = {
 				}
 			}
 			let pick = list[Math.floor(Math.random() * list.length)];
-			item.name += " " + pick[0].toUpperCase() + pick.substr(1);
+			item.name += " " + pick.capitalize();
 		}
 	}
 };

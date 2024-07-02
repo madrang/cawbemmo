@@ -134,15 +134,16 @@ define([
 					}
 				}
 			} else {
-				Object.keys(tempStats).forEach((s) => {
-					if (enchantedStats[s]) {
-						tempStats[s] -= enchantedStats[s];
-						if (tempStats[s] <= 0) {
-							delete tempStats[s];
-						}
-						tempStats["_" + s] = enchantedStats[s];
+				for (const s in tempStats) {
+					if (!enchantedStats[s]) {
+						continue;
 					}
-				});
+					tempStats[s] -= enchantedStats[s];
+					if (tempStats[s] <= 0) {
+						delete tempStats[s];
+					}
+					tempStats["_" + s] = enchantedStats[s];
+				}
 			}
 			const html = Object.keys(tempStats)
 				.map((s) => {

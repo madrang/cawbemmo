@@ -160,14 +160,13 @@ module.exports = {
 	, getTypeTemplate: function (type) {
 		let typeTemplate = null;
 		if (type) {
-			const capitalizedType = type[0].toUpperCase() + type.substr(1);
 			const result = {
 				type: type
-				, url: `config/effects/effect${capitalizedType}.js`
+				, url: `config/effects/effect${type.capitalize()}.js`
 			};
 			this.obj.instance.eventEmitter.emit("onBeforeGetEffect", result);
 
-			typeTemplate = require("../" + result.url);
+			typeTemplate = _.safeRequire(module, "../" + result.url);
 		}
 		return _.assign({}, effectTemplate, typeTemplate);
 	}

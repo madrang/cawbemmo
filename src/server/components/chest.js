@@ -39,7 +39,7 @@ module.exports = {
 
 		let ownerName = this.ownerName;
 		if (ownerName) {
-			if (ownerName instanceof Array) {
+			if (Array.isArray(ownerName)) {
 				if (ownerName.indexOf(obj.name) === -1) {
 					return;
 				}

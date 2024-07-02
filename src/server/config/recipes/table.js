@@ -8,6 +8,7 @@ const baseRecipes = {
 			, noSalvage: true
 			, noAugment: true
 			, uses: 1
+			, getXp: 10
 			, effects: [{
 				type: "gainStat"
 			}]
@@ -58,6 +59,7 @@ module.exports = [
 		// item
 		,{ name: "Un bon vieux joint"
 			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
+			, getXp: 10
 		}
 		// materials
 		, undefined
@@ -79,6 +81,7 @@ module.exports = [
 		// item
 		, { name: "Joint Deux papier"
 			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 50 Mana instant"
+			, getXp: 15
 		}
 		// Materials
 		, [ { name: "Papier a roulé", quantity: 2 }

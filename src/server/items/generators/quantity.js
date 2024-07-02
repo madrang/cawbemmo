@@ -4,7 +4,7 @@ module.exports = {
 		if (!qty) {
 			return;
 		}
-		if (qty instanceof Array) {
+		if (Array.isArray(qty)) {
 			item.quantity = qty[0] + Math.floor(Math.random() * (qty[1] - qty[0]));
 		} else {
 			item.quantity = qty;

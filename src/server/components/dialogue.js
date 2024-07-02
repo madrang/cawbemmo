@@ -56,21 +56,21 @@ module.exports = {
 
 	, getState: async function (sourceObj, state = 1) {
 		let result = null;
-		if ((state + "").indexOf(".") > -1) {
-			let config = this.states[(state + "").split(".")[0]];
+		if (String(state).indexOf(".") > -1) {
+			let config = this.states[String(state).split(".")[0]];
 			if (!config) {
 				return false;
 			}
 			let goto = (config.options[state] || {}).goto;
-			if (goto instanceof Array) {
-				let gotos = [];
-				goto.forEach(function (g) {
-					let rolls = (g.chance * 100) || 100;
+			if (Array.isArray(goto)) {
+				const gotos = [];
+				for (const g of goto) {
+					const rolls = (g.chance * 100) || 100;
 					for (let i = 0; i < rolls; i++) {
 						gotos.push(g.number);
 					}
-				});
-				state = gotos[Math.floor(Math.random() * gotos.length)];
+				}
+				state = _.randomObj(gotos);
 			} else {
 				state = goto;
 			}
@@ -119,7 +119,7 @@ module.exports = {
 			, from: this.obj.name
 			, options: []
 		};
-		if (useMsg instanceof Array) {
+		if (Array.isArray(useMsg)) {
 			const msgs = [];
 			useMsg.forEach(function (m, i) {
 				let rolls = (m.chance * 100) || 100;
@@ -138,7 +138,7 @@ module.exports = {
 			result.options = stateConfig.options;
 		}
 
-		if (!(result.options instanceof Array)) {
+		if (!Array.isArray(result.options)) {
 			if (result.options[0] === "$") {
 				result.options = this.states[result.options.replace("$", "")].options;
 			}

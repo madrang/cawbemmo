@@ -451,7 +451,6 @@ module.exports = {
 			let y2 = toY + c;
 
 			let lowX, lowY, highX, highY, incX, incY;
-
 			if (reverseX) {
 				incX = -1;
 				lowX = x2;
@@ -461,7 +460,6 @@ module.exports = {
 				lowX = x1;
 				highX = x2 + 1;
 			}
-
 			if (reverseY) {
 				incY = -1;
 				lowY = y2;
@@ -473,7 +471,7 @@ module.exports = {
 			}
 
 			for (let i = lowX; i !== highX; i += incX) {
-				if ((i < 0) || (i >= width)) {
+				if (i < 0 || i >= width) {
 					continue;
 				}
 
@@ -489,13 +487,11 @@ module.exports = {
 					if (t[j]) {
 						continue;
 					}
-
 					t[j] = 1;
 
-					if (
-						((i === toX) && (j === toY)) ||
-						((j < 0) || (j >= height)) ||
-						(row[j])
+					if ((i === toX && j === toY)
+						|| (j < 0 || j >= height)
+						|| row[j]
 					) {
 						continue;
 					}
@@ -510,11 +506,7 @@ module.exports = {
 					if (!hasLos(i, j)) {
 						continue;
 					}
-
-					return {
-						x: i
-						, y: j
-					};
+					return { x: i, y: j };
 				}
 			}
 		}

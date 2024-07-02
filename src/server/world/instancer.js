@@ -1,15 +1,15 @@
-let map = require("./map");
-let syncer = require("./syncer");
-let objects = require("../objects/objects");
-let spawners = require("./spawners");
-let physics = require("./physics");
-let resourceSpawner = require("./resourceSpawner");
-let spellCallbacks = require("../config/spells/spellCallbacks");
-let questBuilder = require("../config/quests/questBuilder");
-let events = require("../events/events");
-let scheduler = require("../misc/scheduler");
-let herbs = require("../config/herbs");
-let eventEmitter = require("../misc/events");
+const map = require("./map");
+const syncer = require("./syncer");
+const objects = require("../objects/objects");
+const spawners = require("./spawners");
+const physics = require("./physics");
+const resourceSpawner = require("./resourceSpawner");
+const spellCallbacks = require("../config/spells/spellCallbacks");
+const questBuilder = require("../config/quests/questBuilder");
+const events = require("../events/events");
+const scheduler = require("../misc/scheduler");
+const herbs = require("../config/herbs");
+const eventEmitter = require("../misc/events");
 const mods = require("../misc/mods");
 const transactions = require("../security/transactions");
 
@@ -62,7 +62,7 @@ module.exports = {
 			map.randomMap.init(fakeInstance);
 			this.startRegen();
 		} else {
-			_.log.World.notice(`(M ${map.name}): Ready`);
+			_.log.World.notice(`(Map/${map.name}): Ready`);
 		}
 		map.clientMap.zoneId = this.zoneId;
 
@@ -159,7 +159,7 @@ module.exports = {
 		this.addQueue.forEach((q) => this.addObject(q));
 		this.addQueue = [];
 
-		_.log.World.notice(`(M ${map.name}): Ready`);
+		_.log.World.notice(`(Map/${map.name}): Ready`);
 	}
 
 	, tick: function () {

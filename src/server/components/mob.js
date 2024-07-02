@@ -234,7 +234,8 @@ module.exports = {
 		//If the target is true, it means we can't reach the target and should wait for a new one
 		if (this.target === true) {
 			return;
-		} else if (obj.spellbook.isCasting()) {
+		}
+		if (obj.spellbook.isCasting()) {
 			return;
 		}
 		let x = obj.x;
@@ -326,7 +327,7 @@ module.exports = {
 	}
 
 	, canChase: function (obj) {
-		//Patrol mobs can always chase if they don't have a target yet (since they don't have a home yet)
+		// Patrol mobs can always chase if they don't have a target yet (since they don't have a home yet)
 		if (this.patrol && !this.target && !this.goHome) {
 			return true;
 		}
