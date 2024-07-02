@@ -1,6 +1,7 @@
 module.exports = {
 	name: "Vlad Vs. Igor"
 	, description: "Vlad et ses sbir attaque Igor."
+	, code: "vladAttack"
 	, distance: 10
 	, cron: "34 */2 * * *"
 	, disabled: false
