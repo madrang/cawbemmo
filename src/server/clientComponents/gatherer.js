@@ -21,12 +21,28 @@ define([
 					this.effect.destroyed = true;
 				}
 
+				const validPos = [];
+				for (const pos of _.getPositions(msg)) {
+					if (!physics.isTileBlocking(pos[0], pos[1])) {
+						continue;
+					}
+					const plDist = Math.max(Math.abs(pos[0] - this.obj.x), Math.abs(pos[1] - this.obj.y));
+					if (plDist <= 2 || plDist >= 9) {
+						continue;
+					}
+					validPos.push(pos);
+					if (validPos.length >= 16) {
+						break;
+					}
+				}
 				let x = 0;
 				let y = 0;
-				do {
-					x = msg.x + Math.floor(Math.random() * msg.width);
-					y = msg.y + Math.floor(Math.random() * msg.height);
-				} while (!physics.isTileBlocking(x, y) || Math.max(Math.abs(x - this.obj.x), Math.abs(y - this.obj.y)) <= 2);
+				if (validPos.length <= 0) {
+					x = _.constrain(this.obj.x, msg.x, msg.width);
+					y = _.constrain(this.obj.y, msg.y, msg.height);
+				} else {
+					[ x, y ] = _.randomObj(validPos);
+				}
 
 				this.obj.flipX = (x < this.obj.x);
 				this.obj.setSpritePosition();
@@ -48,7 +64,6 @@ define([
 					this.effect.destroyed = true;
 					this.effect = null;
 				}
-
 				events.emit("onShowProgress", (msg.action || "Gathering") + "...", msg.progress);
 			}
 		}

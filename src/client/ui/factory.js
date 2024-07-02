@@ -106,7 +106,7 @@ define([
 		, buildFromConfig: async function (config) {
 			const { type, path } = config;
 
-			const className = "ui" + type[0].toUpperCase() + type.substr(1);
+			const className = "ui" + type.capitalize();
 			const el = $("." + className);
 			if (el.length > 0) {
 				return;

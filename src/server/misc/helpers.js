@@ -1,7 +1,13 @@
 const logging = require("../../common/logging");
 const gExports = require("../../common/globals");
 
-let consoleLogLevel = (process.env.NODE_ENV === "production" ? logging.EventLevels.STANDARD : logging.EventLevels.ALL);
+let consoleLogLevel = (process.env.NODE_ENV === "production"
+	? logging.EventLevels.STANDARD
+	: logging.EventLevels.DEBUG
+);
+if (process.env.LOG_LEVEL) {
+	consoleLogLevel = Number.parseInt(process.env.LOG_LEVEL);
+}
 let consoleLogFilter = function (logger, logLvl, args) {
 	return true;
 };
@@ -94,7 +100,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 	if (!Number.isInteger(logLevel) || (logLevel !== 0 && (logLevel & consoleLogLevel) === 0)) {
 		return;
 	}
-	for (let n in consoleFnNames) {
+	for (const n in consoleFnNames) {
 		if (consoleFnNames[n] >= logLevel) {
 			//eslint-disable-next-line no-console
 			applyLogFn(thisLogger, logLevel, console[n], args);
@@ -102,7 +108,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 		}
 		if (n == "debug") { //Last item...
 			//eslint-disable-next-line no-console
-			applyLogFn(thisLogger, logLevel, console.trace, args);
+			applyLogFn(thisLogger, logLevel, (args?.length > 0 ? console.debug : console.trace), args);
 		}
 	}
 	// Send notifications
@@ -113,11 +119,11 @@ const printEvent = function (thisLogger, logLevel, args) {
 };
 
 module.exports = gExports.CONSTANTS(gExports, {
-	safeRequire: function (path) {
+	safeRequire: function (moduleContext, path, logger) {
 		try {
-			return require(path);
+			return moduleContext.require(path);
 		} catch (e) {
-			_.log.NodeJS.error(`Failed to import "${path}" Error:`, e);
+			(logger || _.log.NodeJS).error(`Failed to import "${path}" Error:`, e);
 		}
 	}
 

@@ -17,18 +17,13 @@ const takeDamage = (cpnStats, eventDamage) => {
 		return;
 	}
 
+	_.log.takeDamage.trace("%s attacked %s for %s dammage."
+		, source.name || source.id
+		, obj.name || obj.id
+		, damage.amount.toFixed(2)
+	);
 	const amount = Math.min(values.hp, damage.amount);
-
 	damage.dealt = amount;
-
-	const msg = {
-		id: obj.id
-		, source: source.id
-		, crit
-		, amount
-		, element
-	};
-
 	values.hp -= amount;
 	const recipients = [];
 	if (obj.serverId) {
@@ -38,11 +33,17 @@ const takeDamage = (cpnStats, eventDamage) => {
 		recipients.push(source.serverId);
 	}
 
+	const msg = {
+		id: obj.id
+		, source: source.id
+		, crit
+		, amount
+		, element
+	};
 	if (source.follower && source.follower.master.serverId) {
 		recipients.push(source.follower.master.serverId);
 		msg.masterSource = source.follower.master.id;
 	}
-
 	if (obj.follower && obj.follower.master.serverId) {
 		recipients.push(obj.follower.master.serverId);
 		msg.masterId = obj.follower.master.id;

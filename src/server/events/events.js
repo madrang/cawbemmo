@@ -2,7 +2,7 @@
 const fs = require("fs");
 
 //Imports
-const phaseTemplate = require("./phases/phaseTemplate");
+const phaseTemplate = require("./phaseTemplate");
 const { mapList } = require("../world/mapManager");
 
 //Helpers
@@ -42,7 +42,7 @@ module.exports = {
 			if (!f.includes(".js")) {
 				continue;
 			}
-			const e = require(f);
+			const e = _.safeRequire(module, f);
 			if (e.disabled) {
 				continue;
 			}
@@ -155,6 +155,7 @@ module.exports = {
 			return;
 		}
 		const scheduler = this.instance.scheduler;
+		const time = scheduler.getTime();
 		for (const c of this.configs) {
 			if (c.event) {
 				//Event active.
@@ -162,7 +163,7 @@ module.exports = {
 				if (c.event.done
 					|| (c.cron
 						&& c.durationEvent
-						&& !scheduler.isActive(c)
+						&& !scheduler.isActive(c, time)
 					)
 				) {
 					// Event completed.
@@ -179,11 +180,11 @@ module.exports = {
 			}
 			if (c.cron) {
 				if (c.durationEvent) {
-					if (!scheduler.isActive(c)) {
+					if (!scheduler.isActive(c, time)) {
 						continue;
 					}
 				} else {
-					if (!scheduler.shouldRun(c)) {
+					if (!scheduler.shouldRun(c, time)) {
 						continue;
 					}
 				}
@@ -211,6 +212,7 @@ module.exports = {
 		};
 		event.config.event = event;
 
+		_.log.events.debug("Starting event '%s'", config.name);
 		const onStart = event.config.events?.onStart;
 		if (onStart) {
 			onStart(this, event);
@@ -291,6 +293,7 @@ module.exports = {
 	}
 
 	, stopEvent: function (config) {
+		_.log.events.debug("Event '%s' has completed.", config.name);
 		const event = config.event;
 		for (const p of event.participators) {
 			p.events.unregisterEvent(event);
@@ -327,7 +330,7 @@ module.exports = {
 			}, ["server"]);
 		}
 		for (const p of event.phases) {
-			if ((p.destroy) && (!p.destroyed)) {
+			if (p.destroy && !p.destroyed) {
 				p.destroyed = true;
 				p.destroy();
 			}
@@ -371,7 +374,8 @@ module.exports = {
 	}
 
 	, updateEvent: function (event) {
-		const onTick = event.config?.events?.onTick;
+		const config = event.config;
+		const onTick = config.events?.onTick;
 		if (onTick) {
 			onTick(this, event);
 		}
@@ -379,29 +383,31 @@ module.exports = {
 
 		let stillBusy = false;
 		for (const phase of event.phases) {
-			if (!phase.destroyed) {
-				if (phase.end || (phase.endMark !== -1 && phase.endMark <= event.age)) {
-					if (phase.destroy && !phase.destroyed) {
-						phase.destroy();
-					}
-					phase.destroyed = true;
+			if (phase.destroyed) {
+				continue;
+			}
+			if (phase.end || (phase.endMark !== -1 && phase.endMark <= event.age)) {
+				_.log.events.debug("%s[%s] %s has ended.", config.name, phase.step, phase.type);
+				if (phase.destroy && !phase.destroyed) {
+					phase.destroy();
+				}
+				phase.destroyed = true;
+				continue;
+			}
+			if (phase.has("ttl")) {
+				if (phase.ttl === 0) {
+					phase.end = true;
 					continue;
 				}
-				if (phase.has("ttl")) {
-					if (phase.ttl === 0) {
-						phase.end = true;
-						continue;
-					}
-					phase.ttl--;
-					stillBusy = true;
-				} else if (!phase.auto) {
-					stillBusy = true;
-				}
-				phase.update(event);
+				phase.ttl--;
+				stillBusy = true;
+			} else if (!phase.auto) {
+				stillBusy = true;
 			}
+			phase.update(event);
 		}
 
-		const notifications = event.config.notifications || [];
+		const notifications = config.notifications || [];
 		for (const n of notifications) {
 			if (n.mark === event.age) {
 				this.handleNotification(event, n);
@@ -409,33 +415,36 @@ module.exports = {
 		}
 		event.age++;
 
-		if (event.age === event.config.duration) {
+		if (event.age === config.duration) {
 			event.done = true;
-		} else if ((event.config.prizeTime) && (event.age === event.config.prizeTime)) {
-			this.giveRewards(event.config);
+		} else if (config.prizeTime && event.age === config.prizeTime) {
+			this.giveRewards(config);
 		}
 		if (stillBusy) {
 			return;
 		}
 
-		const config = event.config;
 		const phases = config.phases;
 		let pLen = phases.length;
 		for (let i = event.nextPhase; i < pLen; i++) {
 			const p = phases[i];
 			let phase = event.phases[i];
 			if (!phase) {
-				const phaseFile = "phase" + p.type[0].toUpperCase() + p.type.substr(1);
-				const typeTemplate = require("./phases/" + phaseFile);
+				const typeTemplate = _.safeRequire(module, "./phases/phase" + p.type.capitalize());
 				phase = _.assign({
-					instance: this.instance
-					, event: event
-				}, phaseTemplate, typeTemplate, p);
-
+						instance: this.instance
+						, event: event
+						, step: i
+					}
+					, phaseTemplate
+					, typeTemplate
+					, p
+				);
 				event.phases.push(phase);
 				event.currentPhase = phase;
 			}
 			event.nextPhase = i + 1;
+			_.log.events.debug("%s[%s] %s is starting.", config.name, phase.step, phase.type);
 			phase.init(event);
 			if (!p.auto) {
 				stillBusy = true;
@@ -443,7 +452,7 @@ module.exports = {
 			}
 		}
 
-		if ((event.nextPhase >= pLen) && (!stillBusy)) {
+		if (event.nextPhase >= pLen && !stillBusy) {
 			event.done = true;
 		}
 

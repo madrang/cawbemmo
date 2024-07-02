@@ -48,8 +48,11 @@ module.exports = {
 	}
 
 	, extendComponent: function (ext, type, blueprint) {
-		const template = require("../components/extensions/" + type);
 		const cpn = this[ext];
+		const template = _.safeRequire(module, "../components/extensions/" + type);
+		if (!template) {
+			return cpn;
+		}
 		_.assign(cpn, template);
 		if (template.init) {
 			cpn.init(blueprint);

@@ -28,9 +28,6 @@ define([
 		, init: function () {
 			this.hookEvent("onUiHover", this.onUiHover.bind(this, true));
 			this.hookEvent("onUiLeave", this.onUiHover.bind(this, false));
-			//TODO onSceneMove
-			//this.hookEvent("mouseDown", this.onMouseInput.bind(this));
-			//this.hookEvent("mouseMove", this.onMouseInput.bind(this));
 
 			this.sprite = renderer.buildObject({
 				layerName: "effects"

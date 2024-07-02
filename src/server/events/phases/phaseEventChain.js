@@ -18,11 +18,10 @@ module.exports = {
 					if (!stateConfig.oldRepeat) {
 						stateConfig.oldRepeat = stateConfig.repeat;
 					}
-
 					stateConfig.repeat--;
 				}
 
-				this.cd = (stateConfig.delay instanceof Array) ? stateConfig.delay[stateConfig.oldRepeat - stateConfig.repeat - 1] : stateConfig.delay;
+				this.cd = Array.isArray(stateConfig.delay) ? stateConfig.delay[stateConfig.oldRepeat - stateConfig.repeat - 1] : stateConfig.delay;
 				this.events[stateConfig.type].call(this, stateConfig);
 
 				if (stateConfig.repeat > 0) {
@@ -47,7 +46,7 @@ module.exports = {
 	, events: {
 		mobTalk: function (config) {
 			let mob = this.instance.objects.objects.find((o) => (o.id === config.id));
-			let text = (config.text instanceof Array) ? config.text[config.oldRepeat - config.repeat - 1] : config.text;
+			let text = Array.isArray(config.text) ? config.text[config.oldRepeat - config.repeat - 1] : config.text;
 
 			if (config.zone) {
 				this.instance.syncer.queue("onGetMessages", {

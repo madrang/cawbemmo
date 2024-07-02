@@ -1,3 +1,5 @@
+const CRON_STEPS = ["minute", "hour", "day", "month", "weekday"];
+const CRON_TIME_OVERFLOWS = [ 60, 24, 32, 12, 7 ];
 module.exports = {
 	cd: 1000
 
@@ -11,59 +13,69 @@ module.exports = {
 		this.lastTime = this.getTime();
 	}
 
-	, isActive: function (c) {
-		let cron = c.cron.split(" ");
+	, isTimeMatch: function (cron, time) {
+		cron = cron.split(" ");
 		if (cron.length !== 5) {
+			_.log.cron.error("Invalid cron notation '%s'.", cron.join(" "));
 			return false;
 		}
-		const time = this.getTime();
-		return ["minute", "hour", "day", "month", "weekday"].every((t, i) => {
+		if (!time) {
+			time = this.lastTime || this.getTime();
+		}
+		for (const i in CRON_STEPS) {
+			const t = CRON_STEPS[i];
 			let f = cron[i].split("-");
 			if (f[0] === "*") {
-				return true;
+				continue;
 			}
 			const useTime = time[t];
 			if (f.length === 1) {
 				f = f[0].split("/");
 				if (f.length === 1) {
 					const options = f[0].split(",");
-					const isOk = options.some((o) => {
-						return ~~o === useTime;
-					});
-					return isOk;
+					let foundMatch = false;
+					for (const o of options) {
+						if (~~o === useTime) {
+							foundMatch = true;
+							break;
+						}
+					}
+					if (foundMatch) {
+						continue;
+					} else {
+						return false;
+					}
+				} else if ((useTime % f[1]) === 0) {
+					continue;
 				}
-				return ((useTime % f[1]) === 0);
+			} else if (useTime >= f[0] && useTime <= f[1]) {
+				continue;
 			}
-			return (useTime >= f[0] && useTime <= f[1]);
-		});
-	}
-
-	, shouldRun: function (c) {
-		let cron = c.cron.split(" ");
-		if (cron.length !== 5) {
 			return false;
 		}
+		return true;
+	}
 
-		let lastTime = this.lastTime;
-		let time = this.getTime();
-
-		let lastRun = c.lastRun;
-		if (lastRun) {
-			if (Object.keys(lastRun).every((e) => (lastRun[e] === time[e]))) {
-				return false;
-			}
+	, isActive: function (c, time) {
+		if (!time) {
+			time = this.lastTime || this.getTime();
 		}
+		return this.isTimeMatch(c.cron, time);
+	}
 
-		let timeOverflows = [60, 24, 32, 12, 7];
-
-		let run = ["minute", "hour", "day", "month", "weekday"].every(function (t, i) {
+	, isPlanned: function(cron, lastTime, time) {
+		cron = cron.split(" ");
+		if (cron.length !== 5) {
+			_.log.cron.error("Invalid cron notation '%s'.", cron.join(" "));
+			return false;
+		}
+		for (const i in CRON_STEPS) {
+			const t = CRON_STEPS[i];
 			let tCheck = cron[i];
-
 			if (tCheck === "*") {
-				return true;
+				continue;
 			}
-
-			let overflow = timeOverflows[i];
+			const overflow = CRON_TIME_OVERFLOWS[i];
 			let timeT = time[t];
 			let lastTimeT = lastTime[t];
 			if (timeT < lastTimeT) {
@@ -71,27 +83,58 @@ module.exports = {
 			} else if (timeT > lastTimeT) {
 				lastTimeT++;
 			}
-
 			tCheck = tCheck.split(",");
-
-			return Array
-				.apply(null, Array(1 + timeT - lastTimeT))
-				.map((j, k) => (k + lastTimeT))
-				.some(function (s) {
-					const useTime = (s >= overflow) ? (s - overflow) : s;
-					return tCheck.some(function (f) {
-						f = f.split("-");
+			let foundMatch = false;
+			for (let k = 1 + timeT - lastTimeT; k > 0; --k) {
+				let s = k + lastTimeT;
+				const useTime = (s >= overflow) ? (s - overflow) : s;
+				for (let f of tCheck) {
+					f = f.split("-");
+					if (f.length === 1) {
+						f = f[0].split("/");
 						if (f.length === 1) {
-							f = f[0].split("/");
-							if (f.length === 1) {
-								return (useTime === ~~f[0]);
+							if (useTime === ~~f[0]) {
+								foundMatch = true;
+								break;
 							}
-							return ((useTime % f[1]) === 0);
+						} else if (useTime % f[1] === 0) {
+							foundMatch = true;
+							break;
 						}
-						return (useTime >= f[0] && useTime <= f[1]);
-					});
-				});
-		});
+					} else if (useTime >= f[0] && useTime <= f[1]) {
+						foundMatch = true;
+						break;
+					}
+				}
+				if (foundMatch) {
+					break;
+				}
+			}
+			if (!foundMatch) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	, shouldRun: function (c, time) {
+		if (!time) {
+			time = this.getTime();
+		}
+		if (c.lastRun) {
+			// If was runned before, check that time in minutes has changed since.
+			let isCurrentTime = true;
+			for (const e in c.lastRun) {
+				if (c.lastRun[e] !== time[e]) {
+					isCurrentTime = false;
+					break;
+				}
+			}
+			if (isCurrentTime) {
+				return false;
+			}
+		}
+		const run = this.isPlanned(c.cron, this.lastTime, time);
 		if (run) {
 			c.lastRun = time;
 		}
@@ -111,8 +154,7 @@ module.exports = {
 	}
 
 	, daysInMonth: function (month) {
-		let year = (new Date()).getYear();
-
+		const year = (new Date()).getYear();
 		return new Date(year, month, 0).getDate();
 	}
 };

@@ -91,9 +91,7 @@ define([
 		}
 
 		, onToggleUnusableIndicators: function (state) {
-			const newValue = state[0].toUpperCase() + state.substr(1);
-
-			this.find(".item.unusable .value").html(newValue);
+			this.find(".item.unusable .value").html(state.capitalize());
 		}
 
 		, toggleQualityIndicators: function () {
@@ -108,9 +106,7 @@ define([
 		}
 
 		, onToggleQualityIndicators: function (state) {
-			const newValue = state[0].toUpperCase() + state.substr(1);
-
-			this.find(".item.quality .value").html(newValue);
+			this.find(".item.quality .value").html(state.capitalize());
 		}
 
 		, toggleScreen: function () {
@@ -139,9 +135,7 @@ define([
 		}
 
 		, onToggleQuestsVisibility: function (state) {
-			const newValue = state[0].toUpperCase() + state.substr(1);
-
-			this.find(".item.quests .value").html(newValue);
+			this.find(".item.quests .value").html(state.capitalize());
 		}
 
 		, onResize: function () {
@@ -188,9 +182,7 @@ define([
 		}
 
 		, onTogglePartyView: function (state) {
-			const newValue = state[0].toUpperCase() + state.substr(1);
-
-			this.find(".item.partyView .value").html(newValue);
+			this.find(".item.partyView .value").html(state.capitalize());
 		}
 
 		, toggleDamageNumbers: function () {
@@ -200,9 +192,7 @@ define([
 		}
 
 		, onToggleDamageNumbers: function (state) {
-			const newValue = state[0].toUpperCase() + state.substr(1);
-
-			this.find(".item.damageNumbers .value").html(newValue);
+			this.find(".item.damageNumbers .value").html(state.capitalize());
 		}
 
 		, onVolumeChange: function ({ soundType, volume }) {

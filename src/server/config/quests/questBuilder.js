@@ -17,21 +17,11 @@ module.exports = {
 		if (!zone) { // Zone doesn't exist any more. Probably been renamed
 			return;
 		}
-		let oQuests = obj.quests;
+		const oQuests = obj.quests;
 		if (oQuests.quests.filter((q) => q.zoneName === zoneName).length > 0) {
 			return;
 		}
-		let zoneTemplate = null;
-		try {
-			zoneTemplate = require(`../../${zone.path}/${zoneName}/quests.js`);
-		} catch (e) {
-			zoneTemplate = globalQuests;
-			_.log.questBuilder.error(e);
-		}
-
-		if (!zoneTemplate) {
-			zoneTemplate = globalQuests;
-		}
+		const zoneTemplate = _.safeRequire(module, `../../${zone.path}/${zoneName}/quests.js`) || globalQuests;
 		const config = _.assign({}, zoneTemplate);
 		this.instance.eventEmitter.emit("onBeforeGetQuests", {
 			obj
@@ -57,8 +47,8 @@ module.exports = {
 		if (!pickQuest) {
 			pickQuest = config.infini[Math.floor(Math.random() * config.infini.length)];
 		}
-		const pickType = pickQuest.type[0].toUpperCase() + pickQuest.type.substr(1);
-		const questClass = require(`../../config/quests/templates/quest${pickType}`);
+		const pickType = pickQuest.type.capitalize();
+		const questClass = _.safeRequire(module, `../../config/quests/templates/quest${pickType}`);
 		const quest = _.assign({}, pickQuest, questTemplate, questClass, template);
 		if (template) {
 			quest.xp = template.xp;

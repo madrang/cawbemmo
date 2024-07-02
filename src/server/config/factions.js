@@ -1,4 +1,4 @@
-let events = require("../misc/events");
+const events = require("../misc/events");
 
 module.exports = {
 	mappings: {
@@ -10,14 +10,12 @@ module.exports = {
 	}
 
 	, getFaction: function (id) {
-		let mapping = this.mappings[id];
-		let faction = null;
+		const mapping = this.mappings[id];
 		if (mapping) {
-			faction = require("./" + mapping);
+			return _.safeRequire(module, "./" + mapping);
 		} else {
-			faction = require("./factions/" + id);
+			return _.safeRequire(module, "./factions/" + id);
 		}
-
-		return faction;
 	}
+
 };

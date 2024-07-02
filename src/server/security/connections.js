@@ -5,6 +5,12 @@ const eventEmitter = require("../misc/events");
 //Helpers
 const { route, routeGlobal } = require("./connections/route");
 
+const COMPONENTS_PROTECTED = [
+	"player"
+	, "auth"
+	, "syncer"
+];
+
 //Module
 module.exports = {
 	players: []
@@ -114,18 +120,16 @@ module.exports = {
 			atlas.removeObject(player, true, res);
 		});
 
-		let keys = Object.keys(player);
-		keys.forEach(function (k) {
-			let val = player[k];
-			if (val && val.type) {
-				if (["player", "auth", "syncer"].indexOf(val.type) === -1) {
-					delete player[k];
-
-					player.components.spliceWhere((c) => c.type === val.type);
-				}
+		for (const k in player) {
+			const val = player[k];
+			if (!val?.type) {
+				continue;
 			}
-		});
-
+			if (!COMPONENTS_PROTECTED.includes(val.type)) {
+				delete player[k];
+				player.components.spliceWhere((c) => c.type === val.type);
+			}
+		}
 		eventEmitter.emit("playerObjRemoved", {
 			id: player.id
 		});
@@ -171,11 +175,8 @@ module.exports = {
 	}
 
 	, getCharacterList: function () {
-		let result = [];
-		let players = this.players;
-		let pLen = players.length;
-		for (let i = 0; i < pLen; i++) {
-			let p = players[i];
+		const result = [];
+		for (const p of this.players) {
 			if (!p.name) {
 				continue;
 			}

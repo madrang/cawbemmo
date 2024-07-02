@@ -3,8 +3,7 @@
 (function() {
 	//eslint-disable-next-line no-extend-native
 	Object.defineProperties(Array.prototype, {
-		"spliceWhere": {
-			enumerable: false
+		"spliceWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -21,8 +20,7 @@
 				}
 			}
 		}
-		, "spliceFirstWhere": {
-			enumerable: false
+		, "spliceFirstWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -37,6 +35,22 @@
 					arrObj.splice(idx, 1);
 					return kValue;
 				}
+			}
+		}
+
+		, "shuffle": { enumerable: false, writable: true
+			, value: function shuffle() {
+				let currentIndex = this.length;
+				let randomIndex;
+				// While there remain elements to shuffle...
+				while (currentIndex != 0) {
+					// Pick a remaining element...
+					randomIndex = Math.floor(Math.random() * currentIndex);
+					currentIndex--;
+					// And swap it with the current element.
+					[ this[currentIndex], this[randomIndex] ] = [ this[randomIndex], this[currentIndex] ];
+				}
+				return this;
 			}
 		}
 	});
@@ -65,7 +79,13 @@
 		};
 	}
 	Object.defineProperties(String.prototype, {
-		indexOfAny: {
+		capitalize: {
+			enumerable: false
+			, value: function() {
+				return this[0].toUpperCase() + this.substr(1);
+			}
+		}
+		, indexOfAny: {
 			enumerable: false
 			, value: function (charsArr) {
 				const sLen = this.length;
@@ -81,6 +101,12 @@
 			enumerable: false
 			, value: function () {
 				return /^[0-9a-zA-Z]+$/.test(this);
+			}
+		}
+		, replaceAllWith: {
+			enumerable: false
+			, value: function(template) {
+				return
 			}
 		}
 	});
@@ -162,6 +188,10 @@
 				throw new Error("Invalid params type");
 			}
 			return Object.defineProperties(obj || window || global, properties);
+		}
+
+		, constrain: function(n, low, high) {
+			return Math.max(Math.min(n, high), low);
 		}
 
 		/** Pause the execution of an async function until timer elapse.
@@ -253,6 +283,29 @@
 			return result;
 		}
 
+		, getDirectionsDeltas: function* (rangeX = 1, rangeY) {
+			if (!rangeY) {
+				rangeY = rangeX;
+			}
+			for (let xDir = -rangeX; xDir <= rangeX; ++xDir) {
+				for (let yDir = -rangeY; yDir <= rangeY; ++yDir) {
+					yield [ xDir, yDir ];
+				}
+			}
+		}
+		, getPositions: function* (rect) {
+			if (!rect) {
+				return;
+			}
+			const xEnd = rect.x + (rect.width || rect.w || 1);
+			for (let xPos = rect.x; xPos <= xEnd; ++xPos) {
+				const yEnd = rect.y + (rect.height || rect.h || 1);
+				for (let yPos = rect.y; yPos <= yEnd; ++yPos) {
+					yield [ xPos, yPos ];
+				}
+			}
+		}
+
 		, getGuid: function () {
 			return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
 				let r = Math.random() * 16 | 0;
@@ -275,9 +328,14 @@
 			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
 				return undefined;
 			}
-			if (args.length === 1 && Array.isArray(args[0])) {
-				// If single item array at pos zero.
-				args = args[0];
+			if (args.length === 1) {
+				if (Array.isArray(args[0])) {
+					// If single item array at pos zero.
+					args = args[0];
+				} else {
+					// Only a single choice possible.
+					return args[0];
+				}
 			}
 			return args[Math.floor(Math.random() * args.length)];
 		}

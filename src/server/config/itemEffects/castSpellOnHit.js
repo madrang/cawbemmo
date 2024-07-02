@@ -74,13 +74,13 @@ const handler = (obj, item, event, firedEventName) => {
 	}
 
 	const typeTemplate = {
-		type: spellConfig.type[0].toUpperCase() + spellConfig.type.substr(1)
+		type: spellConfig.type.capitalize()
 		, template: null
 	};
 	obj.instance.eventEmitter.emit("onBeforeGetSpellTemplate", typeTemplate);
 
 	if (!typeTemplate.template) {
-		typeTemplate.template = require("../spells/spell" + typeTemplate.type);
+		typeTemplate.template = _.safeRequire(module, "../spells/spell" + typeTemplate.type);
 	}
 
 	const builtSpell = _.assign({ obj }, spellBaseTemplate, typeTemplate.template, spellConfig);

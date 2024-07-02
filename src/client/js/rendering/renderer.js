@@ -9,7 +9,7 @@ define([
 	, "js/rendering/spritePool"
 	, "js/system/globals"
 	, "js/rendering/renderLoginBackground"
-	, "js/rendering/helpers/resetRenderer"
+	, "js/rendering/renderer_reset"
 ], function (
 	resources,
 	events,
@@ -111,12 +111,12 @@ define([
 			this.stage = new PIXI.Container();
 
 			const layers = this.layers;
-			Object.keys(layers).forEach((l) => {
+			for (const l in layers) {
 				layers[l] = new PIXI.Container();
 				layers[l].layer = (l === "tileSprites") ? "tiles" : l;
 				this.stage.addChild(layers[l]);
-			});
-			particleLayers.forEach((p) => {
+			}
+			for (const p of particleLayers) {
 				const engine = _.assign({}, particles);
 				engine.init({
 					r: this
@@ -124,7 +124,7 @@ define([
 					, stage: this.layers[p]
 				});
 				particleEngines[p] = engine;
-			});
+			}
 			this.buildSpritesTexture();
 		}
 
@@ -912,7 +912,9 @@ define([
 				return;
 			}
 			effects.render();
-			particleLayers.forEach((p) => particleEngines[p].update());
+			for (const p of particleLayers) {
+				particleEngines[p].update();
+			}
 			this.renderer.render(this.stage);
 		}
 	};

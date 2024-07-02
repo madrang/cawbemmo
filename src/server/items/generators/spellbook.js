@@ -65,25 +65,22 @@ module.exports = {
 				sprite = [10, 1];
 			} else if (statType === "str") {
 				sprite = [10, 2];
-			} else if (statType instanceof Array) {
+			} else if (Array.isArray(statType)) {
 				if ((statType.indexOf("dex") > -1) && (statType.indexOf("int") > -1)) {
 					sprite = [10, 3];
-				} else if ((statType.indexOf("str") > -1) && (statType.indexOf("int") > -1)) {
+				} else if (statType.indexOf("str") > -1 && statType.indexOf("int") > -1) {
 					sprite = [10, 4];
 				}
 			}
-
 			item.name = "Rune of " + spellAesthetic.name;
 			item.ability = true;
 			item.sprite = sprite;
 		} else if (spellQuality === "basic") {
 			item.stats = {};
 		}
-
 		if (blueprint.spellConfig) {
 			spellAesthetic = _.assign({}, spellAesthetic, blueprint.spellConfig);
 		}
-
 		item.spell = {
 			name: spellAesthetic.name || "Weapon Damage"
 			, type: spellAesthetic.type || spellName

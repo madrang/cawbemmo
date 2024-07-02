@@ -11,7 +11,7 @@ const getDamage = (config) => {
 	config.srcValues = config.source.stats.values;
 	config.tgtValues = config.target.stats.values;
 	if (element) {
-		config.elementName = `element${element[0].toUpperCase()}${element.substr(1)}`;
+		config.elementName = "element" + element.capitalize();
 	}
 
 	const result = {

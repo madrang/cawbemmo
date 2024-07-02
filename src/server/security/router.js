@@ -35,8 +35,19 @@ const keysCorrect = function (obj, specs) {
 		return false;
 	}
 	// Check if obj has extra unallowed properties.
-	const foundInvalid = Object.keys(obj).some((o) => !specs.some((k) => k.key === o));
-	return !foundInvalid;
+	for (const p in obj) {
+		let valid = false;
+		for (const sp of specs) {
+			if (p === sp.key) {
+				valid = true;
+				break;
+			}
+		}
+		if (!valid) {
+			return false;
+		}
+	}
+	return true;
 }
 
 DATA_TYPES_VALIDATORS.arrayOfObjects = (value, spec) => (

@@ -191,7 +191,7 @@ define([
 
 			let newClass = classes[nextIndex];
 
-			el.html(newClass[0].toUpperCase() + newClass.substr(1));
+			el.html(newClass.capitalize());
 
 			this.class = newClass;
 
