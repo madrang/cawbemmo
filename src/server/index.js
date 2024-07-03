@@ -16,7 +16,6 @@ const mapManager = require("./world/mapManager");
 const fixes = require("./fixes/fixes");
 const profanities = require("./language/profanities");
 const routerConfig = require("./security/routerConfig");
-const { spawnMapThreads } = require("./world/threadManager");
 
 let startup = {
 	init: function () {
@@ -55,8 +54,6 @@ let startup = {
 		await clientConfig.init();
 		await server.init();
 		await leaderboard.init();
-
-		await spawnMapThreads();
 	}
 
 	, onError: async function (e) {

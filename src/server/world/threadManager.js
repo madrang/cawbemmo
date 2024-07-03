@@ -178,9 +178,6 @@ const doesThreadExist = ({ zoneName, zoneId }) => {
 	if (exists) {
 		return true;
 	}
-	if (map.instanced) {
-		return false;
-	}
 	const thread = getThreadFromName(map.name);
 	return Boolean(thread);
 };
@@ -200,7 +197,7 @@ const getThread = async ({ zoneName, zoneId }) => {
 			result.resetObjPosition = true;
 			thread = await spawnThread(map);
 		} else {
-			thread = getThreadFromName(map.name);
+			thread = getThreadFromName(map.name) || await spawnThread(map);
 		}
 	}
 	if (!thread) {
@@ -235,13 +232,6 @@ const killThreadIfEmpty = async (thread) => {
 	}
 };
 
-const spawnMapThreads = async () => {
-	const promises = mapList
-		.filter((m) => !m.disabled && !m.instanced)
-		.map((m) => spawnThread(m));
-	await Promise.all(promises);
-};
-
 const sendMessageToThread = ({ threadId, msg }) => {
 	const thread = threads.find((t) => t.id === threadId);
 	if (thread) {
@@ -250,7 +240,9 @@ const sendMessageToThread = ({ threadId, msg }) => {
 };
 
 const messageAllThreads = (message) => {
-	threads.forEach((t) => t.worker.send(message));
+	for (const t of threads) {
+		t.worker.send(message);
+	}
 };
 
 const returnWhenThreadsIdle = async () => {
@@ -265,10 +257,8 @@ const returnWhenThreadsIdle = async () => {
 			res();
 		};
 		listenersOnZoneIdle.push(onZoneIdle);
-		threads.forEach((t) => {
-			t.worker.send({
-				method: "notifyOnceIdle"
-			});
+		messageAllThreads({
+			method: "notifyOnceIdle"
 		});
 	});
 };
@@ -279,7 +269,6 @@ module.exports = {
 	, killThread
 	, getThreadFromId
 	, doesThreadExist
-	, spawnMapThreads
 	, messageAllThreads
 	, killThreadIfEmpty
 	, sendMessageToThread
