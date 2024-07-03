@@ -1,8 +1,7 @@
 {
   "name": "cawbemmo_client",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "Browser client for CawbeMMO",
   "devDependencies": {
-
   }
 }

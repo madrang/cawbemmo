@@ -1,23 +1,23 @@
-{
-  "name": "cawbemmo_server",
-  "version": "0.0.2",
-  "description": "NodeJS Server for CawbeMMO.",
-  "dependencies": {
-    "axios": "^0.22.0",
-    "bcrypt-nodejs": "0.0.3",
-    "compression": "^1.7.4",
-    "express": "^4.17.1",
-    "express-minify": "^1.0.0",
-    "image-size": "^1.0.0",
-    "less-middleware": "^3.1.0",
-    "rethinkdbdash": "^2.3.31",
-    "socket.io": "^4.7.5",
-    "universal-analytics": "^0.5.1"
-  },
-  "devDependencies": {
+{ "name": "cawbemmo_server"
+  , "version": "0.0.6"
+  , "description": "NodeJS Server for CawbeMMO."
+  , "main": "index.js"
+  , "dependencies": {
+    "axios": "^0.22.0"
+    , "bcrypt-nodejs": "0.0.3"
+    , "compression": "^1.7.4"
+    , "express": "^4.17.1"
+    , "express-minify": "^1.0.0"
+    , "image-size": "^1.0.0"
+    , "less-middleware": "^3.1.0"
+    , "rethinkdbdash": "^2.3.31"
+    , "socket.io": "^4.7.5"
+    , "universal-analytics": "^0.5.1"
+  }
+  , "devDependencies": {
     "sqlite3": "^5.0.3"
-  },
-  "scripts": {
+  }
+  , "scripts": {
     "start": "nodejs index.js"
   }
 }

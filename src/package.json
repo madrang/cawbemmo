@@ -1,15 +1,19 @@
-{
-  "name": "cawbemmo",
-  "version": "0.0.2",
-  "description": "CawbeMMO is an opensource MMO in javascript originaly forked from Isleward.",
-  "dependencies": {
+{ "name": "cawbemmo"
+  , "version": "0.0.6"
+  , "description": "CawbeMMO is an opensource MMO in javascript originaly forked from Isleward."
+  , "dependencies": {
     "globals": "^15.5.0"
-  },
-  "devDependencies": {
-    "eslint": "9.5.0",
-    "@stylistic/eslint-plugin-js": "2.2.0",
-    "@babel/eslint-parser": "^7.24.7",
-    "eslint-plugin-prettier": "5.1.3",
-    "eslint-plugin-requirejs": "^4.0.1"
+  }
+  , "devDependencies": {
+    "@babel/eslint-parser": "^7.24.7"
+    , "@stylistic/eslint-plugin-js": "2.2.0"
+    , "eslint": "9.5.0"
+    , "eslint-plugin-prettier": "5.1.3"
+    , "eslint-plugin-requirejs": "^4.0.1"
+    , "chai": "^5.1.1"
+    , "mocha": "^10.6.0"
+  }
+  , "scripts": {
+    "test": "mocha --reporter spec"
   }
 }
