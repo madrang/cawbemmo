@@ -5,11 +5,11 @@ module.exports = {
 	, distance: 10
 	, cron: "34 */2 * * *"
 	, disabled: false
-	, endMark: 1800
+	, endMark: 2000
 	, failure: [ // Not Implemented...
 		{ type: "killMob"
 			, mobs: "Igor"
-			, endMark: 1750
+			, endMark: 1950
 		}
 	]
 	, phases: [
