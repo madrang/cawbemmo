@@ -32,7 +32,7 @@ module.exports = {
 				}
 			}
 		}
-		, mrBoner: {
+		, mrboner: {
 			properties: {
 				cpnNotice: {
 					actions: {
