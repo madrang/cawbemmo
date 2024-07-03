@@ -55,7 +55,7 @@ module.exports = {
 				event: "onGetAnnouncement"
 				, data: {
 					msg: "Loading map, please wait as this may take a few moments..."
-					, ttl: 350
+					, ttl: 150
 				}
 			});
 		}
@@ -108,9 +108,7 @@ module.exports = {
 				}
 			});
 		});
-
 		killThread(thread);
-
 		if (callback) {
 			callback();
 		}
@@ -127,13 +125,11 @@ module.exports = {
 		const thread = getThreadFromId(obj.zoneId);
 		if (!thread) {
 			callback();
-
 			return;
 		}
 
-		if (thread.instanced && (await getPlayerCountInThread(thread)) === 1) {
+		if ((await getPlayerCountInThread(thread)) === 1) {
 			this.removeObjectFromInstancedZone(thread, playerId, callback);
-
 			return;
 		}
 

@@ -34,6 +34,19 @@ const getPlayerCountInThread = async (thread) => {
 	return playerCount;
 };
 
+const killThread = (thread) => {
+	_.log.threadManager.debug("Unloading empty zone (Map/%s).", thread.name || thread.id);
+	thread.worker.kill();
+	threads.spliceWhere((t) => t === thread);
+};
+
+const killThreadIfEmpty = async (thread) => {
+	const playerCount = await getPlayerCountInThread(thread);
+	if (playerCount === 0) {
+		killThread(thread);
+	}
+};
+
 const messageHandlers = {
 	onReady: function (thread) {
 		thread.worker.send({
@@ -96,9 +109,8 @@ const messageHandlers = {
 	, rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		if (thread.instanced && (await getPlayerCountInThread(thread)) === 0) {
-			thread.worker.kill();
-			threads.spliceWhere((t) => t === thread);
+		if ((await getPlayerCountInThread(thread)) === 0) {
+			killThread(thread);
 		}
 
 		//When messages are sent from map threads, they have an id (id of the object in the map thread)
@@ -218,18 +230,6 @@ const getThread = async ({ zoneName, zoneId }) => {
 	}
 	result.thread = thread;
 	return result;
-};
-
-const killThread = (thread) => {
-	thread.worker.kill();
-	threads.spliceWhere((t) => t === thread);
-};
-
-const killThreadIfEmpty = async (thread) => {
-	const playerCount = await getPlayerCountInThread(thread);
-	if (playerCount === 0) {
-		killThread(thread);
-	}
 };
 
 const sendMessageToThread = ({ threadId, msg }) => {
