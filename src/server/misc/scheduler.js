@@ -85,7 +85,7 @@ module.exports = {
 			}
 			tCheck = tCheck.split(",");
 			let foundMatch = false;
-			for (let k = 1 + timeT - lastTimeT; k > 0; --k) {
+			for (let k = timeT - lastTimeT; k >= 0; --k) {
 				let s = k + lastTimeT;
 				const useTime = (s >= overflow) ? (s - overflow) : s;
 				for (let f of tCheck) {
@@ -93,15 +93,15 @@ module.exports = {
 					if (f.length === 1) {
 						f = f[0].split("/");
 						if (f.length === 1) {
-							if (useTime === ~~f[0]) {
+							if (useTime === Number.parseInt(f[0])) {
 								foundMatch = true;
 								break;
 							}
-						} else if (useTime % f[1] === 0) {
+						} else if (useTime % Number.parseInt(f[1]) === 0) {
 							foundMatch = true;
 							break;
 						}
-					} else if (useTime >= f[0] && useTime <= f[1]) {
+					} else if (useTime >= Number.parseInt(f[0]) && useTime <= Number.parseInt(f[1])) {
 						foundMatch = true;
 						break;
 					}
