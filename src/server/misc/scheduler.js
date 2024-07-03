@@ -5,12 +5,12 @@ module.exports = {
 
 	, lastTime: null
 
-	, init: function () {
-		this.lastTime = this.getTime();
+	, init: function (time) {
+		this.lastTime = time || this.getTime();
 	}
 
-	, update: function () {
-		this.lastTime = this.getTime();
+	, update: function (time) {
+		this.lastTime = time || this.getTime();
 	}
 
 	, isTimeMatch: function (cron, time) {
@@ -141,8 +141,11 @@ module.exports = {
 		return run;
 	}
 
-	, getTime: function () {
-		const time = new Date();
+	, getTime: function (dateValue) {
+		const time = (dateValue === undefined
+			? new Date()
+			: new Date(dateValue)
+		);
 		return {
 			minute: time.getMinutes()
 			, hour: time.getHours()
