@@ -15,6 +15,14 @@ const dropBag = require("./inventory/dropBag");
 const useItem = require("./inventory/useItem");
 const { isItemStackable } = require("./inventory/helpers");
 
+const SPRITE_CHEST_CELL_IDS = [
+	98			// 0 - Normal
+	, 99		// 1
+	, 256		// 2
+	, 100		// 3
+	, 101		// 4 - Rare
+];
+
 //Component
 module.exports = {
 	type: "inventory"
@@ -105,16 +113,11 @@ module.exports = {
 	}
 
 	, update: function () {
-		let items = this.items;
-		let iLen = items.length;
-		for (let i = 0; i < iLen; i++) {
-			let item = items[i];
+		for (const item of this.items) {
 			if (!item.cd) {
 				continue;
 			}
-
 			item.cd--;
-
 			this.obj.syncer.setArray(true, "inventory", "getItems", item);
 		}
 	}
@@ -142,10 +145,8 @@ module.exports = {
 		if (!learnMsg.success) {
 			const message = learnMsg.msg || "you cannot learn that ability";
 			this.obj.social.notifySelf({ message });
-
 			return;
 		}
-
 		let spellbook = this.obj.spellbook;
 
 		if ((item.slot === "twoHanded") || (item.slot === "oneHanded")) {
@@ -269,11 +270,10 @@ module.exports = {
 
 	, salvageItem: function ({ itemId }) {
 		let item = this.findItem(itemId);
-		if ((!item) || (item.material) || (item.quest) || (item.noSalvage) || (item.eq)) {
+		if (!item || item.material || item.quest || item.noSalvage || item.eq) {
 			return;
 		}
-
-		let messages = [];
+		const messages = [];
 
 		let items = salvager.salvage(item);
 
@@ -287,7 +287,6 @@ module.exports = {
 				, message: "salvage (" + material.name + " x" + material.quantity + ")"
 			});
 		}
-
 		this.obj.social.notifySelfArray(messages);
 	}
 
@@ -524,7 +523,6 @@ module.exports = {
 		if (id === null) {
 			return null;
 		}
-
 		return this.items.find((i) => i.id === id);
 	}
 
@@ -576,30 +574,19 @@ module.exports = {
 	}
 
 	, createBag: function (x, y, items, ownerName) {
-		let bagCell = 50;
-
 		let topQuality = 0;
-		let iLen = items.length;
-		for (let i = 0; i < iLen; i++) {
-			let quality = items[i].quality;
-			items[i].fromMob = Boolean(this.obj.mob);
+		for (const item of items) {
+			let quality = Number.parseInt(item.quality);
+			item.fromMob = Boolean(this.obj.mob);
 			if (quality > topQuality) {
-				topQuality = ~~quality;
+				topQuality = quality;
 			}
 		}
-
-		if (topQuality === 0) {
-			bagCell = 50;
-		} else if (topQuality === 1) {
-			bagCell = 51;
-		} else if (topQuality === 2) {
-			bagCell = 128;
-		} else if (topQuality === 3) {
-			bagCell = 52;
-		} else {
-			bagCell = 53;
+		// Map quality to sprite cell.
+		let bagCell = SPRITE_CHEST_CELL_IDS[topQuality];
+		if (!bagCell) {
+			bagCell = SPRITE_CHEST_CELL_IDS[SPRITE_CHEST_CELL_IDS.length - 1];
 		}
-
 		const createBagMsg = {
 			ownerName
 			, x
@@ -612,7 +599,7 @@ module.exports = {
 		};
 		this.obj.instance.eventEmitter.emit("onBeforeCreateBag", createBagMsg);
 
-		let obj = this.obj.instance.objects.buildObjects([{
+		const obj = this.obj.instance.objects.buildObjects([{
 			sheetName: createBagMsg.sprite.sheetName
 			, cell: createBagMsg.sprite.cell
 			, x: createBagMsg.x
@@ -627,9 +614,7 @@ module.exports = {
 				}
 			}
 		}]);
-
 		obj.canBeSeenBy = ownerName;
-
 		return obj;
 	}
 
