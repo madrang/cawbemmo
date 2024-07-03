@@ -1,7 +1,25 @@
 let mobBuilder = require("../../world/mobBuilder");
 
 const buildMob = (objects, mobConfig, x, y, mobIndex) => {
-	const { id, sheetName="mobs", cell, name, properties, originX, originY, maxChaseDistance, dialogue, trade, chats, events } = mobConfig;
+	const {
+		id, name
+		, sheetName="mobs"
+		, cell
+		, attackable
+		, properties
+		, originX, originY
+		, maxChaseDistance
+		, dialogue
+		, trade
+		, chats
+		, events
+	} = mobConfig;
+
+	if (attackable && !mobConfig.spells) {
+		mobConfig.spells = [
+			{ type: "melee" }
+		];
+	}
 
 	const mob = objects.buildObjects([{
 		x, y

@@ -5,6 +5,13 @@ module.exports = {
 	, distance: 10
 	, cron: "34 */2 * * *"
 	, disabled: false
+	, endMark: 2000
+	, failure: [ // Not Implemented...
+		{ type: "killMob"
+			, mobs: "Igor"
+			, endMark: 1950
+		}
+	]
 	, phases: [
 		{ type: "spawnMob"
 			, spawnRect: { x: 120, y: 94 }

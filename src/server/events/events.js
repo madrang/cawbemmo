@@ -46,7 +46,9 @@ module.exports = {
 			if (e.disabled) {
 				continue;
 			}
-			this.configs.push(_.assign({}, e));
+			this.configs.push(_.assign({
+				endMark: -1
+			}, e));
 		}
 		this.instance.eventEmitter.emit("afterGetEventList", {
 			eventConfigs: this.configs
@@ -165,6 +167,7 @@ module.exports = {
 						&& c.durationEvent
 						&& !scheduler.isActive(c, time)
 					)
+					|| (c.endMark !== -1 && c.endMark <= c.event.age)
 				) {
 					// Event completed.
 					this.stopEvent(c);
