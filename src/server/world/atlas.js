@@ -24,33 +24,26 @@ module.exports = {
 
 		let { zoneName, zoneId } = obj;
 
+		// Try to join party leader in instanced maps.
 		const partyIds = obj.components.find((c) => c.type === "social")?.party;
 		if (partyIds) {
 			const partyLeader = cons.players.find((p) => {
 				if (!partyIds.includes(p.id)) {
 					return false;
 				}
-
 				const cpnSocial = p.components.find((c) => c.type === "social");
-
 				if (!cpnSocial) {
 					return false;
 				}
-
 				return cpnSocial.isPartyLeader;
 			});
-
 			if (partyLeader?.zoneName === zoneName) {
 				zoneId = partyLeader.zoneId;
 			}
 		}
 
-		const eGetThread = {
-			zoneName
-			, zoneId
-		};
-
-		if (!doesThreadExist(eGetThread)) {
+		const thread = getThread({ zoneName, zoneId });
+		if (!thread.isReady) {
 			serverObj.socket.emit("event", {
 				event: "onGetAnnouncement"
 				, data: {
@@ -58,8 +51,8 @@ module.exports = {
 					, ttl: 150
 				}
 			});
+			await thread.promise;
 		}
-		const thread = await getThread(eGetThread);
 
 		//Perhaps the player disconnected while waiting for the thread to spawn
 		if (!serverObj.socket.connected) {

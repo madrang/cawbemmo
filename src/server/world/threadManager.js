@@ -153,26 +153,21 @@ const onMessage = (thread, message) => {
 	}
 };
 
-const spawnThread = async ({ name, path, instanced }) => {
-	let cbOnInitialized;
-	const promise = new Promise((resolveOnReady) => {
-		cbOnInitialized = resolveOnReady;
-	});
-	const worker = childProcess.fork("./world/worker", [name]);
-	const id = instanced ? _.getGuid() : name;
+const spawnThread = ({ name, path, instanced }) => {
 	const thread = {
-		id
+		id: instanced ? _.getGuid() : name
 		, name
 		, instanced
 		, path
-		, worker
 		, isReady: false
-		, promise
-		, cbOnInitialized
 	};
-	worker.on("message", onMessage.bind(null, thread));
+	thread.promise = new Promise((resolve) => {
+		thread.cbOnInitialized = resolve;
+	});
+	thread.worker = childProcess.fork("./world/worker", [name]);
+	thread.worker.on("message", onMessage.bind(null, thread));
 	threads.push(thread);
-	return promise;
+	return thread;
 };
 
 module.exports = {
@@ -182,16 +177,16 @@ module.exports = {
 	, getThreadFromId: (threadId) => {
 		return threads.find((t) => t.id === threadId);
 	}
-	, getThread:async ({ zoneName, zoneId }) => {
-		let thread = threads.find((t) => (t.name === zoneName
-			&& (t.id === zoneId
-				|| (!zoneId && t.id === t.name)
+	, getThread: ({ zoneName, zoneId }) => {
+		let thread = threads.find(
+			(t) => (t.name === zoneName
+				&& (t.id === zoneId || t.id === t.name)
 			)
-		));
+		);
 		if (!thread) {
 			const mapList = getMapList();
 			const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
-			thread = await spawnThread(map);
+			thread = spawnThread(map);
 		}
 		if (!thread) {
 			io.logError({
@@ -205,9 +200,6 @@ module.exports = {
 				}
 			});
 			process.exit();
-		}
-		if (!thread.isReady) {
-			await thread.promise;
 		}
 		return thread;
 	}
@@ -233,7 +225,7 @@ module.exports = {
 	}
 
 	, killThread
-	, killThreadIfEmpty:async (thread) => {
+	, killThreadIfEmpty: async (thread) => {
 		const playerCount = await getPlayerCountInThread(thread);
 		if (playerCount === 0) {
 			killThread(thread);
