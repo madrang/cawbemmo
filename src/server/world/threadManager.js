@@ -3,7 +3,7 @@ const childProcess = require("child_process");
 
 //Imports
 const objects = require("../objects/objects");
-const { mapList } = require("./mapManager");
+const { getMapList } = require("./mapManager");
 const { registerCallback } = require("./atlas/registerCallback");
 
 //Internals
@@ -120,6 +120,7 @@ const messageHandlers = {
 		obj.destroyed = false;
 
 		const serverObj = objects.objects.find((o) => o.id === obj.id);
+		const mapList = getMapList();
 		const mapExists = mapList.some((m) => m.name === newZone);
 
 		if (mapExists) {
@@ -182,6 +183,7 @@ const spawnThread = async ({ name, path, instanced }) => {
 };
 
 const doesThreadExist = ({ zoneName, zoneId }) => {
+	const mapList = getMapList();
 	let map = mapList.find((m) => m.name === zoneName);
 	if (!map) {
 		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);
@@ -199,6 +201,7 @@ const getThread = async ({ zoneName, zoneId }) => {
 		resetObjPosition: false
 		, thread: null
 	};
+	const mapList = getMapList();
 	let map = mapList.find((m) => m.name === zoneName);
 	if (!map) {
 		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);

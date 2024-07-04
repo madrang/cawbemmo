@@ -236,7 +236,7 @@ module.exports = {
 	config
 
 	, init: async function () {
-		fileLister.getFolder("./clientComponents").forEach((f) => {
+		fileLister.getFiles("./clientComponents").forEach((f) => {
 			if (!f.endsWith(".js")) {
 				return;
 			}
