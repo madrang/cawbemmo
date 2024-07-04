@@ -70,6 +70,13 @@ module.exports = {
 				}
 			}
 		}
+		, four: {
+			components: {
+				cpnWorkbench: {
+					type: "cooking"
+				}
+			}
+		}
 	}
 	, mobs: {
 		default: {
@@ -292,10 +299,10 @@ module.exports = {
 					},{
 						name: "Pince de crabe cuite"
 						, type: "consumable"
-						, sprite: [0, 1]
+						, sprite: [0, 3]
 						, description: "Donne 200 HP"
 						, spritesheet: "images/questItems.png"
-						, worth: 12
+						, worth: 18
 						, noSalvage: true
 						, noAugment: true
 						, uses: 1
@@ -350,6 +357,46 @@ module.exports = {
 						, quality: 0
 						, infinite: true
 					}]
+					, level: {
+						min: 1
+						, max: 10
+					}
+					, markup: {
+						buy: 0.50
+						, sell: 2.5
+					}
+				}
+			}
+		}, "mr giroux": {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 3
+						, max: 10
+					}
+					, forceItems: [{
+						name: "Bouteille vide"
+						, material: true
+						, sprite: [0, 9]
+						, worth: 3
+						, quality: 0
+						, infinite: true
+					}
+					,{
+						name: "pain"
+						, material: true
+						, sprite: [1, 5]
+						, worth: 5
+						, quality: 0
+						, infinite: true
+					}
+					]
 					, level: {
 						min: 1
 						, max: 10

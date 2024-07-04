@@ -128,7 +128,7 @@ module.exports = {
 			cpn: "trade"
 			, method: "startBuy"
 			, args: [{
-				targetName: "raymond"
+				targetName: "mr giroux"
 			}]
 		}
 		,

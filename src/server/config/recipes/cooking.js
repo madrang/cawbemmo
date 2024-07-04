@@ -1,53 +1,94 @@
 const baseRecipes = {
-	carp: {
-		description: "It's a fish on a stick, what more do you want to know?"
-		, item: {
-			name: "Carp on a Stick"
+	bouffe: {
+		item: {
+			name: "bouffe"
 			, type: "consumable"
-			, sprite: [0, 9]
-			, description: "It's a fish on a stick, what more do you want to know?"
-			, worth: 0
+			, sprite: [0, 8]
+			, worth: 5
 			, noSalvage: true
 			, noAugment: true
 			, uses: 1
+			, getXp: 10
 			, effects: [{
 				type: "gainStat"
-				, rolls: {
-					stat: "hp"
-				}
 			}]
 		}
-		, materials: [{
-			quantity: 1
-		}, {
-			name: "Skewering Stick"
-			, quantity: 1
-		}]
+		, materials: [
+
+		]
 	}
 };
 
-const buildRecipe = function (recipeName, itemName, effectAmount, materialName, quantity) {
-	return _.assign({}, baseRecipes[recipeName], {
-		name: itemName
-		, item: {
-			name: itemName
-			, quantity: quantity
-			, effects: [{
-				rolls: {
-					amount: effectAmount
-				}
-			}]
-		}
-		, materials: [{
-			name: materialName
-		}]
+const buildRecipe = function (recipe, item, materials, effects) {
+	if (!recipe?.name) {
+		throw new Error("Missing recipe name.")
+	}
+	if (!item?.name) {
+		throw new Error("Missing item name.")
+	}
+	if (materials && !Array.isArray(materials)) {
+		materials = [ materials ];
+	}
+	if (effects && !Array.isArray(effects)) {
+		effects = [ effects ];
+	}
+	return _.assign({}, baseRecipes[recipe.name], recipe, {
+		// New recipe name from the item name.
+		name: item.name
+		, item: _.assign(item, {
+			effects: effects || []
+		})
+		, materials: materials || []
 	});
 };
 
 module.exports = [
-	buildRecipe("carp", "Carp on a Stick", 50, "Sun Carp", 1)
-	, buildRecipe("carp", "Big Carp on a Stick", 50, "Big Sun Carp", 2)
-	, buildRecipe("carp", "Giant Carp on a Stick", 150, "Giant Sun Carp", 1)
-	, buildRecipe("carp", "Trophy Carp on a Stick", 150, "Trophy Sun Carp", 2)
-	, buildRecipe("carp", "Fabled Carp on a Stick", 200, "Fabled Sun Carp", [3, 5])
+	buildRecipe(
+		// recette
+		{ name: "bouffe"
+			, description: "Un gros hamburger <br /><br />Donne: 100 Hp instant"
+		}
+		// item
+		,{ name: "Hamburger"
+			, description: "Un gros hamburger <br /><br />Donne: 100 Hp instant"
+			, getXp: 10
+		}
+		// materials
+		,  [
+			{ name: "Steak", quantity: 1 }
+			, { name: "pain", quantity: 1 }]
+		// effects
+		, {
+			rolls: {
+				//stat: ( "mana" | "hp" )
+				stat: "hp"
+				// montant de base
+				, amount: "100"
+			}
+		}
+	)
+	,buildRecipe(
+		// recette
+		{ name: "bouffe"
+			, description: "Un gros hamburger <br /><br />Donne: 100 Hp instant"
+		}
+		// item
+		,{ name: "Pince de homar cuite"
+			, description: "Un gros hamburger <br /><br />Donne: 200 Hp instant"
+			, getXp: 10
+		}
+		// materials
+		,  [
+			{ name: "Steak", quantity: 1 }
+			, { name: "pain", quantity: 1 }]
+		// effects
+		, {
+			rolls: {
+				//stat: ( "mana" | "hp" )
+				stat: "hp"
+				// montant de base
+				, amount: "100"
+			}
+		}
+	)
 ];
