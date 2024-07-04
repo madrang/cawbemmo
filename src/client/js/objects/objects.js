@@ -11,19 +11,20 @@ define([
 	sound,
 	config
 ) {
+	const OBJECTS_EVENTS = [
+		"onGetObject"
+		, "onTilesVisible"
+		, "onToggleNameplates"
+		, "destroyAllObjects"
+	];
 	return {
 		objects: []
 
 		, init: function () {
 			events.on("onChangeHoverTile", this.getLocation.bind(this));
-
-			[
-				"onGetObject"
-				, "onTilesVisible"
-				, "onToggleNameplates"
-				, "destroyAllObjects"
-			]
-				.forEach((e) => events.on(e, this[e].bind(this)));
+			for (const e of OBJECTS_EVENTS) {
+				events.on(e, this[e].bind(this));
+			}
 		}
 
 		, getLocation: function (x, y) {

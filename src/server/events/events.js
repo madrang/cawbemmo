@@ -79,7 +79,9 @@ module.exports = {
 		if (desc) {
 			config.description = applyVariablesToDescription(desc, event.variables);
 		}
-		event.participators.forEach((p) => p.events.syncList());
+		for (const p of event.participators) {
+			p.events.syncList();
+		}
 	}
 
 	, setEventRewards: function (name, rewards) {

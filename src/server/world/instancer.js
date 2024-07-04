@@ -101,10 +101,9 @@ module.exports = {
 		const { respawnPos, respawnMap } = this;
 
 		//Ensure that all players are gone
-		const players = objects.objects.filter((o) => o.player);
-		players.forEach((p) => {
-			if (p.destroyed) {
-				return;
+		for (const p of objects.objects) {
+			if (!p.player || p.destroyed) {
+				continue;
 			}
 			p.fireEvent("beforeRezone");
 			p.destroyed = true;
@@ -126,7 +125,7 @@ module.exports = {
 					, keepPos: true
 				}
 			});
-		});
+		}
 
 		//Only objects and syncer should update if there are players
 		if (players.length) {
@@ -156,7 +155,9 @@ module.exports = {
 		this.respawnPos = null;
 		this.respawnMap = null;
 
-		this.addQueue.forEach((q) => this.addObject(q));
+		for (const q of this.addQueue) {
+			this.addObject(q);
+		}
 		this.addQueue = [];
 
 		_.log.World.notice(`(Map/${map.name}): Ready`);
@@ -195,11 +196,12 @@ module.exports = {
 			, changed: false
 		};
 		eventEmitter.emit("onBeforePlayerSpawn", { name: obj.name, instance: { physics } }, spawnEvent);
-		//If a player is added, destroy any player objects with the same name
-		const existing = objects.filter((o) => o.player && o.name === msg.obj.name);
-		existing.forEach((o) => {
-			o.destroyed = true;
-		});
+		// If a player is added, destroy any player objects with the same name
+		for (const o of objects.objects) {
+			if (o.player && o.name === msg.obj.name) {
+				o.destroyed = true;
+			}
+		}
 
 		if (spawnEvent.changed) {
 			msg.keepPos = false;

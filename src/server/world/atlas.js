@@ -195,7 +195,6 @@ module.exports = {
 		if (!callback) {
 			return;
 		}
-
 		callback.callback(msg.msg.result);
 	}
 
@@ -222,5 +221,4 @@ module.exports = {
 			});
 		});
 	}
-
 };

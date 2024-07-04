@@ -42,36 +42,33 @@ module.exports = {
 	}
 
 	, syncList: function () {
-		this.list.forEach(function (l) {
+		for (const l of this.list) {
 			this.obj.syncer.setArray(true, "events", "updateList", {
 				id: l.id
 				, name: l.config.name
 				, description: l.config.description
 			});
-		}, this);
+		}
 	}
 
 	, events: {
 		afterMove: function () {
-			let events = this.obj.instance.events;
-			let closeEvents = events.getCloseEvents(this.obj);
+			const events = this.obj.instance.events;
+			const closeEvents = events.getCloseEvents(this.obj);
 			if (!closeEvents) {
 				return;
 			}
-
-			closeEvents.forEach(function (c) {
-				if (this.list.some((l) => (l === c))) {
-					return;
+			for (const c of closeEvents) {
+				if (this.list.includes(c)) {
+					continue;
 				}
-
 				this.list.push(c);
-
 				this.obj.syncer.setArray(true, "events", "updateList", {
 					id: c.id
 					, name: c.config.name
 					, description: c.config.description
 				});
-			}, this);
+			}
 		}
 	}
 };

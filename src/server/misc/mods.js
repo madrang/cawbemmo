@@ -78,10 +78,10 @@ module.exports = {
 	}
 
 	, tick: function () {
-		this.mods.forEach((m) => {
+		for (const m of this.mods) {
 			if (m.tick) {
 				m.tick();
 			}
-		});
+		}
 	}
 };

@@ -36,13 +36,10 @@ module.exports = {
 			if (!o.destroyed) {
 				continue;
 			}
-
 			objects.removeObject(o);
-
 			oLen--;
 			i--;
 		}
-
 		this.sendServerModuleMessages();
 	}
 
@@ -94,17 +91,14 @@ module.exports = {
 				let p = pList[j];
 				let px = p.x;
 				let py = p.y;
-
 				const canSee = (
-					Math.abs(ox - px) <= viewDistanceX && Math.abs(oy - py) < viewDistanceY &&
-					(
-						!canBeSeenBy ||
-						canBeSeenBy === p.name
+					Math.abs(ox - px) <= viewDistanceX && Math.abs(oy - py) < viewDistanceY
+					&& (
+						!canBeSeenBy
+						|| canBeSeenBy === p.name
 					)
 				);
-
 				let hasSeen = p.player.hasSeen(oId);
-
 				if (hasSeen) {
 					if (canSee) {
 						if (p.id === oId && syncSelf) {
@@ -116,7 +110,6 @@ module.exports = {
 							sendTo = true;
 						}
 					}
-
 					if (destroyed || !canSee) {
 						if (!canSee) {
 							queueFunction({
@@ -126,7 +119,6 @@ module.exports = {
 							},
 							[ p.serverId ]);
 						}
-
 						p.player.unsee(oId);
 					}
 				} else if (!destroyed && canSee) {
@@ -143,15 +135,12 @@ module.exports = {
 							cached = cache[oId] = o.getSimple();
 						}
 					}
-
 					completeObj = cached;
 					completeList.push(p.serverId);
 					sendComplete = true;
-
 					p.player.see(oId);
 				}
 			}
-
 			if (sendTo) {
 				queueFunction(sync, toList);
 			}
@@ -159,7 +148,6 @@ module.exports = {
 				queueFunction(completeObj, completeList);
 			}
 		}
-
 		this.send();
 	}
 
@@ -172,13 +160,9 @@ module.exports = {
 		if (!to.length) {
 			return;
 		}
-
 		this.dirty = true;
-
-		let buffer = this.buffer;
-		let list = buffer[event] || (buffer[event] = []);
-
-		list.push({
+		const buffer = this.buffer[event] || (this.buffer[event] = []);
+		buffer.push({
 			to: to
 			, obj: obj
 		});
@@ -186,13 +170,10 @@ module.exports = {
 
 	, flushForTarget: function (targetServerId) {
 		const buffer = this.buffer;
-
 		for (let p in buffer) {
 			const list = buffer[p];
-
 			list.forEach((l) => l.to.spliceWhere((f) => f === targetServerId));
 			list.spliceWhere((l) => !l.to.length);
-
 			if (!list.length) {
 				delete buffer[p];
 			}
@@ -200,46 +181,33 @@ module.exports = {
 	}
 
 	, processDestroyedObject: function (obj) {
-		const { objects, queue } = this;
-		const { id, serverId } = obj;
-
 		obj.destroyed = true;
-
-		//We mark forceDestroy to tell objects that we're destroying an object outside of the
-		// syncer's update method
+		// We mark forceDestroy to tell objects that we're destroying an object outside of the syncer's update method.
 		obj.forceDestroy = true;
-
+		this.objects.removeObject(obj);
+		this.flushForTarget(obj.serverId);
 		const msg = {
-			id: id
+			id: obj.id
 			, destroyed: true
 		};
-
-		objects.removeObject(obj);
-
-		this.flushForTarget(serverId);
-
-		const fnQueueMsg = queue.bind(this, "onGetObject");
-
-		//Find any players that have seen this obj
-		objects
-			.filter((o) => !o.destroyed && o?.player?.hasSeen(id))
-			.forEach((o) => {
-				fnQueueMsg(msg, [o.serverId]);
-			});
+		// Send to any players that have seen this obj.
+		for (const o of this.objects.objects) {
+			if (!o.destroyed && o.player?.hasSeen(obj.id)) {
+				this.queue.bind("onGetObject", msg, [o.serverId]);
+			}
+		}
 	}
 
 	, send: function () {
 		if (!this.dirty) {
 			return;
 		}
-
 		this.dirty = false;
 
 		process.send({
 			method: "events"
 			, data: this.buffer
 		});
-
 		this.buffer = {};
 	}
 
@@ -247,11 +215,9 @@ module.exports = {
 		if (!this.dirty) {
 			return;
 		}
-
 		this.dirty = false;
 
 		const serverModuleMsgs = this.buffer.serverModule;
-
 		if (serverModuleMsgs) {
 			process.send({
 				method: "events"
@@ -260,7 +226,6 @@ module.exports = {
 				}
 			});
 		}
-
 		this.buffer = {};
 	}
 };
