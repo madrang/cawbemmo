@@ -10,7 +10,6 @@ const config = {
 	logoPath: null
 	, loginBgGeneratorPath: null
 	, resourceList: []
-	, defaultZone: "town"
 	, textureList: [
 		"tiles"
 		, "walls"

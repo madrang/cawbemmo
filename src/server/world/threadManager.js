@@ -1,23 +1,10 @@
-//System Imports
 const childProcess = require("child_process");
-
-//Imports
 const objects = require("../objects/objects");
 const { getMapList } = require("./mapManager");
 const { registerCallback } = require("./atlas/registerCallback");
 
-//Internals
 const threads = [];
 const listenersOnZoneIdle = [];
-
-//Helpers
-const getThreadFromName = (name) => {
-	return threads.find((t) => t.name === name);
-};
-
-const getThreadFromId = (threadId) => {
-	return threads.find((t) => t.id === threadId);
-};
 
 const getPlayerCountInThread = async (thread) => {
 	const { playerCount } = await new Promise((res) => {
@@ -37,11 +24,19 @@ const killThread = (thread) => {
 	threads.spliceWhere((t) => t === thread);
 };
 
-const killThreadIfEmpty = async (thread) => {
-	const playerCount = await getPlayerCountInThread(thread);
-	if (playerCount === 0) {
-		killThread(thread);
+const messageAllThreads = (message) => {
+	for (const t of threads) {
+		t.worker.send(message);
 	}
+};
+
+const getDefaultMap = (mapList) => {
+	let defaultMaps = mapList.filter((m) => m.defaultZone);
+	if (!defaultMaps || !defaultMaps.length) {
+		_.log.threadManager.warn("No defaultZone found, using any available maps.");
+		defaultMaps = mapList;
+	}
+	return _.randomObj(defaultMaps);
 };
 
 const messageHandlers = {
@@ -91,7 +86,7 @@ const messageHandlers = {
 			return;
 		}
 
-		let newThread = getThreadFromName(obj.zoneName);
+		let newThread = threads.find((t) => t.name === obj.zoneName);
 		if (!newThread) {
 			return;
 		}
@@ -124,8 +119,9 @@ const messageHandlers = {
 			serverObj.zoneName = newZone;
 			obj.zoneName = newZone;
 		} else {
-			obj.zoneName = clientConfig.config.defaultZone;
-			serverObj.zoneName = clientConfig.config.defaultZone;
+			const defaultMap = getDefaultMap(mapList);
+			obj.zoneName = defaultMap.name;
+			serverObj.zoneName = defaultMap.name;
 		}
 
 		delete serverObj.zoneId;
@@ -179,99 +175,88 @@ const spawnThread = async ({ name, path, instanced }) => {
 	return promise;
 };
 
-const doesThreadExist = ({ zoneName, zoneId }) => {
-	const mapList = getMapList();
-	let map = mapList.find((m) => m.name === zoneName);
-	if (!map) {
-		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);
+module.exports = {
+	getThreadsFromName: (name) => {
+		return threads.filter((t) => t.name === name);
 	}
-	const exists = threads.some((t) => t.id === zoneId && t.name === zoneName);
-	if (exists) {
-		return true;
+	, getThreadFromId: (threadId) => {
+		return threads.find((t) => t.id === threadId);
 	}
-	const thread = getThreadFromName(map.name);
-	return Boolean(thread);
-};
-
-const getThread = async ({ zoneName, zoneId }) => {
-	const result = {
-		resetObjPosition: false
-		, thread: null
-	};
-	const mapList = getMapList();
-	let map = mapList.find((m) => m.name === zoneName);
-	if (!map) {
-		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);
-	}
-	let thread = threads.find((t) => t.id === zoneId && t.name === zoneName);
-	if (!thread) {
-		if (map.instanced) {
-			result.resetObjPosition = true;
+	, getThread:async ({ zoneName, zoneId }) => {
+		let thread = threads.find((t) => (t.name === zoneName
+			&& (t.id === zoneId
+				|| (!zoneId && t.id === t.name)
+			)
+		));
+		if (!thread) {
+			const mapList = getMapList();
+			const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
 			thread = await spawnThread(map);
-		} else {
-			thread = getThreadFromName(map.name) || await spawnThread(map);
+		}
+		if (!thread) {
+			io.logError({
+				sourceModule: "threadManager"
+				, sourceMethod: "getThread"
+				, error: "No thread found"
+				, info: {
+					requestedZoneName: zoneName
+					, requestedZoneId: zoneId
+					, useMapName: map.name
+				}
+			});
+			process.exit();
+		}
+		if (!thread.isReady) {
+			await thread.promise;
+		}
+		return thread;
+	}
+	, doesThreadExist:({ zoneName, zoneId }) => {
+		for (const t of threads) {
+			if (t.name === zoneName
+				&& (t.id === zoneId
+					|| (!zoneId && t.id === t.name)
+				)
+			) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	, messageAllThreads
+	, sendMessageToThread: ({ threadId, msg }) => {
+		const thread = threads.find((t) => t.id === threadId);
+		if (thread) {
+			thread.worker.send(msg);
 		}
 	}
-	if (!thread) {
-		io.logError({
-			sourceModule: "threadManager"
-			, sourceMethod: "getThread"
-			, error: "No thread found"
-			, info: {
-				requestedZoneName: zoneName
-				, requestedZoneId: zoneId
-				, useMapName: map.name
-			}
-		});
-		process.exit();
-	}
-	if (!thread.isReady) {
-		await thread.promise;
-	}
-	result.thread = thread;
-	return result;
-};
 
-const sendMessageToThread = ({ threadId, msg }) => {
-	const thread = threads.find((t) => t.id === threadId);
-	if (thread) {
-		thread.worker.send(msg);
-	}
-};
-
-const messageAllThreads = (message) => {
-	for (const t of threads) {
-		t.worker.send(message);
-	}
-};
-
-const returnWhenThreadsIdle = async () => {
-	return new Promise((res) => {
-		let doneCount = 0;
-		const onZoneIdle = (thread) => {
-			doneCount++;
-			if (doneCount.length < threads.length) {
-				return;
-			}
-			listenersOnZoneIdle.spliceWhere((l) => l === onZoneIdle);
-			res();
-		};
-		listenersOnZoneIdle.push(onZoneIdle);
-		messageAllThreads({
-			method: "notifyOnceIdle"
-		});
-	});
-};
-
-//Exports
-module.exports = {
-	getThread
 	, killThread
-	, getThreadFromId
-	, doesThreadExist
-	, messageAllThreads
-	, killThreadIfEmpty
-	, sendMessageToThread
-	, returnWhenThreadsIdle
+	, killThreadIfEmpty:async (thread) => {
+		const playerCount = await getPlayerCountInThread(thread);
+		if (playerCount === 0) {
+			killThread(thread);
+		}
+	}
+
+	, returnWhenThreadsIdle: async () => {
+		return new Promise((res) => {
+			let doneCount = 0;
+			const onZoneIdle = (thread) => {
+				doneCount++;
+				if (doneCount.length < threads.length) {
+					return;
+				}
+				listenersOnZoneIdle.spliceWhere((l) => l === onZoneIdle);
+				res();
+			};
+			listenersOnZoneIdle.push(onZoneIdle);
+			messageAllThreads({
+				method: "notifyOnceIdle"
+			});
+		});
+	}
+
 	, getPlayerCountInThread
 };

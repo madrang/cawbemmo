@@ -59,7 +59,7 @@ module.exports = {
 				}
 			});
 		}
-		const { thread, resetObjPosition } = await getThread(eGetThread);
+		const thread = await getThread(eGetThread);
 
 		//Perhaps the player disconnected while waiting for the thread to spawn
 		if (!serverObj.socket.connected) {
@@ -67,7 +67,8 @@ module.exports = {
 			return;
 		}
 
-		if (resetObjPosition) {
+		if (thread.id !== thread.name) {
+			// Instanced map. Reset object position.
 			delete obj.x;
 			delete obj.y;
 		}
