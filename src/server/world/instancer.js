@@ -336,7 +336,6 @@ module.exports = {
 
 	, notifyOnceIdle: async function () {
 		await transactions.returnWhenDone();
-
 		process.send({
 			method: "onZoneIdle"
 		});
@@ -359,10 +358,17 @@ module.exports = {
 		this.resolveCallback(msg);
 	}
 
-	, getPlayerCount: function (msg) {
+	, getThreadStatus: function (msg) {
+		let playerCount = 0;
+		for (const o of objects.objects) {
+			if (o.player) {
+				playerCount++;
+			}
+		}
+		// map.zoneConfig.ttl
 		this.resolveCallback(msg, {
 			result: {
-				playerCount: objects.objects.filter((o) => o.player !== undefined).length
+				playerCount
 			}
 		});
 	}
@@ -379,7 +385,7 @@ module.exports = {
 			}
 		};
 		if (data) {
-			Object.assign(payload.msg, data);
+			_.assign(payload.msg, data);
 		}
 		process.send(payload);
 	}

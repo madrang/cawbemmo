@@ -21,16 +21,13 @@ const getThreadFromId = (threadId) => {
 
 const getPlayerCountInThread = async (thread) => {
 	const { playerCount } = await new Promise((res) => {
-		const cb = registerCallback(res);
-
 		thread.worker.send({
-			method: "getPlayerCount"
+			method: "getThreadStatus"
 			, args: {
-				callbackId: cb
+				callbackId: registerCallback(res)
 			}
 		});
 	});
-
 	return playerCount;
 };
 
