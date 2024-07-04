@@ -29,10 +29,10 @@ module.exports = {
 		}
 	}
 
-	, hermit: {
+	, peter: {
 		1: {
 			msg: [{
-				msg: "Nice to see you again. How can I help?"
+				msg: "Bienvenue chez les cossin chez peter"
 				, options: [1.1, 1.2, 1.3, 1.4]
 			}]
 			, options: {
@@ -41,15 +41,15 @@ module.exports = {
 					, goto: 2
 				}
 				, 1.2: {
-					msg: "Have you scavenged anything worth selling lately?"
+					msg: "Tas tu des beau cossin en stock?"
 					, goto: "tradeBuy"
 				}
 				, 1.3: {
-					msg: "I have some items you might be interested in."
+					msg: "T'intéresserais tu ses cossins la ?"
 					, goto: "tradeSell"
 				}
 				, 1.4: {
-					msg: "I changed my mind, I want to buy something back."
+					msg: "J'ai changé d'idée j'aimerais racheté."
 					, goto: "tradeBuyback"
 				}
 			}
@@ -110,8 +110,52 @@ module.exports = {
 				targetName: "hermit"
 			}]
 		}
+	}, "mr giroux": {
+		1: {
+			msg: [{
+				msg: "Bienvenue a l'épiceries"
+				, options: [1.1]
+			}]
+			, options: {
+				1.1: {
+					msg: "acheter"
+					, goto: "tradeBuy"
+				}
+			}
+
+		}
+		, tradeBuy: {
+			cpn: "trade"
+			, method: "startBuy"
+			, args: [{
+				targetName: "raymond"
+			}]
+		}
+		,
 	}
-	, gislain: {
+	, raymond: {
+		1: {
+			msg: [{
+				msg: "Bienvenue au snack bar"
+				, options: [1.1]
+			}]
+			, options: {
+				1.1: {
+					msg: "je vais te prendre un..."
+					, goto: "tradeBuy"
+				}
+			}
+
+		}
+		, tradeBuy: {
+			cpn: "trade"
+			, method: "startBuy"
+			, args: [{
+				targetName: "raymond"
+			}]
+		}
+		,
+	}, gislain: {
 		1: {
 			msg: [{
 				msg: "Bonjour bienvenue humble magasin"

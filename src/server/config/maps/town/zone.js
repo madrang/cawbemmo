@@ -236,7 +236,91 @@ module.exports = {
 
 			}
 		}
-		, peter: {
+		, raymond: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 0
+						, max: 1
+					}
+					, forceItems: [{
+						name: "hot-dog"
+						, type: "consumable"
+						, sprite: [0, 1]
+						, description: "Donne 75 HP"
+						, spritesheet: "images/questItems.png"
+						, worth: 8
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "75"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					},{
+						name: "Hamburger"
+						, type: "consumable"
+						, sprite: [0, 1]
+						, description: "Donne 100 HP"
+						, spritesheet: "images/questItems.png"
+						, worth: 12
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "100"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					},{
+						name: "Pince de crabe cuite"
+						, type: "consumable"
+						, sprite: [0, 1]
+						, description: "Donne 200 HP"
+						, spritesheet: "images/questItems.png"
+						, worth: 12
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "200"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					}]
+					, level: {
+						min: 1
+						, max: 10
+					}
+					, markup: {
+						buy: 0.50
+						, sell: 2.5
+					}
+				}
+			}
+		}, peter: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false

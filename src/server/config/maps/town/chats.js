@@ -16,14 +16,12 @@ module.exports = {
 	}, {
 		msg: "c'est terrible"
 	}]
-	, hermit: [{
-		msg: "*strokes his beard*"
+	, peter: [{
+		msg: "*Ce met a dancé comme un fou*"
 	}, {
-		msg: "Rodriguez, get away from the fire!"
+		msg: "Quand l'apétie vas tout vas!"
 	}, {
-		msg: "*coughs*"
-	}, {
-		msg: "My back is killing me"
+		msg: "Dans le cochon on mange tout"
 	}]
 	, rodriguez: [{
 		msg: "*scratches for food*"
