@@ -32,7 +32,7 @@ module.exports = {
 				}
 			}
 		}
-		, mrBoner: {
+		, mrboner: {
 			properties: {
 				cpnNotice: {
 					actions: {
@@ -236,7 +236,7 @@ module.exports = {
 
 			}
 		}
-		, hermit: {
+		, peter: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -250,7 +250,7 @@ module.exports = {
 						, max: 10
 					}
 					, forceItems: [{
-						name: "Flimsy Fishing Rod"
+						name: "Canne à pêche"
 						, type: "Fishing Rod"
 						, slot: "tool"
 						, quality: 0
@@ -290,10 +290,10 @@ module.exports = {
 						, max: 10
 					}
 					, forceItems: [{
-						name: "Canne a pêche a spring"
+						name: "Canne à pêche à spring"
 						, type: "Fishing Rod"
 						, slot: "tool"
-						, quality: 0
+						, quality: 1
 						, worth: 500
 						, sprite: [11, 1]
 						, infinite: true
@@ -363,8 +363,22 @@ module.exports = {
 			}
 		}
 		, cow: {
-			attackable: false
+			attackable: true
 			, level: 3
+			, regular: {
+				drops: {
+					rolls: 1
+					, noRandom: true
+					, alsoRandom: true
+					, blueprints: [{
+						chance: 75
+						, name: "Steak"
+						, material: true
+						, sprite: [1, 4]
+						, spritesheet: "images/materials.png"
+					}]
+				}
+			}
 			, rare: {
 				count: 0
 			}

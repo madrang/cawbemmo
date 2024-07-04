@@ -54,11 +54,11 @@ module.exports = [
 	buildRecipe(
 		// recette
 		{ name: "joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50% Hp instant"
 		}
 		// item
 		,{ name: "Un bon vieux joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50% Hp instant"
 			, getXp: 10
 		}
 		// materials
@@ -76,11 +76,11 @@ module.exports = [
 	, buildRecipe(
 		// recette
 		{ name: "joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Mana instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 20 Mana instant"
 		}
 		// item
 		, { name: "Joint Deux papier"
-			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 50 Mana instant"
+			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 20 Mana instant"
 			, getXp: 15
 		}
 		// Materials
@@ -92,7 +92,7 @@ module.exports = [
 				//stat: ( "mana" | "hp" )
 				stat: "mana"
 				// montant de base
-				, amount: "50%"
+				, amount: "20"
 			}
 		}
 	)
