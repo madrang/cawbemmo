@@ -243,7 +243,7 @@ module.exports = {
 				type: f.split(".")[0]
 				, path: "server/clientComponents/" + f
 			});
-		});
+		}
 		config.clientComponents.push({
 			extends: "effects"
 			, path: "server/clientComponents/effects/auras.js"
