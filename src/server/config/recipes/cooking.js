@@ -67,28 +67,5 @@ module.exports = [
 			}
 		}
 	)
-	,buildRecipe(
-		// recette
-		{ name: "bouffe"
-			, description: "Un gros hamburger <br /><br />Donne: 100 Hp instant"
-		}
-		// item
-		,{ name: "Pince de homar cuite"
-			, description: "Un gros hamburger <br /><br />Donne: 200 Hp instant"
-			, getXp: 10
-		}
-		// materials
-		,  [
-			{ name: "Steak", quantity: 1 }
-			, { name: "pain", quantity: 1 }]
-		// effects
-		, {
-			rolls: {
-				//stat: ( "mana" | "hp" )
-				stat: "hp"
-				// montant de base
-				, amount: "100"
-			}
-		}
-	)
+
 ];
