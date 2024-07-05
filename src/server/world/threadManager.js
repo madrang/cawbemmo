@@ -6,17 +6,16 @@ const { registerCallback } = require("./atlas/registerCallback");
 const threads = [];
 const listenersOnZoneIdle = [];
 
-const getPlayerCountInThread = async (thread) => {
-	const { playerCount } = await new Promise((res) => {
+const getThreadStatus = (thread) => new Promise(
+	(res) => {
 		thread.worker.send({
 			method: "getThreadStatus"
 			, args: {
 				callbackId: registerCallback(res)
 			}
 		});
-	});
-	return playerCount;
-};
+	}
+);
 
 const killThread = (thread) => {
 	_.log.threadManager.debug("Unloading empty zone (Map/%s).", thread.name || thread.id);
@@ -101,7 +100,8 @@ const messageHandlers = {
 	, rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		if ((await getPlayerCountInThread(thread)) === 0) {
+		const threadStatus = await getThreadStatus(thread);
+		if (threadStatus.playerCount === 0) {
 			killThread(thread);
 		}
 
@@ -132,7 +132,9 @@ const messageHandlers = {
 	}
 
 	, onZoneIdle: function (thread) {
-		listenersOnZoneIdle.forEach((l) => l(thread));
+		for (const cb of listenersOnZoneIdle) {
+			cb(thread);
+		}
 	}
 };
 
@@ -226,8 +228,8 @@ module.exports = {
 
 	, killThread
 	, killThreadIfEmpty: async (thread) => {
-		const playerCount = await getPlayerCountInThread(thread);
-		if (playerCount === 0) {
+		const threadStatus = await getThreadStatus(thread);
+		if (threadStatus.playerCount === 0) {
 			killThread(thread);
 		}
 	}
@@ -237,7 +239,7 @@ module.exports = {
 			let doneCount = 0;
 			const onZoneIdle = (thread) => {
 				doneCount++;
-				if (doneCount.length < threads.length) {
+				if (doneCount < threads.length) {
 					return;
 				}
 				listenersOnZoneIdle.spliceWhere((l) => l === onZoneIdle);
@@ -250,5 +252,5 @@ module.exports = {
 		});
 	}
 
-	, getPlayerCountInThread
+	, getThreadStatus
 };

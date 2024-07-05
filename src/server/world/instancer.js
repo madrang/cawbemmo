@@ -311,14 +311,14 @@ module.exports = {
 			return;
 		}
 
-		//We fire this event because even though an object might be destroyed already,
+		// We fire this event because even though an object might be destroyed already,
 		// mods and modules might have staged events/actions we need to clear
 		eventEmitter.emit("removeObject", { obj: msg.obj });
 
 		let obj = msg.obj;
 		obj = objects.find((o) => o.serverId === obj.id);
 		if (!obj) {
-			//We could reach this if a player dc's while zoning in
+			// We could reach this if a player dc's while zoning in
 			this.resolveCallback(msg);
 			return;
 		}

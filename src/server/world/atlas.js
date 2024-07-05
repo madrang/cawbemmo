@@ -3,7 +3,7 @@ const objects = require("../objects/objects");
 const events = require("../misc/events");
 const {
 	getThread, killThread, sendMessageToThread, getThreadFromId, doesThreadExist,
-	returnWhenThreadsIdle, getPlayerCountInThread, killThreadIfEmpty
+	returnWhenThreadsIdle, getThreadStatus, killThreadIfEmpty
 } = require("./threadManager");
 const { registerCallback, removeCallback } = require("./atlas/registerCallback");
 
@@ -90,16 +90,11 @@ module.exports = {
 		});
 	}
 
-	, removeObjectFromInstancedZone: async function (thread, objId, callback) {
+	, savePlayerUnloadZone: async function (thread, playerId, callback) {
 		await new Promise((res) => {
-			const cb = this.registerCallback(res);
-
 			thread.worker.send({
 				method: "forceSavePlayer"
-				, args: {
-					playerId: objId
-					, callbackId: cb
-				}
+				, args: { playerId, callbackId: this.registerCallback(res) }
 			});
 		});
 		killThread(thread);
@@ -122,14 +117,10 @@ module.exports = {
 			return;
 		}
 
-		if ((await getPlayerCountInThread(thread)) === 1) {
-			this.removeObjectFromInstancedZone(thread, playerId, callback);
+		const threadStatus = await getThreadStatus(thread);
+		if (threadStatus.playerCount === 1) {
+			this.savePlayerUnloadZone(thread, playerId, callback);
 			return;
-		}
-
-		let callbackId = null;
-		if (callback) {
-			callbackId = this.registerCallback(callback);
 		}
 
 		sendMessageToThread({
@@ -138,7 +129,7 @@ module.exports = {
 				method: "removeObject"
 				, args: {
 					obj: obj.getSimple(true)
-					, callbackId: callbackId
+					, callbackId: (callback ? this.registerCallback(callback) : null)
 				}
 			}
 		});
@@ -198,19 +189,15 @@ module.exports = {
 
 	, forceSavePlayer: async function (playerId, zoneId) {
 		const thread = getThreadFromId(zoneId);
-
 		if (!thread) {
 			return;
 		}
-
 		return new Promise((res) => {
-			const callbackId = this.registerCallback(res);
-
 			thread.worker.send({
 				method: "forceSavePlayer"
 				, args: {
 					playerId
-					, callbackId
+					, callbackId: this.registerCallback(res)
 				}
 			});
 		});
