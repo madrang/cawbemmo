@@ -193,7 +193,7 @@ module.exports = {
 		// Send to any players that have seen this obj.
 		for (const o of this.objects.objects) {
 			if (!o.destroyed && o.player?.hasSeen(obj.id)) {
-				this.queue.bind("onGetObject", msg, [o.serverId]);
+				this.queue("onGetObject", msg, [o.serverId]);
 			}
 		}
 	}
