@@ -365,10 +365,12 @@ module.exports = {
 				playerCount++;
 			}
 		}
-		// map.zoneConfig.ttl
 		this.resolveCallback(msg, {
 			result: {
+				// Current number of players.
 				playerCount
+				// TimeToLive - Time before unloading map when empty.
+				, ttl: map.zoneConfig.ttl
 			}
 		});
 	}
