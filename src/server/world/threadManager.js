@@ -71,25 +71,22 @@ const messageHandlers = {
 	}
 
 	, track: function (thread, message) {
-		let player = objects.objects.find((o) => o.id === message.serverId);
+		const player = objects.objects.find((o) => o.id === message.serverId);
 		if (!player) {
 			return;
 		}
-
 		player.auth.gaTracker.track(message.obj);
 	}
 
 	, callDifferentThread: function (thread, message) {
-		let obj = cons.players.find((p) => (p.name === message.playerName));
+		const obj = cons.players.find((p) => (p.name === message.playerName));
 		if (!obj) {
 			return;
 		}
-
-		let newThread = threads.find((t) => t.name === obj.zoneName);
+		const newThread = threads.find((t) => t.name === obj.zoneName);
 		if (!newThread) {
 			return;
 		}
-
 		newThread.worker.send({
 			module: message.data.module
 			, method: message.data.method
