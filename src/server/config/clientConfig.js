@@ -7,7 +7,7 @@ const changeLog = require("./changeLog");
 const tos = require("./tos");
 
 const config = {
-	logoPath: null
+	logoPath: "images/logo_CWB.png"
 	, loginBgGeneratorPath: null
 	, resourceList: []
 	, textureList: [
