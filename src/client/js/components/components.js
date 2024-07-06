@@ -19,9 +19,12 @@ define([
 	};
 
 	const unhookEvents = function () {
-		Object.entries(this.eventList).forEach(([eventName, callbacks]) => {
-			callbacks.forEach((c) => events.off(eventName, c));
-		});
+		for (const eventName in this.eventList) {
+			const callbacks = this.eventList[eventName];
+			for (const c of callbacks) {
+				events.off(eventName, c);
+			}
+		}
 	};
 
 	//Helpers
@@ -47,13 +50,15 @@ define([
 	};
 
 	const buildComponents = () => {
-		templates.forEach((t) => {
+		for (const t of templates) {
 			const extensions = extenders.filter((e) => e.extends === t.type);
-			extensions.forEach((e) => _.assign(t, e.tpl));
+			for (const e of extensions) {
+				_.assign(t, e.tpl);
+			}
 			t.eventList = {};
 			t.hookEvent = hookEvent;
 			t.unhookEvents = unhookEvents;
-		});
+		}
 	};
 
 	//Export

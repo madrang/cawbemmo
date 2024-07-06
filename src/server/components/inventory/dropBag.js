@@ -80,7 +80,7 @@ module.exports = (cpnInv, ownerName, killSource) => {
 	}
 	playerObject.fireEvent("beforeTargetDeath", obj, cpnInv.items);
 
-	// Deprecated
+	//FIXME Deprecated
 	eventEmitter.emit("onBeforeDropBag", obj, cpnInv.items, killSource);
 	obj.fireEvent("onBeforeDropBag", cpnInv.items, killSource);
 	// New

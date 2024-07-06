@@ -86,12 +86,11 @@ module.exports = {
 	, getSimple: function (self, isSave, isTransfer) {
 		let s = this.simplify(null, self, isSave, isTransfer);
 		if (self && !isSave && this.syncer) {
-			this.syncer.oSelf.components
-				.forEach((c) => {
-					if (!this[c.type]) {
-						s.components.push(c);
-					}
-				});
+			for (const c of this.syncer.oSelf.components) {
+				if (!this[c.type]) {
+					s.components.push(c);
+				}
+			}
 		}
 		return s;
 	}
@@ -356,13 +355,12 @@ module.exports = {
 			}
 			callback.apply(cpn, args);
 		}
-		this.eventListeners.forEach((l) => {
-			const { eventName, callback } = l;
-			if (eventName !== event) {
-				return;
+		for (const l of this.eventListeners) {
+			if (l.eventName !== event) {
+				continue;
 			}
-			callback.apply(null, args);
-		});
+			l.callback.apply(null, args);
+		}
 	}
 
 	, destroy: function () {

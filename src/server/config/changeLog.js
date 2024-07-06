@@ -1,7 +1,28 @@
 module.exports = {
-	version: "0.0.6"
+	version: "0.0.7"
 	, content: `
 Nouvelle Version du jeu!
+Version 0.0.7
+-Changement: Joint donne 10 mana
+-Changement: Deux papiers donne 20 mana
+-Changement: Carte Town nouveau batiment
+-Changement: Batiment rouge près du parking
+-Changement: Les Évennements (EX: vlad VS Igor) ont maintenant un délais d'expiration'
+-Nouveau: NPC raymond le gars du snack bar
+-Nouveau: NPC Mr Giroux
+-Nouveau: Item Bouteille Vide
+-Nouveau: Item Pain
+-Nouveau: Item Hot-Dog 75 HP
+-Nouveau: Item hamburger 100 HP (craftable: 1 steak + 1 pain)
+-Nouveau: Item Pince de crabe cuite 200HP
+-Nouveau: Item Liquide louche (augmente les armes) (craftable)
+-Update: World Manager (meilleur gestion des cartes)
+-Fix: 2 papiers mana infini
+-Fix: Loot drop Texture
+-Fix: Planificateur d'évennement Décalé de 1
+-Optimisation: le serveur décharge les carte vide
+-Optimisation: Cleanup de la carte de la ville
+
 Version 0.0.6
 -nouveau: Mob Phoque de police
 -nouveau: le crafting donne maintenant du XP

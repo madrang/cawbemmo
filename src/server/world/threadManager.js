@@ -1,50 +1,66 @@
-//System Imports
 const childProcess = require("child_process");
-
-//Imports
 const objects = require("../objects/objects");
-const { mapList } = require("./mapManager");
+const { getMapList } = require("./mapManager");
 const { registerCallback } = require("./atlas/registerCallback");
 
-//Internals
 const threads = [];
 const listenersOnZoneIdle = [];
 
-//Helpers
-const getThreadFromName = (name) => {
-	return threads.find((t) => t.name === name);
-};
-
-const getThreadFromId = (threadId) => {
-	return threads.find((t) => t.id === threadId);
-};
-
-const getPlayerCountInThread = async (thread) => {
-	const { playerCount } = await new Promise((res) => {
-		const cb = registerCallback(res);
-
+const getThreadStatus = (thread) => new Promise(
+	(res) => {
 		thread.worker.send({
-			method: "getPlayerCount"
+			method: "getThreadStatus"
 			, args: {
-				callbackId: cb
+				callbackId: registerCallback(res)
 			}
 		});
-	});
-
-	return playerCount;
-};
+	}
+);
 
 const killThread = (thread) => {
 	_.log.threadManager.debug("Unloading empty zone (Map/%s).", thread.name || thread.id);
 	thread.worker.kill();
 	threads.spliceWhere((t) => t === thread);
 };
-
-const killThreadIfEmpty = async (thread) => {
-	const playerCount = await getPlayerCountInThread(thread);
-	if (playerCount === 0) {
-		killThread(thread);
+const tryFreeUnusedThread = async (thread) => {
+	const threadStatus = await getThreadStatus(thread);
+	const wasInactive = thread.has("inactive");
+	if (threadStatus.playerCount === 0) {
+		if (threadStatus.ttl <= 0
+			|| (wasInactive && Date.now() - thread.inactive > threadStatus.ttl * 1000)
+		) {
+			killThread(thread);
+			return true;
+		} else if (!wasInactive) {
+			thread.inactive = Date.now();
+		}
+	} else if (wasInactive) {
+		delete thread.inactive;
 	}
+	return false;
+};
+setInterval(() => {
+	for (let i = threads.length - 1; i >= 0; --i) {
+		if (!threads[i].has("inactive")) {
+			continue;
+		}
+		tryFreeUnusedThread(threads[i]);
+	}
+}, 60 * 1000);
+
+const messageAllThreads = (message) => {
+	for (const t of threads) {
+		t.worker.send(message);
+	}
+};
+
+const getDefaultMap = (mapList) => {
+	let defaultMaps = mapList.filter((m) => m.defaultZone);
+	if (!defaultMaps || !defaultMaps.length) {
+		_.log.threadManager.warn("No defaultZone found, using any available maps.");
+		defaultMaps = mapList;
+	}
+	return _.randomObj(defaultMaps);
 };
 
 const messageHandlers = {
@@ -80,25 +96,22 @@ const messageHandlers = {
 	}
 
 	, track: function (thread, message) {
-		let player = objects.objects.find((o) => o.id === message.serverId);
+		const player = objects.objects.find((o) => o.id === message.serverId);
 		if (!player) {
 			return;
 		}
-
 		player.auth.gaTracker.track(message.obj);
 	}
 
 	, callDifferentThread: function (thread, message) {
-		let obj = cons.players.find((p) => (p.name === message.playerName));
+		const obj = cons.players.find((p) => (p.name === message.playerName));
 		if (!obj) {
 			return;
 		}
-
-		let newThread = getThreadFromName(obj.zoneName);
+		const newThread = threads.find((t) => t.name === obj.zoneName);
 		if (!newThread) {
 			return;
 		}
-
 		newThread.worker.send({
 			module: message.data.module
 			, method: message.data.method
@@ -109,25 +122,27 @@ const messageHandlers = {
 	, rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		if ((await getPlayerCountInThread(thread)) === 0) {
-			killThread(thread);
-		}
+		// Check if old thread should be freed when player leaves.
+		tryFreeUnusedThread(thread);
 
-		//When messages are sent from map threads, they have an id (id of the object in the map thread)
+		// When messages are sent from map threads, they have an id (id of the object in the map thread)
 		// as well as a serverId (id of the object in the main thread)
 		const serverId = obj.serverId;
 		obj.id = serverId;
+		// Was destroyed in the zone, but not in the server.
 		obj.destroyed = false;
 
 		const serverObj = objects.objects.find((o) => o.id === obj.id);
+		const mapList = getMapList();
 		const mapExists = mapList.some((m) => m.name === newZone);
 
 		if (mapExists) {
 			serverObj.zoneName = newZone;
 			obj.zoneName = newZone;
 		} else {
-			obj.zoneName = clientConfig.config.defaultZone;
-			serverObj.zoneName = clientConfig.config.defaultZone;
+			const defaultMap = getDefaultMap(mapList);
+			obj.zoneName = defaultMap.name;
+			serverObj.zoneName = defaultMap.name;
 		}
 
 		delete serverObj.zoneId;
@@ -138,7 +153,9 @@ const messageHandlers = {
 	}
 
 	, onZoneIdle: function (thread) {
-		listenersOnZoneIdle.forEach((l) => l(thread));
+		for (const cb of listenersOnZoneIdle) {
+			cb(thread);
+		}
 	}
 };
 
@@ -159,119 +176,97 @@ const onMessage = (thread, message) => {
 	}
 };
 
-const spawnThread = async ({ name, path, instanced }) => {
-	let cbOnInitialized;
-	const promise = new Promise((resolveOnReady) => {
-		cbOnInitialized = resolveOnReady;
-	});
-	const worker = childProcess.fork("./world/worker", [name]);
-	const id = instanced ? _.getGuid() : name;
+const spawnThread = ({ name, path, instanced }) => {
 	const thread = {
-		id
+		id: instanced ? _.getGuid() : name
 		, name
 		, instanced
 		, path
-		, worker
 		, isReady: false
-		, promise
-		, cbOnInitialized
 	};
-	worker.on("message", onMessage.bind(null, thread));
+	thread.promise = new Promise((resolve) => {
+		thread.cbOnInitialized = resolve;
+	});
+	thread.worker = childProcess.fork("./world/worker", [name]);
+	thread.worker.on("message", onMessage.bind(null, thread));
 	threads.push(thread);
-	return promise;
+	return thread;
 };
 
-const doesThreadExist = ({ zoneName, zoneId }) => {
-	let map = mapList.find((m) => m.name === zoneName);
-	if (!map) {
-		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);
+module.exports = {
+	getThreadsFromName: (name) => {
+		return threads.filter((t) => t.name === name);
 	}
-	const exists = threads.some((t) => t.id === zoneId && t.name === zoneName);
-	if (exists) {
-		return true;
+	, getThreadFromId: (threadId) => {
+		return threads.find((t) => t.id === threadId);
 	}
-	const thread = getThreadFromName(map.name);
-	return Boolean(thread);
-};
+	, getThread: ({ zoneName, zoneId }) => {
+		let thread = threads.find(
+			(t) => (t.name === zoneName
+				&& (t.id === zoneId || t.id === t.name)
+			)
+		);
+		if (!thread) {
+			const mapList = getMapList();
+			const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
+			thread = spawnThread(map);
+		}
+		if (!thread) {
+			io.logError({
+				sourceModule: "threadManager"
+				, sourceMethod: "getThread"
+				, error: "No thread found"
+				, info: {
+					requestedZoneName: zoneName
+					, requestedZoneId: zoneId
+					, useMapName: map.name
+				}
+			});
+			process.exit();
+		}
+		return thread;
+	}
+	, doesThreadExist:({ zoneName, zoneId }) => {
+		for (const t of threads) {
+			if (t.name === zoneName
+				&& (t.id === zoneId
+					|| (!zoneId && t.id === t.name)
+				)
+			) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-const getThread = async ({ zoneName, zoneId }) => {
-	const result = {
-		resetObjPosition: false
-		, thread: null
-	};
-	let map = mapList.find((m) => m.name === zoneName);
-	if (!map) {
-		map = mapList.find((m) => m.name === clientConfig.config.defaultZone);
-	}
-	let thread = threads.find((t) => t.id === zoneId && t.name === zoneName);
-	if (!thread) {
-		if (map.instanced) {
-			result.resetObjPosition = true;
-			thread = await spawnThread(map);
-		} else {
-			thread = getThreadFromName(map.name) || await spawnThread(map);
+	, messageAllThreads
+	, sendMessageToThread: ({ threadId, msg }) => {
+		const thread = threads.find((t) => t.id === threadId);
+		if (thread) {
+			thread.worker.send(msg);
 		}
 	}
-	if (!thread) {
-		io.logError({
-			sourceModule: "threadManager"
-			, sourceMethod: "getThread"
-			, error: "No thread found"
-			, info: {
-				requestedZoneName: zoneName
-				, requestedZoneId: zoneId
-				, useMapName: map.name
-			}
-		});
-		process.exit();
-	}
-	if (!thread.isReady) {
-		await thread.promise;
-	}
-	result.thread = thread;
-	return result;
-};
 
-const sendMessageToThread = ({ threadId, msg }) => {
-	const thread = threads.find((t) => t.id === threadId);
-	if (thread) {
-		thread.worker.send(msg);
-	}
-};
-
-const messageAllThreads = (message) => {
-	for (const t of threads) {
-		t.worker.send(message);
-	}
-};
-
-const returnWhenThreadsIdle = async () => {
-	return new Promise((res) => {
-		let doneCount = 0;
-		const onZoneIdle = (thread) => {
-			doneCount++;
-			if (doneCount.length < threads.length) {
-				return;
-			}
-			listenersOnZoneIdle.spliceWhere((l) => l === onZoneIdle);
-			res();
-		};
-		listenersOnZoneIdle.push(onZoneIdle);
-		messageAllThreads({
-			method: "notifyOnceIdle"
-		});
-	});
-};
-
-//Exports
-module.exports = {
-	getThread
 	, killThread
-	, getThreadFromId
-	, doesThreadExist
-	, messageAllThreads
-	, killThreadIfEmpty
-	, sendMessageToThread
-	, returnWhenThreadsIdle
-	, getPlayerCountInThread
+	, tryFreeUnusedThread
+
+	, returnWhenThreadsIdle: async () => {
+		return new Promise((res) => {
+			let doneCount = 0;
+			const onZoneIdle = (thread) => {
+				doneCount++;
+				if (doneCount < threads.length) {
+					return;
+				}
+				listenersOnZoneIdle.spliceWhere((l) => l === onZoneIdle);
+				res();
+			};
+			listenersOnZoneIdle.push(onZoneIdle);
+			messageAllThreads({
+				method: "notifyOnceIdle"
+			});
+		});
+	}
+
+	, getThreadStatus
 };

@@ -125,26 +125,24 @@ define([
 		}
 
 		, onResize: function () {
-			this.uis.forEach(function (ui) {
+			for (const ui of this.uis) {
 				if (ui.centered) {
 					ui.center();
 				} else if (ui.centeredX || ui.centeredY) {
 					ui.center(ui.centeredX, ui.centeredY);
 				}
-			}, this);
+			}
 		}
 
 		, onUiKeyDown: function (keyEvent) {
 			if (keyEvent.key === "esc") {
-				this.uis.forEach((u) => {
+				for (const u of this.uis) {
 					if (!u.modal || !u.shown) {
 						return;
 					}
-
 					keyEvent.consumed = true;
 					u.toggle();
-				});
-
+				}
 				$(".uiOverlay").hide();
 				events.emit("onHideContextMenu");
 			} else if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {

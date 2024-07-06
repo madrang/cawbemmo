@@ -15,19 +15,14 @@ module.exports = {
 		this.o = {
 			components: []
 		};
-
 		this.oSelf = {
 			components: []
 		};
-
 		this.locked = false;
-
-		this.buffer.forEach((q) => {
+		for (const q of this.buffer) {
 			const [ method, ...rest ] = q;
-
 			this[method].apply(this, rest);
-		});
-
+		}
 		this.buffer = [];
 	}
 

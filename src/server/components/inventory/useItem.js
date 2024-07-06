@@ -59,7 +59,7 @@ module.exports = async (cpnInv, itemId) => {
 		success: true
 		, cdMax: item.cdMax
 	};
-	//Deprecated
+	//FIXME Deprecated
 	obj.instance.eventEmitter.emit("onBeforeUseItem", obj, item, result);
 	obj.fireEvent("onBeforeUseItem", item, result);
 	//New

@@ -1,8 +1,10 @@
-const { version } = require("../../config/serverConfig");
+const { version, nodeEnv, realmName } = require("../../config/serverConfig");
 
 module.exports = (req, res, next) => {
 	res.jsonp({
-		v: version
-		, p: cons.players.length
+		version
+		, type: nodeEnv
+		, name: realmName
+		, players: cons.players.length
 	});
 };

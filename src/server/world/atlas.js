@@ -3,7 +3,7 @@ const objects = require("../objects/objects");
 const events = require("../misc/events");
 const {
 	getThread, killThread, sendMessageToThread, getThreadFromId, doesThreadExist,
-	returnWhenThreadsIdle, getPlayerCountInThread, killThreadIfEmpty
+	returnWhenThreadsIdle, getThreadStatus, tryFreeUnusedThread
 } = require("./threadManager");
 const { registerCallback, removeCallback } = require("./atlas/registerCallback");
 
@@ -14,7 +14,8 @@ module.exports = {
 	, addObject: async function (obj, keepPos, transfer) {
 		const serverObj = objects.objects.find((o) => o.id === obj.id);
 		if (!serverObj) {
-			return;
+			_.log.atlas.error("Object %s can't join threads, missing in objects atlas.", obj.name || obj.id);
+			return false;
 		}
 
 		//While rezoning, this is set to true. So we remove it
@@ -24,33 +25,26 @@ module.exports = {
 
 		let { zoneName, zoneId } = obj;
 
+		// Try to join party leader in instanced maps.
 		const partyIds = obj.components.find((c) => c.type === "social")?.party;
 		if (partyIds) {
 			const partyLeader = cons.players.find((p) => {
 				if (!partyIds.includes(p.id)) {
 					return false;
 				}
-
 				const cpnSocial = p.components.find((c) => c.type === "social");
-
 				if (!cpnSocial) {
 					return false;
 				}
-
 				return cpnSocial.isPartyLeader;
 			});
-
 			if (partyLeader?.zoneName === zoneName) {
 				zoneId = partyLeader.zoneId;
 			}
 		}
 
-		const eGetThread = {
-			zoneName
-			, zoneId
-		};
-
-		if (!doesThreadExist(eGetThread)) {
+		const thread = getThread({ zoneName, zoneId });
+		if (!thread.isReady) {
 			serverObj.socket.emit("event", {
 				event: "onGetAnnouncement"
 				, data: {
@@ -58,18 +52,23 @@ module.exports = {
 					, ttl: 150
 				}
 			});
+			await thread.promise;
 		}
-		const { thread, resetObjPosition } = await getThread(eGetThread);
 
 		//Perhaps the player disconnected while waiting for the thread to spawn
 		if (!serverObj.socket.connected) {
-			await killThreadIfEmpty(thread);
-			return;
+			await tryFreeUnusedThread(thread);
+			return false;
 		}
 
-		if (resetObjPosition) {
+		if (thread.id !== thread.name) {
+			// Instanced map. Reset object position.
 			delete obj.x;
 			delete obj.y;
+		}
+		if (thread.has("inactive")) {
+			// Player joined, thread is now active.
+			delete thread.inactive;
 		}
 
 		obj.zoneName = thread.name;
@@ -94,26 +93,25 @@ module.exports = {
 				}
 			}
 		});
+		return true;
 	}
 
-	, removeObjectFromInstancedZone: async function (thread, objId, callback) {
-		await new Promise((res) => {
-			const cb = this.registerCallback(res);
-
-			thread.worker.send({
-				method: "forceSavePlayer"
-				, args: {
-					playerId: objId
-					, callbackId: cb
-				}
-			});
-		});
+	// Save all players in a zone when event is completed and unload the zone.
+	, savePlayersUnloadZone: async function (thread, callback) {
+		await Promise.all(
+			objects.objects.filter(
+				(p) => p.zoneId === thread.id
+			).map(
+				(p) => this.forceSavePlayer(p.id, thread)
+			)
+		);
 		killThread(thread);
 		if (callback) {
-			callback();
+			return callback();
 		}
 	}
 
+	// Remove player/tracked obj
 	, removeObject: async function (obj, skipLocal, callback) {
 		//We need to store the player id because the calling thread might delete it (connections.unzone)
 		const playerId = obj.id;
@@ -124,30 +122,34 @@ module.exports = {
 
 		const thread = getThreadFromId(obj.zoneId);
 		if (!thread) {
-			callback();
-			return;
-		}
-
-		if ((await getPlayerCountInThread(thread)) === 1) {
-			this.removeObjectFromInstancedZone(thread, playerId, callback);
-			return;
-		}
-
-		let callbackId = null;
-		if (callback) {
-			callbackId = this.registerCallback(callback);
-		}
-
-		sendMessageToThread({
-			threadId: obj.zoneId
-			, msg: {
-				method: "removeObject"
-				, args: {
-					obj: obj.getSimple(true)
-					, callbackId: callbackId
-				}
+			if (callback) {
+				return callback();
 			}
+			return;
+		}
+
+		const threadStatus = await getThreadStatus(thread);
+		if (threadStatus.ttl < 0
+			|| (threadStatus.playerCount === 1 && threadStatus.ttl === 0)
+		) {
+			return this.savePlayersUnloadZone(thread, callback);
+		}
+
+		await new Promise((res) => {
+			sendMessageToThread({
+				threadId: obj.zoneId
+				, msg: {
+					method: "removeObject"
+					, args: {
+						obj: obj.getSimple(true)
+						, callbackId: this.registerCallback(res)
+					}
+				}
+			});
 		});
+		if (callback) {
+			return callback();
+		}
 	}
 	, updateObject: function (obj, msgObj) {
 		sendMessageToThread({
@@ -195,7 +197,6 @@ module.exports = {
 		if (!callback) {
 			return;
 		}
-
 		callback.callback(msg.msg.result);
 	}
 
@@ -203,24 +204,25 @@ module.exports = {
 		await returnWhenThreadsIdle();
 	}
 
-	, forceSavePlayer: async function (playerId, zoneId) {
-		const thread = getThreadFromId(zoneId);
-
+	, forceSavePlayer: async function (playerId, threadId) {
+		let thread;
+		if (typeof threadId === "string") {
+			thread = getThreadFromId(threadId);
+		} else if (typeof threadId?.worker?.send === "function") {
+			thread = threadId;
+		}
 		if (!thread) {
+			_.log.atlas.forceSavePlayer.error("Can't find thread %s", threadId);
 			return;
 		}
-
 		return new Promise((res) => {
-			const callbackId = this.registerCallback(res);
-
 			thread.worker.send({
 				method: "forceSavePlayer"
 				, args: {
 					playerId
-					, callbackId
+					, callbackId: this.registerCallback(res)
 				}
 			});
 		});
 	}
-
 };

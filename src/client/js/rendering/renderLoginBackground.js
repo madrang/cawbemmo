@@ -73,11 +73,11 @@ define([
 					}[tile];
 				}
 				tile = 3;
-				let sprite = new PIXI.Sprite(renderer.getTexture("sprites", tile));
+				const sprite = new PIXI.Sprite(renderer.getTexture("sprites", tile));
 
 				alpha = Math.min(Math.max(0.15, alpha), 0.65);
-
 				sprite.alpha = alpha;
+
 				sprite.position.x = i * scale;
 				sprite.position.y = j * scale;
 				sprite.width = scale;

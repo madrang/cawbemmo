@@ -20,14 +20,17 @@ define([
 		, centered: true
 
 		, beforeRender: function () {
-			const { clientConfig: { logoPath } } = globals;
-			if (!logoPath) {
-				return;
-			}
-
+			const { clientConfig: { logoPath, changeLog } } = globals;
+			// Add infos to template.
 			const tempEl = $(this.tpl);
-			tempEl.find(".logo").attr("src", logoPath);
-
+			if (logoPath) {
+				tempEl.find(".logo").attr("src", logoPath);
+			}
+			if (changeLog) {
+				tempEl.find(".version").html(function() {
+					return $(this).html().replace("$VERSION$", changeLog.version);
+				});
+			}
 			this.tpl = tempEl.prop("outerHTML");
 		}
 

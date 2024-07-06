@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt-nodejs");
 
-const doSaveAll = async (res, config, err, compareResult) => {
+const doMessageAll = async (res, config, err, compareResult) => {
 	if (!compareResult) {
 		return;
 	}
@@ -11,9 +11,6 @@ const doSaveAll = async (res, config, err, compareResult) => {
 	if (!accountInfo || !accountInfo.level || accountInfo.level < 9) {
 		return;
 	}
-	// Wait for all zones to clear queues.
-	await atlas.returnWhenZonesIdle();
-	// Send notification.
 	cons.emit("event", {
 		event: "onGetMessages"
 		, data: {
@@ -24,11 +21,6 @@ const doSaveAll = async (res, config, err, compareResult) => {
 			}]
 		}
 	});
-	// Ask threads to save all data.
-	await cons.forceSaveAll();
-	// Wait for all threads to get idle again.
-	await atlas.returnWhenZonesIdle();
-	// HTTP Return value.
 	res.jsonp({
 		success: true
 	});
@@ -54,5 +46,5 @@ module.exports = async (req, res, next) => {
 		, table: "login"
 		, noParse: true
 	});
-	bcrypt.compare(config.pwd, storedPassword, doSaveAll.bind(null, res, config));
+	bcrypt.compare(config.pwd, storedPassword, doMessageAll.bind(null, res, config));
 };

@@ -3,6 +3,7 @@ const events = require("../misc/events");
 const restEndpoints = {
 	info: require("./restEndpoints/info.js")
 	, adminForceSave: require("./restEndpoints/forceSaveAll.js")
+	, messageAll: require("./restEndpoints/messageAll.js")
 };
 
 module.exports = {

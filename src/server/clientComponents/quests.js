@@ -8,30 +8,30 @@ define([
 		, quests: []
 
 		, init: function () {
-			this.quests.forEach((q) => events.emit("onObtainQuest", q));
+			for (const q of this.quests) {
+				events.emit("onObtainQuest", q);
+			}
 		}
 
 		, extend: function (blueprint) {
 			if (blueprint.updateQuests) {
-				blueprint.updateQuests.forEach(function (q) {
+				for (const q of blueprint.updateQuests) {
 					events.emit("onUpdateQuest", q);
 					let index = this.quests.findIndex((f) => f.id === q.id);
 					this.quests.splice(index, 1, q);
-				}, this);
+				}
 			}
 			if (blueprint.completeQuests) {
-				blueprint.completeQuests.forEach(function (q) {
+				for (const q of blueprint.completeQuests) {
 					events.emit("onCompleteQuest", q);
-					this.quests.spliceWhere(function (qq) {
-						return (qq.id === q);
-					});
-				}, this);
+					this.quests.spliceWhere((qq) => qq.id === q);
+				}
 			}
 			if (blueprint.obtainQuests) {
-				blueprint.obtainQuests.forEach(function (q) {
+				for (const q of blueprint.obtainQuests) {
 					events.emit("onObtainQuest", q);
 					this.quests.push(q);
-				}, this);
+				}
 			}
 		}
 	};
