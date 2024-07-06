@@ -200,9 +200,15 @@ module.exports = {
 		await returnWhenThreadsIdle();
 	}
 
-	, forceSavePlayer: async function (playerId, zoneId) {
-		const thread = getThreadFromId(zoneId);
+	, forceSavePlayer: async function (playerId, threadId) {
+		let thread;
+		if (typeof threadId === "string") {
+			thread = getThreadFromId(threadId);
+		} else if (typeof threadId?.worker?.send === "function") {
+			thread = threadId;
+		}
 		if (!thread) {
+			_.log.atlas.forceSavePlayer.error("Can't find thread %s", threadId);
 			return;
 		}
 		return new Promise((res) => {

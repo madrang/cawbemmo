@@ -27,7 +27,7 @@ const doSaveAll = async (res, config, err, compareResult) => {
 		}
 	});
 
-	cons.forceSaveAll();
+	await cons.forceSaveAll();
 
 	res.jsonp({
 		success: true
@@ -49,12 +49,11 @@ module.exports = async (req, res, next) => {
 		return;
 	}
 
-	let storedPassword = await io.getAsync({
+	const storedPassword = await io.getAsync({
 		key: config.username
 		, table: "login"
 		, noParse: true
 	});
-
 	bcrypt.compare(config.pwd, storedPassword, doSaveAll.bind(null, res, config));
 };
 
