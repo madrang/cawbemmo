@@ -189,11 +189,10 @@ module.exports = {
 			}
 		}
 
+		// Remove mappings zones from the map.
 		for (const r of this.randomMap.templates) {
 			//Fix for newer versions of Tiled
 			r.properties = objectifyProperties(r.properties);
-
-			//TODO - Seems like Incomplete code from previous repo ????
 			const m = r.properties.mapping;
 			if (!m) {
 				continue;

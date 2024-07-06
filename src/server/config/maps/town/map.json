@@ -1757,6 +1757,24 @@
                  "width":8,
                  "x":1016,
                  "y":912
+                }, 
+                {
+                 "gid":898,
+                 "height":8,
+                 "id":1113,
+                 "name":"| portalExit",
+                 "properties":[
+                        {
+                         "name":"cpnPortal",
+                         "type":"string",
+                         "value":"{\"zone\":\"depanneur\",\"pos\":{\"x\":135,\"y\":186}}"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":1112,
+                 "y":720
                 }],
          "opacity":1,
          "properties":[
@@ -4490,7 +4508,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1113,
+ "nextobjectid":1114,
  "orientation":"orthogonal",
  "properties":[
         {
