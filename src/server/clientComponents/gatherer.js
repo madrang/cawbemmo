@@ -16,7 +16,7 @@ define([
 		}
 
 		, extend: function (msg) {
-			if ((msg.width) && (msg.progress !== 100)) {
+			if (msg.width && msg.progress !== 100) {
 				if (this.effect) {
 					this.effect.destroyed = true;
 				}
@@ -60,7 +60,7 @@ define([
 					, lineShrink: true
 				});
 			} else {
-				if ((msg.progress === 100) && (this.effect)) {
+				if (msg.progress === 100 && this.effect) {
 					this.effect.destroyed = true;
 					this.effect = null;
 				}

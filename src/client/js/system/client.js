@@ -19,9 +19,9 @@ define([
 			this.socket.on("events", this.onEvents.bind(this));
 			this.socket.on("dc", this.onDisconnect.bind(this));
 
-			Object.entries(this.processAction).forEach(([k, v]) => {
-				this.processAction[k] = v.bind(this);
-			});
+			for (const k in this.processAction) {
+				this.processAction[k] = this.processAction[k].bind(this);
+			}
 		}
 
 		, onRezoneStart: function () {
@@ -77,7 +77,9 @@ define([
 
 		, processAction: {
 			default: function (eventName, msgs) {
-				msgs.forEach((m) => events.emit(eventName, m));
+				for (const m of msgs) {
+					events.emit(eventName, m);
+				}
 			}
 
 			, rezoneStart: function (eventName, msgs) {
@@ -117,10 +119,8 @@ define([
 
 		, onEvents: function (response) {
 			for (let eventName in response) {
-				const eventMsgs = response[eventName];
-
 				const handler = this.processAction[eventName] || this.processAction.default;
-
+				const eventMsgs = response[eventName];
 				handler(eventName, eventMsgs);
 			}
 		}

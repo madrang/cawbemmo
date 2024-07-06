@@ -4,18 +4,16 @@ const doSaveAll = async (res, config, err, compareResult) => {
 	if (!compareResult) {
 		return;
 	}
-
 	const accountInfo = await io.getAsync({
 		table: "accountInfo"
 		, key: config.username
 	});
-
 	if (!accountInfo || !accountInfo.level || accountInfo.level < 9) {
 		return;
 	}
-
+	// Wait for all zones to clear queues.
 	await atlas.returnWhenZonesIdle();
-
+	// Send notification.
 	cons.emit("event", {
 		event: "onGetMessages"
 		, data: {
@@ -26,16 +24,18 @@ const doSaveAll = async (res, config, err, compareResult) => {
 			}]
 		}
 	});
-
-	cons.forceSaveAll();
-
+	// Ask threads to save all data.
+	await cons.forceSaveAll();
+	// Wait for all threads to get idle again.
+	await atlas.returnWhenZonesIdle();
+	// HTTP Return value.
 	res.jsonp({
 		success: true
 	});
 };
 
 module.exports = async (req, res, next) => {
-	let config = {};
+	const config = {};
 
 	let pars = req.originalUrl.split("?").pop().split("&");
 	pars.forEach((p) => {
@@ -49,12 +49,10 @@ module.exports = async (req, res, next) => {
 		return;
 	}
 
-	let storedPassword = await io.getAsync({
+	const storedPassword = await io.getAsync({
 		key: config.username
 		, table: "login"
 		, noParse: true
 	});
-
 	bcrypt.compare(config.pwd, storedPassword, doSaveAll.bind(null, res, config));
 };
-

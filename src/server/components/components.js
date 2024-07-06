@@ -15,7 +15,7 @@ module.exports = {
 
 	, getComponentFolder: function () {
 		const ignoreFiles = ["components.js", "componentBase.js"];
-		const files = fileLister.getFolder("./components/")
+		const files = fileLister.getFiles("./components/")
 			.filter((f) => !ignoreFiles.includes(f));
 
 		const fLen = files.length;

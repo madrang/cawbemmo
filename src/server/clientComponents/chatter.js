@@ -33,7 +33,10 @@ define([
 
 		, extend: function (serverMsg) {
 			if (typeof serverMsg?.msg !== "string") {
-				console.error("Chatter.js: 'serverMsg.msg' is not a string.");
+				_.log.chatter.error("%s message '%s' can't be displayed as 'serverMsg.msg' is not a string."
+					, this.obj.name || this.obj.id
+					, serverMsg?.msg
+				);
 				return;
 			}
 			const msg = (serverMsg.msg.endsWith("\n") ? serverMsg.msg : serverMsg.msg + "\n");

@@ -4,7 +4,6 @@ window.addons = {
 
 	, register: function (addon) {
 		this.addons.push(addon);
-
 		if (this.events) {
 			addon.init(this.events);
 		}
@@ -12,7 +11,8 @@ window.addons = {
 
 	, init: function (events) {
 		this.events = events;
-
-		this.addons.forEach((a) => a.init(this.events));
+		for (const a of this.addons) {
+			a.init(this.events);
+		}
 	}
 };

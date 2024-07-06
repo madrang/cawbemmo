@@ -282,27 +282,29 @@ module.exports = {
 	}
 
 	, notifyCollisionChange: function (x, y, collides) {
-		this.objects
-			.filter((o) => o.player)
-			.forEach(function (o) {
-				o.syncer.setArray(true, "player", "collisionChanges", {
-					x
-					, y
-					, collides
-				});
+		for (const o of this.objects) {
+			if (!o.player) {
+				continue;
+			}
+			o.syncer.setArray(true, "player", "collisionChanges", {
+				x
+				, y
+				, collides
 			});
+		}
 	}
 
 	, notifyMapChange: function (x, y, mapCellString) {
-		this.objects
-			.filter((o) => o.player)
-			.forEach(function (o) {
-				o.syncer.setArray(true, "player", "mapChanges", {
-					x
-					, y
-					, mapCellString
-				});
+		for (const o of this.objects) {
+			if (!o.player) {
+				continue;
+			}
+			o.syncer.setArray(true, "player", "mapChanges", {
+				x
+				, y
+				, mapCellString
 			});
+		}
 	}
 
 	, update: function () {

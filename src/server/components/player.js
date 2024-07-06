@@ -33,7 +33,7 @@ module.exports = {
 			, y: character.y
 			, hidden: character.dead || null
 			, account: character.account
-			, zoneName: character.zoneName || clientConfig.config.defaultZone
+			, zoneName: character.zoneName || "default"
 			, zoneId: character.zoneId || null
 			, zoneMapSeed: character.zoneMapSeed
 		});

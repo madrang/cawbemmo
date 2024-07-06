@@ -1,5 +1,6 @@
 module.exports = {
-	objects: {
+	ttl: 120
+	, objects: {
 		default: {
 
 		}

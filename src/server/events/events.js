@@ -3,7 +3,7 @@ const fs = require("fs");
 
 //Imports
 const phaseTemplate = require("./phaseTemplate");
-const { mapList } = require("../world/mapManager");
+const { getMapList } = require("../world/mapManager");
 
 //Helpers
 const applyVariablesToDescription = (desc, variables) => {
@@ -25,6 +25,7 @@ module.exports = {
 		this.instance = instance;
 
 		const zoneName = this.instance.map.name;
+		const mapList = getMapList();
 		const zonePath = mapList.find((z) => z.name === zoneName).path;
 		const zoneEventPath = `${zonePath}/${zoneName}/events`;
 
@@ -79,7 +80,9 @@ module.exports = {
 		if (desc) {
 			config.description = applyVariablesToDescription(desc, event.variables);
 		}
-		event.participators.forEach((p) => p.events.syncList());
+		for (const p of event.participators) {
+			p.events.syncList();
+		}
 	}
 
 	, setEventRewards: function (name, rewards) {
