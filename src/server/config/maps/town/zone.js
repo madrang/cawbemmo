@@ -271,7 +271,7 @@ module.exports = {
 							type: "gainStat"
 							, rolls: {
 								stat: "hp"
-								, amount: "75"
+								, amount: 75
 							}
 						}]
 						, infinite: true
@@ -291,7 +291,7 @@ module.exports = {
 							type: "gainStat"
 							, rolls: {
 								stat: "hp"
-								, amount: "100"
+								, amount: 100
 							}
 						}]
 						, infinite: true
@@ -311,7 +311,7 @@ module.exports = {
 							type: "gainStat"
 							, rolls: {
 								stat: "hp"
-								, amount: "200"
+								, amount: 200
 							}
 						}]
 						, infinite: true
