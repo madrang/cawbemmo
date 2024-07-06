@@ -1,11 +1,11 @@
-//Balance
+// Balance
 const { hpMults, dmgMults } = require("../config/consts");
 
-//Imports
+// Imports
 const animations = require("../config/animations");
 const itemGenerator = require("../items/generator");
 
-//Mobs will be given random items to equip for these slots
+// Mobs will be given random items to equip for these slots
 const generateSlots = [
 	"head"
 	, "chest"
@@ -19,13 +19,19 @@ const generateSlots = [
 	, "twoHanded"
 ];
 
-//Mobs will pick one of these stats to be force rolles onto their items
-const statSelector = ["str", "dex", "int"];
+// Mobs will pick one of these stats to be force rolles onto their items
+const statSelector = [
+	"str", "dex", "int"
+];
 
-//These stat values are synced to players
-const syncStats = ["hp", "hpMax", "mana", "manaMax", "level"];
+// These stat values are synced to players
+const syncStats = [
+	"hp", "hpMax"
+	, "mana", "manaMax"
+	, "level"
+];
 
-//Component generators
+// Component generators
 const buildCpnMob = (mob, blueprint, typeDefinition) => {
 	const { walkDistance, grantRep, deathRep, patrol, needLos } = blueprint;
 	const cpnMob = mob.addComponent("mob");
@@ -36,7 +42,7 @@ const buildCpnMob = (mob, blueprint, typeDefinition) => {
 		, needLos
 	});
 	if (patrol !== undefined) {
-		cpnMob.patrol = blueprint.patrol;
+		cpnMob.patrol = patrol;
 	}
 	if (cpnMob.patrol) {
 		cpnMob.walkDistance = 1;
@@ -45,8 +51,8 @@ const buildCpnMob = (mob, blueprint, typeDefinition) => {
 
 const buildCpnStats = (mob, blueprint, typeDefinition) => {
 	const {
-		level,
-		hpMult: baseHpMult = typeDefinition.hpMult
+		level
+		, hpMult: baseHpMult = typeDefinition.hpMult
 	} = blueprint;
 
 	const hpMax = Math.floor(level * 40 * hpMults[level - 1] * baseHpMult);
@@ -65,18 +71,15 @@ const buildCpnStats = (mob, blueprint, typeDefinition) => {
 };
 
 const buildCpnInventory = (mob, blueprint, { drops, hasNoItems = false }, preferStat) => {
-	const { level } = blueprint;
-
 	const cpnInventory = mob.addComponent("inventory", drops);
-
 	cpnInventory.inventorySize = -1;
 	cpnInventory.dailyDrops = blueprint.dailyDrops;
 
-	if (hasNoItems !== true) {
-		generateSlots.forEach((slot) => {
+	if (!hasNoItems) {
+		for (const slot of generateSlots) {
 			const item = itemGenerator.generate({
 				noSpell: true
-				, level
+				, level: blueprint.level
 				, slot
 				, quality: 4
 				, forceStats: [preferStat]
@@ -85,7 +88,7 @@ const buildCpnInventory = (mob, blueprint, { drops, hasNoItems = false }, prefer
 			item.eq = true;
 
 			cpnInventory.getItem(item);
-		});
+		}
 	}
 };
 
@@ -93,30 +96,23 @@ const buildCpnSpells = (mob, blueprint, typeDefinition, preferStat) => {
 	const dmgMult = 4.5 * typeDefinition.dmgMult * dmgMults[blueprint.level - 1];
 
 	const spells = _.assign([], blueprint.spells);
-	spells.forEach((s) => {
+	for (const s of spells) {
 		if (!s.animation && mob.sheetName === "mobs" && animations.mobs[mob.cell]) {
 			s.animation = "basic";
 		}
-	});
-
+	}
 	mob.addComponent("spellbook", { spells });
 
-	let spellCount = 0;
 	if (mob.isRare) {
-		spellCount = 1;
-	}
-	for (let i = 0; i < spellCount; i++) {
 		const rune = itemGenerator.generate({ spell: true });
 		rune.eq = true;
-
 		mob.inventory.getItem(rune);
 	}
-
-	mob.spellbook.spells.forEach((s) => {
-		s.dmgMult = s.name ? dmgMult / 3 : dmgMult;
+	for (const s of mob.spellbook.spells) {
+		s.dmgMult = (s.name ? dmgMult / 3 : dmgMult);
 		s.statType = preferStat;
 		s.manaCost = 0;
-	});
+	}
 };
 
 const fnComponentGenerators = [
@@ -154,9 +150,11 @@ const build = (mob, blueprint, type, zoneName) => {
 	}
 	mob.addComponent("equipment");
 
-	const preferStat = statSelector[Math.floor(Math.random() * 3)];
+	const preferStat = _.randomObj(statSelector);
 
-	fnComponentGenerators.forEach((fn) => fn(mob, blueprint, typeDefinition, preferStat));
+	for (const fn of fnComponentGenerators) {
+		fn(mob, blueprint, typeDefinition, preferStat);
+	}
 
 	if (blueprint.attackable !== false) {
 		mob.addComponent("aggro", { faction: blueprint.faction });
@@ -190,7 +188,9 @@ const build = (mob, blueprint, type, zoneName) => {
 	if (statValues.has("manaMax")) {
 		statValues.mana = statValues.manaMax;
 	}
-	syncStats.forEach((s) => mob.syncer.setObject(false, "stats", "values", s, statValues[s]));
+	for (const s of syncStats) {
+		mob.syncer.setObject(false, "stats", "values", s, statValues[s]);
+	}
 };
 
 module.exports = { build };

@@ -7,10 +7,9 @@ const changeLog = require("./changeLog");
 const tos = require("./tos");
 
 const config = {
-	logoPath: null
+	logoPath: "images/logo_CWB.png"
 	, loginBgGeneratorPath: null
 	, resourceList: []
-	, defaultZone: "town"
 	, textureList: [
 		"tiles"
 		, "walls"
@@ -236,34 +235,21 @@ module.exports = {
 	config
 
 	, init: async function () {
-		fileLister.getFolder("./clientComponents").forEach((f) => {
+		for (const f of fileLister.getFiles("./clientComponents")) {
 			if (!f.endsWith(".js")) {
 				return;
 			}
-
-			const type = f.split(".")[0];
-			const path = "server/clientComponents/" + f;
-
 			config.clientComponents.push({
-				type
-				, path
+				type: f.split(".")[0]
+				, path: "server/clientComponents/" + f
 			});
-		});
-
+		}
 		config.clientComponents.push({
 			extends: "effects"
 			, path: "server/clientComponents/effects/auras.js"
 		});
 
 		events.emit("onBeforeGetClientConfig", config);
-
-		//Deprecated
-		events.emit("onBeforeGetResourceList", config.resourceList);
-		events.emit("onBeforeGetUiList", config.uiList);
-		events.emit("onBeforeGetContextMenuActions", config.contextMenuActions);
-		events.emit("onBeforeGetTermsOfService", config.tos);
-		events.emit("onBeforeGetTextureList", config.textureList);
-
 		await this.calculateAtlasTextureDimensions();
 	}
 

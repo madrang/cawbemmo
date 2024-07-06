@@ -274,8 +274,8 @@ define([
 			for (let i = 0; i < w; i++) {
 				let row = map[i];
 				for (let j = 0; j < h; j++) {
-					if (!row[j].split) {
-						row[j] += "";
+					if (typeof row[j] !== "string") {
+						row[j] = String(row[j]);
 					}
 					row[j] = row[j].split(",");
 				}

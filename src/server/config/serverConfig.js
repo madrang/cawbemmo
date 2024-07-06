@@ -2,8 +2,12 @@
 
 module.exports = {
 	version: "0.0.7"
-	,name: "main"
-	, nodeEnv: process.env.NODE_ENV
+
+	// Instance name, Define REALM for a custom realm name.
+	, realmName: process.env.REALM || "main"
+	// node type, set NODE_ENV to "DEV" or any other value to disable css caching.
+	, nodeEnv: process.env.NODE_ENV || "production"
+
 	, port: process.env.SRV_PORT || 4000
 	, startupMessage: "Server: ready"
 

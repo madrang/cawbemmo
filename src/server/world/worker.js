@@ -61,7 +61,7 @@ const onCrash = async (e) => {
 	if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
 		return;
 	}
-	_.log.error(`Error Logged: ${e.toString()}\r\n`, e.stack);
+	_.log.fatal(`Error Logged: ${e.toString()}\r\n`, e.stack);
 	await io.setAsync({
 		key: new Date()
 		, table: "error"

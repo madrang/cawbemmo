@@ -9,7 +9,7 @@ module.exports = {
 	, init: async function ({ logger = _.log.mods } = {}) {
 		this.logger = logger;
 		//Load all mods
-		const modList = fileLister.getFolderList("mods");
+		const modList = fileLister.getDirectories("mods");
 		const loadList = modList.map((modName) => {
 			if(!knownModuleSet.has(modName)) {
 				knownModuleSet.add(modName);
@@ -78,10 +78,10 @@ module.exports = {
 	}
 
 	, tick: function () {
-		this.mods.forEach((m) => {
+		for (const m of this.mods) {
 			if (m.tick) {
 				m.tick();
 			}
-		});
+		}
 	}
 };

@@ -132,11 +132,11 @@ define([
 				this.stats.hpSprite.visible = false;
 				this.stats.hpSpriteInner.visible = false;
 			}
-			this.components.forEach((c) => {
+			for (const c of this.components) {
 				if (c.setVisible) {
 					c.setVisible(visible);
 				}
-			});
+			}
 		}
 
 		, destroy: function () {

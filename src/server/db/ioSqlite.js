@@ -179,21 +179,20 @@ module.exports = {
 		let res = await util.promisify(this.db.all.bind(this.db))(`SELECT * FROM ${options.table}`);
 		if (res) {
 			if (options.clean) {
-				res.forEach((r) => {
+				for (const r of res) {
 					r.value = r.value
 						.split("`")
 						.join("'")
 						.replace(/''+/g, "'");
-				});
+				}
 			}
-
 			if (!options.noParse) {
 				if (!res) {
 					res = options.isArray ? [] : {};
 				} else {
-					res.forEach((r) => {
+					for (const r of res) {
 						r.value = JSON.parse(r.value);
-					});
+					}
 				}
 			}
 		} else if (!options.noParse && !options.noDefault) {

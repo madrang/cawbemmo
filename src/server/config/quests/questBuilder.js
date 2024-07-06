@@ -1,7 +1,7 @@
 //Imports
 const questTemplate = require("./templates/questTemplate");
 const globalQuests = require("../questsBase");
-const { mapList } = require("../../world/mapManager");
+const { getMapList } = require("../../world/mapManager");
 
 //Exports
 module.exports = {
@@ -13,6 +13,7 @@ module.exports = {
 
 	, obtain: function (obj, template) {
 		const zoneName = template?.zoneName ?? obj.zoneName;
+		const mapList = getMapList();
 		const zone = mapList.find((m) => m.name === zoneName);
 		if (!zone) { // Zone doesn't exist any more. Probably been renamed
 			return;

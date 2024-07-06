@@ -248,7 +248,7 @@ module.exports = {
 	}
 
 	, logError: async function ({ sourceModule, sourceMethod, error, info }) {
-		_.log.ioDB.error(error);
+		_.log.ioDB.fatal(error);
 		try {
 			await this.setAsync({
 				table: "error"
@@ -262,7 +262,7 @@ module.exports = {
 				}
 			});
 		} catch (e) {
-			_.log.ioDB.error(e);
+			_.log.ioDB.critical(e);
 		}
 		if (process.send) {
 			process.send({
