@@ -70,6 +70,13 @@ module.exports = {
 				}
 			}
 		}
+		, four: {
+			components: {
+				cpnWorkbench: {
+					type: "cooking"
+				}
+			}
+		}
 	}
 	, mobs: {
 		default: {
@@ -236,7 +243,91 @@ module.exports = {
 
 			}
 		}
-		, hermit: {
+		, raymond: {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 0
+						, max: 1
+					}
+					, forceItems: [{
+						name: "hot-dog"
+						, type: "consumable"
+						, sprite: [1, 6]
+						, description: "Donne 75 HP"
+						, spritesheet: "images/consumable.png"
+						, worth: 8
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "75"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					},{
+						name: "Hamburger"
+						, type: "consumable"
+						, sprite: [0, 6]
+						, description: "Donne 100 HP"
+						, spritesheet: "images/consumables.png"
+						, worth: 12
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "100"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					},{
+						name: "Pince de crabe cuite"
+						, type: "consumable"
+						, sprite: [0, 3]
+						, description: "Donne 200 HP"
+						, spritesheet: "images/questItems.png"
+						, worth: 18
+						, noSalvage: true
+						, noAugment: true
+						, uses: 1
+						, cdMax: 85
+						, effects: [{
+							type: "gainStat"
+							, rolls: {
+								stat: "hp"
+								, amount: "200"
+							}
+						}]
+						, infinite: true
+						, noSalvage: true
+					}]
+					, level: {
+						min: 1
+						, max: 10
+					}
+					, markup: {
+						buy: 0.50
+						, sell: 2.5
+					}
+				}
+			}
+		}, peter: {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -250,7 +341,7 @@ module.exports = {
 						, max: 10
 					}
 					, forceItems: [{
-						name: "Flimsy Fishing Rod"
+						name: "Canne à pêche"
 						, type: "Fishing Rod"
 						, slot: "tool"
 						, quality: 0
@@ -276,6 +367,46 @@ module.exports = {
 					}
 				}
 			}
+		}, "mr giroux": {
+			level: 10
+			, walkDistance: 0
+			, attackable: false
+			, rare: {
+				count: 0
+			}
+			, properties: {
+				cpnTrade: {
+					items: {
+						min: 3
+						, max: 10
+					}
+					, forceItems: [{
+						name: "Bouteille vide"
+						, material: true
+						, sprite: [0, 9]
+						, worth: 3
+						, quality: 0
+						, infinite: true
+					}
+					,{
+						name: "pain"
+						, material: true
+						, sprite: [1, 5]
+						, worth: 5
+						, quality: 0
+						, infinite: true
+					}
+					]
+					, level: {
+						min: 1
+						, max: 10
+					}
+					, markup: {
+						buy: 0.50
+						, sell: 2.5
+					}
+				}
+			}
 		}, gislain: {
 			level: 10
 			, walkDistance: 0
@@ -290,10 +421,10 @@ module.exports = {
 						, max: 10
 					}
 					, forceItems: [{
-						name: "Canne a pêche a spring"
+						name: "Canne à pêche à spring"
 						, type: "Fishing Rod"
 						, slot: "tool"
-						, quality: 0
+						, quality: 1
 						, worth: 500
 						, sprite: [11, 1]
 						, infinite: true
@@ -363,8 +494,22 @@ module.exports = {
 			}
 		}
 		, cow: {
-			attackable: false
+			attackable: true
 			, level: 3
+			, regular: {
+				drops: {
+					rolls: 1
+					, noRandom: true
+					, alsoRandom: true
+					, blueprints: [{
+						chance: 75
+						, name: "Steak"
+						, material: true
+						, sprite: [1, 4]
+						, spritesheet: "images/materials.png"
+					}]
+				}
+			}
 			, rare: {
 				count: 0
 			}

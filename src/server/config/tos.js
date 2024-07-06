@@ -1,14 +1,20 @@
 module.exports = {
-	version: "0.0.5"
+	version: "05.07.24"
 	, content: `
-Version de TEST public
-Peu ètre instable ou indisponible à tout moment.
+Le jeu es présentement en développement.
+Peu planté souvent
+SVP rapportez les bogues sur le git ou le Discord.
 
-Pour l'instant la base du jeu es en phase de test
-La traduction et le nouveau storyline vont bientot arrivé Merci
+Le jeu garde en mémoire les informations suivante sur vous:
+-Votre nom d'utilisateur
+-Votre Mot de passe
+-Vos personnages
 
-Ceci es une première Mise a jours Majeur Merci de rapporté les bogues
+Nous vous offrons ce service gratuitement et es fournis sans aucune
+garanties.
 
-Le max level es niveau 20
+Les termes de services peuvent changé sans préavis.
+
+Pour plus d'information communiquez avec nous sur le Discord'
 
 `};

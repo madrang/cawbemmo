@@ -24,6 +24,34 @@ const baseRecipes = {
 			}
 		]
 	}
+	,bouteille: {
+		item: {
+			name: "Liquide louche"
+			, type: "consumable"
+			, sprite: [0, 7]
+			, worth: 15
+			, noSalvage: true
+			, noAugment: true
+			, uses: 1
+			, cdMax: 85
+			, effects: [{
+				type: "augmentWeapon"
+				, rolls: {
+					duration: 500
+				}
+			}]
+	}
+	, materials: [{
+		name: "Bouteille vide"
+		, quantity: 1
+	}, {
+		name: "champignon"
+		, quantity: 3
+	}, {
+		name: "weed"
+		, quantity: 1
+	}]
+}
 };
 
 const buildRecipe = function (recipe, item, materials, effects) {
@@ -54,11 +82,11 @@ module.exports = [
 	buildRecipe(
 		// recette
 		{ name: "joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50% Hp instant"
 		}
 		// item
 		,{ name: "Un bon vieux joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Hp instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50% Hp instant"
 			, getXp: 10
 		}
 		// materials
@@ -76,11 +104,11 @@ module.exports = [
 	, buildRecipe(
 		// recette
 		{ name: "joint"
-			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 50 Mana instant"
+			, description: "Un bon vieux joint pour ce heal<br /><br />Donne: 20 Mana instant"
 		}
 		// item
 		, { name: "Joint Deux papier"
-			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 50 Mana instant"
+			, description: "Un bon vieux joint pour ce donner de la mana<br /><br />Donne: 20 Mana instant"
 			, getXp: 15
 		}
 		// Materials
@@ -92,8 +120,42 @@ module.exports = [
 				//stat: ( "mana" | "hp" )
 				stat: "mana"
 				// montant de base
-				, amount: "50%"
+				, amount: "20"
 			}
 		}
 	)
+
+		, buildRecipe(
+		// recette
+		{ name: "bouteille"
+			, description: "Ca pue mais ca rend l'arme plus forte."
+		}
+		// item
+		, { name: "Liquide louche"
+			, description: "Ca pue mais ca rend l'arme plus forte."
+			, getXp: 25
+		}
+		// Materials
+		, [ {
+		name: "Bouteille vide"
+		, quantity: 1
+	}, {
+		name: "champignon"
+		, quantity: 3
+	}, {
+		name: "weed"
+		, quantity: 1
+	}
+		]
+		, {
+			rolls: {
+				duration: 500
+			}
+		}
+	)
+
+
+
+
+
 ];
