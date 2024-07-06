@@ -40,7 +40,7 @@ const tryFreeUnusedThread = async (thread) => {
 	return false;
 };
 setInterval(() => {
-	for (let i = threads.length; i > 0; --i) {
+	for (let i = threads.length - 1; i >= 0; --i) {
 		if (!threads[i].has("inactive")) {
 			continue;
 		}
