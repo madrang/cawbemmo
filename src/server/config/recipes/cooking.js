@@ -50,6 +50,7 @@ module.exports = [
 		}
 		// item
 		,{ name: "Hamburger"
+			, sprite: [0, 6]
 			, description: "Un gros hamburger <br /><br />Donne: 100 Hp instant"
 			, getXp: 10
 		}

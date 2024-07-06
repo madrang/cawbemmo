@@ -24,6 +24,34 @@ const baseRecipes = {
 			}
 		]
 	}
+	,bouteille: {
+		item: {
+			name: "Liquide louche"
+			, type: "consumable"
+			, sprite: [0, 7]
+			, worth: 15
+			, noSalvage: true
+			, noAugment: true
+			, uses: 1
+			, cdMax: 85
+			, effects: [{
+				type: "augmentWeapon"
+				, rolls: {
+					duration: 500
+				}
+			}]
+	}
+	, materials: [{
+		name: "Bouteille vide"
+		, quantity: 1
+	}, {
+		name: "champignon"
+		, quantity: 3
+	}, {
+		name: "weed"
+		, quantity: 1
+	}]
+}
 };
 
 const buildRecipe = function (recipe, item, materials, effects) {
@@ -96,4 +124,38 @@ module.exports = [
 			}
 		}
 	)
+
+		, buildRecipe(
+		// recette
+		{ name: "bouteille"
+			, description: "Ca pue mais ca rend l'arme plus forte."
+		}
+		// item
+		, { name: "Liquide louche"
+			, description: "Ca pue mais ca rend l'arme plus forte."
+			, getXp: 25
+		}
+		// Materials
+		, [ {
+		name: "Bouteille vide"
+		, quantity: 1
+	}, {
+		name: "champignon"
+		, quantity: 3
+	}, {
+		name: "weed"
+		, quantity: 1
+	}
+		]
+		, {
+			rolls: {
+				duration: 500
+			}
+		}
+	)
+
+
+
+
+
 ];

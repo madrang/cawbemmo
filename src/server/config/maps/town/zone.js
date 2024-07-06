@@ -259,9 +259,9 @@ module.exports = {
 					, forceItems: [{
 						name: "hot-dog"
 						, type: "consumable"
-						, sprite: [0, 1]
+						, sprite: [1, 6]
 						, description: "Donne 75 HP"
-						, spritesheet: "images/questItems.png"
+						, spritesheet: "images/consumable.png"
 						, worth: 8
 						, noSalvage: true
 						, noAugment: true
@@ -279,9 +279,9 @@ module.exports = {
 					},{
 						name: "Hamburger"
 						, type: "consumable"
-						, sprite: [0, 1]
+						, sprite: [0, 6]
 						, description: "Donne 100 HP"
-						, spritesheet: "images/questItems.png"
+						, spritesheet: "images/consumables.png"
 						, worth: 12
 						, noSalvage: true
 						, noAugment: true
