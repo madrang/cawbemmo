@@ -66,6 +66,10 @@ module.exports = {
 			delete obj.x;
 			delete obj.y;
 		}
+		if (thread.has("inactive")) {
+			// Player joined, thread is now active.
+			delete thread.inactive;
+		}
 
 		obj.zoneName = thread.name;
 		obj.zoneId = thread.id;
