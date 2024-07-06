@@ -359,18 +359,22 @@ module.exports = {
 	}
 
 	, getThreadStatus: function (msg) {
+		// Current number of players.
 		let playerCount = 0;
 		for (const o of objects.objects) {
 			if (o.player) {
 				playerCount++;
 			}
 		}
+		// TimeToLive - Time before unloading map when empty.
+		let ttl = map.zoneConfig.ttl;
+		if (typeof ttl === "function") {
+			ttl = ttl.apply(map.zoneConfig, this.instances);
+		}
 		this.resolveCallback(msg, {
 			result: {
-				// Current number of players.
 				playerCount
-				// TimeToLive - Time before unloading map when empty.
-				, ttl: map.zoneConfig.ttl
+				, ttl
 			}
 		});
 	}

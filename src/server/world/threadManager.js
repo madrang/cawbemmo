@@ -22,6 +22,31 @@ const killThread = (thread) => {
 	thread.worker.kill();
 	threads.spliceWhere((t) => t === thread);
 };
+const tryFreeUnusedThread = async (thread) => {
+	const threadStatus = await getThreadStatus(thread);
+	const wasInactive = thread.has("inactive");
+	if (threadStatus.playerCount === 0) {
+		if (threadStatus.ttl <= 0
+			|| (wasInactive && Date.now() - thread.inactive > threadStatus.ttl * 1000)
+		) {
+			killThread(thread);
+			return true;
+		} else if (!wasInactive) {
+			thread.inactive = Date.now();
+		}
+	} else if (wasInactive) {
+		delete thread.inactive;
+	}
+	return false;
+};
+setInterval(() => {
+	for (let i = threads.length; i > 0; --i) {
+		if (!threads[i].has("inactive")) {
+			continue;
+		}
+		tryFreeUnusedThread(threads[i]);
+	}
+}, 60 * 1000);
 
 const messageAllThreads = (message) => {
 	for (const t of threads) {
@@ -97,15 +122,14 @@ const messageHandlers = {
 	, rezone: async function (thread, message) {
 		const { args: { obj, newZone, keepPos = true } } = message;
 
-		const threadStatus = await getThreadStatus(thread);
-		if (threadStatus.playerCount === 0) {
-			killThread(thread);
-		}
+		// Check if old thread should be freed when player leaves.
+		tryFreeUnusedThread(thread);
 
-		//When messages are sent from map threads, they have an id (id of the object in the map thread)
+		// When messages are sent from map threads, they have an id (id of the object in the map thread)
 		// as well as a serverId (id of the object in the main thread)
 		const serverId = obj.serverId;
 		obj.id = serverId;
+		// Was destroyed in the zone, but not in the server.
 		obj.destroyed = false;
 
 		const serverObj = objects.objects.find((o) => o.id === obj.id);
@@ -224,12 +248,7 @@ module.exports = {
 	}
 
 	, killThread
-	, killThreadIfEmpty: async (thread) => {
-		const threadStatus = await getThreadStatus(thread);
-		if (threadStatus.playerCount === 0) {
-			killThread(thread);
-		}
-	}
+	, tryFreeUnusedThread
 
 	, returnWhenThreadsIdle: async () => {
 		return new Promise((res) => {

@@ -192,10 +192,14 @@ module.exports = {
 		return result;
 	}
 
-	, forceSaveAll: async function () {
+	, forceSaveAll: async function (zoneName, zoneId) {
 		const promises = this.players
-			.filter((p) => p.zoneName !== undefined)
-			.map((p) => {
+			.filter((p) => (zoneName
+				? p.zoneName === zoneName
+					&& (zoneId ? p.zoneId === zoneId : true)
+				: p.zoneName !== undefined
+				)
+			).map((p) => {
 				const promise = new Promise((res) => {
 					const msg = {
 						cpn: "auth"

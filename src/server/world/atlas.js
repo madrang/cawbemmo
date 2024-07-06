@@ -3,7 +3,7 @@ const objects = require("../objects/objects");
 const events = require("../misc/events");
 const {
 	getThread, killThread, sendMessageToThread, getThreadFromId, doesThreadExist,
-	returnWhenThreadsIdle, getThreadStatus, killThreadIfEmpty
+	returnWhenThreadsIdle, getThreadStatus, tryFreeUnusedThread
 } = require("./threadManager");
 const { registerCallback, removeCallback } = require("./atlas/registerCallback");
 
@@ -14,7 +14,8 @@ module.exports = {
 	, addObject: async function (obj, keepPos, transfer) {
 		const serverObj = objects.objects.find((o) => o.id === obj.id);
 		if (!serverObj) {
-			return;
+			_.log.atlas.error("Object %s can't join threads, missing in objects atlas.", obj.name || obj.id);
+			return false;
 		}
 
 		//While rezoning, this is set to true. So we remove it
@@ -56,8 +57,8 @@ module.exports = {
 
 		//Perhaps the player disconnected while waiting for the thread to spawn
 		if (!serverObj.socket.connected) {
-			await killThreadIfEmpty(thread);
-			return;
+			await tryFreeUnusedThread(thread);
+			return false;
 		}
 
 		if (thread.id !== thread.name) {
@@ -88,21 +89,25 @@ module.exports = {
 				}
 			}
 		});
+		return true;
 	}
 
-	, savePlayerUnloadZone: async function (thread, playerId, callback) {
-		await new Promise((res) => {
-			thread.worker.send({
-				method: "forceSavePlayer"
-				, args: { playerId, callbackId: this.registerCallback(res) }
-			});
-		});
+	// Save all players in a zone when event is completed and unload the zone.
+	, savePlayersUnloadZone: async function (thread, callback) {
+		await Promise.all(
+			objects.objects.filter(
+				(p) => p.zoneId === thread.id
+			).map(
+				(p) => this.forceSavePlayer(p.id, thread)
+			)
+		);
 		killThread(thread);
 		if (callback) {
-			callback();
+			return callback();
 		}
 	}
 
+	// Remove player/tracked obj
 	, removeObject: async function (obj, skipLocal, callback) {
 		//We need to store the player id because the calling thread might delete it (connections.unzone)
 		const playerId = obj.id;
@@ -113,26 +118,34 @@ module.exports = {
 
 		const thread = getThreadFromId(obj.zoneId);
 		if (!thread) {
-			callback();
+			if (callback) {
+				return callback();
+			}
 			return;
 		}
 
 		const threadStatus = await getThreadStatus(thread);
-		if (threadStatus.playerCount === 1) {
-			this.savePlayerUnloadZone(thread, playerId, callback);
-			return;
+		if (threadStatus.ttl < 0
+			|| (threadStatus.playerCount === 1 && threadStatus.ttl === 0)
+		) {
+			return this.savePlayersUnloadZone(thread, callback);
 		}
 
-		sendMessageToThread({
-			threadId: obj.zoneId
-			, msg: {
-				method: "removeObject"
-				, args: {
-					obj: obj.getSimple(true)
-					, callbackId: (callback ? this.registerCallback(callback) : null)
+		await new Promise((res) => {
+			sendMessageToThread({
+				threadId: obj.zoneId
+				, msg: {
+					method: "removeObject"
+					, args: {
+						obj: obj.getSimple(true)
+						, callbackId: this.registerCallback(res)
+					}
 				}
-			}
+			});
 		});
+		if (callback) {
+			return callback();
+		}
 	}
 	, updateObject: function (obj, msgObj) {
 		sendMessageToThread({
