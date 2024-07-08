@@ -31,53 +31,41 @@ module.exports = {
 	}
 
 	, updateZoneEmpty: function (objects, oList, oLen) {
-		for (let i = 0; i < oLen; i++) {
-			let o = oList[i];
+		for (let i = oLen - 1; i >= 0; --i) {
+			const o = oList[i];
 			if (!o.destroyed) {
 				continue;
 			}
 			objects.removeObject(o);
-			oLen--;
-			i--;
 		}
 		this.sendServerModuleMessages();
 	}
 
 	, updateZoneNotEmpty: function (objects, oList, oLen, pList, pLen) {
-		let queueFunction = this.queue.bind(this, "onGetObject");
-
-		let cache = {};
-
-		for (let i = 0; i < oLen; i++) {
-			let o = oList[i];
+		const cache = {};
+		for (let i = oLen - 1; i >= 0; --i) {
+			const o = oList[i];
+			if (!o.syncer) {
+				continue;
+			}
 			let canBeSeenBy = o.canBeSeenBy;
 			let oId = o.id;
 			let ox = o.x;
 			let oy = o.y;
-
-			if (!o.syncer) {
-				continue;
-			}
-
 			let destroyed = o.destroyed;
-
 			let sync = null;
 			let syncSelf = null;
-			if (!destroyed) {
-				sync = o.syncer.get();
-				syncSelf = o.syncer.get(true);
-				o.syncer.locked = true;
-			} else {
+			if (destroyed) {
 				sync = {
 					id: o.id
 					, destroyed: true
 					, destructionEvent: o.destructionEvent
 				};
-
 				objects.removeObject(o);
-
-				oLen--;
-				i--;
+			} else {
+				sync = o.syncer.get();
+				syncSelf = o.syncer.get(true);
+				o.syncer.locked = true;
 			}
 
 			let toList = [];
@@ -102,7 +90,7 @@ module.exports = {
 				if (hasSeen) {
 					if (canSee) {
 						if (p.id === oId && syncSelf) {
-							queueFunction(syncSelf, [ p.serverId ]);
+							this.queue("onGetObject", syncSelf, [ p.serverId ]);
 						}
 
 						if (sync) {
@@ -112,7 +100,7 @@ module.exports = {
 					}
 					if (destroyed || !canSee) {
 						if (!canSee) {
-							queueFunction({
+							this.queue("onGetObject", {
 								id: oId
 								, destroyed: true
 								, destructionEvent: "visibility"
@@ -126,7 +114,7 @@ module.exports = {
 					if (p.id === oId) {
 						let syncO = o.getSimple(true);
 						syncO.self = true;
-						queueFunction(syncO, [ p.serverId ]);
+						this.queue("onGetObject", syncO, [ p.serverId ]);
 						p.player.see(oId);
 						continue;
 					} else {
@@ -142,10 +130,10 @@ module.exports = {
 				}
 			}
 			if (sendTo) {
-				queueFunction(sync, toList);
+				this.queue("onGetObject", sync, toList);
 			}
 			if (sendComplete) {
-				queueFunction(completeObj, completeList);
+				this.queue("onGetObject", completeObj, completeList);
 			}
 		}
 		this.send();

@@ -286,19 +286,14 @@ define([
 		}
 
 		, update: function () {
-			let objects = this.objects;
-			let len = objects.length;
-			for (let i = 0; i < len; i++) {
-				let o = objects[i];
-
+			const objects = this.objects;
+			for (let i = objects.length - 1; i >= 0; --i) {
+				const o = objects[i];
 				if (o.destroyed) {
 					o.destroy();
 					objects.splice(i, 1);
-					i--;
-					len--;
 					continue;
 				}
-
 				o.update();
 			}
 		}

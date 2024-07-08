@@ -6,8 +6,7 @@
 		"spliceWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
-				let len = arrObj.length || 0;
-				for (let idx = 0; idx < len; ++idx) {
+				for (let idx = (arrObj.length || 0) - 1; idx >= 0; --idx) {
 					if (!(idx in arrObj)) {
 						continue;
 					}
@@ -15,8 +14,6 @@
 						continue;
 					}
 					arrObj.splice(idx, 1);
-					idx--;
-					len--;
 				}
 			}
 		}

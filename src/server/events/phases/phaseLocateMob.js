@@ -22,31 +22,22 @@ module.exports = {
 	}
 
 	, update: function () {
-		let players = this.instance.objects.objects.filter(function (o) {
-			return o.player;
-		});
-		let pLen = players.length;
-
-		let distance = this.distance;
-
-		let mobs = this.mobs;
-		let mLen = mobs.length;
-		for (let i = 0; i < mLen; i++) {
-			let m = mobs[i];
-
-			for (let j = 0; j < pLen; j++) {
-				let p = players[j];
-
-				if ((Math.abs(p.x - m.x) <= distance) && (Math.abs(p.y - m.y) <= distance)) {
+		const players = this.instance.objects.objects.filter((o) => o.player);
+		const mobs = this.mobs;
+		const distance = this.distance;
+		for (let i = mobs.length - 1; i >= 0; --i) {
+			const m = mobs[i];
+			for (let j = players.length - 1; j >= 0; --j) {
+				const p = players[j];
+				if (Math.abs(p.x - m.x) <= distance
+					&& Math.abs(p.y - m.y) <= distance
+				) {
 					mobs.splice(i, 1);
-					mLen--;
-					i--;
 					break;
 				}
 			}
 		}
-
-		if (mobs.length === 0) {
+		if (mobs.length <= 0) {
 			this.end = true;
 		}
 	}

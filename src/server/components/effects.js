@@ -93,9 +93,8 @@ module.exports = {
 
 	, events: {
 		beforeRezone: function (forceDestroy) {
-			let effects = this.effects;
-			let eLen = effects.length;
-			for (let i = 0; i < eLen; i++) {
+			const effects = this.effects;
+			for (let i = effects.length - 1; i >= 0; --i) {
 				let effect = effects[i];
 				if (!forceDestroy) {
 					if (effect.persist) {
@@ -103,13 +102,9 @@ module.exports = {
 						continue;
 					}
 				}
-
 				this.destroyEffect(effect);
-
 				this.syncRemove(effect.id);
 				effects.splice(i, 1);
-				eLen--;
-				i--;
 			}
 		}
 	}
@@ -254,11 +249,12 @@ module.exports = {
 	, update: function () {
 		const effects = this.effects;
 		let eLen = effects.length;
-		for (let i = 0; i < eLen; i++) {
+		for (let i = effects.length - 1; i >= 0; --i) {
 			const e = effects[i];
 			if (e.ttl > 0) {
 				e.ttl--;
-			} else if (e.ttl === 0) {
+			}
+			if (e.ttl <= 0) {
 				e.destroyed = true;
 			}
 			if (e.update) {
@@ -266,12 +262,8 @@ module.exports = {
 			}
 			if (e.destroyed) {
 				this.destroyEffect(e);
-
 				this.syncRemove(e.id);
-
 				effects.splice(i, 1);
-				eLen--;
-				i--;
 			}
 		}
 		for (let p in this.ccResistances) {

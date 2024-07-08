@@ -147,15 +147,16 @@ module.exports = {
 	}
 
 	, logOut: async function (exclude) {
+		if (!exclude?.auth?.username) {
+			return;
+		}
 		const { players } = this;
-
-		let pLen = players.length;
-		for (let i = 0; i < pLen; i++) {
+		for (let i = players.length - 1; i >= 0; --i) {
 			const p = players[i];
-
-			if (!p || p === exclude || !p.auth) {
+			if (!p?.auth || p === exclude) {
 				continue;
-			} else if (p.auth.username === exclude.auth.username) {
+			}
+			if (p.auth.username === exclude.auth.username) {
 				if (p.name && p.zoneId) {
 					await atlas.forceSavePlayer(p.id, p.zoneId);
 				}
@@ -163,8 +164,6 @@ module.exports = {
 					p.socket.emit("dc", {});
 				} else {
 					players.splice(i, 1);
-					i--;
-					pLen--;
 				}
 			}
 		}

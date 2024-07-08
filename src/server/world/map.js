@@ -256,7 +256,8 @@ module.exports = {
 			const isExitB = b?.properties?.some((p) => p.name === "exit");
 			if (isExitA && !isExitB) {
 				return 1;
-			} else if (!isExitA && isExitB) {
+			}
+			if (!isExitA && isExitB) {
 				return -1;
 			}
 			return 0;
@@ -413,16 +414,20 @@ module.exports = {
 				blueprint.objZoneName = objZoneName;
 			}
 			if (this.zoneConfig) {
-				if ((this.zoneConfig.objects) && (this.zoneConfig.objects[objZoneName.toLowerCase()])) {
+				if (this.zoneConfig.objects && this.zoneConfig.objects[objZoneName.toLowerCase()]) {
 					_.assign(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
-				} else if ((this.zoneConfig.objects) && (this.zoneConfig.mobs[objZoneName.toLowerCase()])) {
+				} else if (this.zoneConfig.objects && this.zoneConfig.mobs[objZoneName.toLowerCase()]) {
 					_.assign(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
 				}
 			}
 			if (blueprint.blocking) {
 				this.collisionMap[blueprint.x][blueprint.y] = 1;
 			}
-			if (blueprint.properties.cpnNotice || blueprint.properties.cpnLightPatch || layerName === "rooms" || layerName === "hiddenRooms") {
+			if (blueprint.properties.cpnNotice
+				|| blueprint.properties.cpnLightPatch
+				|| layerName === "rooms"
+				|| layerName === "hiddenRooms"
+			) {
 				blueprint.y++;
 				blueprint.width = Math.round(cell.width / mapScale);
 				blueprint.height = Math.round(cell.height / mapScale);
@@ -436,12 +441,12 @@ module.exports = {
 			if (layerName === "rooms") {
 				if (blueprint.properties.exit) {
 					let room = this.rooms.find(function (r) {
-						return (!(
-							(blueprint.x + blueprint.width < r.x) ||
-								(blueprint.y + blueprint.height < r.y) ||
-								(blueprint.x >= r.x + r.width) ||
-								(blueprint.y >= r.y + r.height)
-						));
+						return !(
+							blueprint.x + blueprint.width < r.x
+							|| blueprint.y + blueprint.height < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
+						);
 					});
 					room.exits.push(blueprint);
 				} else if (blueprint.properties.resource) {
@@ -461,8 +466,10 @@ module.exports = {
 				} else {
 					const room = this.rooms.find((r) => {
 						return !(
-							blueprint.x < r.x || blueprint.y < r.y ||
-							blueprint.x >= r.x + r.width || blueprint.y >= r.y + r.height
+							blueprint.x < r.x
+							|| blueprint.y < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
 						);
 					});
 					room.objects.push(blueprint);
@@ -473,10 +480,10 @@ module.exports = {
 				} else {
 					const room = this.rooms.find((r) => {
 						return !(
-							blueprint.x < r.x ||
-							blueprint.y < r.y ||
-							blueprint.x >= r.x + r.width ||
-							blueprint.y >= r.y + r.height
+							blueprint.x < r.x
+							|| blueprint.y < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
 						);
 					});
 					room.objects.push(blueprint);

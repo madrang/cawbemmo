@@ -43,13 +43,12 @@ module.exports = {
 	}
 
 	, update: function () {
-		let mobs = this.mobs;
-		let mLen = mobs.length;
-		for (let i = 0; i < mLen; i++) {
-			let m = mobs[i];
+		const mobs = this.mobs;
+		for (let i = mobs.length - 1; i >= 0; --i) {
+			const m = mobs[i];
 			let destroyed = m.destroyed;
 			if (!destroyed) {
-				let deathStopper = m.components.find((c) => (c.type === "deathStopper"));
+				const deathStopper = m.components.find((c) => c.type === "deathStopper");
 				if (deathStopper) {
 					destroyed = deathStopper.end;
 				}
@@ -57,8 +56,6 @@ module.exports = {
 			// Remove destroyed mobs.
 			if (destroyed) {
 				mobs.splice(i, 1);
-				mLen--;
-				i--;
 			}
 		}
 		// Is completed once all tracked mobs are killed.

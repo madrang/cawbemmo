@@ -55,8 +55,7 @@ define([
 
 		, update: function () {
 			const oComponents = this.components;
-			let len = oComponents.length;
-			for (let i = 0; i < len; i++) {
+			for (let i = oComponents.length - 1; i >= 0; --i) {
 				const c = oComponents[i];
 				if (c.update) {
 					c.update();
@@ -66,8 +65,6 @@ define([
 						c.destroy();
 					}
 					oComponents.splice(i, 1);
-					i--;
-					len--;
 					delete this[c.type];
 				}
 			}

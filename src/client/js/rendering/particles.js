@@ -44,8 +44,7 @@ define([
 			const renderer = this.r;
 			const now = Date.now();
 			const emitters = this.emitters;
-			let eLen = emitters.length;
-			for (let i = 0; i < eLen; i++) {
+			for (let i = emitters.length - 1; i >= 0; --i) {
 				const e = emitters[i];
 				let visible = null;
 				let destroy = (!e.emit && e.obj.destroyed);
@@ -60,8 +59,6 @@ define([
 				if (destroy) {
 					emitters.splice(i, 1);
 					e.destroy();
-					i--;
-					eLen--;
 					continue;
 				}
 				if (visible === null) {
