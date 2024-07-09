@@ -125,33 +125,29 @@ define([
 		}
 
 		, showContext: function (char, e) {
-			if (char.name !== window.player.name) {
-				const extraActions = this.actions.map(({ command, text }) => {
-					return {
-						text
-						, callback: this.performAction.bind(this, command, char.name)
-					};
-				});
-
-				const isBlocked = window.player.social.isPlayerBlocked(char.name);
-
-				const actions = [{
-					text: "invite to party"
-					, callback: this.invite.bind(this, char.id)
-				}, {
-					text: "whisper"
-					, callback: events.emit.bind(events, "onDoWhisper", char.name)
-				}, {
-					text: isBlocked ? "unblock" : "block"
-					, callback: this.block.bind(this, char.name)
-				}, ...extraActions];
-
-				events.emit("onBeforeOnlineListContext", char.id, actions);
-
-				events.emit("onContextMenu", actions, e);
-			}
-
 			e.preventDefault();
+			if (char.name === window.player.name) {
+				return false;
+			}
+			const isBlocked = window.player.social.isPlayerBlocked(char.name);
+			const actions = [
+				{ text: "invite to party"
+					, callback: this.invite.bind(this, char.id)
+				}
+				, { text: "whisper"
+					, callback: events.emit.bind(events, "onDoWhisper", char.name)
+				}
+				, { text: isBlocked ? "unblock" : "block"
+					, callback: this.block.bind(this, char.name)
+				}
+				, ...this.actions.map(
+					({ command, text }) => ({ text
+						, callback: this.performAction.bind(this, command, char.name)
+					})
+				)
+			];
+			events.emit("onBeforeOnlineListContext", char.id, actions);
+			events.emit("onContextMenu", actions, e);
 			return false;
 		}
 

@@ -57,7 +57,9 @@ const localCommands = [
 ];
 
 //Actions that should appear when a player is right clicked
-const contextActions = [];
+const contextActions = [
+	{ text: "Go to player", command: "teleport" }
+];
 
 const commandActions = {};
 
