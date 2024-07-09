@@ -8,7 +8,8 @@ const tos = require("./tos");
 
 const config = {
 	logoPath: "images/logo_CWB.png"
-	, loginBgGeneratorPath: null
+	// loginBackground, using undefined means default will load. Randomly using static as a broken login.
+	, loginBackgroundGeneratorPath: [ undefined, "js/rendering/backgrounds/static", undefined ]
 	, resourceList: []
 	, textureList: [
 		"tiles"

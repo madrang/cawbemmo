@@ -80,22 +80,17 @@ module.exports = {
 
 					syncer.queue("onGetObject", effect, -1);
 
-					let mobs = physics.getCell(i, j);
-					let mLen = mobs.length;
-					for (let k = 0; k < mLen; k++) {
-						let m = mobs[k];
-
+					const mobs = physics.getCell(i, j);
+					for (let k = mobs.length - 1; k >= 0; --k) {
+						const m = mobs[k];
 						//Maybe we killed something?
 						if (!m) {
-							mLen--;
 							continue;
 						} else if (!m.player) {
 							continue;
 						}
-
-						let damage = this.getDamage(m);
 						m.stats.takeDamage({
-							damage
+							damage: this.getDamage(m)
 							, threatMult: 1
 							, source: obj
 							, target: m

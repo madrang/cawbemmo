@@ -35,7 +35,7 @@ const performPatrolAction = ({ obj }, node) => {
 		}
 		node.ttl--;
 		if (!node.ttl) {
-			delete node .ttl;
+			delete node.ttl;
 			return true;
 		}
 	}
@@ -198,29 +198,19 @@ module.exports = {
 		if (dx <= 1 && dy <= 1) {
 			obj.queue({
 				action: "move"
-				, data: {
-					x: toX
-					, y: toY
-				}
+				, data: { x: toX, y: toY }
 			});
 			return;
 		}
-		const path = this.physics.getPath({
-			x: obj.x
-			, y: obj.y
-		}, {
-			x: toX
-			, y: toY
-		}, false);
-		const pLen = path.length;
-		for (let i = 0; i < pLen; i++) {
-			let p = path[i];
+		const path = this.physics.getPath(
+			{ x: obj.x, y: obj.y }
+			, { x: toX, y: toY }
+			, false
+		);
+		for (const p of path) {
 			obj.queue({
 				action: "move"
-				, data: {
-					x: p.x
-					, y: p.y
-				}
+				, data: { x: p.x, y: p.y }
 			});
 		}
 	}

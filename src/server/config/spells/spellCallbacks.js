@@ -20,39 +20,29 @@ module.exports = {
 		return obj;
 	}
 	, unregister: function (sourceId) {
-		let callbacks = this.callbacks;
-		let cLen = callbacks.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = callbacks[i];
-
+		const callbacks = this.callbacks;
+		for (let i = callbacks.length - 1; i >= 0; --i) {
+			const c = callbacks[i];
 			if (c.sourceId === sourceId) {
 				if (c.destroyCallback) {
 					c.destroyCallback();
 				}
 				callbacks.splice(i, 1);
-				i--;
-				cLen--;
 			}
 		}
 	}
 
 	, update: function () {
-		let speed = this.speed;
-
-		let callbacks = this.callbacks;
-		let cLen = callbacks.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = callbacks[i];
-
-			//If a spellCallback kills a mob he'll unregister his callbacks
+		const callbacks = this.callbacks;
+		for (let i = callbacks.length - 1; i >= 0; --i) {
+			const c = callbacks[i];
 			if (!c) {
-				i--;
-				cLen--;
+				// If a spellCallback kills a mob he'll unregister his callbacks
 				continue;
 			}
-
-			c.time -= speed;
-
+			if (c.time > 0) {
+				c.time -= this.speed;
+			}
 			if (c.time <= 0) {
 				if (c.callback) {
 					c.callback();
@@ -61,8 +51,6 @@ module.exports = {
 					c.destroyCallback();
 				}
 				callbacks.splice(i, 1);
-				i--;
-				cLen--;
 			}
 		}
 	}

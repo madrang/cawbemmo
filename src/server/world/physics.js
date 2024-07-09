@@ -55,34 +55,28 @@ module.exports = {
 	}
 
 	, removeRegion: function (obj) {
-		let oId = obj.id;
+		const oId = obj.id;
 
 		let lowX = obj.x;
 		let lowY = obj.y;
 		let highX = lowX + obj.width;
 		let highY = lowY + obj.height;
-		let cells = this.cells;
+		const cells = this.cells;
 
 		for (let i = lowX; i < highX; i++) {
 			let row = cells[i];
 			for (let j = lowY; j < highY; j++) {
-				let cell = row[j];
-
+				const cell = row[j];
 				if (!cell) {
 					continue;
 				}
-
-				let cLen = cell.length;
-				for (let k = 0; k < cLen; k++) {
-					let c = cell[k];
-
-					if (c.id !== oId) {
+				for (let k = cell.length - 1; k >= 0; --k) {
+					const c = cell[k];
+					if (c.id === oId) {
+						cell.splice(k, 1);
+					} else {
 						c.collisionExit(obj);
 						obj.collisionExit(c);
-					} else {
-						cell.splice(k, 1);
-						k--;
-						cLen--;
 					}
 				}
 			}
@@ -136,43 +130,42 @@ module.exports = {
 	}
 
 	, removeObject: function (obj, x, y, toX, toY) {
-		let row = this.cells[x];
-
+		const row = this.cells[x];
 		if (!row) {
 			return;
 		}
-
-		let cell = row[y];
-
+		const cell = row[y];
 		if (!cell) {
 			return;
 		}
-
 		let oId = obj.id;
 		let cLen = cell.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = cell[i];
-
-			if (c.id !== oId) {
-				//If we have toX and toY, check if the target cell doesn't contain the same obj (like a notice area)
-				if ((c.width) && (toX)) {
-					if (c.area) {
-						if ((this.isInPolygon(x, y, c.area)) && (!this.isInPolygon(toX, toY, c.area))) {
-							c.collisionExit(obj);
-							obj.collisionExit(c);
-						}
-					} else if ((toX < c.x) || (toY < c.y) || (toX >= c.x + c.width) || (toY >= c.y + c.height)) {
+		for (let i = cell.length - 1; i >= 0; --i) {
+			const c = cell[i];
+			if (c.id === oId) {
+				cell.splice(i, 1);
+				continue;
+			}
+			//If we have toX and toY, check if the target cell doesn't contain the same obj (like a notice area)
+			if (c.width && toX) {
+				if (c.area) {
+					if (this.isInPolygon(x, y, c.area)
+						&& !this.isInPolygon(toX, toY, c.area)
+					) {
 						c.collisionExit(obj);
 						obj.collisionExit(c);
 					}
-				} else {
+				} else if (toX < c.x
+					|| toY < c.y
+					|| toX >= c.x + c.width
+					|| toY >= c.y + c.height
+				) {
 					c.collisionExit(obj);
 					obj.collisionExit(c);
 				}
 			} else {
-				cell.splice(i, 1);
-				i--;
-				cLen--;
+				c.collisionExit(obj);
+				obj.collisionExit(c);
 			}
 		}
 	}

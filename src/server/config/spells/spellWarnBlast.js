@@ -85,10 +85,10 @@ module.exports = {
 	, onWarningOver: function (x, y) {
 		const { obj, spriteSheet, rowOptions, col, row } = this;
 
-		let physics = obj.instance.physics;
-		let syncer = obj.instance.syncer;
+		const physics = obj.instance.physics;
+		const syncer = obj.instance.syncer;
 		const useRow = (row !== null) ? row : rowOptions[Math.floor(Math.random() * rowOptions.length)];
-		let effect = {
+		const effect = {
 			x: x
 			, y: y
 			, components: [{
@@ -102,22 +102,15 @@ module.exports = {
 		};
 		syncer.queue("onGetObject", effect, -1);
 
-		let mobs = physics.getCell(x, y);
-		let mLen = mobs.length;
-		for (let k = 0; k < mLen; k++) {
-			let m = mobs[k];
-			//Maybe we killed something?
-			if (!m) {
-				mLen--;
-				continue;
-			} else if (!m.aggro) {
-				continue;
-			} else if (!this.obj.aggro.canAttack(m)) {
+		const mobs = physics.getCell(x, y);
+		for (let k = mobs.length - 1; k >= 0; --k) {
+			const m = mobs[k];
+			// m can be undefined if mob was just killed.
+			if (!m || !m.aggro || !this.obj.aggro.canAttack(m)) {
 				continue;
 			}
-			let damage = this.getDamage(m);
 			m.stats.takeDamage({
-				damage
+				damage: this.getDamage(m)
 				, threatMult: 1
 				, source: obj
 				, target: m

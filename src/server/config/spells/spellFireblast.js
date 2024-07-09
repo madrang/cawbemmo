@@ -85,42 +85,34 @@ module.exports = {
 					syncer.queue("onGetObject", effect, -1);
 				}
 
-				let mobs = physics.getCell(i, j);
-				let mLen = mobs.length;
-				for (let k = 0; k < mLen; k++) {
-					let m = mobs[k];
-
+				const mobs = physics.getCell(i, j);
+				for (let k = mobs.length - 1; k >= 0; --k) {
+					const m = mobs[k];
 					//Maybe we killed something?
 					if (!m) {
-						mLen--;
 						continue;
 					} else if (!m.aggro || !m.effects) {
 						continue;
 					} else if (!obj.aggro.canAttack(m)) {
 						continue;
 					}
-
 					const targetPos = getTargetPos(physics, obj, m, this.pushback);
 
 					let distance = Math.max(Math.abs(m.x - targetPos.x), Math.abs(m.y - targetPos.y));
 					let ttl = distance * 125;
 
 					m.clearQueue();
-
-					let damage = this.getDamage(m);
 					m.stats.takeDamage({
-						damage
+						damage: this.getDamage(m)
 						, threatMult: 1
 						, source: this.obj
 						, target: m
 						, spellName: "fireblast"
 						, noEvents: this.noEvents
 					});
-
 					if (m.destroyed) {
 						continue;
 					}
-
 					const eventMsg = {
 						success: true
 						, targetPos
@@ -164,10 +156,7 @@ module.exports = {
 			}
 		}
 
-		this.sendBump({
-			x: x
-			, y: y - 1
-		});
+		this.sendBump({ x: x, y: y - 1 });
 
 		return true;
 	}

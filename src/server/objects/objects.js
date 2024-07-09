@@ -308,39 +308,28 @@ module.exports = {
 	}
 
 	, update: function () {
-		let objects = this.objects;
-		let len = objects.length;
-
-		for (let i = 0; i < len; i++) {
-			let o = objects[i];
-
+		const objects = this.objects;
+		for (let i = objects.length - 1; i >= 0; --i) {
+			const o = objects[i];
 			//If object A causes object B (layer in the list) to rezone, we won't find it here
 			if (!o) {
-				len--;
-
 				continue;
 			}
-
 			//Don't remove it from the list if it's destroyed, but don't update it either
 			//That's syncer's job
-			if ((o.update) && (!o.destroyed)) {
+			if (o.update && !o.destroyed) {
 				o.update();
 			}
-
 			//When objects are sent to other zones, we destroy them immediately (thhrough sendObjToZone)
 			if (o.forceDestroy) {
-				i--;
-				len--;
 				continue;
 			}
-
-			if (o.ttl) {
+			if (o.ttl > 0) {
 				o.ttl--;
-				if (!o.ttl) {
-					o.destroyed = true;
-				}
 			}
-
+			if (o.ttl <= 0) {
+				o.destroyed = true;
+			}
 			o.fireEvent("afterTick");
 		}
 	}

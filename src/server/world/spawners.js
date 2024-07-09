@@ -64,11 +64,9 @@ module.exports = {
 				}, -1);
 			}
 		}
-
 		if (!customSpawn) {
 			this.syncer.queue("onGetObject", {
-				x: obj.x
-				, y: obj.y
+				x: obj.x, y: obj.y
 				, components: [{
 					type: "attackAnimation"
 					, row: 0
@@ -76,26 +74,20 @@ module.exports = {
 				}]
 			}, -1);
 		}
-
 		if (spawner.amountLeft !== -1) {
 			spawner.amountLeft--;
 		}
-
 		return obj;
 	}
 
 	, update: function () {
 		const spawners = this.list;
-		let count = spawners.length;
 		const time = scheduler.getTime();
-		for (let i = 0; i < count; i++) {
+		for (let i = spawners.length - 1; i >= 0; --i) {
 			const l = spawners[i];
 
 			if (l.destroyed) {
 				spawners.splice(i, 1);
-				i--;
-				count--;
-
 				continue;
 			}
 
@@ -181,10 +173,10 @@ module.exports = {
 		let type = "regular";
 		if (blueprint.rare.count > 0) {
 			const rareCount = this.list.filter((l) => (
-				(l.mob) &&
-				(!l.mob.destroyed) &&
-				(l.mob.isRare) &&
-				(l.mob.baseName === mob.name)
+				l.mob
+				&& !l.mob.destroyed
+				&& l.mob.isRare
+				&& l.mob.baseName === mob.name
 			));
 			if (rareCount.length < blueprint.rare.count) {
 				const roll = Math.random() * 100;
@@ -193,9 +185,7 @@ module.exports = {
 				}
 			}
 		}
-
 		this.setupObj(mob, blueprint);
-
 		mobBuilder.build(mob, blueprint, type, this.zoneConfig.name);
 	}
 
@@ -204,7 +194,6 @@ module.exports = {
 		if (!cpns) {
 			return;
 		}
-
 		for (let c in cpns) {
 			const cpn = cpns[c];
 

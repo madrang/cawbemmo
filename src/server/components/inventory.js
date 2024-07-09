@@ -651,21 +651,15 @@ module.exports = {
 	}
 
 	, giveItems: function (obj, hideMessage) {
-		let objInventory = obj.inventory;
-
-		let items = this.items;
-		let iLen = items.length;
-		for (let i = 0; i < iLen; i++) {
-			let item = items[i];
-
+		const objInventory = obj.inventory;
+		const items = this.items;
+		for (let i = items.length - 1; i >= 0; --i) {
+			const item = items[i];
 			if (objInventory.getItem(item, hideMessage)) {
 				items.splice(i, 1);
-				i--;
-				iLen--;
 			}
 		}
-
-		return !iLen;
+		return (items.length <= 0);
 	}
 
 	, fireEvent: function (event, args) {

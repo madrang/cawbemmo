@@ -259,21 +259,16 @@ module.exports = {
 	}
 
 	, reset: function () {
-		let list = this.list;
-		let lLen = list.length;
-
-		for (let i = 0; i < lLen; i++) {
-			let l = list[i];
+		const list = this.list;
+		for (let i = list.length - 1; i >= 0; --i) {
+			const l = list[i];
 			if (!l) {
-				lLen--;
 				continue;
 			}
 			//Maybe the aggro component was removed?
-			let targetAggro = l.obj.aggro;
+			const targetAggro = l.obj.aggro;
 			if (targetAggro) {
 				targetAggro.unAggro(this.obj);
-				i--;
-				lLen--;
 			}
 		}
 		this.list = [];
@@ -418,16 +413,11 @@ module.exports = {
 	}
 
 	, update: function () {
-		let list = this.list;
-		let lLen = list.length;
-
-		for (let i = 0; i < lLen; i++) {
-			let l = list[i];
-
+		const list = this.list;
+		for (let i = list.length - 1; i >= 0; --i) {
+			const l = list[i];
 			if (l.obj.destroyed) {
 				this.unAggro(l.obj);
-				i--;
-				lLen--;
 			} else if (l.threat > 0) {
 				l.threat *= this.threatDecay;
 			}

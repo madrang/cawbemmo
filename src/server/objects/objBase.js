@@ -62,16 +62,13 @@ module.exports = {
 
 	, update: function () {
 		let usedTurn = false;
-		let cpns = this.components;
-		let len = cpns.length;
-		for (let i = 0; i < len; i++) {
+		const cpns = this.components;
+		for (let i = cpns.length - 1; i >= 0; --i) {
 			let c = cpns[i];
 			if (c.destroyed) {
 				this.syncer.setSelfArray(false, "removeComponents", c.type);
 				cpns.spliceWhere((f) => (f === c));
 				delete this[c.type];
-				len--;
-				i--;
 			} else if (c.update) {
 				if (c.update()) {
 					usedTurn = true;

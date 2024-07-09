@@ -15,15 +15,12 @@ define([
 		}
 
 		, render: function () {
-			let list = this.list;
-			let lLen = list.length;
-			for (let i = 0; i < lLen; i++) {
+			const list = this.list;
+			for (let i = list.length - 1; i >= 0; --i) {
 				let l = list[i];
 				if (l.destroyed || !l.obj || l.obj.destroyed) {
-					if ((l.destroyManual && !l.destroyManual()) || !l.destroyManual) {
+					if (!l.destroyManual || !l.destroyManual()) {
 						list.splice(i, 1);
-						i--;
-						lLen--;
 						continue;
 					}
 				}

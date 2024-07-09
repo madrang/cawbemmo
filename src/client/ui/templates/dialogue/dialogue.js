@@ -24,20 +24,13 @@ define([
 			if (isMobile && msg.msg.includes("(U to")) {
 				return;
 			}
-
-			this.text.spliceWhere(function (t) {
-				return (t.src === msg.src);
-			});
-
+			this.text.spliceWhere((t) => t.src === msg.src);
 			this.text.push(msg);
 			this.setText();
 		}
 
 		, onRemoveDialogue: function (msg) {
-			this.text.spliceWhere(function (t) {
-				return (t.src === msg.src);
-			});
-
+			this.text.spliceWhere((t) => t.src === msg.src);
 			this.setText();
 		}
 
