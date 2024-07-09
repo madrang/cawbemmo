@@ -64,7 +64,7 @@ module.exports = [
 				//stat: ( "mana" | "hp" )
 				stat: "hp"
 				// montant de base
-				, amount: "100"
+				, amount: 100
 			}
 		}
 	)
