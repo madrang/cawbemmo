@@ -142,8 +142,7 @@ module.exports = {
 	, queue: function (event, obj, to) {
 		//Send to all players in zone?
 		if (to === -1) {
-			let pList = this.objects.objects.filter((o) => o.player);
-			to = pList.map((p) => p.serverId);
+			to = this.objects.objects.filter((o) => o.player).map((p) => p.serverId);
 		}
 		if (!to.length) {
 			return;
@@ -160,8 +159,13 @@ module.exports = {
 		const buffer = this.buffer;
 		for (let p in buffer) {
 			const list = buffer[p];
-			list.forEach((l) => l.to.spliceWhere((f) => f === targetServerId));
-			list.spliceWhere((l) => !l.to.length);
+			for (let i = list.length - 1; i >= 0; --i) {
+				const l = list[i];
+				l.to.spliceWhere((f) => f === targetServerId);
+				if (!l.to.length) {
+					list.splice(i, 1);
+				}
+			}
 			if (!list.length) {
 				delete buffer[p];
 			}

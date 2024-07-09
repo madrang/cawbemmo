@@ -103,10 +103,8 @@ define([
 			}
 
 			, onGetObject: function (eventName, msgs) {
-				const prepend = msgs.filter((o) => o.self);
-				msgs.spliceWhere((o) => prepend.some((p) => p === o));
-				msgs.unshift.apply(msgs, prepend);
-
+				// Move self messages first.
+				msgs = msgs.filter((o) => o.self).concat(msgs.filter((o) => !o.self));
 				this.processAction.default(eventName, msgs);
 			}
 		}

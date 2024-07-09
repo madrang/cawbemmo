@@ -47,9 +47,7 @@ define([
 			if (!cpn) {
 				return;
 			}
-			this.components.spliceWhere((c) => {
-				return c === cpn;
-			});
+			this.components.spliceWhere((c) => c === cpn);
 			delete this[type];
 		}
 

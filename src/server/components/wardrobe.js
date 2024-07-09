@@ -34,10 +34,10 @@ module.exports = {
 	, exitArea: function (obj) {
 		if (!obj.player) {
 			return;
-		} else if (!this.proximalPlayers.some((p) => p === obj)) {
+		}
+		if (!this.proximalPlayers.some((p) => p === obj)) {
 			return;
 		}
-
 		this.proximalPlayers.spliceWhere((p) => p === obj);
 
 		obj.syncer.setArray(true, "serverActions", "removeActions", {
