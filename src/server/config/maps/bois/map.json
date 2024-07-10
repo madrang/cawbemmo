@@ -907,18 +907,6 @@
          "name":"objects",
          "objects":[
                 {
-                 "gid":1184,
-                 "height":8,
-                 "id":1076,
-                 "name":"Table",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":576,
-                 "y":664
-                }, 
-                {
                  "gid":688,
                  "height":8,
                  "id":1142,
@@ -1047,24 +1035,7 @@
          "draworder":"topdown",
          "id":7,
          "name":"notices",
-         "objects":[
-                {
-                 "height":56,
-                 "id":1075,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"msg\":\"Quest giver\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":80,
-                 "x":616,
-                 "y":680
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1177,18 +1148,6 @@
          "id":4,
          "name":"mobs",
          "objects":[
-                {
-                 "gid":513,
-                 "height":8,
-                 "id":1070,
-                 "name":"Teleport",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":760,
-                 "y":664
-                }, 
                 {
                  "gid":548,
                  "height":8,
