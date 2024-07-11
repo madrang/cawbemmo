@@ -12,49 +12,11 @@ module.exports = {
 			//, cdMax: 17100
 		}
 	}
-	, objects: {
-		mrBoner: {
-			properties: {
-				cpnNotice: {
-					actions: {
-						enter: {
-							cpn: "dialogue"
-							, method: "talk"
-							, args: [{
-								targetName: "binary"
-							}]
-						}
-						, exit: {
-							cpn: "dialogue"
-							, method: "stopTalk"
-						}
-					}
-				}
-			}
-		}
-		, "sun carp school": {
-			max: 9
-			, type: "fish"
-			, quantity: [6, 12]
-		}
-		, table: {
-			components: {
-				cpnWorkbench: {
-					type: "table"
-				}
-			}
-		}
-		, fireplace: {
-			components: {
-				cpnWorkbench: {
-					type: "cooking"
-				}
-			}
-		}
-	}
+	, objects: {}
 	, mobs: {
 		default: {
 			level: 13
+			, faction: "hostile"
 			, regular: {
 				drops: {
 					chance: 40
@@ -64,6 +26,7 @@ module.exports = {
 		}
 		, "renard-garous": {
 			level: 13
+			, faction: "hostile"
 			, regular: {
 				drops: {
 					chance: 55
@@ -77,6 +40,7 @@ module.exports = {
 		}
 		, "papillion": {
 			level: 14
+			, faction: "hostile"
 			, regular: {
 				drops: {
 					chance: 55
@@ -88,26 +52,9 @@ module.exports = {
 				, sprite: [0, 0]
 			}
 		}
-		, "grosse vidange": {
-			level: 14
-			, cron: "0 * * * *"
-
-			, regular: {
-				hpMult: 3
-				, dmgMult: 3
-
-				, drops: {
-					chance: 100
-					, rolls: 2
-					, magicFind: [1300]
-				}
-			}
-			, rare: {
-				chance: 100
-			}
-		}
 		, wezo: {
 			level: 15
+			, faction: "hostile"
 			, rare: {
 				name: "Boss des wézo"
 				,hpMult: 3
@@ -127,7 +74,7 @@ module.exports = {
 					, blueprints: [{
 						chance: 35
 						, name: "Lettre d'admiratrice"
-						, quality: 2
+						, quality: 5
 						, quest: true
 						, sprite: [0, 4]
 					}]
@@ -136,6 +83,7 @@ module.exports = {
 		}
 		, Steeeveess: {
 			level: 16
+			, faction: "hostile"
 			, regular: {
 				drops: {
 					rolls: 1
@@ -152,6 +100,7 @@ module.exports = {
 			}
 			, rare: {
 				name: "Keveune"
+				, faction: "hostile"
 				, hpMult: 3
 				, dmgMult: 3
 				, drops: {
@@ -166,45 +115,6 @@ module.exports = {
 						, spritesheet: "images/questItems.png"
 					}]
 				}
-			}
-		}
-		, teleport: {
-			level: 10
-			, walkDistance: 0
-			, attackable: false
-			, rare: {
-				count: 0
-			}
-			, properties: {
-
-			}
-		}
-		, rodriguez: {
-			attackable: false
-			, level: 10
-			, rare: {
-				count: 0
-			}
-		}
-		, pig: {
-			attackable: false
-			, level: 3
-			, rare: {
-				count: 0
-			}
-		}
-		, goat: {
-			attackable: false
-			, level: 3
-			, rare: {
-				count: 0
-			}
-		}
-		, cow: {
-			attackable: false
-			, level: 3
-			, rare: {
-				count: 0
 			}
 		}
 		, sundfehr: {

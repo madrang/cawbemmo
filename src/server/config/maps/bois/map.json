@@ -907,18 +907,6 @@
          "name":"objects",
          "objects":[
                 {
-                 "gid":1184,
-                 "height":8,
-                 "id":1076,
-                 "name":"Table",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":576,
-                 "y":664
-                }, 
-                {
                  "gid":688,
                  "height":8,
                  "id":1142,
@@ -1047,24 +1035,7 @@
          "draworder":"topdown",
          "id":7,
          "name":"notices",
-         "objects":[
-                {
-                 "height":56,
-                 "id":1075,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnNotice",
-                         "type":"string",
-                         "value":"{\"msg\":\"Quest giver\"}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":80,
-                 "x":616,
-                 "y":680
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1075,97 +1046,7 @@
          "draworder":"topdown",
          "id":6,
          "name":"clientObjects",
-         "objects":[
-                {
-                 "gid":955,
-                 "height":8,
-                 "id":869,
-                 "name":"|soundWind",
-                 "properties":[
-                        {
-                         "name":"cpnSound",
-                         "type":"string",
-                         "value":"{\"sound\":\"wind.ogg\",\"volume\":1.5}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":1176,
-                 "y":592
-                }, 
-                {
-                 "gid":955,
-                 "height":8,
-                 "id":870,
-                 "name":"|soundWind",
-                 "properties":[
-                        {
-                         "name":"cpnSound",
-                         "type":"string",
-                         "value":"{\"sound\":\"wind.ogg\",\"volume\":1.5}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":1224,
-                 "y":512
-                }, 
-                {
-                 "gid":955,
-                 "height":8,
-                 "id":871,
-                 "name":"|soundWind",
-                 "properties":[
-                        {
-                         "name":"cpnSound",
-                         "type":"string",
-                         "value":"{\"sound\":\"wind.ogg\",\"volume\":1.5}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":1304,
-                 "y":584
-                }, 
-                {
-                 "gid":955,
-                 "height":8,
-                 "id":872,
-                 "name":"|soundWind",
-                 "properties":[
-                        {
-                         "name":"cpnSound",
-                         "type":"string",
-                         "value":"{\"sound\":\"wind.ogg\",\"volume\":1.5}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":1360,
-                 "y":568
-                }, 
-                {
-                 "gid":955,
-                 "height":8,
-                 "id":873,
-                 "name":"|soundWind",
-                 "properties":[
-                        {
-                         "name":"cpnSound",
-                         "type":"string",
-                         "value":"{\"sound\":\"wind.ogg\",\"volume\":1.5}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":1408,
-                 "y":552
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1177,18 +1058,6 @@
          "id":4,
          "name":"mobs",
          "objects":[
-                {
-                 "gid":513,
-                 "height":8,
-                 "id":1070,
-                 "name":"Teleport",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":760,
-                 "y":664
-                }, 
                 {
                  "gid":548,
                  "height":8,
@@ -1210,8 +1079,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":344,
-                 "y":200
+                 "x":304,
+                 "y":232
                 }, 
                 {
                  "gid":548,
@@ -1222,8 +1091,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":296,
-                 "y":464
+                 "x":304,
+                 "y":456
                 }, 
                 {
                  "gid":548,
@@ -1306,8 +1175,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":984,
-                 "y":504
+                 "x":936,
+                 "y":488
                 }, 
                 {
                  "gid":538,
@@ -1318,8 +1187,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":344,
-                 "y":152
+                 "x":408,
+                 "y":160
                 }, 
                 {
                  "gid":538,
@@ -1342,20 +1211,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":200,
-                 "y":304
-                }, 
-                {
-                 "gid":538,
-                 "height":8,
-                 "id":1090,
-                 "name":"renard-garous",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":432,
-                 "y":256
+                 "x":176,
+                 "y":312
                 }, 
                 {
                  "gid":538,
@@ -1378,8 +1235,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":552,
-                 "y":456
+                 "x":584,
+                 "y":472
                 }, 
                 {
                  "gid":538,
@@ -1426,8 +1283,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":680,
-                 "y":304
+                 "x":704,
+                 "y":352
                 }, 
                 {
                  "gid":538,
@@ -1438,8 +1295,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":208,
-                 "y":368
+                 "x":256,
+                 "y":352
                 }, 
                 {
                  "gid":538,
@@ -1462,8 +1319,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":408,
-                 "y":528
+                 "x":424,
+                 "y":496
                 }, 
                 {
                  "gid":538,
@@ -1474,7 +1331,7 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":560,
+                 "x":536,
                  "y":384
                 }, 
                 {
@@ -1487,7 +1344,7 @@
                  "visible":true,
                  "width":8,
                  "x":768,
-                 "y":208
+                 "y":184
                 }, 
                 {
                  "gid":555,
@@ -1510,8 +1367,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":872,
-                 "y":152
+                 "x":896,
+                 "y":160
                 }, 
                 {
                  "gid":555,
@@ -1558,8 +1415,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1008,
-                 "y":216
+                 "x":960,
+                 "y":256
                 }, 
                 {
                  "gid":555,
@@ -1570,8 +1427,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1224,
-                 "y":208
+                 "x":1232,
+                 "y":192
                 }, 
                 {
                  "gid":555,
@@ -1582,8 +1439,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1272,
-                 "y":296
+                 "x":1232,
+                 "y":344
                 }, 
                 {
                  "gid":555,
@@ -1595,7 +1452,7 @@
                  "visible":true,
                  "width":8,
                  "x":1144,
-                 "y":232
+                 "y":256
                 }, 
                 {
                  "gid":555,
@@ -1606,8 +1463,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1328,
-                 "y":288
+                 "x":1344,
+                 "y":264
                 }, 
                 {
                  "gid":555,
@@ -1630,8 +1487,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1216,
-                 "y":288
+                 "x":1200,
+                 "y":304
                 }, 
                 {
                  "gid":555,
@@ -1642,8 +1499,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":840,
-                 "y":200
+                 "x":832,
+                 "y":168
                 }, 
                 {
                  "gid":532,
@@ -1666,8 +1523,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":256,
-                 "y":504
+                 "x":208,
+                 "y":528
                 }, 
                 {
                  "gid":532,
@@ -1858,8 +1715,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1088,
-                 "y":424
+                 "x":1048,
+                 "y":408
                 }, 
                 {
                  "gid":598,
@@ -1870,8 +1727,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1040,
-                 "y":472
+                 "x":992,
+                 "y":448
                 }, 
                 {
                  "gid":598,
@@ -1882,8 +1739,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":952,
-                 "y":528
+                 "x":888,
+                 "y":552
                 }, 
                 {
                  "gid":598,
@@ -1906,7 +1763,7 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":968,
+                 "x":1056,
                  "y":680
                 }, 
                 {
@@ -1930,8 +1787,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":984,
-                 "y":816
+                 "x":936,
+                 "y":824
                 }, 
                 {
                  "gid":598,
@@ -1954,8 +1811,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1000,
-                 "y":992
+                 "x":976,
+                 "y":1048
                 }, 
                 {
                  "gid":598,
@@ -1979,7 +1836,7 @@
                  "visible":true,
                  "width":8,
                  "x":1120,
-                 "y":1000
+                 "y":960
                 }, 
                 {
                  "gid":598,
@@ -1990,8 +1847,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1216,
-                 "y":1048
+                 "x":1184,
+                 "y":1072
                 }, 
                 {
                  "gid":598,
@@ -2002,8 +1859,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1320,
-                 "y":1024
+                 "x":1368,
+                 "y":1048
                 }, 
                 {
                  "gid":598,
@@ -2026,8 +1883,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1344,
-                 "y":1128
+                 "x":1304,
+                 "y":1136
                 }, 
                 {
                  "gid":598,
@@ -2038,8 +1895,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1384,
-                 "y":1184
+                 "x":1440,
+                 "y":1136
                 }, 
                 {
                  "gid":598,
@@ -2063,7 +1920,7 @@
                  "visible":true,
                  "width":8,
                  "x":1352,
-                 "y":648
+                 "y":544
                 }, 
                 {
                  "gid":598,
@@ -2074,8 +1931,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1424,
-                 "y":568
+                 "x":1456,
+                 "y":624
                 }, 
                 {
                  "gid":598,
@@ -2086,8 +1943,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1432,
-                 "y":504
+                 "x":1296,
+                 "y":480
                 }, 
                 {
                  "gid":598,
@@ -2098,8 +1955,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1432,
-                 "y":424
+                 "x":1496,
+                 "y":488
                 }, 
                 {
                  "gid":598,
@@ -2111,7 +1968,7 @@
                  "visible":true,
                  "width":8,
                  "x":1392,
-                 "y":376
+                 "y":480
                 }, 
                 {
                  "gid":598,
@@ -2122,8 +1979,8 @@
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1304,
-                 "y":272
+                 "x":1312,
+                 "y":240
                 }, 
                 {
                  "gid":598,
@@ -2869,7 +2726,7 @@
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":100,\"y\":100}]"
+         "value":"[{\"x\":54,\"y\":31}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.1",
