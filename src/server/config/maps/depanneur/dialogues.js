@@ -4,7 +4,7 @@ module.exports = {
 		1: {
 			msg: [{
 				msg: "Si c'est pas du crème soda on en a pas"
-				, options: [1.1,1.2]
+				, options: [1.1,1.2,1.3]
 			}]
 			,options: {
 				1.1: {
@@ -14,6 +14,14 @@ module.exports = {
 				1.2: {
 					msg: "Pourquoi vendez vous juste du crème soda?"
 					, goto: "3"
+				}
+				,1.3: {
+					msg: "J'ai trouvé la clé des toilettes."
+					, prereq: function (obj) {
+						let crystals = obj.inventory.items.find((i) => (i.name === "Clé des toilettes"));
+						return Boolean(crystals);
+					}
+					, goto: "giveCle"
 				}
 			}
 		},
@@ -44,8 +52,24 @@ module.exports = {
 			}
 
 
-		},
+		}
+		, giveCle: {
+			msg: [{
+				msg: "Merci d'avoir rapporté la clé des toilettes."
+				, options: [1.1, 1.2, 1.3]
+			}]
+			, method: function (obj) {
+				let inventory = obj.inventory;
 
+				let crystals = inventory.items.find((i) => (i.name === "Clé des toilettes"));
+				if (!crystals) {
+					return;
+				}
+				obj.reputation.getReputation("vendeurs", (crystals.quantity || 1) * 100 );
+				obj.social.getXp((crystals.quantity || 1) * 1000);
+				inventory.destroyItem({ itemId: crystals.id });
+			}
+		}
 	},
 
 
