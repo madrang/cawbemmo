@@ -28,16 +28,16 @@ define([
 			this.queue.clear();
 		}
 		, off: function (eventName, callback) {
-			const list = this.events[eventName] || [];
-			let lLen = list.length;
-			for (let i = 0; i < lLen; i++) {
+			const list = this.events[eventName];
+			if (!list) {
+				return;
+			}
+			for (let i = list.length - 1; i >= 0; --i) {
 				if (list[i] === callback) {
 					list.splice(i, 1);
-					i--;
-					lLen--;
 				}
 			}
-			if (lLen === 0) {
+			if (list.length <= 0) {
 				delete this.events[eventName];
 			}
 		}

@@ -11,9 +11,7 @@ const unstageZoneIn = (msg) => {
 
 const stageZoneIn = (msg) => {
 	const { serverId } = msg.obj;
-
 	stagedZoneIns.spliceWhere((o) => o.obj.serverId === serverId);
-
 	stagedZoneIns.push(msg);
 };
 
@@ -36,9 +34,7 @@ const clientAck = (msg) => {
 	if (!staged) {
 		return;
 	}
-
 	stagedZoneIns.spliceWhere((s) => s === staged);
-
 	doZoneIn(staged);
 };
 

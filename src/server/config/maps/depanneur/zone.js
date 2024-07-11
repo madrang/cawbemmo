@@ -19,8 +19,8 @@ module.exports = {
 		}
 
 		, "canette": {
-			level: 10
-
+			level: 8
+			, faction: "hostile"
 			, regular: {
 				drops: {
 					rolls: 1
@@ -115,7 +115,7 @@ module.exports = {
 		}
 
 		, "rat": {
-			level: 12
+			level: 9
 
 			, regular: {
 				drops: {
@@ -209,11 +209,11 @@ module.exports = {
 		}
 
 		, gaetan: {
-			level: 13
+			level: 10
 			, spawnCd: 1714
 
 			, regular: {
-				hpMult: 90
+				hpMult: 45
 				, dmgMult: 2
 
 				, drops: {
@@ -224,10 +224,10 @@ module.exports = {
 					, magicFind: [2000, 200]
 					, blueprints: [{
 						chance: 100
-						, name: "Digested Crystal"
+						, name: "Clé des toilettes"
 						, quality: 0
 						, quest: true
-						, sprite: [1, 1]
+						, sprite: [1, 0]
 					}]
 				}
 			}

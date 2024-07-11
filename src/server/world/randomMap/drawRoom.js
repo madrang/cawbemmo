@@ -43,7 +43,7 @@ const drawRoom = (scope, instance, room) => {
 				template.objects.spliceWhere((o) => {
 					let ox = o.x - template.x + room.x;
 					let oy = o.y - template.y + room.y;
-					return ((ox === x) && (oy === y));
+					return (ox === x && oy === y);
 				});
 			}
 

@@ -499,10 +499,7 @@ define([
 
 						if (cell.visible) {
 							cell.visible = false;
-							newHidden.push({
-								x: i
-								, y: j
-							});
+							newHidden.push({ x: i, y: j });
 						}
 
 						const hasFake = cell.some((c) => c[0] === "-");
@@ -528,10 +525,7 @@ define([
 
 						if (!cell.visible) {
 							cell.visible = true;
-							newVisible.push({
-								x: i
-								, y: j
-							});
+							newVisible.push({ x: i, y: j });
 						}
 
 						const hasNonFake = cell.some((c) => c[0] !== "-");

@@ -66,12 +66,12 @@ module.exports = {
 
 	, zoneConfig: null
 
-	, init: function ({ zoneName, path }) {
+	, init: async function ({ zoneName, path }) {
 		this.name = zoneName;
 		this.path = path;
 
 		this.zoneConfig = _.safeRequire(module, `../${this.path}/${this.name}/zone`) || globalZone;
-		events.emit("onAfterGetZone", this.name, this.zoneConfig);
+		await events.emit("onAfterGetZone", this.name, this.zoneConfig);
 
 		const chats = _.safeRequire(module, `../${this.path}/${this.name}/chats`);
 		if (chats) {
@@ -83,7 +83,7 @@ module.exports = {
 		}
 
 		const dialogues = _.safeRequire(module, `../${this.path}/${this.name}/dialogues`);
-		events.emit("onBeforeGetDialogue", this.name, dialogues);
+		await events.emit("onBeforeGetDialogue", this.name, dialogues);
 		if (dialogues) {
 			this.zoneConfig.dialogues = dialogues;
 		}
@@ -112,8 +112,8 @@ module.exports = {
 		}
 	}
 
-	, create: function () {
-		this.getMapFile();
+	, create: async function () {
+		await this.getMapFile();
 
 		this.clientMap = {
 			zoneId: -1
@@ -125,8 +125,8 @@ module.exports = {
 		};
 	}
 
-	, getMapFile: function () {
-		this.build();
+	, getMapFile: async function () {
+		await this.build();
 
 		this.randomMap = _.assign({}, randomMap);
 		this.oldMap = _.assign([], this.layers);
@@ -157,7 +157,7 @@ module.exports = {
 							, y: j
 							, map: this.name
 						};
-						events.emit("onBeforeRandomizePosition", msgBeforeRandomizePosition);
+						await events.emit("onBeforeRandomizePosition", msgBeforeRandomizePosition);
 						if (msgBeforeRandomizePosition.success) {
 							newC = this.randomMap.randomizeTile(c);
 						}
@@ -189,11 +189,10 @@ module.exports = {
 			}
 		}
 
+		// Remove mappings zones from the map.
 		for (const r of this.randomMap.templates) {
 			//Fix for newer versions of Tiled
 			r.properties = objectifyProperties(r.properties);
-
-			//TODO - Seems like Incomplete code from previous repo ????
 			const m = r.properties.mapping;
 			if (!m) {
 				continue;
@@ -210,7 +209,7 @@ module.exports = {
 		mapFile = null;
 	}
 
-	, build: function () {
+	, build: async function () {
 		const mapSize = {
 			w: mapFile.width
 			, h: mapFile.height
@@ -219,7 +218,7 @@ module.exports = {
 			w: mapFile.width
 			, h: mapFile.height
 		};
-		events.emit("onBeforeGetMapSize", this.name, mapSize);
+		await events.emit("onBeforeGetMapSize", this.name, mapSize);
 
 		this.size.w = mapSize.w;
 		this.size.h = mapSize.h;
@@ -242,7 +241,13 @@ module.exports = {
 
 		this.collisionMap = _.get2dArray(w, h);
 
-		const layers = [...mapFile.layers.filter((l) => l.objects), ...mapFile.layers.filter((l) => !l.objects)];
+		const layers = mapFile.layers.filter(
+			(l) => l.objects
+		).concat(
+			mapFile.layers.filter(
+				(l) => !l.objects
+			)
+		);
 
 		//Rooms need to be ahead of exits
 		const layerRooms = layers.find((l) => l.name === "rooms") || {};
@@ -251,7 +256,8 @@ module.exports = {
 			const isExitB = b?.properties?.some((p) => p.name === "exit");
 			if (isExitA && !isExitB) {
 				return 1;
-			} else if (!isExitA && isExitB) {
+			}
+			if (!isExitA && isExitB) {
 				return -1;
 			}
 			return 0;
@@ -264,7 +270,7 @@ module.exports = {
 			}
 			const data = layer.data || layer.objects;
 			if (layer.objects) {
-				events.emit("onAfterGetLayerObjects", {
+				await events.emit("onAfterGetLayerObjects", {
 					map: this.name
 					, layer: layerName
 					, objects: data
@@ -289,7 +295,7 @@ module.exports = {
 						if (x < oldW && y < oldH) {
 							msgBuild.cell = data[(y * oldW) + x];
 						}
-						events.emit("onBeforeBuildLayerTile", msgBuild);
+						await events.emit("onBeforeBuildLayerTile", msgBuild);
 						builders.tile(msgBuild);
 						events.emit("onAfterBuildLayerTile", msgBuild);
 					}
@@ -321,6 +327,7 @@ module.exports = {
 			, tilesets: mapFile.tilesets
 			, sheetName: null
 		};
+		//FIXME missing await
 		events.emit("onBeforeGetCellInfo", cellInfoMsg);
 
 		let flipX = Boolean((gid & 0x80000000) !== 0);
@@ -355,7 +362,7 @@ module.exports = {
 				}
 				return;
 			}
-			let cellInfo = this.getCellInfo(cell, x, y, layerName);
+			const cellInfo = this.getCellInfo(cell, x, y, layerName);
 			if (!sheetName) {
 				info.sheetName = cellInfo.sheetName;
 				sheetName = cellInfo.sheetName;
@@ -407,19 +414,23 @@ module.exports = {
 				blueprint.objZoneName = objZoneName;
 			}
 			if (this.zoneConfig) {
-				if ((this.zoneConfig.objects) && (this.zoneConfig.objects[objZoneName.toLowerCase()])) {
+				if (this.zoneConfig.objects && this.zoneConfig.objects[objZoneName.toLowerCase()]) {
 					_.assign(blueprint, this.zoneConfig.objects[objZoneName.toLowerCase()]);
-				} else if ((this.zoneConfig.objects) && (this.zoneConfig.mobs[objZoneName.toLowerCase()])) {
+				} else if (this.zoneConfig.objects && this.zoneConfig.mobs[objZoneName.toLowerCase()]) {
 					_.assign(blueprint, this.zoneConfig.mobs[objZoneName.toLowerCase()]);
 				}
 			}
 			if (blueprint.blocking) {
 				this.collisionMap[blueprint.x][blueprint.y] = 1;
 			}
-			if ((blueprint.properties.cpnNotice) || (blueprint.properties.cpnLightPatch) || (layerName === "rooms") || (layerName === "hiddenRooms")) {
+			if (blueprint.properties.cpnNotice
+				|| blueprint.properties.cpnLightPatch
+				|| layerName === "rooms"
+				|| layerName === "hiddenRooms"
+			) {
 				blueprint.y++;
-				blueprint.width = cell.width / mapScale;
-				blueprint.height = cell.height / mapScale;
+				blueprint.width = Math.round(cell.width / mapScale);
+				blueprint.height = Math.round(cell.height / mapScale);
 			} else if (cell.width === 24) {
 				blueprint.x++;
 			}
@@ -430,12 +441,12 @@ module.exports = {
 			if (layerName === "rooms") {
 				if (blueprint.properties.exit) {
 					let room = this.rooms.find(function (r) {
-						return (!(
-							(blueprint.x + blueprint.width < r.x) ||
-								(blueprint.y + blueprint.height < r.y) ||
-								(blueprint.x >= r.x + r.width) ||
-								(blueprint.y >= r.y + r.height)
-						));
+						return !(
+							blueprint.x + blueprint.width < r.x
+							|| blueprint.y + blueprint.height < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
+						);
 					});
 					room.exits.push(blueprint);
 				} else if (blueprint.properties.resource) {
@@ -455,8 +466,10 @@ module.exports = {
 				} else {
 					const room = this.rooms.find((r) => {
 						return !(
-							blueprint.x < r.x || blueprint.y < r.y ||
-							blueprint.x >= r.x + r.width || blueprint.y >= r.y + r.height
+							blueprint.x < r.x
+							|| blueprint.y < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
 						);
 					});
 					room.objects.push(blueprint);
@@ -467,18 +480,18 @@ module.exports = {
 				} else {
 					const room = this.rooms.find((r) => {
 						return !(
-							blueprint.x < r.x ||
-							blueprint.y < r.y ||
-							blueprint.x >= r.x + r.width ||
-							blueprint.y >= r.y + r.height
+							blueprint.x < r.x
+							|| blueprint.y < r.y
+							|| blueprint.x >= r.x + r.width
+							|| blueprint.y >= r.y + r.height
 						);
 					});
 					room.objects.push(blueprint);
 				}
 			} else {
 				if (cell.width && !cell.polyline) {
-					blueprint.width = cell.width / mapScale;
-					blueprint.height = cell.height / mapScale;
+					blueprint.width = Math.round(cell.width / mapScale);
+					blueprint.height = Math.round(cell.height / mapScale);
 				}
 				const obj = objects.buildObjects([blueprint], true).getSimple(true);
 				this.objBlueprints.push(obj);

@@ -14,15 +14,12 @@ const unstageRezone = (msg) => {
 
 const stageRezone = (simplifiedObj, targetZone) => {
 	const { serverId } = simplifiedObj;
-
 	stagedRezones.spliceWhere((o) => o.simplifiedObj.serverId === serverId);
-
 	stagedRezones.push({ simplifiedObj, targetZone });
 };
 
 const doRezone = (stagedRezone) => {
 	const { simplifiedObj, targetZone } = stagedRezone;
-
 	process.send({
 		method: "rezone"
 		, id: simplifiedObj.serverId
@@ -38,9 +35,7 @@ const clientAck = (msg) => {
 	if (!staged) {
 		return;
 	}
-
 	stagedRezones.spliceWhere((s) => s === staged);
-
 	doRezone(staged);
 };
 

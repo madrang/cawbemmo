@@ -196,18 +196,14 @@ module.exports = {
 	}
 
 	, deleteFromArray: function (self, cpnType, property, cbMatch) {
-		let o = this.o;
-		if (self) {
-			o = this.oSelf;
-		}
-		let cpn = o.components.find((c) => (c.type === cpnType));
-
+		const o = (self ? this.oSelf : this.o);
+		const cpn = o.components.find((c) => (c.type === cpnType));
 		if (!cpn) {
 			return;
-		} else if (!cpn[property]) {
+		}
+		if (!cpn[property]) {
 			return;
 		}
-
 		cpn[property].spliceWhere(cbMatch);
 	}
 };

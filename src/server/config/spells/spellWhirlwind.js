@@ -15,31 +15,20 @@ const applyDamage = (target, damage, threatMult, source) => {
 
 const dealDamage = (spell, obj, coords) => {
 	const { delay } = spell;
-
 	const physics = obj.instance.physics;
-
-	coords.forEach(([x, y], i) => {
+	for (let i = coords.length - 1; i >= 0; --i) {
+		const [ x, y ] = coords[i];
 		const cellDelay = i * delay;
-
 		const mobs = physics.getCell(x, y);
-		let mLen = mobs.length;
-		for (let k = 0; k < mLen; k++) {
+		for (let k = mobs.length - 1; k >= 0; --k) {
 			const m = mobs[k];
-
-			if (!m) {
-				mLen--;
+			if (!m || !m.aggro || !m.effects || !obj.aggro.canAttack(m)) {
 				continue;
 			}
-
-			if (!m.aggro || !m.effects || !obj.aggro.canAttack(m)) {
-				continue;
-			}
-
 			const damage = spell.getDamage(m);
-
 			spell.queueCallback(applyDamage.bind(null, m, damage, 1, obj), cellDelay);
 		}
-	});
+	}
 };
 
 module.exports = {

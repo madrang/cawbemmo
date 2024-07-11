@@ -26,7 +26,7 @@ module.exports = {
 
 	, lastTime: 0
 
-	, init: function (args) {
+	, init: async function (args) {
 		const { zoneId, zoneName } = args;
 
 		this.zoneName = zoneName;
@@ -34,7 +34,7 @@ module.exports = {
 
 		spellCallbacks.init();
 		herbs.init();
-		map.init(args);
+		await map.init(args);
 
 		const fakeInstance = {
 			objects
@@ -54,7 +54,7 @@ module.exports = {
 		this.instances.push(fakeInstance);
 		spawners.init(fakeInstance);
 		scheduler.init();
-		map.create();
+		await map.create();
 		if (map.mapFile.properties.isRandom) {
 			if (!map.oldCollisionMap) {
 				map.oldCollisionMap = map.collisionMap;

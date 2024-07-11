@@ -104,18 +104,12 @@ define([
 		}
 
 		, onCompleteEvent: function (id) {
-			let e = this.list.find(function (l) {
-				return (l.id === id);
-			});
-
+			const e = this.list.find((l) => l.id === id);
 			if (!e) {
 				return;
 			}
-
 			e.el.remove();
-			this.list.spliceWhere(function (l) {
-				return (l.id === id);
-			});
+			this.list.spliceWhere((l) => l.id === id);
 		}
 
 		, toggleButtons: function (e) {

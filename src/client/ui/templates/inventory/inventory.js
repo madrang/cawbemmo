@@ -508,15 +508,14 @@ define([
 			}
 		}
 		, onDestroyItems: function (itemIds) {
-			itemIds.forEach(function (id) {
-				let item = this.items.find((i) => i.id === id);
+			for (let i = itemIds.length - 1; i >= 0; --i) {
+				const id = itemIds[i];
+				const item = this.items.find((it) => it.id === id);
 				if (item === this.hoverItem) {
 					this.hideTooltip();
 				}
-
-				this.items.spliceWhere((i) => i.id === id);
-			}, this);
-
+				this.items.spliceWhere((it) => it.id === id);
+			}
 			if (this.shown) {
 				this.build();
 			}

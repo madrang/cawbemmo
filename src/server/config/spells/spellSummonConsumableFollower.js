@@ -87,15 +87,14 @@ module.exports = {
 			this.walkCd = this.walkCdMax;
 		}
 
-		let minions = this.minions;
-		let mLen = minions.length;
-		for (let i = 0; i < mLen; i++) {
+		const minions = this.minions;
+		for (let i = minions.length - 1; i >= 0; --i) {
 			let m = minions[i];
 			if (m.destroyed) {
 				minions.splice(i, 1);
-				i--;
-				mLen--;
-			} else if ((Math.abs(x - m.x) <= 1) && (Math.abs(y - m.y) <= 1)) {
+			} else if (Math.abs(x - m.x) <= 1
+				&& Math.abs(y - m.y) <= 1
+			) {
 				m.destroyed = true;
 				obj.stats.getHp({
 					heal: {
@@ -104,7 +103,6 @@ module.exports = {
 					, source: obj
 					, target: obj
 				});
-
 				obj.instance.syncer.queue("onGetObject", {
 					x: m.x
 					, y: m.y

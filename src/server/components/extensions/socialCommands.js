@@ -57,7 +57,9 @@ const localCommands = [
 ];
 
 //Actions that should appear when a player is right clicked
-const contextActions = [];
+const contextActions = [
+	{ text: "Go to player", command: "teleport" }
+];
 
 const commandActions = {};
 
@@ -97,7 +99,7 @@ module.exports = {
 		msg.ignore = true;
 
 		messageText = messageText.substr(1).split(" ");
-		let actionName = messageText.splice(0, 1)[0].toLowerCase();
+		let actionName = messageText.shift().toLowerCase();
 		actionName = Object.keys(commandRoles).find((a) => (a.toLowerCase() === actionName));
 
 		if (!actionName) {

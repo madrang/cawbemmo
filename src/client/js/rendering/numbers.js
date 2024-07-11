@@ -185,22 +185,19 @@ define([
 	};
 
 	const update = () => {
-		let lLen = list.length;
-		for (let i = 0; i < lLen; i++) {
+		for (let i = list.length - 1; i >= 0; --i) {
 			const l = list[i];
-
-			l.ttl--;
-			if (l.ttl === 0) {
+			if (l.ttl > 0) {
+				l.ttl--;
+			}
+			if (l.ttl <= 0) {
 				list.splice(i, 1);
-				lLen--;
-
 				renderer.destroyObject({
 					layerName: "effects"
 					, sprite: l.sprite
 				});
 				continue;
 			}
-
 			l.x += l.movementDelta[0] * MOVE_SPEED;
 			l.y += l.movementDelta[1] * MOVE_SPEED;
 

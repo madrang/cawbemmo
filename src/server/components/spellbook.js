@@ -401,21 +401,16 @@ module.exports = {
 				s.update();
 			}
 		});
-
-		let callbacks = this.callbacks;
-		let cLen = callbacks.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = callbacks[i];
-
-			//If a spellCallback kills a mob he'll unregister his callbacks
+		const callbacks = this.callbacks;
+		for (let i = callbacks.length - 1; i >= 0; --i) {
+			const c = callbacks[i];
 			if (!c) {
-				i--;
-				cLen--;
+				// If a spellCallback kills a mob he'll unregister his callbacks
 				continue;
 			}
-
-			c.time -= consts.tickTime;
-
+			if (c.time > 0) {
+				c.time -= consts.tickTime;
+			}
 			if (c.time <= 0) {
 				if (c.callback) {
 					c.callback();
@@ -424,11 +419,8 @@ module.exports = {
 					c.destroyCallback();
 				}
 				callbacks.splice(i, 1);
-				i--;
-				cLen--;
 			}
 		}
-
 		return didCast || isCasting;
 	}
 
@@ -455,27 +447,14 @@ module.exports = {
 	}
 
 	, unregisterCallback: function (objId, isTarget) {
-		let callbacks = this.callbacks;
-		let cLen = callbacks.length;
-		for (let i = 0; i < cLen; i++) {
-			let c = callbacks[i];
-			if (
-				(
-					isTarget &&
-					c.targetId === objId
-				) ||
-				(
-					!isTarget &&
-					c.sourceId === objId
-				)
-			) {
+		const callbacks = this.callbacks;
+		for (let i = callbacks.length - 1; i >= 0; --i) {
+			const c = callbacks[i];
+			if (isTarget ? c.targetId === objId : c.sourceId === objId) {
 				if (c.destroyCallback) {
 					c.destroyCallback();
 				}
-
 				callbacks.splice(i, 1);
-				i--;
-				cLen--;
 			}
 		}
 	}
@@ -603,26 +582,19 @@ module.exports = {
 				}
 			}, this);
 
-			let callbacks = this.callbacks;
-			let cLen = callbacks.length;
-			for (let i = 0; i < cLen; i++) {
-				let c = callbacks[i];
-
-				//If a spellCallback kills a mob he'll unregister his callbacks
-				//Probably not needed since we aren't supposed to damage mobs in destroyCallback
+			const callbacks = this.callbacks;
+			for (let i = callbacks.length - 1; i >= 0; --i) {
+				const c = callbacks[i];
 				if (!c) {
-					i--;
-					cLen--;
+					// If a spellCallback kills a mob he'll unregister his callbacks
+					// Probably not needed since we aren't supposed to damage mobs in destroyCallback
 					continue;
 				}
-
 				if (c.destroyOnRezone) {
 					if (c.destroyCallback) {
 						c.destroyCallback();
 					}
 					callbacks.splice(i, 1);
-					i--;
-					cLen--;
 				}
 			}
 		}

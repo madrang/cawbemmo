@@ -28,6 +28,29 @@ module.exports = {
 			}
 		}
 	}
+		,chauffeur: {
+		1: {
+			msg: [{
+				msg: "Ou voulez vous allez?"
+				, options: [1.1,1.2]
+			}]
+			, options: {
+				1.1: {
+					msg: "Ville"
+					, goto: "teleportCabanne"
+				}
+
+			}
+		}
+		, teleportCabanne: {
+			cpn: "dialogue"
+			, method: "teleport"
+			, args: [{
+				toZone: "cabanne"
+				,toPos: {"x":72,"y":106}
+			}]
+		}
+		}
 
 	, peter: {
 		1: {
@@ -243,8 +266,8 @@ module.exports = {
 				if (!crystals) {
 					return;
 				}
-				obj.reputation.getReputation("akarei", (crystals.quantity || 1) * 15);
-
+				obj.reputation.getReputation("vendeurs", (crystals.quantity || 1) * 15);
+				obj.social.getXp((crystals.quantity || 1) * 5);
 				inventory.destroyItem({ itemId: crystals.id });
 			}
 		}

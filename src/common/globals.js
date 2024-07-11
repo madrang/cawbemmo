@@ -6,8 +6,7 @@
 		"spliceWhere": { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
-				let len = arrObj.length || 0;
-				for (let idx = 0; idx < len; ++idx) {
+				for (let idx = (arrObj.length || 0) - 1; idx >= 0; --idx) {
 					if (!(idx in arrObj)) {
 						continue;
 					}
@@ -15,8 +14,6 @@
 						continue;
 					}
 					arrObj.splice(idx, 1);
-					idx--;
-					len--;
 				}
 			}
 		}
@@ -214,56 +211,92 @@
 		*/
 		, debounce: function(func, wait, immediate, allowRepeat) {
 			if (typeof wait === "undefined") {
-				wait = 40
+				wait = 40;
 			}
 			if (typeof wait !== "number") {
-				throw new Error("wait is not an number.")
+				throw new Error("wait is not an number.");
 			}
-			let timeout = null
-			let lastPromiseSrc = new PromiseSource()
+			let timeout = null;
+			let lastPromiseSrc = new PromiseSource();
 			const applyFn = function(context, args) {
 				if (!lastPromiseSrc) {
-					return
+					return;
 				}
-				let result = undefined
+				let result = undefined;
 				try {
-					result = func.apply(context, args)
+					result = func.apply(context, args);
 				} catch (err) {
-					lastPromiseSrc.reject(err)
-					lastPromiseSrc = null
-					return
+					lastPromiseSrc.reject(err);
+					lastPromiseSrc = null;
+					return;
 				}
 				if (result instanceof Promise) {
-					result.then(lastPromiseSrc.resolve, lastPromiseSrc.reject)
+					result.then(lastPromiseSrc.resolve, lastPromiseSrc.reject);
 				} else {
-					lastPromiseSrc.resolve(result)
+					lastPromiseSrc.resolve(result);
 				}
-				lastPromiseSrc = null
+				lastPromiseSrc = null;
 			}
 			return function(...args) {
-				const callNow = Boolean(immediate && !timeout)
+				const callNow = Boolean(immediate && !timeout);
 				const context = this;
 				if (!lastPromiseSrc) {
-					lastPromiseSrc = new PromiseSource()
+					lastPromiseSrc = new PromiseSource();
 				}
-				const currentPromiseSrc = lastPromiseSrc
+				const currentPromiseSrc = lastPromiseSrc;
 				if (timeout) {
 					if (allowRepeat) {
-						return
+						return;
 					}
-					clearTimeout(timeout)
+					clearTimeout(timeout);
 				}
 				timeout = setTimeout(function () {
 					if (!immediate) {
-						applyFn(context, args)
+						applyFn(context, args);
 					}
-					timeout = null
+					timeout = null;
 				}, wait)
 				if (callNow) {
-					applyFn(context, args)
+					applyFn(context, args);
 				}
-				return currentPromiseSrc.promise
+				return currentPromiseSrc.promise;
 			}
+		}
+		, retry: function(fn, amount, onError) {
+			const doFn = function(triesLeft, args) {
+				do {
+					try {
+						const result = fn.apply(this, args);
+						if (result instanceof Promise) {
+							const promiseSrc = new PromiseSource();
+							const ctx = this;
+							result.then(promiseSrc.resolve, (reason) => {
+								//Promises from onError ??
+								onError(reason);
+								triesLeft = triesLeft - 1;
+								if (triesLeft >= 0) {
+									doFn.call(ctx, triesLeft, args).then(promiseSrc.resolve, promiseSrc.reject);
+								} else {
+									promiseSrc.reject(reason);
+								}
+							});
+							return promiseSrc.promise;
+						}
+						return result;
+					} catch (err) {
+						if (onError) {
+							onError(err);
+						}
+						triesLeft = triesLeft - 1;
+						if (triesLeft < 0) {
+							throw err;
+						}
+					}
+				} while (triesLeft >= 0);
+			};
+			return function(...args) {
+				return doFn.call(this, amount, args);
+			};
 		}
 
 		, get2dArray: function (w, h, def) {

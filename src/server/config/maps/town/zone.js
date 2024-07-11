@@ -243,8 +243,10 @@ module.exports = {
 
 			}
 		}
+
 		, raymond: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -253,15 +255,14 @@ module.exports = {
 			, properties: {
 				cpnTrade: {
 					items: {
-						min: 0
-						, max: 1
+						max: 0
 					}
 					, forceItems: [{
 						name: "hot-dog"
 						, type: "consumable"
 						, sprite: [1, 6]
 						, description: "Donne 75 HP"
-						, spritesheet: "images/consumable.png"
+						, spritesheet: "images/consumables.png"
 						, worth: 8
 						, noSalvage: true
 						, noAugment: true
@@ -329,6 +330,7 @@ module.exports = {
 			}
 		}, peter: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -369,6 +371,7 @@ module.exports = {
 			}
 		}, "mr giroux": {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -410,6 +413,7 @@ module.exports = {
 		}, gislain: {
 			level: 10
 			, walkDistance: 0
+			, faction: "vendeurs"
 			, attackable: false
 			, rare: {
 				count: 0
