@@ -1307,18 +1307,6 @@
                 {
                  "gid":538,
                  "height":8,
-                 "id":1090,
-                 "name":"renard-garous",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":432,
-                 "y":256
-                }, 
-                {
-                 "gid":538,
-                 "height":8,
                  "id":1091,
                  "name":"renard-garous",
                  "rotation":0,
@@ -2828,7 +2816,7 @@
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":100,\"y\":100}]"
+         "value":"[{\"x\":54,\"y\":31}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.1",
