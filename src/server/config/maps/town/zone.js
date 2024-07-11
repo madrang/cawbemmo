@@ -254,8 +254,7 @@ module.exports = {
 			, properties: {
 				cpnTrade: {
 					items: {
-						min: 0
-						, max: 1
+						max: 0
 					}
 					, forceItems: [{
 						name: "hot-dog"
