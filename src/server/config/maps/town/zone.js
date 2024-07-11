@@ -245,6 +245,7 @@ module.exports = {
 		}
 		, raymond: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -329,6 +330,7 @@ module.exports = {
 			}
 		}, peter: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -369,6 +371,7 @@ module.exports = {
 			}
 		}, "mr giroux": {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -410,6 +413,7 @@ module.exports = {
 		}, gislain: {
 			level: 10
 			, walkDistance: 0
+			, faction: "vendeurs"
 			, attackable: false
 			, rare: {
 				count: 0
