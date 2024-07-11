@@ -244,7 +244,7 @@ module.exports = {
 					return;
 				}
 				obj.reputation.getReputation("akarei", (crystals.quantity || 1) * 15);
-
+				obj.social.getXp((crystals.quantity || 1) * 5);
 				inventory.destroyItem({ itemId: crystals.id });
 			}
 		}
