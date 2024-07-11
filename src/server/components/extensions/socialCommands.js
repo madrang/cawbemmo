@@ -99,7 +99,7 @@ module.exports = {
 		msg.ignore = true;
 
 		messageText = messageText.substr(1).split(" ");
-		let actionName = messageText.splice(0, 1)[0].toLowerCase();
+		let actionName = messageText.shift().toLowerCase();
 		actionName = Object.keys(commandRoles).find((a) => (a.toLowerCase() === actionName));
 
 		if (!actionName) {

@@ -193,7 +193,7 @@ module.exports = {
 		if (this.actionQueue.length === 0) {
 			return null;
 		}
-		return this.actionQueue.splice(0, 1)[0];
+		return this.actionQueue.shift();
 	}
 
 	, clearQueue: function () {
@@ -224,16 +224,16 @@ module.exports = {
 		}
 		if (q.action === "move") {
 			let maxDistance = 1;
-			if ((this.actionQueue[0]) && (this.actionQueue[0].action === "move")) {
-				let moveEvent = {
+			if (this.actionQueue[0]?.action === "move") {
+				const moveEvent = {
 					sprintChance: this.stats.values.sprintChance || 0
 				};
 				this.fireEvent("onBeforeTryMove", moveEvent);
 
-				let physics = this.instance.physics;
+				const physics = this.instance.physics;
 				let sprintChance = moveEvent.sprintChance;
 				do {
-					if ((Math.floor(Math.random() * 100) < sprintChance) && !physics.isTileBlocking(q.data.x, q.data.y)) {
+					if (Math.floor(Math.random() * 100) < sprintChance && !physics.isTileBlocking(q.data.x, q.data.y)) {
 						q = this.dequeue();
 						maxDistance++;
 					}
@@ -263,7 +263,6 @@ module.exports = {
 			if (physics.isTileBlocking(data.x, data.y)) {
 				return true;
 			}
-
 			data.success = true;
 			this.fireEvent("beforeMove", data);
 			if (data.success === false) {
@@ -271,18 +270,12 @@ module.exports = {
 				this.queue(action);
 				return true;
 			}
-
-			let deltaX = Math.abs(xOld - xNew);
-			let deltaY = Math.abs(yOld - yNew);
+			const deltaX = Math.abs(xOld - xNew);
+			const deltaY = Math.abs(yOld - yNew);
 			if (
-				(
-					(deltaX > maxDistance) ||
-					(deltaY > maxDistance)
-				) ||
-				(
-					(deltaX === 0) &&
-					(deltaY === 0)
-				)
+				deltaX > maxDistance
+				|| deltaY > maxDistance
+				|| (deltaX === 0 && deltaY === 0)
 			) {
 				return false;
 			}
