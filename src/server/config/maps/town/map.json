@@ -3464,6 +3464,18 @@
                  "width":8,
                  "x":496,
                  "y":704
+                }, 
+                {
+                 "gid":516,
+                 "height":8,
+                 "id":1114,
+                 "name":"chauffeur",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":776,
+                 "y":768
                 }],
          "opacity":1,
          "properties":[
@@ -4508,7 +4520,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1114,
+ "nextobjectid":1115,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -4527,7 +4539,7 @@
          "value":"[{\"x\":131,\"y\":88}]"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.11.0",
+ "tiledversion":"1.10.1",
  "tileheight":8,
  "tilesets":[
         {

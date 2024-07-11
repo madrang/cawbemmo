@@ -243,6 +243,7 @@ module.exports = {
 
 			}
 		}
+
 		, raymond: {
 			level: 10
 			, faction: "vendeurs"
