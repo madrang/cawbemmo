@@ -243,8 +243,8 @@ module.exports = {
 				if (!crystals) {
 					return;
 				}
-				obj.reputation.getReputation("akarei", (crystals.quantity || 1) * 15);
-
+				obj.reputation.getReputation("vendeurs", (crystals.quantity || 1) * 15);
+				obj.social.getXp((crystals.quantity || 1) * 5);
 				inventory.destroyItem({ itemId: crystals.id });
 			}
 		}

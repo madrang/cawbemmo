@@ -245,6 +245,7 @@ module.exports = {
 		}
 		, raymond: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -253,8 +254,7 @@ module.exports = {
 			, properties: {
 				cpnTrade: {
 					items: {
-						min: 0
-						, max: 1
+						max: 0
 					}
 					, forceItems: [{
 						name: "hot-dog"
@@ -329,6 +329,7 @@ module.exports = {
 			}
 		}, peter: {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -369,6 +370,7 @@ module.exports = {
 			}
 		}, "mr giroux": {
 			level: 10
+			, faction: "vendeurs"
 			, walkDistance: 0
 			, attackable: false
 			, rare: {
@@ -410,6 +412,7 @@ module.exports = {
 		}, gislain: {
 			level: 10
 			, walkDistance: 0
+			, faction: "vendeurs"
 			, attackable: false
 			, rare: {
 				count: 0
