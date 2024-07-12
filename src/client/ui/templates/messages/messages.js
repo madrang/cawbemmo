@@ -138,12 +138,18 @@ define([
 		}
 
 		, onKeyDown: function (key) {
-			if (key === "enter") {
-				this.toggle(true);
-			} else if (key === "shift") {
-				this.showItemTooltip();
-			} else if (key === "esc" && this.el.hasClass("typing")) {
-				this.toggle(false);
+			switch (key) {
+				case "enter":
+					this.toggle(true);
+					break;
+				case "shift":
+					this.showItemTooltip();
+					break;
+				case "esc":
+					if (this.el.hasClass("typing")) {
+						this.toggle(false);
+					}
+					break;
 			}
 		}
 

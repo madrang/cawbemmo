@@ -48,6 +48,7 @@ define([
 		, init: function () {
 			events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
 			events.on("onUiKeyDown", this.onUiKeyDown.bind(this));
+			events.on("onUiAction", this.onUiAction.bind(this));
 			events.on("onResize", this.onResize.bind(this));
 
 			setUiTypes(globals.clientConfig.uiLoginList);
@@ -124,18 +125,22 @@ define([
 			}
 		}
 
-		, onUiKeyDown: function (keyEvent) {
-			if (keyEvent.key === "esc") {
+		, onUiAction: function(actionEvent) {
+			if (actionEvent.action === "mainmenu") {
 				for (const u of this.uis) {
 					if (!u.modal || !u.shown) {
 						continue;
 					}
-					keyEvent.consumed = true;
+					actionEvent.consumed = true;
 					u.toggle();
 				}
 				$(".uiOverlay").hide();
 				events.emit("onHideContextMenu");
-			} else if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {
+			}
+		}
+
+		, onUiKeyDown: function (keyEvent) {
+			if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {
 				$(".uiOverlay").hide();
 			}
 		}
