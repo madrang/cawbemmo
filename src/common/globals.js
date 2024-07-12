@@ -194,10 +194,8 @@
 		/** Pause the execution of an async function until timer elapse.
 		 * @Returns a promise that will resolve after the specified timeout.
 		 */
-		, asyncDelay: function (timeout) {
-			return new Promise(function(resolve, reject) {
-				setTimeout(resolve, timeout, true)
-			})
+		, asyncDelay: function (timeout, arg = true) {
+			return new Promise((resolve, reject) => setTimeout(resolve, timeout, arg));
 		}
 
 		, makeQuerablePromise
