@@ -141,31 +141,21 @@ define([
 		}
 
 		, preload: function () {
-			require([
-				"death"
-				, "dialogue"
-				, "equipment"
-				, "events"
-				, "hud"
-				, "inventory"
-				, "overlay"
-				, "passives"
-				, "quests"
-				, "reputation"
-				, "stash"
-			].map((m) => `ui/templates/${m}/${m}`), this.afterPreload.bind(this));
+			const modList = globals.clientConfig.uiList
+				.filter(u => u.preload !== false)
+				.map(u => `${u.path}/${u.type}`);
+			_.log.ui.factory.preload.debug("Preloading UI modules %o", modList);
+			require(modList, this.afterPreload.bind(this));
 		}
 
 		, afterPreload: function () {
 			if (!tosAcceptanceValid()) {
-				this.build("terms");
-				return;
+				return this.build("terms");
 			}
 			if (hasNewContent()) {
-				this.build("changeLog");
-				return;
+				return this.build("changeLog");
 			}
-			this.build("characters");
+			return this.build("characters");
 		}
 
 		, update: function () {

@@ -174,7 +174,11 @@ const config = {
 		, "options"
 		, "progressBar"
 
-		, "announcements"
+		, { type: "announcements"
+			// loaded on login, should already be loaded.
+			, autoLoadOnPlay: false
+			, preload: false
+		}
 		, "hud"
 		, "middleHud"
 		, "map"
@@ -207,15 +211,19 @@ const config = {
 
 		, { type: "createCharacter"
 			, autoLoadOnPlay: false
+			, preload: false
 		}
 		, { type: "characters"
 			, autoLoadOnPlay: false
+			, preload: false
 		}
 		, { type: "terms"
 			, autoLoadOnPlay: false
+			, preload: false
 		}
 		, { type: "changeLog"
 			, autoLoadOnPlay: false
+			, preload: false
 		}
 	]
 	, contextMenuActions: {
