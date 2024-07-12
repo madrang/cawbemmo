@@ -61,33 +61,13 @@ define([
 		, onBuildIngameUis: async function () {
 			if (!this.ingameUisBuilt) {
 				events.clearQueue();
-
 				await Promise.all(
 					globals.clientConfig.uiList
 						.filter(u => u.autoLoadOnPlay !== false)
-						.map(u => {
-							return new Promise(res => {
-								const doneCheck = () => {
-									const isDone = this.uis.some(ui => ui.type === u.type);
-									if (isDone) {
-										res();
-
-										return;
-									}
-
-									setTimeout(doneCheck, 100);
-								};
-
-								this.buildFromConfig(u);
-
-								doneCheck();
-							});
-						})
+						.map(u => this.buildFromConfig(u))
 				);
-
 				this.ingameUisBuilt = true;
 			}
-
 			client.request({
 				threadModule: "instancer"
 				, method: "clientAck"
@@ -109,12 +89,22 @@ define([
 			const className = "ui" + type.capitalize();
 			const el = $("." + className);
 			if (el.length > 0) {
+				_.log.ui.factory.buildFromConfig.warn("UI module '%s' already loaded.", type);
 				return;
 			}
 			const fullPath = `${path}/${type}`;
+			_.log.ui.factory.buildFromConfig.debug("Loading UI module '%s'.", type);
 			const template = await new Promise((res) => require([fullPath], res));
 			const ui = _.assign({ type }, uiBase, template);
-			requestAnimationFrame(this.renderUi.bind(this, ui));
+			const renderUI = this.renderUi.bind(this, ui);
+			await new Promise(
+				(res) => requestAnimationFrame(
+					(timeStamp) => {
+						renderUI();
+						res();
+					}
+				)
+			);
 			return ui;
 		}
 
@@ -196,7 +186,6 @@ define([
 					ui.destroy();
 				}
 			});
-
 			this.ingameUisBuilt = false;
 		}
 
