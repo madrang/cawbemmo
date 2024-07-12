@@ -198,7 +198,6 @@ const config = {
 		, "talk"
 		, "trade"
 		, "overlay"
-		, "online"
 		, "death"
 		, "leaderboard"
 		, "reputation"
