@@ -138,7 +138,7 @@ define([
 			if (keyEvent.key === "esc") {
 				for (const u of this.uis) {
 					if (!u.modal || !u.shown) {
-						return;
+						continue;
 					}
 					keyEvent.consumed = true;
 					u.toggle();
