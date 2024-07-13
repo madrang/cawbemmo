@@ -150,7 +150,7 @@ module.exports = {
 		if (!attacker) {
 			let lastMasterPos = this.lastMasterPos;
 
-			if ((master.x !== lastMasterPos.x) || (master.y !== lastMasterPos.y)) {
+			if (master.x !== lastMasterPos.x || master.y !== lastMasterPos.y) {
 				doMove = true;
 				lastMasterPos.x = master.x;
 				lastMasterPos.y = master.y;

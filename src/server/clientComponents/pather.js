@@ -42,7 +42,6 @@ define([
 			});
 			this.path = [];
 		}
-
 		, resetPath: function () {
 			this.clearPath();
 
@@ -75,7 +74,7 @@ define([
 				, method: "move"
 				, data: {
 					x, y
-					, priority: !this.path.length
+					, priority: this.path.length === 1
 				}
 			});
 		}
@@ -88,19 +87,18 @@ define([
 			let x = this.obj.x;
 			let y = this.obj.y;
 
-			if (this.path.length === 0) {
+			const pathLen = this.path.length;
+			if (pathLen === 0) {
 				this.pathPos.x = Math.round(x);
 				this.pathPos.y = Math.round(y);
 			}
-
 			if (x === this.lastX && y === this.lastY) {
 				return;
 			}
-
 			this.lastX = x;
 			this.lastY = y;
 
-			for (let i = this.path.length - 1; i >= 0; --i) {
+			for (let i = pathLen - 1; i >= 0; --i) {
 				const { x: pX, y: pY } = this.path[i];
 				if (pX !== x || pY !== y) {
 					continue;
@@ -112,7 +110,35 @@ define([
 					});
 				}
 				this.path.splice(0, i + 1);
-				return;
+				break;
+			}
+			const delta = pathLen - this.path.length;
+			if (delta > 1) {
+				if (pathLen - delta > 0) {
+					let first = true;
+					for (const p of this.path) {
+						client.request({
+							cpn: "player"
+							, method: "move"
+							, data: {
+								x: p.x, y: p.y
+								, clearQueued: first
+								, priority: first
+							}
+						});
+						first = false;
+					}
+				} else {
+					client.request({
+						cpn: "player"
+						, method: "performAction"
+						, data: {
+							cpn: "player"
+							, method: "clearQueue"
+							, data: {}
+						}
+					});
+				}
 			}
 		}
 
