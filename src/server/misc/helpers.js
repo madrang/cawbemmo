@@ -63,7 +63,7 @@ const applyLogFn = function (thisLogger, logLevel, logFn, args) {
 			}
 		}
 		msgParts.push(msg);
-		msgIdx = logging.countRe(msg, "%[cso]");
+		msgIdx = logging.countRe(msg, "%[cdso]");
 	} else {
 		// Begins with an object
 		// Add missing start messge

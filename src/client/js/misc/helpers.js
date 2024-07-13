@@ -137,7 +137,7 @@ define([
 				args.unshift(cssStyle);
 				msgIdx = 1;
 			}
-			msgIdx += logging.countRe(msg, "%[cso]");
+			msgIdx += logging.countRe(msg, "%[cdso]");
 		} else {
 			// Begins with an object
 			// Add missing start messge
