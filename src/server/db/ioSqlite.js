@@ -32,7 +32,7 @@ module.exports = {
 		db.serialize(function () {
 			for (let t of tableNames) {
 				db.run(`CREATE TABLE ${t} (key VARCHAR(50), value TEXT)`
-					, scope.onTableCreated.bind(scope, t)
+					, scope.onTableCreated.bind(scope, t, null)
 				);
 			}
 			cbReady();
@@ -47,10 +47,10 @@ module.exports = {
 			);
 		});
 	}
-	, onTableCreated: async function (table, callback) {
-		_.log.ioSQL.notice("New table '%s' created.", table);
+	, onTableCreated: async function (table, callback, ...args) {
+		_.log.ioSQL.notice("New table '%s' created. Result: %o", table, args);
 		if (callback) {
-			callback();
+			callback(args);
 		}
 	}
 
@@ -162,12 +162,11 @@ module.exports = {
 	}
 
 	, done: function (options, err, result) {
-		result = result || {
-			value: null
-		};
-
+		if (err) {
+			_.log.ioSQL.error(err);
+		}
 		if (options.callback) {
-			options.callback(result.value);
+			options.callback(result?.value || null);
 		}
 	}
 };
