@@ -31,30 +31,33 @@ module.exports = {
 		const scope = this;
 		db.serialize(function () {
 			for (let t of tableNames) {
-				db.run(`
-					CREATE TABLE ${t} (key VARCHAR(50), value TEXT)
-				`, scope.onTableCreated.bind(scope, t));
+				db.run(`CREATE TABLE ${t} (key VARCHAR(50), value TEXT)`
+					, scope.onTableCreated.bind(scope, t)
+				);
 			}
 			cbReady();
 		}, this);
 	}
 
 	, createTable: async function (tableName) {
+		const scope = this;
 		return new Promise((res) => {
-			this.db.run(`
-				CREATE TABLE ${tableName} (key VARCHAR(50), value TEXT)
-			`, res);
+			this.db.run(`CREATE TABLE ${tableName} (key VARCHAR(50), value TEXT)`
+				, scope.onTableCreated.bind(scope, tableName, res)
+			);
 		});
 	}
-
-	, onTableCreated: async function (table) {
-
+	, onTableCreated: async function (table, callback) {
+		_.log.ioSQL.notice("New table '%s' created.", table);
+		if (callback) {
+			callback();
+		}
 	}
 
 	//ent, field
 	, get: function (options) {
-		let key = options.ent;
-		let table = options.field;
+		const key = options.ent;
+		const table = options.field;
 
 		options.query = `SELECT * FROM ${table} WHERE key = '${key}' LIMIT 1`;
 
