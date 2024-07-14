@@ -113,7 +113,7 @@ define([
 				break;
 			}
 			const delta = pathLen - this.path.length;
-			if (delta > 1) {
+			if (delta > 2) {
 				if (pathLen - delta > 0) {
 					let first = true;
 					for (const p of this.path) {
