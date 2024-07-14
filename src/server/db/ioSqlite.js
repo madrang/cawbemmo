@@ -47,8 +47,17 @@ module.exports = {
 			);
 		});
 	}
-	, onTableCreated: async function (table, callback, ...args) {
-		_.log.ioSQL.notice("New table '%s' created. Result: %o", table, args);
+	, onTableCreated: async function (table, callback, err, result) {
+		if (err) {
+			if (!err.message?.includes(`table ${table} already exists`)) {
+				_.log.ioSQL.error("Table '%s' creation error: %o", table, args);
+			}
+		} else {
+			_.log.ioSQL.notice("New table '%s' created.", table);
+		}
+		if (result) {
+			_.log.ioSQL.onTableCreated.trace(result);
+		}
 		if (callback) {
 			callback(args);
 		}

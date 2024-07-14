@@ -63,7 +63,7 @@ define([
 		}
 
 		, onDisconnect: function () {
-			socket.disconnect();
+			this.socket.disconnect();
 			window.location = window.location;
 		}
 
