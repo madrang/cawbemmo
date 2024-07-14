@@ -10,7 +10,7 @@ define([
 
 		, init: function (onReady) {
 			this.socket = io({
-				transports: ["websocket"]
+				transports: [ "websocket" ]
 			});
 
 			this.socket.on("connect", this.onConnected.bind(this, onReady));
@@ -63,6 +63,7 @@ define([
 		}
 
 		, onDisconnect: function () {
+			socket.disconnect();
 			window.location = window.location;
 		}
 
