@@ -1,7 +1,20 @@
 module.exports = {
-	version: "0.0.7"
+	version: "0.0.8"
 	, content: `
 Nouvelle Version du jeu!
+Version 0.0.8
+-Changement: Gislain donne maintenant de l'xp pour des lettres
+-Changement: Gislain donne de la réputation chez les vendeurs pour les lettres
+-Changement: Nerf dépanneur Maintenant level 8-10
+-Changement: Mobs dans le bois sont maintenant Hostile
+-Changement: Gaetan donne la clé des toilettes
+-Nouveau: Carte Cabanne
+-Nouveau: Chauffeur d'autobus
+-Update: Écran titre
+-Fix: Hotdogs a raymond typo dans nom de spritesheet
+-Optimisation: Database
+
+
 Version 0.0.7
 -Changement: Joint donne 10 mana
 -Changement: Deux papiers donne 20 mana

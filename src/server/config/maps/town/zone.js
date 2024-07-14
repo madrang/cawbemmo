@@ -243,6 +243,7 @@ module.exports = {
 
 			}
 		}
+
 		, raymond: {
 			level: 10
 			, faction: "vendeurs"
@@ -261,7 +262,7 @@ module.exports = {
 						, type: "consumable"
 						, sprite: [1, 6]
 						, description: "Donne 75 HP"
-						, spritesheet: "images/consumable.png"
+						, spritesheet: "images/consumables.png"
 						, worth: 8
 						, noSalvage: true
 						, noAugment: true
