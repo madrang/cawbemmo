@@ -225,12 +225,21 @@ module.exports = {
 		if (q.action === "move") {
 			let maxDistance = 1;
 			if (this.actionQueue[0]?.action === "move") {
+				const { x: xOld, y: yOld, instance: { physics } } = this;
+				do {
+					const { data: { x: xNew, y: yNew } } = this.actionQueue[0];
+					if (Math.max(Math.abs(xOld - xNew), Math.abs(yOld - yNew)) <= maxDistance) {
+						q = this.dequeue();
+					} else {
+						break;
+					}
+				} while(this.actionQueue[0]?.action === "move");
+
 				const moveEvent = {
 					sprintChance: this.stats.values.sprintChance || 0
 				};
 				this.fireEvent("onBeforeTryMove", moveEvent);
 
-				const physics = this.instance.physics;
 				let sprintChance = moveEvent.sprintChance;
 				do {
 					if (Math.floor(Math.random() * 100) < sprintChance && !physics.isTileBlocking(q.data.x, q.data.y)) {
