@@ -16,29 +16,7 @@ const LOGIN_ILLEGAL_CHARS = [
 
 //This section of code is in charge of ensuring that we only ever create one account at a time,
 // since we don't have a read/write lock on the characters table, we have to address it in code
-const createLockBuffer = [];
-const getCreateLock = async () => {
-	const releaseLock = (lockEntry) => {
-		createLockBuffer.spliceWhere((c) => c === lockEntry);
-		const nextEntry = createLockBuffer[0];
-		if (!nextEntry) {
-			return;
-		}
-		nextEntry.takeLock();
-	};
-	const promise = new Promise(async (res) => {
-		let lockEntry = {};
-		lockEntry.takeLock = res.bind(null, releaseLock.bind(null, lockEntry));
-
-		if (!createLockBuffer.length) {
-			createLockBuffer.push(lockEntry);
-			lockEntry.takeLock();
-			return;
-		}
-		createLockBuffer.push(lockEntry);
-	});
-	return promise;
-};
+const createLock = new _.Lock("createPlayer");
 
 //Component Definition
 module.exports = {
@@ -270,9 +248,10 @@ module.exports = {
 	, onLogin: async function (msg, storedPassword, err, compareResult) {
 		const { data: { username } } = msg;
 
+		const socket = this.obj.socket;
 		if (!compareResult) {
 			msg.callback(messages.login.incorrect);
-			const clientIp = this.obj?.socket.request.connection.remoteAddress;
+			const clientIp = socket?.request.connection.remoteAddress;
 			_.log.auth.notice("Player(%s) from %s - Login denied! Invalid password for %s", this.obj.id, clientIp, username);
 			return;
 		}
@@ -291,6 +270,7 @@ module.exports = {
 		}
 		this.username = username;
 		await cons.logOut(this.obj);
+		socket.data.username = username;
 
 		this.initTracker();
 
@@ -416,67 +396,65 @@ module.exports = {
 			}
 			return;
 		}
-		const releaseCreateLock = await getCreateLock();
-		const exists = await io.getAsync({
-			key: name
-			, ignoreCase: true
-			, table: "character"
-			, noDefault: true
+		await createLock.request(async () => {
+			const exists = await io.getAsync({
+				key: name
+				, ignoreCase: true
+				, table: "character"
+				, noDefault: true
+			});
+			if (exists) {
+				msg.callback(messages.login.charExists);
+				return;
+			}
+
+			// Create new character
+			_.assign(this.obj, {
+				name: name
+				, skinId: data.skinId
+				, class: data.class
+				, cell: skins.getCell(data.skinId)
+				, sheetName: skins.getSpritesheet(data.skinId)
+				, x: null
+				, y: null
+			});
+			const simple = this.obj.getSimple(true);
+			await this.verifySkin(simple);
+
+			const prophecies = (data.prophecies || []).filter((p) => p);
+			simple.components.push({
+				type: "prophecies"
+				, list: prophecies
+			}, {
+				type: "social"
+				, customChannels: this.customChannels
+			});
+
+			const eBeforeSaveCharacter = {
+				obj: simple
+				, config: data
+			};
+			await eventEmitter.emit("beforeSaveCharacter", eBeforeSaveCharacter);
+
+			await io.setAsync({
+				key: name
+				, table: "character"
+				, value: eBeforeSaveCharacter.obj
+				, serialize: true
+			});
+
+			this.characters[name] = simple;
+			this.characterList.push(name);
+
+			await io.setAsync({
+				key: this.username
+				, table: "characterList"
+				, value: this.characterList
+				, serialize: true
+			});
 		});
-		if (exists) {
-			releaseCreateLock();
-			msg.callback(messages.login.charExists);
-			return;
-		}
-		// Create new character
-		_.assign(this.obj, {
-			name: name
-			, skinId: data.skinId
-			, class: data.class
-			, cell: skins.getCell(data.skinId)
-			, sheetName: skins.getSpritesheet(data.skinId)
-			, x: null
-			, y: null
-		});
-		const simple = this.obj.getSimple(true);
-		await this.verifySkin(simple);
-
-		const prophecies = (data.prophecies || []).filter((p) => p);
-		simple.components.push({
-			type: "prophecies"
-			, list: prophecies
-		}, {
-			type: "social"
-			, customChannels: this.customChannels
-		});
-
-		const eBeforeSaveCharacter = {
-			obj: simple
-			, config: data
-		};
-		await eventEmitter.emit("beforeSaveCharacter", eBeforeSaveCharacter);
-
-		await io.setAsync({
-			key: name
-			, table: "character"
-			, value: eBeforeSaveCharacter.obj
-			, serialize: true
-		});
-
-		this.characters[name] = simple;
-		this.characterList.push(name);
-
-		await io.setAsync({
-			key: this.username
-			, table: "characterList"
-			, value: this.characterList
-			, serialize: true
-		});
-
-		releaseCreateLock();
 
 		this.initTracker();
-
 		this.play({
 			data: {
 				name: name

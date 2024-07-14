@@ -54,7 +54,7 @@
 
 	//eslint-disable-next-line no-extend-native
 	Object.defineProperty(Object.prototype, "has", {
-		enumerable: false
+		enumerable: false, writable: true
 		, value: function (prop) {
 			return (this.hasOwnProperty(prop) && this[prop] !== undefined && this[prop] !== null);
 		}
@@ -139,19 +139,19 @@
 			}
 		)
 		Object.defineProperties(qurPro, {
-			'isResolved': {
+			"isResolved": {
 				get: () => isResolved
 			}
-			, 'resolvedValue': {
+			, "resolvedValue": {
 				get: () => resolvedValue
 			}
-			, 'isPending': {
+			, "isPending": {
 				get: () => isPending
 			}
-			, 'isRejected': {
+			, "isRejected": {
 				get: () => isRejected
 			}
-			, 'rejectReason': {
+			, "rejectReason": {
 				get: () => rejectReason
 			}
 		})
@@ -196,6 +196,56 @@
 		 */
 		, asyncDelay: function (timeout, arg = true) {
 			return new Promise((resolve, reject) => setTimeout(resolve, timeout, arg));
+		}
+
+		, Lock: function(name) {
+			if (typeof navigator === "object" && typeof navigator.locks?.request === "function") {
+				this.request = (options, callback) => {
+					return navigator.locks.request(name, options, callback);
+				}
+			} else {
+				const self = this;
+				this.createLockBuffer = [];
+				const requestLock = () => {
+					const releaseLock = (lockEntry) => {
+						self.createLockBuffer.spliceWhere((c) => c === lockEntry);
+						const nextEntry = self.createLockBuffer[0];
+						if (!nextEntry) {
+							return;
+						}
+						nextEntry.takeLock();
+					};
+					return new Promise((res) => {
+						const lockEntry = {};
+						lockEntry.takeLock = res.bind(null, releaseLock.bind(null, lockEntry));
+						self.createLockBuffer.push(lockEntry);
+						if (self.createLockBuffer.length === 1) {
+							lockEntry.takeLock();
+						}
+					});
+				};
+				this.request = async (...args) => {
+					let options, callback;
+					if (args.length <= 0) {
+						callback = () => {};
+					} else if (args.length === 1) {
+						callback = args[0];
+					} else if (args.length >= 2) {
+						options = args[0];
+						callback = args[1];
+					}
+					const releaseLock = await requestLock();
+					try {
+						//TODO "shared" is not supported.
+						return await callback({ mode: "exclusive", name });
+					} catch (err) {
+						_.log.Lock[name].error(err);
+						throw err;
+					} finally {
+						releaseLock();
+					}
+				};
+			}
 		}
 
 		, makeQuerablePromise
