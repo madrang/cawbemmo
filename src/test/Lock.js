@@ -12,7 +12,6 @@ let assert, expect;
 before(async () => {
 	const chai = (await import("chai"));
 	const chaiAsPromised = (await import("chai-as-promised")).default;
-	console.log(chaiAsPromised);
 	chai.use(chaiAsPromised);
 	assert = chai.assert;
 	expect = chai.expect;
@@ -23,7 +22,7 @@ describe("Lock", () => {
 		const lock = new Lock("test_lock");
 		const fakeFn = sinon.fake();
 		lock.request(async () => {
-			await asyncDelay(500);
+			await asyncDelay(5);
 		});
 		lock.request(fakeFn);
 		sinon.assert.notCalled(fakeFn);
@@ -37,7 +36,7 @@ describe("Lock", () => {
 		const lock = new Lock("test_lock");
 		const fakeFn = sinon.fake();
 		const failedPromise = lock.request(async () => {
-			await asyncDelay(500);
+			await asyncDelay(5);
 			throw new Error("Unexpected test error!");
 		});
 		lock.request(fakeFn);

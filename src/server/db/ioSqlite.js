@@ -21,8 +21,13 @@ module.exports = {
 				util.promisify(this.db[fName].bind(this.db))
 				// Amount of retries allowed.
 				, 3
-				// Log errors.
-				, (e) => _.log.ioSQL.error(e)
+				// onError
+				, (e) => {
+					// Log errors.
+					_.log.ioSQL.error(e);
+					// Retry after a small delay.
+					return _.asyncDelay(10);
+				}
 			);
 		}
 	}

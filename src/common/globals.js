@@ -312,28 +312,40 @@
 		}
 		, retry: function(fn, amount, onError) {
 			const doFn = function(triesLeft, args) {
+				const ctx = this;
+				const asyncRetry = async (promiseSrc, reason) => {
+					if (reason && onError) {
+						try {
+							await onError(reason);
+						} catch (err) {
+							promiseSrc.reject(err);
+							throw err;
+						}
+					}
+					triesLeft = triesLeft - 1;
+					if (triesLeft >= 0) {
+						await doFn.call(ctx, triesLeft, args).then(promiseSrc.resolve, promiseSrc.reject);
+					} else {
+						promiseSrc.reject(reason);
+					}
+				};
 				do {
 					try {
-						const result = fn.apply(this, args);
+						const result = fn.apply(ctx, args);
 						if (result instanceof Promise) {
 							const promiseSrc = new PromiseSource();
-							const ctx = this;
-							result.then(promiseSrc.resolve, (reason) => {
-								//Promises from onError ??
-								onError(reason);
-								triesLeft = triesLeft - 1;
-								if (triesLeft >= 0) {
-									doFn.call(ctx, triesLeft, args).then(promiseSrc.resolve, promiseSrc.reject);
-								} else {
-									promiseSrc.reject(reason);
-								}
-							});
+							result.then(promiseSrc.resolve, asyncRetry.bind(null, promiseSrc));
 							return promiseSrc.promise;
 						}
 						return result;
 					} catch (err) {
 						if (onError) {
-							onError(err);
+							const ret = onError(err);
+							if (ret instanceof Promise) {
+								const promiseSrc = new PromiseSource();
+								ret.then(asyncRetry.bind(null, promiseSrc, undefined), promiseSrc.reject);
+								return promiseSrc.promise;
+							}
 						}
 						triesLeft = triesLeft - 1;
 						if (triesLeft < 0) {
