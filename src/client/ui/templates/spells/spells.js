@@ -72,7 +72,7 @@ define([
 			e.preventDefault();
 
 			const key = (hotkey === "space") ? " " : hotkey;
-			window.player.spellbook.onKeyDown(key);
+			window.player.spellbook.triggerSpell(key);
 			return false;
 		}
 
