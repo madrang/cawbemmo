@@ -131,26 +131,23 @@ define([
 				.addClass(className);
 		}
 
-		, onClick: function (item, forceCtrl) {
-			let msg = {
+		, onClick: function (item, force) {
+			const msg = {
 				item: item
 				, success: true
 			};
 			events.emit("beforeInventoryClickItem", msg);
-
 			if (!msg.success) {
 				return;
 			}
-
-			if (!forceCtrl && !input.isKeyDown("ctrl", true)) {
+			if (!force && !input.isKeyDown("ctrl", true)) {
 				return;
 			}
-
 			client.request({
 				cpn: "social"
 				, method: "chat"
 				, data: {
-					message: "{" + item.name + "}"
+					message: `{${item.name}}`
 					, item: item
 					, type: "global"
 				}

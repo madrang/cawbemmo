@@ -113,13 +113,9 @@ module.exports = {
 
 	// Remove player/tracked obj
 	, removeObject: async function (obj, skipLocal, callback) {
-		//We need to store the player id because the calling thread might delete it (connections.unzone)
-		const playerId = obj.id;
-
 		if (!skipLocal) {
 			objects.removeObject(obj);
 		}
-
 		const thread = getThreadFromId(obj.zoneId);
 		if (!thread) {
 			if (callback) {
@@ -127,14 +123,12 @@ module.exports = {
 			}
 			return;
 		}
-
 		const threadStatus = await getThreadStatus(thread);
 		if (threadStatus.ttl < 0
 			|| (threadStatus.playerCount === 1 && threadStatus.ttl === 0)
 		) {
 			return this.savePlayersUnloadZone(thread, callback);
 		}
-
 		await new Promise((res) => {
 			sendMessageToThread({
 				threadId: obj.zoneId
@@ -151,6 +145,7 @@ module.exports = {
 			return callback();
 		}
 	}
+
 	, updateObject: function (obj, msgObj) {
 		sendMessageToThread({
 			threadId: obj.zoneId

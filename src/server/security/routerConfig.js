@@ -157,6 +157,11 @@ const routerConfig = {
 							, dataType: "boolean"
 							, optional: true
 						}
+						, {
+							key: "clearQueued"
+							, dataType: "boolean"
+							, optional: true
+						}
 					]
 				}
 				, castSpell: {

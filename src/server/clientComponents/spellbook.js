@@ -16,6 +16,8 @@ define([
 		objects = o;
 	});
 
+	const ACTION_HEADER = "spell_";
+
 	return {
 		type: "spellbook"
 
@@ -52,7 +54,7 @@ define([
 			this.obj.on("onDeath", this.onDeath.bind(this));
 			this.obj.on("onMobHover", this.onMobHover.bind(this));
 			this.obj.on("mouseDown", this.onMouseDown.bind(this));
-			this.obj.on("onKeyDown", this.onKeyDown.bind(this));
+			this.obj.on("onAction", this.onAction.bind(this));
 		}
 
 		, extend: function (blueprint) {
@@ -79,7 +81,7 @@ define([
 		}
 
 		, getSpell: function (number) {
-			const spellNumber = (number === " ") ? 0 : number;
+			const spellNumber = (number === " ") ? 0 : Number.parseInt(number);
 			return this.spells.find((s) => s.id === spellNumber);
 		}
 
@@ -94,7 +96,7 @@ define([
 					x: Math.floor(e.worldX / scale)
 					, y: Math.floor(e.worldY / scale)
 				};
-				this.onKeyDown(this.groundTargetSpell);
+				this.triggerSpell(this.groundTargetSpell);
 				this.groundTargetSpell = null;
 			}
 			// Allow attack with mouse.
@@ -137,15 +139,21 @@ define([
 			events.emit("onSetTarget", this.target, null);
 		}
 
-		, onKeyDown: function (key) {
-			if (key === "tab") {
+		, onAction: function (action) {
+			if (action === "target") {
 				this.tabTarget();
 				return;
-			} else if (isNaN(key)) {
+			}
+			if (action.startsWith(ACTION_HEADER)) {
+				this.triggerSpell(action.substring(ACTION_HEADER.length))
+			}
+		}
+
+		, triggerSpell: function (key) {
+			if (isNaN(key)) {
 				return;
 			}
-
-			let spell = this.getSpell(~~key);
+			let spell = this.getSpell(key);
 			if (!spell) {
 				return;
 			}

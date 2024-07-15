@@ -63,7 +63,7 @@ const applyLogFn = function (thisLogger, logLevel, logFn, args) {
 			}
 		}
 		msgParts.push(msg);
-		msgIdx = logging.countRe(msg, "%[cso]");
+		msgIdx = logging.countRe(msg, "%[cdso]");
 	} else {
 		// Begins with an object
 		// Add missing start messge
@@ -119,7 +119,32 @@ const printEvent = function (thisLogger, logLevel, args) {
 };
 
 module.exports = gExports.CONSTANTS(gExports, {
-	safeRequire: function (moduleContext, path, logger) {
+	parseAcceptLanguage: function (languageHeaderValue, options = {}) {
+	if (!languageHeaderValue) {
+		return [];
+	}
+	const { ignoreWildcard = true, validate = (locale) => locale } = options;
+	return languageHeaderValue
+		.split(',')
+		.map((lang) => {
+			const [locale, q = 'q=1'] = lang.split(';');
+			const trimmedLocale = locale.trim();
+			const numQ = Number(q.replace(/q ?=/, ''));
+			return [ (isNaN(numQ) ? 0 : numQ), trimmedLocale ];
+		})
+		.sort(([q1], [q2]) => q2 - q1)
+		.flatMap(([_, locale]) => {
+			if (locale === '*' && ignoreWildcard) {
+				return [];
+			}
+			try {
+				return validate(locale) || [];
+			} catch {
+				return [];
+			}
+		});
+	}
+	, safeRequire: function (moduleContext, path, logger) {
 		try {
 			return moduleContext.require(path);
 		} catch (e) {

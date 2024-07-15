@@ -20,7 +20,7 @@ const getMapInfos = function(path, name) {
 
 let lastCheck;
 let mapListCache;
-const getMapList = function (params) {
+const getMapList = function () {
 	const time = Date.now();
 	if (mapListCache && time - lastCheck < BUFFER_TTL * 1000) {
 		return mapListCache;
@@ -30,10 +30,20 @@ const getMapList = function (params) {
 	return mapListCache;
 };
 
+const getDefaultMap = function (mapList) {
+	let defaultMaps = mapList.filter((m) => m.defaultZone);
+	if (!defaultMaps || !defaultMaps.length) {
+		_.log.mapManager.warn("No defaultZone found, using any available maps.");
+		defaultMaps = mapList;
+	}
+	return _.randomObj(defaultMaps);
+};
+
 module.exports = {
 	init: () => {
 		const mapList = getMapList();
 		events.emit("onBeforeGetMapList", mapList);
 	}
 	, getMapList
+	, getDefaultMap
 };

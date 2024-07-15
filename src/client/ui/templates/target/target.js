@@ -63,7 +63,7 @@ define([
 					globals.clientConfig.contextMenuActions.player.forEach((action) => {
 						inspectContext.push({
 							text: action.text
-							, callback: this.onAction.bind(this, action, true)
+							, callback: this.onContextMenuAction.bind(this, action, true)
 						});
 					});
 
@@ -86,7 +86,7 @@ define([
 			globals.clientConfig.contextMenuActions.npc.forEach((action) => {
 				talkContext.push({
 					text: action.text
-					, callback: this.onAction.bind(this, action, false)
+					, callback: this.onContextMenuAction.bind(this, action, false)
 				});
 			});
 
@@ -106,7 +106,7 @@ define([
 			window.player.dialogue.talk(this.target);
 		}
 
-		, onAction: function (action, sendTargetServerId) {
+		, onContextMenuAction: function (action, sendTargetServerId) {
 			const { threadModule, module: actionModule, cpn, method, data = {} } = action;
 			if (method === "performAction") {
 				data.data.playerId = this.target.id;
