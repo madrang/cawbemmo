@@ -436,7 +436,7 @@
 
 	if (typeof define === "function" && define.amd) {
 		define([
-			"common/assign"
+			"assign"
 		], function(
 			assignModule
 		) {

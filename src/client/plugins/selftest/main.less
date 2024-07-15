@@ -1,0 +1,45 @@
+@import "../../css/colors.less";
+
+@font-face {
+	font-family: bitty;
+	src: url("../../fonts/bitty.ttf");
+}
+
+body {
+	background-color: @blackB;
+}
+
+.jasmine_html-reporter {
+	background-color: @black;
+	font-family: bitty;
+	font-size: 14px;
+	line-height: 16px;
+
+	.jasmine-banner .jasmine-version {
+		color: @grayA;
+		font-size: 14px;
+	}
+	.jasmine-symbol-summary li, .jasmine-symbol-summary li.jasmine-failed {
+		font-size: 24px;
+		line-height: 24px;
+	}
+	.jasmine-symbol-summary li.jasmine-passed {
+		font-size: 32px;
+	}
+	.jasmine-overall-result.jasmine-bar {
+		font-size: 24px;
+		line-height: 32px;
+	}
+	.jasmine-duration {
+		font-size: 24px;
+		line-height: 32px;
+	}
+	.jasmine-spec-detail .jasmine-description {
+		padding-top: 4px;
+		padding-bottom: 4px;
+	}
+	.jasmine-result-message {
+		color: @grayA;
+	}
+}
+
