@@ -1,5 +1,5 @@
 require.config({
-	baseUrl: ""
+	baseUrl: "/"
 	, waitSeconds: 60
 	, paths: {
 		assign: "/common/assign"
@@ -29,4 +29,7 @@ require.config({
 		}
 	}
 });
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 15 * 1000;
+window.addEventListener("load", function() {
+	jasmine.DEFAULT_TIMEOUT_INTERVAL = 15 * 1000;
+	console.log("Page loaded... Applied jasmine settings.");
+});
