@@ -431,7 +431,7 @@ define([
 							if (!gamepad || !gamepad.axes.has(axis)) {
 								continue;
 							}
-							result += gamepad.axes[axis];
+							result += Math.round(gamepad.axes[axis]);
 						}
 						break;
 					case "keyboard":
