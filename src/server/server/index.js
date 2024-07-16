@@ -16,7 +16,7 @@ const {
 	nodeEnv
 } = require("../config/serverConfig");
 
-const compileLessOnce = nodeEnv === "production";
+const IS_PROD = nodeEnv === "production";
 
 const onConnection = require("./onConnection");
 const { appRoot, appFile } = require("./requestHandlers");
@@ -50,7 +50,9 @@ const init = async () => {
 	global.cons.sockets = socketServer.sockets;
 
 	app.use(compression());
-	app.use(minify());
+	if (IS_PROD) {
+		app.use(minify());
+	}
 
 	app.use(express.json());
 	app.post("/log", (req, res) => {
@@ -71,8 +73,8 @@ const init = async () => {
 		next();
 	});
 	app.use(lessMiddleware("../", {
-		once: compileLessOnce
-		, force: !compileLessOnce
+		once: IS_PROD
+		, force: !IS_PROD
 	}));
 
 	rest.init(app);
