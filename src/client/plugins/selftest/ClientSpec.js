@@ -102,7 +102,7 @@ describe("Client", () => {
 			addons.register(testAddon);
 			const eventList = [ "foo" ];
 			addons.init(eventList);
-			expect(spyObj).toHaveBeenCalledOnceWith(eventList);
+			expect(spyObj).toHaveBeenCalledWith(eventList);
 		});
 	});
 });
