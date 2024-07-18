@@ -57,7 +57,7 @@ define([
 		, "spell_4": [ "4" ]
 		, "target": [ "tab" ]
 	};
-	const GAMEPAD_UPDATE_DELAY = 10;
+	const GAMEPAD_UPDATE_DELAY = 33;
 	const GAMEPAD_AXES_DEFAULT = {
 		horizontal: 0
 		, vertical: 1
