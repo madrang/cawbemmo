@@ -57,6 +57,7 @@ define([
 		, "spell_4": [ "4" ]
 		, "target": [ "tab" ]
 	};
+	const GAMEPAD_UPDATE_DELAY = 10;
 	const GAMEPAD_AXES_DEFAULT = {
 		horizontal: 0
 		, vertical: 1
@@ -103,6 +104,8 @@ define([
 		axes: {}
 		, mappings: {}
 		, actions: {}
+
+		, lastGamepadActionsUpdate: 0
 
 		, numericalKeyCodeMappings: {
 			Digit1: 49
@@ -176,22 +179,44 @@ define([
 		}
 
 		, updateGamepads: function () {
-			const timestamp = performance.now();
-			let shouldUpdate = false;
+			let lastUpdated = Number.POSITIVE_INFINITY;
+			// Check all connected gamepads for the most stale timestamp (smaller is older).
 			for (const gamepad of this.gamepads) {
 				if (!gamepad) {
 					continue;
 				}
-				if (gamepad.timestamp < timestamp - 10) {
-					shouldUpdate = true;
-					break;
+				if (gamepad.timestamp < lastUpdated) {
+					lastUpdated = gamepad.timestamp;
 				}
 			}
-			if (!shouldUpdate) {
+			const timestamp = performance.now();
+			if (lastUpdated === Number.POSITIVE_INFINITY
+				// When no gamepads connected, check every two seconds.
+				? Math.floor(timestamp / 1000) % 2 === 0
+				// With gamepad connected, poll the data after configured delay.
+				: lastUpdated < timestamp - GAMEPAD_UPDATE_DELAY
+			) {
+				this.gamepads = navigator.getGamepads();
+			}
+			if (lastUpdated === Number.POSITIVE_INFINITY) {
+				if (this.pressedGamepadButtons.length) {
+					// All gamepads disconnected with pressed buttons.
+					for (const button in this.pressedGamepadButtons) {
+						delete this.pressedGamepadButtons[button];
+						const removedActions = this.getMapping("gamepad", button);
+						for (const action of removedActions) {
+							delete this.actions[action];
+						}
+					}
+				}
 				return;
 			}
+			if (this.lastGamepadActionsUpdate > timestamp - GAMEPAD_UPDATE_DELAY) {
+				// Was updated recently.
+				return;
+			}
+			this.lastGamepadActionsUpdate = timestamp;
 			const enableInput = !Boolean($(".modal:visible, .uiOverlay:visible").length);
-			this.gamepads = navigator.getGamepads();
 			for (const gamepad of this.gamepads) {
 				if (!gamepad) {
 					continue;
