@@ -229,6 +229,7 @@ define([
 				return;
 			}
 			this.lastGamepadActionsUpdate = timestamp;
+			//TODO when UI is visible, change action map to allow using the UI with a gamepad.
 			const enableInput = !this.isUIVisible();
 			for (const gamepad of this.gamepads) {
 				if (!gamepad) {
