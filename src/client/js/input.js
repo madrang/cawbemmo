@@ -105,8 +105,6 @@ define([
 		, mappings: {}
 		, actions: {}
 
-		, lastGamepadActionsUpdate: 0
-
 		, numericalKeyCodeMappings: {
 			Digit1: 49
 			, Digit2: 50
@@ -131,6 +129,7 @@ define([
 		, whitelistedKeys: []
 
 		, gamepads: (typeof navigator.getGamepads === "function" ? navigator.getGamepads() : [])
+		, lastGamepadActionsUpdate: 0
 
 		, init: function () {
 			//TODO Load user configs.
@@ -179,6 +178,19 @@ define([
 			setInterval(this.updateGamepads.bind(this), GAMEPAD_UPDATE_DELAY);
 		}
 
+		, isUIVisible: function(timestamp) {
+			if (typeof timestamp !== "number") {
+				timestamp = performance.now();
+			}
+			if (this.isUIVisible.lastUpdate > timestamp - 500) {
+				return this.isUIVisible.lastValue;
+			}
+			const isVisible = Boolean($(".modal:visible, .uiOverlay:visible").length);
+			this.isUIVisible.lastUpdate = timestamp;
+			this.isUIVisible.lastValue = isVisible;
+			return isVisible;
+		}
+
 		, updateGamepads: function () {
 			let lastUpdated = Number.POSITIVE_INFINITY;
 			// Check all connected gamepads for the most stale timestamp (smaller is older).
@@ -217,7 +229,7 @@ define([
 				return;
 			}
 			this.lastGamepadActionsUpdate = timestamp;
-			const enableInput = !Boolean($(".modal:visible, .uiOverlay:visible").length);
+			const enableInput = !this.isUIVisible();
 			for (const gamepad of this.gamepads) {
 				if (!gamepad) {
 					continue;
