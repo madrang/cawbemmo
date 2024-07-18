@@ -13,6 +13,7 @@ define([
 	, objects
 	, physics
 ) {
+	const MOUSE_PATH_DISTANCE = 3;
 	return { type: "inputs"
 		// Mouse & touch
 		, hoverTile: { x: 0, y: 0 }
@@ -83,7 +84,7 @@ define([
 			let dx = Math.floor(e.x / scale) - this.obj.pather.pathPos.x;
 			let dy = Math.floor(e.y / scale) - this.obj.pather.pathPos.y;
 			const distance = Math.max(Math.abs(dx), Math.abs(dy));
-			if (distance <= 0 || distance > 2) {
+			if (distance <= 0 || distance > MOUSE_PATH_DISTANCE) {
 				return;
 			}
 			if (Math.abs(dx) > 1) {
@@ -172,15 +173,13 @@ define([
 		}
 
 		, keyMove: function () {
-			let delta = {
+			const delta = {
 				x: input.getAxis("horizontal")
 				, y: input.getAxis("vertical")
 			};
-
 			if (!delta.x && !delta.y) {
 				return;
 			}
-
 			const newX = Math.floor(this.obj.pather.pathPos.x + delta.x);
 			const newY = Math.floor(this.obj.pather.pathPos.y + delta.y);
 			if (physics.isTileBlocking(newX, newY)) {
