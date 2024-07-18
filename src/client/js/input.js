@@ -176,6 +176,7 @@ define([
 					, gamepad.axes.length
 				);
 			}
+			setInterval(this.updateGamepads.bind(this), GAMEPAD_UPDATE_DELAY);
 		}
 
 		, updateGamepads: function () {
@@ -426,7 +427,6 @@ define([
 		}
 
 		, isGamepadPressed: function (button) {
-			this.updateGamepads();
 			const down = this.pressedGamepadButtons[button];
 			if (down) {
 				if (noConsume) {
@@ -451,7 +451,6 @@ define([
 				const axis = inputAxes[axisName];
 				switch (inputType) {
 					case "gamepad":
-						this.updateGamepads();
 						for (const gamepad of this.gamepads) {
 							if (!gamepad || !gamepad.axes.has(axis)) {
 								continue;
