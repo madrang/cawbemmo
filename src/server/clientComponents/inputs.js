@@ -173,6 +173,9 @@ define([
 		}
 
 		, keyMove: function () {
+			if (input.isUIVisible()) {
+				return;
+			}
 			const delta = {
 				x: input.getAxis("horizontal")
 				, y: input.getAxis("vertical")
