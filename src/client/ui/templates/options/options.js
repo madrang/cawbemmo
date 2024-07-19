@@ -249,7 +249,6 @@ define([
 
 			if (key === "v") {
 				config.toggle("showNames");
-
 				events.emit("onToggleNameplates", config.showNames);
 
 				const newValue = config.showNames ? "On" : "Off";

@@ -87,7 +87,7 @@ define([
 			return false;
 		}
 
-		, isMouseDown: function (button, noConsume) {
+		, isMouseButtonDown: function (button, noConsume) {
 			const down = this.pressedMouseButtons[button];
 			if (down) {
 				if (noConsume) {

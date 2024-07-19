@@ -1,6 +1,6 @@
 const childProcess = require("child_process");
 const objects = require("../objects/objects");
-const { getMapList } = require("./mapManager");
+const { getMapList, getDefaultMap } = require("./mapManager");
 const { registerCallback } = require("./atlas/registerCallback");
 
 const threads = [];
@@ -52,15 +52,6 @@ const messageAllThreads = (message) => {
 	for (const t of threads) {
 		t.worker.send(message);
 	}
-};
-
-const getDefaultMap = (mapList) => {
-	let defaultMaps = mapList.filter((m) => m.defaultZone);
-	if (!defaultMaps || !defaultMaps.length) {
-		_.log.threadManager.warn("No defaultZone found, using any available maps.");
-		defaultMaps = mapList;
-	}
-	return _.randomObj(defaultMaps);
 };
 
 const messageHandlers = {
@@ -209,6 +200,12 @@ module.exports = {
 		if (!thread) {
 			const mapList = getMapList();
 			const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
+			if (map.name !== zoneName) {
+				thread = threads.find((t) => t.name === map.name && t.id === t.name);
+				if (thread) {
+					return thread;
+				}
+			}
 			thread = spawnThread(map);
 		}
 		if (!thread) {

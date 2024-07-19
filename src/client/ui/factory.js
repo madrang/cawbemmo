@@ -48,6 +48,7 @@ define([
 		, init: function () {
 			events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
 			events.on("onUiKeyDown", this.onUiKeyDown.bind(this));
+			events.on("onUiAction", this.onUiAction.bind(this));
 			events.on("onResize", this.onResize.bind(this));
 
 			setUiTypes(globals.clientConfig.uiLoginList);
@@ -61,33 +62,13 @@ define([
 		, onBuildIngameUis: async function () {
 			if (!this.ingameUisBuilt) {
 				events.clearQueue();
-
 				await Promise.all(
 					globals.clientConfig.uiList
 						.filter(u => u.autoLoadOnPlay !== false)
-						.map(u => {
-							return new Promise(res => {
-								const doneCheck = () => {
-									const isDone = this.uis.some(ui => ui.type === u.type);
-									if (isDone) {
-										res();
-
-										return;
-									}
-
-									setTimeout(doneCheck, 100);
-								};
-
-								this.buildFromConfig(u);
-
-								doneCheck();
-							});
-						})
+						.map(u => this.buildFromConfig(u))
 				);
-
 				this.ingameUisBuilt = true;
 			}
-
 			client.request({
 				threadModule: "instancer"
 				, method: "clientAck"
@@ -109,12 +90,22 @@ define([
 			const className = "ui" + type.capitalize();
 			const el = $("." + className);
 			if (el.length > 0) {
+				_.log.ui.factory.buildFromConfig.warn("UI module '%s' already loaded.", type);
 				return;
 			}
 			const fullPath = `${path}/${type}`;
+			_.log.ui.factory.buildFromConfig.debug("Loading UI module '%s'.", type);
 			const template = await new Promise((res) => require([fullPath], res));
 			const ui = _.assign({ type }, uiBase, template);
-			requestAnimationFrame(this.renderUi.bind(this, ui));
+			const renderUI = this.renderUi.bind(this, ui);
+			await new Promise(
+				(res) => requestAnimationFrame(
+					(timeStamp) => {
+						renderUI();
+						res();
+					}
+				)
+			);
 			return ui;
 		}
 
@@ -134,48 +125,42 @@ define([
 			}
 		}
 
-		, onUiKeyDown: function (keyEvent) {
-			if (keyEvent.key === "esc") {
+		, onUiAction: function(actionEvent) {
+			if (actionEvent.action === "mainmenu") {
 				for (const u of this.uis) {
 					if (!u.modal || !u.shown) {
-						return;
+						continue;
 					}
-					keyEvent.consumed = true;
+					actionEvent.consumed = true;
 					u.toggle();
 				}
 				$(".uiOverlay").hide();
 				events.emit("onHideContextMenu");
-			} else if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {
+			}
+		}
+
+		, onUiKeyDown: function (keyEvent) {
+			if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {
 				$(".uiOverlay").hide();
 			}
 		}
 
 		, preload: function () {
-			require([
-				"death"
-				, "dialogue"
-				, "equipment"
-				, "events"
-				, "hud"
-				, "inventory"
-				, "overlay"
-				, "passives"
-				, "quests"
-				, "reputation"
-				, "stash"
-			].map((m) => `ui/templates/${m}/${m}`), this.afterPreload.bind(this));
+			const modList = globals.clientConfig.uiList
+				.filter(u => u.preload !== false)
+				.map(u => `${u.path}/${u.type}`);
+			_.log.ui.factory.preload.debug("Preloading UI modules %o", modList);
+			require(modList, this.afterPreload.bind(this));
 		}
 
 		, afterPreload: function () {
 			if (!tosAcceptanceValid()) {
-				this.build("terms");
-				return;
+				return this.build("terms");
 			}
 			if (hasNewContent()) {
-				this.build("changeLog");
-				return;
+				return this.build("changeLog");
 			}
-			this.build("characters");
+			return this.build("characters");
 		}
 
 		, update: function () {
@@ -196,7 +181,6 @@ define([
 					ui.destroy();
 				}
 			});
-
 			this.ingameUisBuilt = false;
 		}
 

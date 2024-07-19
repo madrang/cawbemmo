@@ -34,6 +34,7 @@ define([
 			this.el.find(".btnPatreon").on("click", this.patreon.bind(this));
 
 			this.onEvent("onResize", this.onResize.bind(this));
+			this.onEvent("onAction", this.onAction.bind(this));
 		}
 
 		, openOptions: function () {
@@ -94,8 +95,8 @@ define([
 			window.location = window.location;
 		}
 
-		, onKeyDown: function (key) {
-			if (key === "esc") {
+		, onAction: function (action) {
+			if (action === "mainmenu") {
 				this.toggle();
 			}
 		}

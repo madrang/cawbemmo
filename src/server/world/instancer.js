@@ -275,6 +275,9 @@ module.exports = {
 		if (!obj) {
 			return;
 		} else if (msg.action.action === "move") {
+			if (msg.action.data.clearQueued) {
+				obj.actionQueue.spliceWhere((q) => (q.action === "move"));
+			}
 			let moveEntries = obj.actionQueue.filter((q) => (q.action === "move")).length;
 			if (moveEntries >= 50) {
 				return;

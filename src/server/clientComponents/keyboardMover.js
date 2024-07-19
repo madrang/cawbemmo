@@ -16,7 +16,7 @@ define([
 		, moveCdMax: 8
 
 		, init: function () {
-			this.hookEvent("onCanvasKeyDown", this.onCanvasKeyDown.bind(this));
+			this.hookEvent("onKeyDown", this.onKeyDown.bind(this));
 			this.hookEvent("onMoveSpeedChange", this.onMoveSpeedChange.bind(this));
 		}
 
@@ -41,8 +41,8 @@ define([
 			this.moveCdMax = Math.ceil(4 + (((200 - moveSpeed) / 200) * 4));
 		}
 
-		, onCanvasKeyDown: function (keyEvent) {
-			if (keyEvent.key === "esc") {
+		, onKeyDown: function (key) {
+			if (key === "esc") {
 				client.request({
 					cpn: "player"
 					, method: "performAction"

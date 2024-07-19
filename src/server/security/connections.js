@@ -162,6 +162,14 @@ module.exports = {
 				}
 				if (p.socket?.connected) {
 					p.socket.emit("dc", {});
+					_.asyncDelay(10 * 1000).then(() => {
+						if (p.socket.disconnected) {
+							return;
+						}
+						const clientIp = p.socket.request.connection.remoteAddress;
+						_.log.connections.notice("Force closing socket left open after logout from %s", clientIp);
+						p.socket.disconnect();
+					});
 				} else {
 					players.splice(i, 1);
 				}
