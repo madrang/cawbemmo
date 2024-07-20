@@ -21,10 +21,40 @@
 		}
 	}
 
+	/* Style the tabs container */
+	.tabs {
+		border: 1px solid @purpleD;
+		background-color: @black;
+		margin: auto;
+	}
+	/* Style the buttons inside the tab */
+	.tabs > button {
+		background-color: @blueC;
+		float: left;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		padding: 8px 16px;
+		transition: 0.3s;
+		font-size: 17px;
+	}
+	/* Change background color of buttons on hover */
+	.tabs > button:hover {
+		background-color: @blueB;
+	}
+	/* Create an active/current tablink class */
+	.tabs > button.active {
+		background-color: @blueA;
+	}
+
 	.bottom {
 		padding: 10px;
 		height: 100%;
 		overflow-y: auto;
+
+		.tabcontent {
+			display: none;
+		}
 
 		.list {
 			display: flex;
@@ -69,6 +99,9 @@
 					align-items: center;
 					justify-content: flex-end;
 					padding-right: 10px;
+				}
+				select {
+					background-color: @black;
 				}
 
 				&.volume {
