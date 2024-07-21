@@ -1,4 +1,4 @@
-const messageAll = async (req, res, next) => {
+const messageAll = async (req, res) => {
 	if (!req.query.msg || typeof req.query.msg !== "string") {
 		return res.status(401).json({ message: "Not successful", error: err.message });
 	}

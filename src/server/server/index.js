@@ -30,7 +30,8 @@ const onConnection = require("./onConnection");
 const { appRoot, appFile } = require("./requestHandlers");
 
 const sharedFolders = [
-	"/common"
+	"/admin"
+	, "/common"
 	, "/server"
 	, "/mods"
 ];
@@ -85,10 +86,6 @@ const init = async () => {
 		}
 		res.send({ response: "ok" });
 	});
-	app.get("/logout", (req, res) => {
-		res.cookie("jwt", "", { maxAge: "1" });
-		res.redirect("/");
-	});
 
 	const loadedAPIs = {};
 	for (const apiName in API_ROUTES) {
@@ -109,8 +106,14 @@ const init = async () => {
 		app.use("/api/" + apiName, routeModule.router);
 		API_ROUTES[apiName] = routeModule;
 	}
-	app.get("/admin", appRoot);
-	app.get("/admin", API_ROUTES.auth.createAuth(99), appFile);
+	app.get("/admin", (req, res, next) => {
+		if (req.path === "/admin") {
+			return res.redirect("/admin/index.html");
+		}
+		next();
+	});
+	// Restrict javascript folder to authorized users only.
+	app.get("/admin/js/", API_ROUTES.auth.createAuth(99), appFile);
 
 	app.use((req, res, next) => {
 		if (!rest.willHandle(req.url) && !sharedFolders.some((s) => req.url.startsWith(s))) {

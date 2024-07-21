@@ -1,4 +1,4 @@
-const forceSaveAll = async (req, res, next) => {
+const forceSaveAll = async (req, res) => {
 	// Wait for all zones to clear queues.
 	await atlas.returnWhenZonesIdle();
 	// Send optional notification.

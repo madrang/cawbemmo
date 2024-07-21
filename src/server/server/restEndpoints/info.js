@@ -1,6 +1,6 @@
 const { version, nodeEnv, realmName } = require("../../config/serverConfig");
 
-const getInfos = (req, res, next) => {
+const getInfos = (req, res) => {
 	res.jsonp({
 		version
 		, type: nodeEnv
