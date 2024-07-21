@@ -1,6 +1,6 @@
 define([
-	"../../common/globals"
-	, "../../common/logging"
+	"/common/globals.js"
+	, "/common/logging.js"
 ], function (
 	gExports
 	, logging
