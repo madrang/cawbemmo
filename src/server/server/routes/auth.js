@@ -118,7 +118,48 @@ const createRouter = (options) => {
 		}
 		return res.redirect("/");
 	});
-
+	router.route("/token").get(async (req, res) => {
+		const token = req.cookies.jwt;
+		if (!token) {
+			return res.status(401).json({ message: "Not authorized, jwt token not available" });
+		}
+		try {
+			const decodedToken = await jVerify(token, jwtSecret);
+			if (decodedToken.level < reqLevel) {
+				return res.status(401).json({ message: "Not authorized" });
+			}
+			const maxAge = 3 * 60 * 60;
+			const token = jwt.sign(
+				{
+					username: decodedToken.username
+					, level: decodedToken.level
+				}
+				, jwtSecret
+				, {
+					// 3hrs in sec
+					expiresIn: maxAge
+				}
+			);
+			if (req.query.refresh) {
+				res.cookie("jwt", token, {
+					// Flags the cookie to be accessible only by the web server.
+					httpOnly: true
+					// 3hrs in ms
+					, maxAge: maxAge * 1000
+				});
+			}
+			res.status(200).jsonp({
+				jwt: token
+				, expiresIn: maxAge
+			});
+		} catch (err) {
+			if (err.message !== "invalid signature") {
+				_.log.routes.auth.error(err);
+			}
+			res.cookie("jwt", "", { maxAge: "1" });
+			return res.status(401).json({ message: "Not authorized" });
+		}
+	});
 	router.route("/register").post(async (req, res, next) => {
 		const { username, password } = req.body
 		if (!username || !password) {
