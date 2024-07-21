@@ -130,15 +130,15 @@ const createRouter = (options) => {
 			return res.status(400).jsonp({ message: "Password less than 6 characters" })
 		}
 		try {
-			await User.create({
+			throw new Error("Not implemented...");
+			const user = await User.create({
 				username,
 				password,
-			}).then(user =>
-				res.status(200).jsonp({
-					message: "User successfully created"
-					, user
-				})
-			);
+			});
+			res.status(200).jsonp({
+				message: "User successfully created"
+				, user
+			});
 		} catch (err) {
 			res.status(401).jsonp({
 				message: "User creation failed"
