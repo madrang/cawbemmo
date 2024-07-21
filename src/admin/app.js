@@ -25,7 +25,18 @@ require([
 	glExport
 	, userlistTpl
 ) {
-
+	const userLevelToString = (level) => {
+		if (!level) {
+			return "Player";
+		}
+		if (level <= 9) {
+			return "Moderator";
+		}
+		if (level <= 89) {
+			return "Admin";
+		}
+		return "Owner";
+	};
 	const buildUserList = async () => {
 		const res = await fetch("/api/rest/users");
 		if (!res.ok) {
@@ -42,7 +53,7 @@ require([
 			const userElm = userTpl.cloneNode(true);
 			userElm.innerHTML = userElm.innerHTML
 				.replaceAll("{{username}}", user.username)
-				.replaceAll("{{level}}", user.level)
+				.replaceAll("{{level}}", `[${user.level}] ${userLevelToString(user.level)}`)
 				.replaceAll("{{characters}}", JSON.stringify(user.characters));
 			userTpl.parentNode.appendChild(userElm);
 		}
@@ -57,7 +68,7 @@ require([
 		loginElm.style.display = "none";
 
 		const userMenu = document.getElementById("user-menu");
-		userMenu.innerText = accountInfo.username;
+		userMenu.innerText = `${userLevelToString(accountInfo.level)}/${accountInfo.username} (${accountInfo.level})`;
 
 		for (const elmName of [ "top-menu", "ui-container" ]) {
 			const elm = document.getElementById(elmName);
