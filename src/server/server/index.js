@@ -109,6 +109,8 @@ const init = async () => {
 		app.use("/api/" + apiName, routeModule.router);
 		API_ROUTES[apiName] = routeModule;
 	}
+	app.get("/admin", appRoot);
+	app.get("/admin", API_ROUTES.auth.createAuth(99), appFile);
 
 	app.use((req, res, next) => {
 		if (!rest.willHandle(req.url) && !sharedFolders.some((s) => req.url.startsWith(s))) {
