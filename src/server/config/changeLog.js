@@ -1,7 +1,15 @@
 module.exports = {
-	version: "0.0.8"
+	version: "0.1.0"
 	, content: `
 Nouvelle Version du jeu!
+Version 0.1.0
+-Nouveau: Support manette de base
+-Nouveau: Fermeture des menus avec 'ESCAPE'
+-Update: Déplacement amélioré
+-Update: Déconnection après 10 secondes quand la requète es envoyé
+-Update: Augmentation de la distance de déplacement avec la souris
+-Fix: typo dans menu option
+
 Version 0.0.8
 -Changement: Gislain donne maintenant de l'xp pour des lettres
 -Changement: Gislain donne de la réputation chez les vendeurs pour les lettres
