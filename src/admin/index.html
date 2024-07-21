@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+	<head>
+		<meta name="Description" content="Adminitrator Panel">
+		<title>CawbeMMO - Admins</title>
+		<link rel="stylesheet" href="main.css">
+		<script src="/js/dependencies/require.min.js" data-main="/admin/app"></script>
+		<link rel="icon" href="images/favicon.ico">
+	</head>
+	<body>
+		<header id="top-menu">
+			<button id="user-menu" onclick="showMenu(event)"></button>
+		</header>
+		<div id="ui-container">
+			Admin Panel WIP...
+		</div>
+		<div id="user-menu-contextmenu" class="contextmenu">
+			<a href="/api/auth/logout?redirect=/admin/index.html" id="user-logout">Logout</a>
+		</div>
+		<form id="login">
+			<img class="logo" src="images/logo.png" alt="">
+			<div class="right hasBorderShadow">
+				<div class="label">Compte</div>
+				<input type="text" class="el textbox txtUsername" placeholder="username" name="username" autocomplete="username">
+				<div class="label">MDP</div>
+				<input type="password" class="el textbox txtPassword" placeholder="password" name="password" autocomplete="current-password">
+				<div class="top-buttons">
+					<input id="btnRegister" class="el btn" value="S'enregistré" type="button" onclick="submitLoginForm(event)">
+					<input id="btnLogin" class="el btn" value="Connexion" type="button" onclick="submitLoginForm(event)">
+				</div>
+				<div class="message"></div>
+			</div>
+			<div class="news"></div>
+		</form>
+	</body>
+</html>
