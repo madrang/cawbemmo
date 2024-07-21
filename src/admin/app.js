@@ -33,27 +33,6 @@ require([
 	}, _.log.AdminPanel.error);
 });
 
-async function submitLoginForm(event) {
-	const formData = new FormData(event.target.form);
-	const data = {};
-	for (const [ key, value ] of formData.entries()) {
-		data[key] = value;
-	}
-	const res = await fetch("/api/auth/login", {
-		method: "POST"
-		, headers: {
-			"Content-Type": "application/json"
-		}
-		, body: JSON.stringify(data)
-	});
-	if (!res.ok) {
-		_.log.submitLoginForm.info("Request Status: %s - Login failed!", res.statusText);
-		return;
-	}
-	const reply = await res.json();
-	onConnected(reply.user);
-};
-
 function onConnected(accountInfo) {
 	_.log.submitLoginForm.info("Connected", accountInfo);
 
@@ -83,11 +62,39 @@ function onConnected(accountInfo) {
 	}, _.log.getUsers.error);
 }
 
-function showMenu(event) {
+async function submitLoginForm(event) {
+	const formData = new FormData(event.target.form);
+	const data = {};
+	for (const [ key, value ] of formData.entries()) {
+		data[key] = value;
+	}
+	const res = await fetch("/api/auth/login", {
+		method: "POST"
+		, headers: {
+			"Content-Type": "application/json"
+		}
+		, body: JSON.stringify(data)
+	});
+	if (!res.ok) {
+		_.log.submitLoginForm.info("Request Status: %s - Login failed!", res.statusText);
+		return;
+	}
+	const reply = await res.json();
+	onConnected(reply.user);
+};
+
+async function showMenu(event) {
 	const targetId = event.target.id;
 	const menuElm = document.getElementById(targetId + "-contextmenu");
 	menuElm.style.display = "block";
 	const offsets = event.target.getBoundingClientRect();
 	menuElm.style.left = offsets.left + "px";
 	menuElm.style.top = offsets.bottom + "px";
+	// asyncDelay is to allow document to process current click event.
+	await _.asyncDelay(1);
+	const hideMenu = (e) => {
+		menuElm.style.display = "none";
+		//document.removeEventListener("click", hideMenu);
+	};
+	document.addEventListener("click", hideMenu, { once: true });
 }

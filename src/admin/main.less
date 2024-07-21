@@ -51,14 +51,23 @@ body {
 	--color-element-poison: @tealB;
 }
 
+@topMenuHeight: 32px;
+
 #top-menu {
 	display: none;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: @topMenuHeight;
+	background-color: @black;
+	border: 2px solid @blueD;
 	button {
 		background-color: @blueC;
 		border: none;
 		outline: none;
 		cursor: pointer;
-		padding: 8px 16px;
+		padding: 6px 16px;
 		transition: 0.3s;
 		font-size: 17px;
 	}
@@ -281,6 +290,8 @@ div.textbox {
 
 #ui-container {
 	display: none;
+	position: fixed;
+	top: @topMenuHeight + 5px;
 	.modal {
 		position: absolute;
 		.btnClose {
