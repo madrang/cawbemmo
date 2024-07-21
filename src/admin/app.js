@@ -20,9 +20,75 @@ require.config({
 
 require([
 	"helpers"
+	, "html!templates/userlist"
 ], function (
 	glExport
+	, userlistTpl
 ) {
+
+	const buildUserList = async () => {
+		const res = await fetch("/api/rest/users");
+		if (!res.ok) {
+			_.log.getUsers.error("Request failed! Status:", res.statusText);
+			return;
+		}
+		const users = await res.json();
+		const container = document.getElementById("ui-container");
+		const uiElm = document.createElement("div");
+		uiElm.innerHTML = userlistTpl;
+		const userTpl = uiElm.getElementsByClassName("user")[0];
+		for (const user of users) {
+			_.log.getUsers.debug("Adding user", user);
+			const userElm = userTpl.cloneNode(true);
+			userElm.innerHTML = userElm.innerHTML
+				.replaceAll("{{username}}", user.username)
+				.replaceAll("{{level}}", user.level)
+				.replaceAll("{{characters}}", JSON.stringify(user.characters));
+			userTpl.parentNode.appendChild(userElm);
+		}
+		userTpl.remove();
+		container.appendChild(uiElm);
+	};
+
+	const onConnected = (accountInfo) => {
+		_.log.submitLoginForm.info("Connected", accountInfo);
+
+		const loginElm = document.getElementById("login");
+		loginElm.style.display = "none";
+
+		const userMenu = document.getElementById("user-menu");
+		userMenu.innerText = accountInfo.username;
+
+		for (const elmName of [ "top-menu", "ui-container" ]) {
+			const elm = document.getElementById(elmName);
+			elm.style.display = "block";
+		}
+
+		buildUserList().catch(_.log.buildUserList.error);
+	};
+
+	window.submitLoginForm = async (event) => {
+		const formData = new FormData(event.target.form);
+		const data = {};
+		for (const [ key, value ] of formData.entries()) {
+			data[key] = value;
+		}
+		const res = await fetch("/api/auth/login", {
+			method: "POST"
+			, headers: {
+				"Content-Type": "application/json"
+			}
+			, body: JSON.stringify(data)
+		});
+		if (!res.ok) {
+			_.log.submitLoginForm.info("Request Status: %s - Login failed!", res.statusText);
+			return;
+		}
+		const reply = await res.json();
+		onConnected(reply.user);
+	};
+
+	// Check if user is currently authentified.
 	fetch("/api/auth/self").then(async (res) => {
 		if (res.status === 200) {
 			return onConnected(await res.json());
@@ -32,56 +98,6 @@ require([
 		loginElm.style.display = "flex";
 	}, _.log.AdminPanel.error);
 });
-
-function onConnected(accountInfo) {
-	_.log.submitLoginForm.info("Connected", accountInfo);
-
-	const loginElm = document.getElementById("login");
-	loginElm.style.display = "none";
-
-	const userMenu = document.getElementById("user-menu");
-	userMenu.innerText = accountInfo.username;
-
-	for (const elmName of [ "top-menu", "ui-container" ]) {
-		const elm = document.getElementById(elmName);
-		elm.style.display = "block";
-	}
-
-	fetch("/api/rest/users").then(async (res) => {
-		if (!res.ok) {
-			_.log.getUsers.info("Request failed! Status:", res.statusText);
-			return;
-		}
-		const users = await res.json();
-		const container = document.getElementById("ui-container");
-		for (const user of users) {
-			const userElm = document.createElement("div");
-			userElm.appendChild(document.createTextNode(JSON.stringify(user)));
-			container.appendChild(userElm);
-		}
-	}, _.log.getUsers.error);
-}
-
-async function submitLoginForm(event) {
-	const formData = new FormData(event.target.form);
-	const data = {};
-	for (const [ key, value ] of formData.entries()) {
-		data[key] = value;
-	}
-	const res = await fetch("/api/auth/login", {
-		method: "POST"
-		, headers: {
-			"Content-Type": "application/json"
-		}
-		, body: JSON.stringify(data)
-	});
-	if (!res.ok) {
-		_.log.submitLoginForm.info("Request Status: %s - Login failed!", res.statusText);
-		return;
-	}
-	const reply = await res.json();
-	onConnected(reply.user);
-};
 
 async function showMenu(event) {
 	const targetId = event.target.id;
@@ -94,7 +110,6 @@ async function showMenu(event) {
 	await _.asyncDelay(1);
 	const hideMenu = (e) => {
 		menuElm.style.display = "none";
-		//document.removeEventListener("click", hideMenu);
 	};
 	document.addEventListener("click", hideMenu, { once: true });
 }
