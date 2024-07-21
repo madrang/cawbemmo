@@ -101,6 +101,7 @@ const createRouter = (options) => {
 						, ...accountInfo
 					}
 					, jwt: token
+					, expiresIn: maxAge
 				});
 			}
 		} catch (err) {
