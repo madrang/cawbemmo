@@ -129,6 +129,10 @@ module.exports = {
 		) {
 			return this.savePlayersUnloadZone(thread, callback);
 		}
+		if (threadStatus.playerCount === 1) {
+			// Removing last player, flag inactive to be rechecked later.
+			thread.inactive = Date.now();
+		}
 		await new Promise((res) => {
 			sendMessageToThread({
 				threadId: obj.zoneId
