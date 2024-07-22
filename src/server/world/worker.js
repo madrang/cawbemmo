@@ -7,9 +7,10 @@ global.eventManager = require("../events/events");
 global.clientConfig = require("../config/clientConfig");
 global.rezoneManager = require("./rezoneManager");
 
-const mapName = process.argv[2];
+const workerConfig = JSON.parse(process.argv[2]);
+
 // Configure logger base name.
-_.log = _.log.worker[`Map/${mapName}`];
+_.log = _.log.worker[`Map/${workerConfig.name}`];
 
 //Imports
 const components = require("../components/components");
@@ -29,7 +30,7 @@ const profanities = require("../language/profanities");
 const eventEmitter = require("../misc/events");
 
 //Worker
-instancer.mapName = mapName;
+instancer.mapName = workerConfig.name;
 
 const onCpnsReady = async function () {
 	factions.init();
@@ -68,7 +69,7 @@ const onCrash = async (e) => {
 		, value: e.toString() + " | " + e.stack.toString()
 	});
 	process.send({ event: "onCrashed"
-		, name: mapName
+		, name: workerConfig.name
 	});
 };
 

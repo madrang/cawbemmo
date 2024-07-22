@@ -1,3 +1,18 @@
+/*
+	This module contains an array of all threads. Each thread looks like this:
+
+	{
+		id: 'The equals the map name unless the map is instanced, in which case it will be a GUID. Mods can override this',
+		name: 'The name of the map',
+		instanced: 'Boolean value indicating whether the thread is instanced or not',
+		path: 'The path to the map file',
+		worker: 'The actual thread that has been spawned',
+		isReady: 'Boolean value that turns from false to true as soon as the thread is ready to accept players',
+		promise: 'Used by the getThread method to wait for the thread to be ready, so it can be sent to the atlas',
+		cbOnInitialized: 'The promise resolver',
+		inactive: 'An epoch of when the thread became empty, or null if not empty',
+	}
+*/
 const childProcess = require("child_process");
 const objects = require("../objects/objects");
 const { getMapList, getDefaultMap } = require("./mapManager");
@@ -167,7 +182,8 @@ const onMessage = (thread, message) => {
 	}
 };
 
-const spawnThread = ({ name, path, instanced }) => {
+const spawnThread = (mapConfig) => {
+	const { name, path, instanced } = mapConfig;
 	const thread = {
 		id: instanced ? _.getGuid() : name
 		, name
@@ -178,7 +194,10 @@ const spawnThread = ({ name, path, instanced }) => {
 	thread.promise = new Promise((resolve) => {
 		thread.cbOnInitialized = resolve;
 	});
-	thread.worker = childProcess.fork("./world/worker", [name]);
+	const workerArgs = {
+		...mapConfig
+	};
+	thread.worker = childProcess.fork("./world/worker", [JSON.stringify(workerArgs)]);
 	thread.worker.on("message", onMessage.bind(null, thread));
 	threads.push(thread);
 	return thread;
