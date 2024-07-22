@@ -75,7 +75,7 @@ const init = async () => {
 	}
 
 	app.use(cookieParser());
-	app.use(express.json());
+	app.use(express.json({ limit: "50mb" }));
 
 	app.post("/log", (req, res) => {
 		if (Array.isArray(req.body)) {
