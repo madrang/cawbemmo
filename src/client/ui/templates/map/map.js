@@ -92,8 +92,8 @@ define([
 				// Draw player again on top of other objects.
 				this.drawMapItem(ctx, window.player);
 			}
-		// 250ms - 4FPS
-		}, 250, true, true)
+		// 1000ms - 1 FPS
+		}, 1000, true, true)
 
 		, getItemType: function(obj) {
 			if (obj.isVisible && obj.sprite) {
