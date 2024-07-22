@@ -175,7 +175,9 @@ define([
 					, gamepad.axes.length
 				);
 			}
-			setInterval(this.updateGamepads.bind(this), GAMEPAD_UPDATE_DELAY);
+			if (typeof navigator.getGamepads === "function") {
+				setInterval(this.updateGamepads.bind(this), GAMEPAD_UPDATE_DELAY);
+			}
 		}
 
 		, isUIVisible: function(timestamp) {
