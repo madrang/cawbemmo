@@ -108,6 +108,7 @@ define([
 			viewCtx.translate(viewportCanvas.width / 2, viewportCanvas.height / 2);
 			viewCtx.scale(this.mapScale, this.mapScale);
 			viewCtx.translate(-player.x, -player.y);
+			viewCtx.imageSmoothingEnabled = false;
 			viewCtx.drawImage(this.mapCanvas, 0, 0);
 		// 250ms - 4 FPS
 		}, 250, true, true)
