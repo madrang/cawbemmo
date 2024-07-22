@@ -159,12 +159,22 @@
 	};
 
 	const PromiseSource = function () {
-		const srcPromise = new Promise((resolve, reject) => {
+		let srcPromise;
+		if (typeof Promise.withResolvers === "function") {
+			const { promise, resolve, reject } = Promise.withResolvers();
+			srcPromise = promise;
 			Object.defineProperties(this, {
 				resolve: { value: resolve, writable: false }
 				, reject: { value: reject, writable: false }
 			});
-		});
+		} else {
+			srcPromise = new Promise((resolve, reject) => {
+				Object.defineProperties(this, {
+					resolve: { value: resolve, writable: false }
+					, reject: { value: reject, writable: false }
+				});
+			});
+		}
 		Object.defineProperties(this, {
 			promise: {
 				value: makeQuerablePromise(srcPromise)
