@@ -119,7 +119,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 };
 
 module.exports = gExports.CONSTANTS(gExports, {
-	parseAcceptLanguage: function (languageHeaderValue, options = {}) {
+	parseAcceptLanguage: (languageHeaderValue, options = {}) => {
 	if (!languageHeaderValue) {
 		return [];
 	}
@@ -144,7 +144,20 @@ module.exports = gExports.CONSTANTS(gExports, {
 			}
 		});
 	}
-	, safeRequire: function (moduleContext, path, logger) {
+	, requireAll: async (moduleContext, moduleDefinitions, callback, logger) => {
+		const loadedConfigurationsComponents = {};
+		for (const compName in moduleDefinitions) {
+			const path = moduleDefinitions[compName];
+			(logger || _.log.NodeJS).debug("Loading %s", compName);
+			const component = moduleContext.require(path);
+			if (callback) {
+				await callback(component);
+			}
+			loadedConfigurationsComponents[compName] = component;
+		}
+		return loadedConfigurationsComponents;
+	}
+	, safeRequire: (moduleContext, path, logger) => {
 		try {
 			return moduleContext.require(path);
 		} catch (e) {
