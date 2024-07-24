@@ -19,9 +19,10 @@ const API_ROUTES = {
 }
 
 const {
-	port = 4000,
-	startupMessage = "Server: Ready",
-	nodeEnv
+	port = 4000
+	, startupMessage = "Server: Ready"
+	, nodeEnv = "production"
+	, realmName = "main"
 } = require("../config/serverConfig");
 
 const IS_PROD = nodeEnv === "production";
@@ -74,7 +75,7 @@ const init = async () => {
 	}
 
 	app.use(cookieParser());
-	app.use(express.json());
+	app.use(express.json({ limit: "50mb" }));
 
 	app.post("/log", (req, res) => {
 		if (Array.isArray(req.body)) {
@@ -132,6 +133,7 @@ const init = async () => {
 	app.get(/^(.*)$/, appFile);
 
 	socketServer.on("connection", onConnection);
+	_.log.Server.info(`Starting server with 'NODE_ENV=${nodeEnv} REALM=${realmName} SRV_PORT=${port}'`);
 	await new Promise((resolve) => server.listen(port, resolve));
 	_.log.Server.info(startupMessage);
 };

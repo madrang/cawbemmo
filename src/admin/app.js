@@ -44,9 +44,9 @@ require([
 			return;
 		}
 		const users = await res.json();
-		const container = document.getElementById("ui-container");
-		const uiElm = document.createElement("div");
+		let uiElm = document.createElement("div");
 		uiElm.innerHTML = userlistTpl;
+		uiElm = uiElm.querySelector("#user-list");
 		const userTpl = uiElm.getElementsByClassName("user")[0];
 		for (const user of users) {
 			_.log.getUsers.debug("Adding user", user);
@@ -58,6 +58,7 @@ require([
 			userTpl.parentNode.appendChild(userElm);
 		}
 		userTpl.remove();
+		const container = document.getElementById("ui-container");
 		container.appendChild(uiElm);
 	};
 
