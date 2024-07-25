@@ -7,6 +7,7 @@ process.on("warning", (e) => {
 const server = require("./server/index");
 const mods = require("./misc/mods");
 const fixes = require("./fixes/fixes");
+const { close: closeThreadManager } = require("./world/threadManager");
 
 const COMPONENTS_CONFIGURATIONS_PATHS = {
 	routerConfig: "./security/routerConfig"
@@ -51,6 +52,18 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 
 	await clientConfig.init();
 	await server.init();
+	let closing = false;
+	const onClose = async () => {
+		if (closing) {
+			return;
+		}
+		closing = true;
+		await server.close(server);
+		await closeThreadManager();
+		process.exit();
+	};
+	process.on("SIGINT", onClose);
+	process.on("SIGTERM", onClose);
 
 	await leaderboard.init();
 })().catch(

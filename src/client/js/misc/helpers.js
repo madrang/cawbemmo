@@ -184,7 +184,12 @@ define([
 	};
 
 	window.addEventListener("unhandledrejection", (event) => {
-		bufferedLogEvents.push([ EventLevels.ERROR, "Unhandled promise rejection.", String(event.reason.stack) ]);
+		const stackString = String(event.reason.stack);
+		if (stackString.includes("TypeError: Failed to fetch")) {
+			// When connexion is lost, dont keep those errors.
+			return;
+		}
+		bufferedLogEvents.push([ EventLevels.ERROR, "Unhandled promise rejection.", stackString ]);
 		processLogBuffer();
 	});
 

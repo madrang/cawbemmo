@@ -33,10 +33,10 @@ const getThreadStatus = (thread) => new Promise(
 );
 
 const killThread = (thread) => {
-	_.log.threadManager.debug("Unloading empty zone (Map/%s).", thread.name || thread.id);
 	thread.worker.kill();
 	threads.spliceWhere((t) => t === thread);
 };
+
 const tryFreeUnusedThread = async (thread) => {
 	const threadStatus = await getThreadStatus(thread);
 	const wasInactive = thread.has("inactive");
@@ -44,6 +44,7 @@ const tryFreeUnusedThread = async (thread) => {
 		if (threadStatus.ttl <= 0
 			|| (wasInactive && Date.now() - thread.inactive > threadStatus.ttl * 1000)
 		) {
+			_.log.threadManager.debug("Unloading empty zone (Map/%s).", thread.name || thread.id);
 			killThread(thread);
 			return true;
 		} else if (!wasInactive) {
@@ -268,6 +269,9 @@ module.exports = {
 
 	, returnWhenThreadsIdle: async () => {
 		return new Promise((res) => {
+			if (!threads.length) {
+				return res();
+			}
 			let doneCount = 0;
 			const onZoneIdle = (thread) => {
 				doneCount++;
@@ -285,4 +289,22 @@ module.exports = {
 	}
 
 	, getThreadStatus
+
+	, close: async (timeout = 30) => {
+		const timeoutTime = Date.now() + (timeout * 1000);
+		while (threads.length && timeoutTime < Date.now()) {
+			const statusList = await Promise.all(threads.map((t) => getThreadStatus(t)));
+			for (let i = statusList.length - 1; i >= 0; --i) {
+				if (statusList[i].playerCount === 0) {
+					killThread(threads[i]);
+				}
+			}
+			if (threads.length) {
+				await _.asyncDelay(250);
+			}
+		}
+		for (let i = threads.length - 1; i >= 0; --i) {
+			killThread(threads[i]);
+		}
+	}
 };

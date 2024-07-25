@@ -71,6 +71,34 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	rezoneManager.init();
 	await clientConfig.init();
 
+	let closing = false;
+	const onClose = async () => {
+		if (closing) {
+			return;
+		}
+		closing = true;
+		_.log.debug("Received SIGTERM, saving before disconnect...");
+		const instances = instancer.instances;
+		for (let i = instances.length - 1; i >= 0; --i) {
+			const objects = instances[i].objects.objects;
+			const oLen = objects.length;
+			for (let j = 0; j < oLen; j++) {
+				const object = objects[j];
+				if (object?.auth?.doSave) {
+					_.log.debug("Saving", object.name);
+					await object.auth.doSave();
+				}
+			}
+		}
+		if (process.connected) {
+			process.disconnect();
+		}
+		_.log.debug("Disconnedted, closing thread.");
+		process.exit();
+	};
+	process.on("SIGINT", onClose);
+	process.on("SIGTERM", onClose);
+
 	// Start listening to messages.
 	process.on("message", (m) => {
 		if (m.module) {
@@ -79,28 +107,24 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 			for (let i = 0; i < iLen; i++) {
 				const objects = instances[i].objects.objects;
 				const oLen = objects.length;
-				let found = false;
 				for (let j = 0; j < oLen; j++) {
 					const object = objects[j];
-
 					if (object.name === m.args[0]) {
 						const mod = object.instance[m.module];
-						mod[m.method].apply(mod, m.args);
-
-						found = true;
-						break;
+						return mod[m.method].apply(mod, m.args);
 					}
 				}
-				if (found) {
-					break;
-				}
 			}
-		} else if (m.threadModule) {
-			global[m.threadModule][m.method](m.data);
-		} else if (m.method) {
-			instancer[m.method](m.args);
-		} else if (m.event) {
-			eventEmitter.emit(m.event, m.data);
+			return;
+		}
+		if (m.threadModule) {
+			return global[m.threadModule][m.method](m.data);
+		}
+		if (m.method) {
+			return instancer[m.method](m.args);
+		}
+		if (m.event) {
+			return eventEmitter.emit(m.event, m.data);
 		}
 	});
 	// Notify parent that worker is ready.
