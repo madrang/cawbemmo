@@ -58,6 +58,12 @@ require([
 			userTpl.parentNode.appendChild(userElm);
 		}
 		userTpl.remove();
+
+		if (uiElm.classList.contains("modal")) {
+			buildClose(uiElm);
+			makeElementDraggable(uiElm);
+		}
+
 		const container = document.getElementById("ui-container");
 		container.appendChild(uiElm);
 	};
@@ -111,17 +117,89 @@ require([
 	}, _.log.AdminPanel.error);
 });
 
+function buildClose (uiElm) {
+	const heading = uiElm.querySelector(".heading");
+	if (!heading) {
+		return;
+	}
+	const btnClose = document.createElement("div");
+	btnClose.classList.add("btn", "btnClose");
+	btnClose.innerText = "X";
+	heading.appendChild(btnClose);
+	btnClose.addEventListener("click", toggleUiElement.bind(btnClose, uiElm));
+}
+
+function makeElementDraggable (elmnt) {
+	if (!elmnt) {
+		throw new Error("Element is undefined.");
+	}
+	let lastX = 0, lastY = 0;
+	const elementDrag = function (e) {
+		e.preventDefault();
+		// calculate the new cursor position:
+		const deltaX = lastX - e.clientX;
+		const deltaY = lastY - e.clientY;
+		lastX = e.clientX;
+		lastY = e.clientY;
+		// set the element's new position:
+		elmnt.style.left = `${elmnt.offsetLeft - deltaX}px`;
+		elmnt.style.top = `${elmnt.offsetTop - deltaY}px`;
+	};
+	const closeDragElement = function () {
+		// stop moving when mouse button is released:
+		document.removeEventListener("mouseup", closeDragElement);
+		document.removeEventListener("mousemove", elementDrag);
+	};
+	const dragMouseDown = function (e) {
+		e.preventDefault();
+		// get the mouse cursor position at startup:
+		lastX = e.clientX;
+		lastY = e.clientY;
+		document.addEventListener("mouseup", closeDragElement);
+		// call a function whenever the cursor moves:
+		document.addEventListener("mousemove", elementDrag);
+	};
+	let header;
+	if (elmnt.id) {
+		header = document.getElementById(elmnt.id + "header");
+	}
+	if (!header) {
+		header = elmnt.querySelector(".heading");
+	}
+	if (header) {
+		// if present, the header is where you move the DIV from:
+		header.addEventListener("mousedown", dragMouseDown);
+	} else {
+		// otherwise, move the DIV from anywhere inside the DIV:
+		elmnt.addEventListener("mousedown", dragMouseDown);
+	}
+}
+
 async function showMenu(event) {
-	const targetId = event.target.id;
+	const target = event.target;
+	const targetId = target.id;
 	const menuElm = document.getElementById(targetId + "-contextmenu");
 	menuElm.style.display = "block";
-	const offsets = event.target.getBoundingClientRect();
+	const offsets = target.getBoundingClientRect();
 	menuElm.style.left = offsets.left + "px";
 	menuElm.style.top = offsets.bottom + "px";
 	// asyncDelay is to allow document to process current click event.
 	await _.asyncDelay(1);
 	const hideMenu = (e) => {
+		if (e.target === target) {
+			document.addEventListener("click", hideMenu, { once: true });
+			return;
+		}
 		menuElm.style.display = "none";
 	};
 	document.addEventListener("click", hideMenu, { once: true });
+}
+
+function toggleUiElement(uiElm) {
+	if (uiElm.style.display === "none") {
+		uiElm.style.display = "block";
+		//events.emit("onToggleUi", uiElm);
+		return;
+	}
+	uiElm.style.display = "none";
 }

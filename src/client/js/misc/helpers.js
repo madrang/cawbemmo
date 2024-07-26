@@ -53,13 +53,24 @@ define([
 		}
 	};
 
+	function replaceErrors(key, value) {
+		if (value instanceof Error) {
+			// Replace property getters by their values.
+			const error = {};
+			for (const propName of Object.getOwnPropertyNames(value)) {
+				error[propName] = value[propName];
+			}
+			return error;
+		}
+		return value;
+	}
 	const sendLogBuffer = async function (logData) {
 		const response = await fetch("/log", {
 			method: "POST"
 			, headers: {
 				"Content-Type": "application/json"
 			}
-			, body: JSON.stringify(logData)
+			, body: JSON.stringify(logData, replaceErrors)
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP${response.status}:${response.statusText}`);
@@ -86,7 +97,7 @@ define([
 		} catch (err) {
 			console.error(err);
 		}
-	}
+	};
 
 	const printCss = function(cssStyle) {
 		if (typeof cssStyle === "undefined") {
