@@ -36,7 +36,7 @@ module.exports = {
 			}]
 			, options: {
 				1.1: {
-					msg: "Ville"
+					msg: "La cabanne"
 					, goto: "teleportCabanne"
 				}
 
