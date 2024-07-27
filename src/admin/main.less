@@ -7,6 +7,8 @@
 
 body {
 	background-color: @black;
+	min-width: 90vw;
+	min-height: 90vh;
 }
 
 * {
@@ -80,13 +82,13 @@ body {
 		background-color: @blueA;
 	}
 }
-#user-menu {
+#profile-menu {
 	float: right;
 }
 
 .contextmenu {
 	display: none;
-	position: absolute;
+	position: fixed;
 	padding: 5px;
 	z-index: 999999;
 	border: 5px solid @blueD;
@@ -312,7 +314,10 @@ div.textbox {
 				margin: 10px 10px 5px 10px;
 			}
 		}
-
+		.error.item {
+			height: 300px;
+			border: 2px solid @black;
+		}
 		.item {
 			height: 30px;
 			display: flex;
@@ -422,6 +427,9 @@ div.textbox {
 		top: 50%;
 		transform: translate(-50%, -50%);
 		text-align: center;
+		max-width: 90vw;
+		max-height: 90vh;
+		overflow: scroll;
 
 		> .heading {
 			width: 100%;

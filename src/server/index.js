@@ -40,7 +40,7 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 		await io.setAsync({
 			key: new Date()
 			, table: "error"
-			, value: e.toString() + " | " + e.stack.toString()
+			, value: e.stack?.toString() || e.toString()
 		});
 		process.exit();
 	};
