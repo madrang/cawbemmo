@@ -47,7 +47,12 @@ const onNewLogEvent = function(req, entry) {
 		return;
 	}
 	const logLevel = entry.shift();
-	_.log.UserLog[req.ip].print(logLevel, entry);
+	let userLogger = _.log.UserLog[req.ip];
+	if (typeof entry[0] === "string" && entry[0].length > 4 && entry[0].startsWith("<{") && entry[0].endsWith("}>")) {
+		let loggerName = entry.shift();
+		userLogger = userLogger[loggerName.slice(2, -2)];
+	}
+	userLogger.print(logLevel, entry);
 }
 
 const loadRoute = function(rName, options, loadedAPIs) {

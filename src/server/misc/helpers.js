@@ -40,22 +40,17 @@ const getColor = function (level) {
 	}
 };
 
-const applyLogFn = function (thisLogger, logLevel, logFn, args) {
-	if (typeof logFn === "string") {
-		const fnName = logFn;
-		logFn = console[fnName];
-	}
-	if (typeof logFn !== "function") {
-		throw new Error("logFn is not a function.");
+const prepArgs = function (thisLogger, logLevel, args, useColors) {
+	if (useColors === undefined) {
+		useColors = process.env.COLOR && process.env.COLOR !== "false";
 	}
 	let msgIdx;
 	const msgParts = [];
 	const color = getColor(logLevel);
-	//args = _mapArgsToString(...args);
 	if (typeof args[0] === "string") { //Starts with string message
 		const msg = args.shift();
 		if (typeof thisLogger?.name !== "undefined" && thisLogger.name !== "System") {
-			if (process.env.COLOR && process.env.COLOR !== "false") {
+			if (useColors) {
 				msgParts.push(color);
 				msgParts.push(`\x1b[1m${thisLogger.name} -->\x1b[0m `);
 			} else {
@@ -68,7 +63,7 @@ const applyLogFn = function (thisLogger, logLevel, logFn, args) {
 		// Begins with an object
 		// Add missing start messge
 		if (typeof thisLogger?.name !== "undefined" && thisLogger.name !== "System") {
-			if (process.env.COLOR && process.env.COLOR !== "false") {
+			if (useColors) {
 				msgParts.push(color);
 				msgParts.push(`\x1b[1m${thisLogger.name}-->\x1b[0m %o`);
 			} else {
@@ -88,7 +83,7 @@ const applyLogFn = function (thisLogger, logLevel, logFn, args) {
 		}
 	}
 	args.unshift(msgParts.join(""));
-	logFn.apply(console, args);
+	return args;
 };
 const consoleFnNames = {
 	error: logging.EventLevels.ERROR
@@ -103,19 +98,21 @@ const printEvent = function (thisLogger, logLevel, args) {
 	for (const n in consoleFnNames) {
 		if (consoleFnNames[n] >= logLevel) {
 			//eslint-disable-next-line no-console
-			applyLogFn(thisLogger, logLevel, console[n], args);
+			console[n].apply(console, prepArgs(thisLogger, logLevel, [ ...args ]));
 			break;
 		}
 		if (n == "debug") { //Last item...
 			//eslint-disable-next-line no-console
-			applyLogFn(thisLogger, logLevel, (args?.length > 0 ? console.debug : console.trace), args);
+			(args?.length > 0 ? console.debug : console.trace).apply(console, prepArgs(thisLogger, logLevel, [ ...args ]));
 		}
 	}
 	if (io.open && logLevel <= logging.EventLevels.MINIMUM) {
+		const stringArgs = logging.mapArgsToString(prepArgs(thisLogger, logLevel, [ ...args ], false));
+		const message = stringArgs.shift();
 		io.setAsync({
 			key: new Date().toISOString()
 			, table: "error"
-			, value: logging.mapArgsToString(args)
+			, value: message.replace(/%[cdso]/g, (c) => stringArgs.shift() || c)
 		});
 	}
 	// Send notifications

@@ -40,13 +40,17 @@ require([
 		return "Owner";
 	};
 	const buildErrorsList = async () => {
+		let uiElm = document.querySelector("#errors-list");
+		if (uiElm) {
+			uiElm.remove();
+		}
 		const res = await fetch("/api/rest/errors");
 		if (!res.ok) {
 			_.log.getErrors.error("Request failed! Status:", res.statusText);
 			return;
 		}
 		const errorsList = await res.json();
-		let uiElm = document.createElement("div");
+		uiElm = document.createElement("div");
 		uiElm.innerHTML = errorslistTpl;
 		uiElm = uiElm.querySelector("#errors-list");
 		const errorTpl = uiElm.querySelector(".error.item");
@@ -63,10 +67,10 @@ require([
 			errElm.addEventListener("click", (evt) => showMenu.call(errElm, evt, "error-item"));
 			errorTpl.parentNode.appendChild(errElm);
 		}
-		errorTpl.remove();
 		if (!errorsList.length) {
 			errorTpl.parentNode.appendChild(document.createTextNode("No errors..."));
 		}
+		errorTpl.remove();
 
 		if (uiElm.classList.contains("modal")) {
 			buildClose(uiElm, true);
@@ -76,13 +80,17 @@ require([
 		container.appendChild(uiElm);
 	};
 	const buildUsersList = async () => {
+		let uiElm = document.querySelector("#users-list");
+		if (uiElm) {
+			uiElm.remove();
+		}
 		const res = await fetch("/api/rest/users");
 		if (!res.ok) {
 			_.log.getUsers.error("Request failed! Status:", res.statusText);
 			return;
 		}
 		const users = await res.json();
-		let uiElm = document.createElement("div");
+		uiElm = document.createElement("div");
 		uiElm.innerHTML = userslistTpl;
 		uiElm = uiElm.querySelector("#users-list");
 		const userTpl = uiElm.getElementsByClassName("user")[0];

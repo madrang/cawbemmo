@@ -163,22 +163,28 @@ const replaceErrors = (key, value) => {
 	}
 	return value;
 };
-const mapArgsToString = (...args) => {
-	return args.map((a) => {
-		const aType = typeof a;
-		if (aType === "undefined") {
-			return "undefined";
-		} else if (aType === "string") {
-			return a;
-		} else if (typeof a.toString === "function" && !(a instanceof Error)) {
-			return a.toString();
-		}
-		try { // Converting circular structure to JSON
-			return JSON.stringify(a, replaceErrors, 4);
-		} catch (ex) {
-			return ex.toString();
-		}
-	});
+
+const valueToString = (a) => {
+	const aType = typeof a;
+	if (aType === "undefined") {
+		return "undefined";
+	} else if (aType === "string") {
+		return a;
+	} else if (typeof a.toString === "function" && !(a instanceof Error)) {
+		return a.toString();
+	}
+	try {
+		return JSON.stringify(a, replaceErrors, 4);
+	} catch (ex) {
+		// Converting circular structure to JSON
+		return ex.toString();
+	}
+};
+const mapArgsToString = (args) => {
+	if (!Array.isArray(args)) {
+		throw new Error("args must be an array.");
+	}
+	return args.map(valueToString);
 };
 
 const countRe = (str, re) => {
@@ -206,6 +212,7 @@ const tmpExport = {
 	, countRe
 	, mapArgsToString
 	, replaceErrors
+	, valueToString
 };
 if (typeof define === "function") {
 	define([], tmpExport);
