@@ -38,7 +38,7 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 		}
 		_.log.error(`Error Logged: ${e.toString()}\r\n`, e.stack);
 		await io.setAsync({
-			key: new Date()
+			key: new Date().toISOString()
 			, table: "error"
 			, value: e.stack?.toString() || e.toString()
 		});

@@ -51,7 +51,7 @@ EventLevels.VERBOSE = EventLevels.STANDARD | EventLevels.DEBUG;
 
 Object.freeze(EventLevels);
 
-const createLogHandler = function(printEvent, printFilter) {
+const createLogHandler = (printEvent, printFilter) => {
 	if (typeof printEvent !== "function") {
 		throw new Error("printEvent is not a function.");
 	}
@@ -152,25 +152,36 @@ proxyHandler.get = function (target, propertyKey) {
 };
 Object.freeze(proxyHandler);
 
-const mapArgsToString = function (...args) {
+const replaceErrors = (key, value) => {
+	if (value instanceof Error) {
+		// Replace property getters by their values.
+		const error = {};
+		for (const propName of Object.getOwnPropertyNames(value)) {
+			error[propName] = value[propName];
+		}
+		return error;
+	}
+	return value;
+};
+const mapArgsToString = (...args) => {
 	return args.map((a) => {
 		const aType = typeof a;
 		if (aType === "undefined") {
 			return "undefined";
 		} else if (aType === "string") {
 			return a;
-		} else if (typeof a.toString === "function") {
+		} else if (typeof a.toString === "function" && !(a instanceof Error)) {
 			return a.toString();
 		}
 		try { // Converting circular structure to JSON
-			return JSON.stringify(a, undefined, 4);
+			return JSON.stringify(a, replaceErrors, 4);
 		} catch (ex) {
 			return ex.toString();
 		}
 	});
 };
 
-const countRe = function (str, re) {
+const countRe = (str, re) => {
 	if (typeof str !== "string") {
 		throw new Error(`str need to be a string but an unexpected type of '${typeof str}' was received.`);
 	}
@@ -194,6 +205,7 @@ const tmpExport = {
 
 	, countRe
 	, mapArgsToString
+	, replaceErrors
 };
 if (typeof define === "function") {
 	define([], tmpExport);

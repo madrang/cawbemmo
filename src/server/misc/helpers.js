@@ -111,6 +111,13 @@ const printEvent = function (thisLogger, logLevel, args) {
 			applyLogFn(thisLogger, logLevel, (args?.length > 0 ? console.debug : console.trace), args);
 		}
 	}
+	if (io.open && logLevel <= logging.EventLevels.MINIMUM) {
+		io.setAsync({
+			key: new Date().toISOString()
+			, table: "error"
+			, value: logging.mapArgsToString(args)
+		});
+	}
 	// Send notifications
 	//if (logLevel === logging.EventLevels.EMERGENCY) {
 	//TODO Send email on emergencies.
