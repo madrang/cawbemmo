@@ -64,6 +64,9 @@ require([
 			errorTpl.parentNode.appendChild(errElm);
 		}
 		errorTpl.remove();
+		if (!errorsList.length) {
+			errorTpl.parentNode.appendChild(document.createTextNode("No errors..."));
+		}
 
 		if (uiElm.classList.contains("modal")) {
 			buildClose(uiElm, true);
@@ -228,8 +231,8 @@ async function showMenu(event, menuId) {
 	menuElm.style.display = "block";
 	const offsets = target.getBoundingClientRect();
 	const parentOffsets = menuElm.parentElement.getBoundingClientRect();
-	menuElm.style.left = menuElm.parentElement.scrollLeft + _.constrain(event.pageX - parentOffsets.left, offsets.left, offsets.right) + "px";
-	menuElm.style.top = menuElm.parentElement.scrollTop + _.constrain(event.pageY - parentOffsets.top, offsets.top, offsets.bottom) + "px";
+	menuElm.style.left = (menuElm.parentElement.scrollLeft + _.constrain(event.pageX, offsets.left, offsets.right) - parentOffsets.left) + "px";
+	menuElm.style.top = (menuElm.parentElement.scrollTop + _.constrain(event.pageY, offsets.top, offsets.bottom) - parentOffsets.top) + "px";
 	let tX = 0, tY = 0;
 	if (event.pageX > parentOffsets.left + (parentOffsets.width / 2)) {
 		tX = -100;
