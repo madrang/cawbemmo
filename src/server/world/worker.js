@@ -51,11 +51,13 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 		if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
 			return;
 		}
-		_.log.fatal(`Error Logged: ${e.toString()}\r\n`, e.stack);
+		const errMsg = `Worker Map/${workerConfig.name} Crashed! ${e}\r\n${e.stack}`;
+		//eslint-disable-next-line no-console
+		console.error(errMsg);
 		await io.setAsync({
 			key: new Date().toISOString()
 			, table: "error"
-			, value: e.stack?.toString() || e.toString()
+			, value: errMsg
 		});
 		process.send({ event: "onCrashed"
 			, name: workerConfig.name
