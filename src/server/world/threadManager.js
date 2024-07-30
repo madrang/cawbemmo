@@ -21,14 +21,15 @@ const { registerCallback } = require("./atlas/registerCallback");
 const threads = [];
 const listenersOnZoneIdle = [];
 
-const getThreadStatus = (thread) => new Promise(
+const getThreadStatus = (thread, details) => new Promise(
 	(res) => {
-		thread.worker.send({
-			method: "getThreadStatus"
-			, args: {
-				callbackId: registerCallback(res)
-			}
-		});
+		const args = {
+			callbackId: registerCallback(res)
+		};
+		if (details) {
+			args.details = details;
+		}
+		thread.worker.send({ method: "getThreadStatus", args });
 	}
 );
 
@@ -205,7 +206,10 @@ const spawnThread = (mapConfig) => {
 };
 
 module.exports = {
-	getThreadsFromName: (name) => {
+	getThreads: () => {
+		return [ ...threads ];
+	}
+	, getThreadsFromName: (name) => {
 		return threads.filter((t) => t.name === name);
 	}
 	, getThreadFromId: (threadId) => {

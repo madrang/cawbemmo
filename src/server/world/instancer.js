@@ -1,3 +1,5 @@
+const v8 = require("node:v8");
+
 const map = require("./map");
 const syncer = require("./syncer");
 const objects = require("../objects/objects");
@@ -368,12 +370,12 @@ module.exports = {
 		if (typeof ttl === "function") {
 			ttl = ttl.apply(map.zoneConfig, this.instances);
 		}
-		this.resolveCallback(msg, {
-			result: {
-				playerCount
-				, ttl
-			}
-		});
+		const result = { playerCount, ttl };
+		if (msg.details) {
+			const heapStatsObj = v8.getHeapStatistics();
+			result.heapStatistics = heapStatsObj;
+		}
+		this.resolveCallback(msg, { result });
 	}
 
 	, resolveCallback: function ({ callbackId }, data) {
