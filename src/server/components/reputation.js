@@ -1,12 +1,11 @@
 //Helpers
-const { getFactionBlueprint } = require("../config/factions/helpers");
+const { getById } = require("../config/factions");
 
 //Component
 module.exports = {
 	type: "reputation"
 
 	, list: []
-
 	, factions: {}
 
 	, init: function (blueprint) {
@@ -14,7 +13,7 @@ module.exports = {
 		delete blueprint.list;
 
 		list.forEach(function (l) {
-			let bpt = getFactionBlueprint(l.id);
+			let bpt = getById(l.id);
 			if (!bpt) {
 				return;
 			}
@@ -53,7 +52,7 @@ module.exports = {
 	}
 
 	, calculateTier: function (factionId) {
-		let blueprint = getFactionBlueprint(factionId);
+		let blueprint = getById(factionId);
 
 		let faction = this.list.find((l) => l.id === factionId);
 		let rep = faction.rep;
@@ -83,7 +82,7 @@ module.exports = {
 
 	, getReputation: function (factionId, gain) {
 		let fullSync = false;
-		let blueprint = getFactionBlueprint(factionId);
+		let blueprint = getById(factionId);
 
 		let faction = this.list.find((l) => l.id === factionId);
 		if (!faction) {
@@ -108,7 +107,7 @@ module.exports = {
 
 		this.obj.social.notifySelf({
 			className: (action === "gained") ? "color-greenB" : "color-redA"
-			, message: "you " + action + " " + Math.abs(gain) + " reputation with " + blueprint.name
+			, message: `you ${action} ${Math.abs(gain)} reputation with ${blueprint.name}`
 			, type: "rep"
 		});
 
@@ -123,7 +122,7 @@ module.exports = {
 	, sendMessage: function (tierName, factionName, didIncrease) {
 		this.obj.social.notifySelf({
 			className: didIncrease ? "color-greenB" : "color-redA"
-			, message: "you are now " + tierName + " with " + factionName
+			, message: `you are now ${tierName} with ${factionName}`
 			, type: "rep"
 		});
 	}
@@ -132,9 +131,7 @@ module.exports = {
 		if (this.list.some((l) => l.id === factionId)) {
 			return;
 		}
-
-		let blueprint = getFactionBlueprint(factionId);
-
+		const blueprint = getById(factionId);
 		if (!blueprint) {
 			return;
 		}
@@ -172,7 +169,7 @@ module.exports = {
 		let sendList = this.list
 			.map(function (l) {
 				let result = {};
-				let blueprint = getFactionBlueprint(l.id);
+				let blueprint = getById(l.id);
 				_.assign(result, l, blueprint);
 
 				return result;
@@ -192,7 +189,7 @@ module.exports = {
 			, tier: l.tier
 		};
 		if (full) {
-			let blueprint = getFactionBlueprint(factionId);
+			let blueprint = getById(factionId);
 			_.assign(faction, l, blueprint);
 		}
 		this.obj.syncer.setArray(true, "reputation", "modifyRep", faction);

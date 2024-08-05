@@ -9,28 +9,21 @@ module.exports = {
 	}
 
 	, update: function () {
-		let objects = this.objects;
-
-		let oList = objects.objects;
-		let oLen = oList.length;
-
-		let pList = oList.filter((f) => f.player && !f.destroyed);
-		let pLen = pList.length;
-
-		if (pLen === 0) {
-			this.updateZoneEmpty(objects, oList, oLen);
-		} else if (pLen > 0) {
-			this.updateZoneNotEmpty(objects, oList, oLen, pList, pLen);
+		const objects = this.objects;
+		const oList = objects.objects;
+		const pList = oList.filter((f) => f.player && !f.destroyed);
+		if (pList.length > 0) {
+			this.updateZoneNotEmpty(objects, oList, pList);
+		} else {
+			this.updateZoneEmpty(objects, oList);
 		}
-
-		oLen = oList.length;
-
-		for (let i = 0; i < oList.length; i++) {
-			oList[i].syncer.reset();
+		for (const obj of objects.objects) {
+			obj.syncer.reset();
 		}
 	}
 
-	, updateZoneEmpty: function (objects, oList, oLen) {
+	, updateZoneEmpty: function (objects, oList) {
+		const oLen = oList.length;
 		for (let i = oLen - 1; i >= 0; --i) {
 			const o = oList[i];
 			if (!o.destroyed) {
@@ -41,8 +34,9 @@ module.exports = {
 		this.sendServerModuleMessages();
 	}
 
-	, updateZoneNotEmpty: function (objects, oList, oLen, pList, pLen) {
+	, updateZoneNotEmpty: function (objects, oList, pList) {
 		const cache = {};
+		const oLen = oList.length;
 		for (let i = oLen - 1; i >= 0; --i) {
 			const o = oList[i];
 			if (!o.syncer) {
@@ -75,6 +69,7 @@ module.exports = {
 			let sendTo = false;
 			let sendComplete = false;
 
+			const pLen = pList.length;
 			for (let j = 0; j < pLen; j++) {
 				let p = pList[j];
 				let px = p.x;
@@ -110,18 +105,16 @@ module.exports = {
 						p.player.unsee(oId);
 					}
 				} else if (!destroyed && canSee) {
-					let cached = null;
 					if (p.id === oId) {
 						let syncO = o.getSimple(true);
 						syncO.self = true;
 						this.queue("onGetObject", syncO, [ p.serverId ]);
 						p.player.see(oId);
 						continue;
-					} else {
-						cached = cache[oId];
-						if (!cached) {
-							cached = cache[oId] = o.getSimple();
-						}
+					}
+					let cached = cache[oId];
+					if (!cached) {
+						cached = cache[oId] = o.getSimple();
 					}
 					completeObj = cached;
 					completeList.push(p.serverId);
@@ -140,7 +133,7 @@ module.exports = {
 	}
 
 	, queue: function (event, obj, to) {
-		//Send to all players in zone?
+		// Send to all players in zone ?
 		if (to === -1) {
 			to = this.objects.objects.filter((o) => o.player).map((p) => p.serverId);
 		}

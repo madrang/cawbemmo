@@ -155,7 +155,7 @@ module.exports = gExports.CONSTANTS(gExports, {
 			(logger || _.log.NodeJS).debug("Loading %s", compName);
 			const component = moduleContext.require(path);
 			if (callback) {
-				await callback(component);
+				await callback(component, compName);
 			}
 			loadedConfigurationsComponents[compName] = component;
 		}

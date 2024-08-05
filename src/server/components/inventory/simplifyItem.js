@@ -1,8 +1,17 @@
 //Helpers
-const { getFactionBlueprint } = require("../../config/factions/helpers");
+const { getById } = require("../../config/factions");
 
 //Internals
-const tierNames = ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted"];
+const tierNames = [
+	"Hated"
+	, "Hostile"
+	, "Unfriendly"
+	, "Neutral"
+	, "Friendly"
+	, "Honored"
+	, "Revered"
+	, "Exalted"
+];
 
 //Method
 const simplifyItem = (cpnInventory, item) => {
@@ -24,7 +33,7 @@ const simplifyItem = (cpnInventory, item) => {
 				id: f.id
 				, tier: f.tier
 				, tierName: tierNames[f.tier]
-				, name: getFactionBlueprint(f.id).name
+				, name: getById(f.id).name
 			};
 
 			return res;

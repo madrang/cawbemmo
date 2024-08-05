@@ -5,7 +5,7 @@ const events = require("../misc/events");
 const generator = require("../items/generator");
 const salvager = require("../items/salvager");
 const classes = require("../config/spirits");
-const factions = require("../config/factions");
+const Factions = require("../config/factions");
 const itemEffects = require("../items/itemEffects");
 
 //Helpers
@@ -383,7 +383,7 @@ module.exports = {
 			if (item.effects) {
 				item.effects.forEach(function (e) {
 					if (e.factionId) {
-						let faction = factions.getFaction(e.factionId);
+						let faction = Factions.getById(e.factionId);
 						let statGenerator = faction.uniqueStat;
 						statGenerator.generate(item);
 						return;
