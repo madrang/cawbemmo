@@ -68,7 +68,16 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	// Load mods
 	await mods.init({ logger: _.log.mods });
 	// and then load the components configurations.
-	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS, (c) => c.init(), _.log.ComponentsConfiguration);
+	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS
+		, (component, componentName) => {
+			//if (componentName == "factions") {
+			//	component = new component();
+			//}
+			component.init();
+			return component;
+		}
+		, _.log.ComponentsConfiguration
+	);
 
 	rezoneManager.init();
 	await clientConfig.init();

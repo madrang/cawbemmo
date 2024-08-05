@@ -1,13 +1,9 @@
 //Helpers
-const { getFactionBlueprint } = require("../../config/factions/helpers");
-
-//Internals
-const tierNames = ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted"];
+const { getById } = require("../../config/factions");
 
 //Method
 const simplifyItem = (cpnInventory, item) => {
 	const result = _.assign({}, item);
-
 	if (result.effects) {
 		result.effects = result.effects.map((e) => ({
 			factionId: e.factionId ?? null
@@ -17,20 +13,22 @@ const simplifyItem = (cpnInventory, item) => {
 			, rolls: e.rolls ?? null
 		}));
 	}
-
 	if (result.factions) {
 		result.factions = result.factions.map((f) => {
-			const res = {
+			const faction = getById(f.id);
+			if (!faction) {
+				_.log.simplifyItem.faction.error("Faction '%s' can't be found!", f.id);
+				return;
+			}
+			const tierDefinition = faction.tiers[f.tier];
+			return {
 				id: f.id
 				, tier: f.tier
-				, tierName: tierNames[f.tier]
-				, name: getFactionBlueprint(f.id).name
+				, tierName: tierDefinition?.name || null
+				, name: faction.name
 			};
-
-			return res;
-		});
+		}).filter((f) => Boolean(f));
 	}
-
 	return result;
 };
 

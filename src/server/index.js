@@ -50,7 +50,16 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	process.on("uncaughtException", onError);
 
 	await mods.init();
-	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS, (c) => c.init(), _.log.ComponentsConfiguration)
+	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS
+		, (component, componentName) => {
+			//if (componentName == "factions") {
+			//	component = new component();
+			//}
+			component.init();
+			return component;
+		}
+		, _.log.ComponentsConfiguration
+	);
 
 	await clientConfig.init();
 	await server.init();
