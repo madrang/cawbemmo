@@ -1,10 +1,10 @@
 //const expect = (await require("chai")).expect;
 //import { expect} from "chai"
 
-const simplifyItem = require("../server/components/inventory/simplifyItem");
-const Faction = require("../server/config/factions");
+const Item = require("../server/components/inventory/item");
+const fileLister = require("../server/misc/fileLister");
 
-describe("Inventory.SimplifyItem", function() {
+describe("items", function() {
 	let expect;
 	before(async () => {
 		expect = (await import("chai")).expect;
@@ -12,26 +12,36 @@ describe("Inventory.SimplifyItem", function() {
 		const logging = require("../common/logging.js");
 		_.log = logging.createLogger({ name: "System", loggerCtor: logging.createLogHandler((thisLogger, logLevel, args) => console.info.apply(console, args), () => true)});
 
-		Faction.init({
-			0: "factions/hostile"
+		Item.init();
+	});
+	it("fromJSON", function() {
+		const item = Item.fromJSON({
+		});
+		expect(item).to.be.a("object");
+		expect(item).to.be.instanceOf(Item);
+		expect(item).to.deep.equal({
+			"factions": []
 		});
 	});
-	it("can convert an item to JSON", function() {
-		const itemObj = {
+	it("toJSON", function() {
+		const item = Item.fromJSON({
 			factions: [{
 				id: 0
 				, tier: 1
 			}]
-		};
-		const simplifiedItem = simplifyItem(null, itemObj);
-		expect(simplifiedItem).to.deep.equal({
+		});
+		expect(item.toJSON()).to.deep.equal({
 			"factions": [
-				{ "id": 0
+					{ "id": 0
 					, "name": "Hostile"
 					, "tier": 1
 					, "tierName": "Hostile"
 				}
 			]
+		});
+	});
+	describe("generators", function() {
+		it("has all requires overrides", function() {
 		});
 	});
 });

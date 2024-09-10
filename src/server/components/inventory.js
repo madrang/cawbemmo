@@ -9,7 +9,6 @@ const Factions = require("../config/factions");
 const itemEffects = require("../items/itemEffects");
 
 //Helpers
-const simplifyItem = require("./inventory/simplifyItem");
 const getItem = require("./inventory/getItem");
 const dropBag = require("./inventory/dropBag");
 const useItem = require("./inventory/useItem");
@@ -109,7 +108,33 @@ module.exports = {
 	}
 
 	, simplifyItem: function (item) {
-		return simplifyItem(this, item);
+		const result = _.assign({}, item);
+		if (result.effects) {
+			result.effects = result.effects.map((e) => ({
+				factionId: e.factionId ?? null
+				, text: e.text ?? null
+				, properties: e.properties ?? null
+				, type: e.type ?? null
+				, rolls: e.rolls ?? null
+			}));
+		}
+		if (result.factions) {
+			result.factions = result.factions.map((f) => {
+				const faction = Factions.getById(f.id);
+				if (!faction) {
+					_.log.simplifyItem.faction.error("Faction '%s' can't be found!", f.id);
+					return;
+				}
+				const tierDefinition = faction.tiers[f.tier];
+				return {
+					id: f.id
+					, tier: f.tier
+					, tierName: tierDefinition?.name || null
+					, name: faction.name
+				};
+			}).filter((f) => Boolean(f));
+		}
+		return result;
 	}
 
 	, update: function () {

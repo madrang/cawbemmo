@@ -39,7 +39,7 @@ const factionBase = {
 };
 module.exports = class Faction {
 	static mappings = {};
-	static cache = {};
+	static #cache = {};
 
 	static async init(mappings) {
 		if (mappings) {
@@ -57,8 +57,8 @@ module.exports = class Faction {
 	}
 
 	static getById(id) {
-		if (id in Faction.cache) {
-			return Faction.cache[id];
+		if (id in Faction.#cache) {
+			return Faction.#cache[id];
 		}
 		let res = null;
 		const mapping = Faction.mappings[id];
@@ -73,7 +73,7 @@ module.exports = class Faction {
 		if (!(res instanceof Faction)) {
 			res = Faction.fromJSON(res);
 		}
-		Faction.cache[id] = res;
+		Faction.#cache[id] = res;
 		return res;
 	}
 

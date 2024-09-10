@@ -145,8 +145,9 @@ module.exports = {
 
 	, removeStat: function (item, stat) {
 		if (!stat) {
-			stat = Object.keys(item.stats).filter((s) => (s !== "armor"));
-			stat = stat[Math.floor(Math.random() * stat.length)];
+			stat = _.randomObj(
+				Object.keys(item.stats).filter((s) => s !== "armor")
+			);
 		}
 		delete item.stats[stat];
 		if (stat === "lvlRequire") {
