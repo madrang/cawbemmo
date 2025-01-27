@@ -1,7 +1,22 @@
 module.exports = {
-	version: "0.1.0"
+	version: "0.1.1"
 	, content: `
 Nouvelle Version du jeu!
+Version 0.1.2
+-Changement: nouveau commerce dans la ville
+-Changement: Carte bois: Intérieur de la cabane
+-Nouveau: Dongeon de la GG
+-Nouveau: NPC ponpon dans la ville
+
+
+Version 0.1.1
+-Nouveau: test coté client en cas de crash
+-Update: Augmentation de la distance de déplacement avec la souris
+-Update: Cow, pigs, goat retiré de la ville
+-Update: Enlevé la mise a jours du gamepad du render
+-Fix: Chauffeur dans la ville teleport vers la cabanne qui s'apelle ville
+-Optimisation: minimap
+
 Version 0.1.0
 -Nouveau: Support manette de base
 -Nouveau: Fermeture des menus avec 'ESCAPE'

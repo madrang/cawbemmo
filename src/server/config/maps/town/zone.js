@@ -475,7 +475,13 @@ module.exports = {
 				}
 			}
 		}
-
+		, ponpon: {
+			attackable: false
+			, level: 10
+			, rare: {
+				count: 0
+			}
+		}
 		, rodriguez: {
 			attackable: false
 			, level: 10
