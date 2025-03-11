@@ -12,6 +12,7 @@
     , "image-size": "^1.0.0"
     , "jsonwebtoken": "^9.0.2"
     , "less-middleware": "^3.1.0"
+    , "less": "^3.9.0"
     , "rethinkdbdash": "^2.3.31"
     , "socket.io": "^4.7.5"
     , "universal-analytics": "^0.5.1"
