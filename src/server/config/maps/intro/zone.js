@@ -37,8 +37,7 @@ module.exports = {
 					, rolls: 1
 				}
 			}
-		},
-		"Banddo": {
+		},"Banddo": {
 			level: 10
 			, walkDistance: 0
 			, attackable: false
@@ -49,7 +48,6 @@ module.exports = {
 
 			}
 		}
-		
 
 	}
 };
