@@ -1170,7 +1170,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"..\/..\/..\/..\/client\/images\/walls.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/walls.png",
          "imageheight":256,
          "imagewidth":128,
          "margin":0,
@@ -1220,7 +1220,7 @@
         {
          "columns":8,
          "firstgid":513,
-         "image":"..\/..\/..\/..\/client\/images\/mobs.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/mobs.png",
          "imageheight":88,
          "imagewidth":64,
          "margin":0,
@@ -1243,7 +1243,7 @@
         {
          "columns":16,
          "firstgid":601,
-         "image":"..\/..\/..\/..\/client\/images\/tiles.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/tiles.png",
          "imageheight":224,
          "imagewidth":128,
          "margin":0,
@@ -1345,7 +1345,7 @@
         {
          "columns":16,
          "firstgid":1049,
-         "image":"..\/..\/..\/..\/client\/images\/objects.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/objects.png",
          "imageheight":176,
          "imagewidth":128,
          "margin":0,
@@ -1363,7 +1363,7 @@
         {
          "columns":8,
          "firstgid":1401,
-         "image":"..\/..\/..\/..\/client\/images\/bigObjects.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/bigObjects.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,
@@ -1376,7 +1376,7 @@
         {
          "columns":8,
          "firstgid":1481,
-         "image":"..\/..\/..\/..\/client\/images\/bosses.png",
+         "image":"..\/..\/..\/..\/..\/..\/..\/cawbemmo\/src\/client\/images\/bosses.png",
          "imageheight":240,
          "imagewidth":192,
          "margin":0,

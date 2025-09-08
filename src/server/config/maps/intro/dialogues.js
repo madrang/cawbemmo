@@ -57,12 +57,64 @@ module.exports = {
 				4.1: {
 					msg: "c\'est pour ca tu fait du pouce ?"
 					, goto: 3
-				}
+				},
 				4.2: {
 					msg: "on es ou?"
 					, goto: 3
 				}
 			}
+		}
+	},
+	chauffeur: {
+		1: {
+			msg: [{
+				msg: "Avez vous votre ticket?",
+				options: [1.1,1.2]
+			}],
+			options: {
+				1.1: {
+					msg: "non"
+					, goto: 2
+				},
+				1.2: {
+					msg: "Le vla mon ticket d'autobus"
+					, prereq: function (obj) {
+						let crystals = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+						return Boolean(crystals);
+					}
+					, goto: "teleportVille"
+				}
+
+			}
+		},
+		2: {
+			msg: [{
+				msg: "ca prend un ticket sinon tu rentre pas dans mon autobus"
+				, options: [2.1]
+			}]
+			, options: {
+				2.1: {
+					msg: "je trouve ca ou?"
+					, goto: 3
+				}
+			}
+		},
+		3: {
+			msg: [{
+				msg: "tu peu en acheté en ville sinon ici yen traine un peu partou"
+				, options: []
+			}]
+			, options: {
+
+			}
+		}
+		, teleportVille: {
+			cpn: "dialogue"
+			, method: "teleport"
+			, args: [{
+				toZone: "town"
+				,toPos: {"x":96,"y":96}
+			}]
 		}
 	}
 };
