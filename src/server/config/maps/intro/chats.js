@@ -1,10 +1,12 @@
 module.exports = {
-	"Banddo": [{
-		msg: "Maudit chauffeur d'autobus"
+	banddo: [{
+		msg: "*leve son pouce*"
 	}, {
-		msg: "*soupir*"
+		msg: "maudit chauffeur d'autobus!"
 	}, {
-		msg: "Pas de char qui passe depuis des heures"
+		msg: "*s'étouffe*"
+	}, {
+		msg: "ya don bin pas de char icitte"
 	}]
 	
 };
