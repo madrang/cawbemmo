@@ -1561,7 +1561,7 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":190,\"y\"8:3}}"
+                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
                         }],
                  "rotation":0,
                  "type":"",
@@ -1615,7 +1615,7 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":190,\"y\"8:3}}"
+                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
                         }],
                  "rotation":0,
                  "type":"",
@@ -1633,7 +1633,7 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":190,\"y\"8:3}}"
+                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
                         }],
                  "rotation":0,
                  "type":"",
@@ -1644,19 +1644,19 @@
                 }, 
                 {
                  "height":0,
-                 "id":1138,
-                 "name":"",
+                 "id":1140,
+                 "name":"|teleportRuelle",
                  "polygon":[
                         {
                          "x":0,
                          "y":0
                         }, 
                         {
-                         "x":72,
+                         "x":-72,
                          "y":0
                         }, 
                         {
-                         "x":72,
+                         "x":-72,
                          "y":8
                         }, 
                         {
@@ -1667,13 +1667,13 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":78,\"y\":3}}"
+                         "value":"{\"zone\":\"town\",\"pos\":{\"x\":78,\"y\":178}}"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":720,
+                 "x":792,
                  "y":720
                 }],
          "opacity":1,
@@ -2836,7 +2836,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1139,
+ "nextobjectid":1141,
  "orientation":"orthogonal",
  "properties":[
         {
