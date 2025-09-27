@@ -1385,42 +1385,6 @@
                  "y":704
                 }, 
                 {
-                 "gid":688,
-                 "height":8,
-                 "id":1075,
-                 "name":"|portalSouth",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":960,
-                 "y":976
-                }, 
-                {
-                 "gid":688,
-                 "height":8,
-                 "id":1076,
-                 "name":"|portalSouth",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":952,
-                 "y":976
-                }, 
-                {
                  "gid":1057,
                  "height":8,
                  "id":1097,
@@ -1499,150 +1463,6 @@
                  "y":720
                 }, 
                 {
-                 "gid":688,
-                 "height":8,
-                 "id":1121,
-                 "name":"|portalSouth",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":968,
-                 "y":976
-                }, 
-                {
-                 "gid":688,
-                 "height":8,
-                 "id":1122,
-                 "name":"|portalSouth",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":976,
-                 "y":976
-                }, 
-                {
-                 "gid":688,
-                 "height":8,
-                 "id":1123,
-                 "name":"|portalSouth",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":944,
-                 "y":976
-                }, 
-                {
-                 "gid":632,
-                 "height":8,
-                 "id":1130,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":80,
-                 "y":784
-                }, 
-                {
-                 "gid":632,
-                 "height":8,
-                 "id":1134,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":190,\"y\":83}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":80,
-                 "y":768
-                }, 
-                {
-                 "gid":632,
-                 "height":8,
-                 "id":1135,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":190,\"y\":83}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":80,
-                 "y":776
-                }, 
-                {
-                 "gid":632,
-                 "height":8,
-                 "id":1136,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":80,
-                 "y":792
-                }, 
-                {
-                 "gid":632,
-                 "height":8,
-                 "id":1137,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"cpnPortal",
-                         "type":"string",
-                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":54,\"y\":3}}"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":80,
-                 "y":800
-                }, 
-                {
                  "height":0,
                  "id":1140,
                  "name":"|teleportRuelle",
@@ -1667,7 +1487,7 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"town\",\"pos\":{\"x\":78,\"y\":178}}"
+                         "value":"{\"zone\":\"ruelle\",\"pos\":{\"x\":78,\"y\":178}}"
                         }],
                  "rotation":0,
                  "type":"",
@@ -1701,7 +1521,7 @@
                         {
                          "name":"cpnPortal",
                          "type":"string",
-                         "value":"{\"zone\":\"town\",\"pos\":{\"x\":24,\"y\":98}}"
+                         "value":"{\"zone\":\"lac\",\"pos\":{\"x\":24,\"y\":98}}"
                         }],
                  "rotation":0,
                  "type":"",
@@ -1709,6 +1529,74 @@
                  "width":0,
                  "x":1552,
                  "y":760
+                }, 
+                {
+                 "height":0,
+                 "id":1142,
+                 "name":"|teleportPatate",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":8,
+                         "y":0
+                        }, 
+                        {
+                         "x":8,
+                         "y":40
+                        }, 
+                        {
+                         "x":0,
+                         "y":40
+                        }],
+                 "properties":[
+                        {
+                         "name":"cpnTeleport",
+                         "type":"string",
+                         "value":"{\"zone\":\"patate\",\"pos\":{\"x\":183,\"y\":83}}"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":80,
+                 "y":760
+                }, 
+                {
+                 "height":0,
+                 "id":1143,
+                 "name":"|teleportBois",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":40,
+                         "y":0
+                        }, 
+                        {
+                         "x":40,
+                         "y":8
+                        }, 
+                        {
+                         "x":0,
+                         "y":8
+                        }],
+                 "properties":[
+                        {
+                         "name":"cpnPortal",
+                         "type":"string",
+                         "value":"{\"zone\":\"bois\",\"pos\":{\"x\":54,\"y\":3}}"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":944,
+                 "y":968
                 }],
          "opacity":1,
          "properties":[
@@ -2870,7 +2758,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1142,
+ "nextobjectid":1144,
  "orientation":"orthogonal",
  "properties":[
         {
