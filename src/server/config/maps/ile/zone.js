@@ -25,7 +25,7 @@ module.exports = {
 			}
 		}
 		, "sbire": {
-			level: 13
+			level: 9
 			, faction: "hostile"
 			, regular: {
 				drops: {
