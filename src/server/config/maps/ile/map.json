@@ -1457,16 +1457,16 @@
                  "y":280
                 }, 
                 {
-                 "gid":683,
+                 "gid":1184,
                  "height":8,
-                 "id":1210,
+                 "id":1213,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":1062,
-                 "y":297.5
+                 "x":552,
+                 "y":216
                 }],
          "opacity":1,
          "properties":[
@@ -2160,7 +2160,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1213,
+ "nextobjectid":1214,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -2171,12 +2171,12 @@
         {
          "name":"name",
          "type":"string",
-         "value":"Test Zone"
+         "value":"l'ile"
         }, 
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":54,\"y\":31}]"
+         "value":"[{\"x\":69,\"y\":27}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.11.0",

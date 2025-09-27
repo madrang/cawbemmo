@@ -1011,6 +1011,18 @@
                  "width":0,
                  "x":1480,
                  "y":648
+                }, 
+                {
+                 "gid":1184,
+                 "height":8,
+                 "id":1216,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":1448,
+                 "y":648
                 }],
          "opacity":1,
          "properties":[
@@ -1988,7 +2000,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1216,
+ "nextobjectid":1217,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -1999,12 +2011,12 @@
         {
          "name":"name",
          "type":"string",
-         "value":"Test Zone"
+         "value":"Le bord de la 132"
         }, 
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":54,\"y\":31}]"
+         "value":"[{\"x\":181,\"y\":81}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.11.0",

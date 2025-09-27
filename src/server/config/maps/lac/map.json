@@ -1045,6 +1045,18 @@
                  "width":0,
                  "x":1360,
                  "y":128
+                }, 
+                {
+                 "gid":1184,
+                 "height":8,
+                 "id":1202,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":192,
+                 "y":720
                 }],
          "opacity":1,
          "properties":[
@@ -2022,7 +2034,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1202,
+ "nextobjectid":1203,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -2033,12 +2045,12 @@
         {
          "name":"name",
          "type":"string",
-         "value":"Test Zone"
+         "value":"Lac"
         }, 
         {
          "name":"spawn",
          "type":"string",
-         "value":"[{\"x\":54,\"y\":31}]"
+         "value":"[{\"x\":26,\"y\":90}]"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.11.0",
