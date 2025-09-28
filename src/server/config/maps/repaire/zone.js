@@ -1,6 +1,6 @@
 module.exports = {
-	name: "Bois"
-	, level: [13, 16]
+	name: "repaire top secret"
+	, level: [9, 10]
 	, resources: {
 		champignon: {
 			type: "herb"
@@ -15,7 +15,7 @@ module.exports = {
 	, objects: {}
 	, mobs: {
 		default: {
-			level: 13
+			level: 10
 			, faction: "hostile"
 			, regular: {
 				drops: {
@@ -24,8 +24,8 @@ module.exports = {
 				}
 			}
 		}
-		, "renard-garous": {
-			level: 13
+		, "vidanges": {
+			level: 10
 			, faction: "hostile"
 			, regular: {
 				drops: {
@@ -33,51 +33,14 @@ module.exports = {
 					, rolls: 1
 				}
 			}
-			, questItem: {
-				name: "Cd de boys band"
-				, sprite: [0, 0]
-			}
 		}
-		, "papillion": {
-			level: 14
+		, "police corompue": {
+			level: 10
 			, faction: "hostile"
 			, regular: {
 				drops: {
 					chance: 55
 					, rolls: 1
-				}
-			}
-			, questItem: {
-				name: "papillion mort"
-				, sprite: [0, 0]
-			}
-		}
-		, wezo: {
-			level: 15
-			, faction: "hostile"
-			, rare: {
-				name: "Boss des wézo"
-				,hpMult: 3
-				, dmgMult: 3
-
-				, drops: {
-					chance: 100
-					, rolls: 2
-					, magicFind: [1300]
-				}
-			}
-			, regular: {
-				drops: {
-					rolls: 6
-					, noRandom: true
-					, alsoRandom: true
-					, blueprints: [{
-						chance: 35
-						, name: "Lettre d'admiratrice"
-						, quality: 5
-						, quest: true
-						, sprite: [0, 4]
-					}]
 				}
 			}
 		}
@@ -91,7 +54,7 @@ module.exports = {
 					, alsoRandom: true
 					, blueprints: [{
 						chance: 3
-						, name: "Eagle Feather"
+						, name: "carte postale de st-jérome"
 						, material: true
 						, sprite: [0, 0]
 						, spritesheet: "images/questItems.png"
@@ -109,15 +72,215 @@ module.exports = {
 					, alsoRandom: true
 					, blueprints: [{
 						chance: 80
-						, name: "Eagle Feather"
+						, name: "carte postale de Laval"
 						, material: true
 						, sprite: [0, 0]
 						, spritesheet: "images/questItems.png"
 					}]
 				}
 			}
+		}, "MR. P": {
+			level: 10
+			, spawnCd: 1714
+
+			, regular: {
+				hpMult: 45
+				, dmgMult: 2
+
+				, drops: {
+					chance: 100
+					, rolls: 5
+					, noRandom: true
+					, alsoRandom: true
+					, magicFind: [2000, 200]
+					, blueprints: [{
+						chance: 100
+						, name: "Recette de binnes"
+						, quality: 0
+						, quest: true
+						, sprite: [1, 0]
+					}]
+				}
+			}
+			, rare: {
+				count: 0
+			}
+
+			, mobile: false
+			, spells: [{
+				type: "projectile"
+				, particles: {
+					scale: {
+						start: {
+							min: 6
+							, max: 18
+						}
+						, end: {
+							min: 2
+							, max: 8
+						}
+					}
+					, color: {
+						start: ["fc66f7", "a24eff"]
+						, end: ["393268", "933159"]
+					}
+					, chance: 0.65
+					, randomScale: true
+					, randomColor: true
+				}
+			}, {
+				type: "smokeBomb"
+				, radius: 1
+				, repeat: 4
+				, duration: 14
+				, randomPos: true
+				, range: 6
+				, selfCast: 0.25
+				, statMult: 1
+				, damage: 0.05
+				, element: "arcane"
+				, cdMax: 8
+				, particles: {
+					scale: {
+						start: {
+							min: 6
+							, max: 18
+						}
+						, end: {
+							min: 4
+							, max: 10
+						}
+					}
+					, opacity: {
+						start: 0.01
+						, end: 0
+					}
+					, lifetime: {
+						min: 1
+						, max: 3
+					}
+					, speed: {
+						start: 2
+						, end: 0
+					}
+					, color: {
+						start: ["ff4252", "d43346"]
+						, end: ["802343", "a82841"]
+					}
+					, chance: 0.125
+					, randomColor: true
+					, randomScale: true
+					, blendMode: "add"
+					, spawnType: "rect"
+					, spawnRect: {
+						x: -10
+						, y: -10
+						, w: 20
+						, h: 20
+					}
+				}
+			}, {
+				type: "summonConsumableFollower"
+			}]
 		}
-		, sundfehr: {
+
+		, "canette": {
+			level: 4
+			, faction: "hostile"
+			, regular: {
+				drops: {
+					rolls: 1
+					, noRandom: true
+					, alsoRandom: true
+					, blueprints: [{
+						chance: 30
+						, name: "Canette vide"
+						, quality: 0
+						, quest: true
+						, sprite: [1, 1]
+					}]
+				}
+			}
+			, rare: {
+				name: "Canette Frette"
+			}
+			, spells: [{
+				type: "melee"
+			}, {
+				type: "smokeBomb"
+				, radius: 0
+				, repeat: 5
+				, duration: 7
+				, randomPos: true
+				, range: 2
+				, selfCast: 0.2
+				, statMult: 1
+				, damage: 0.125
+				, element: "arcane"
+				, cdMax: 5
+				, particles: {
+					lifetime: { min: 1, max: 2 }
+					, behaviors: [
+						{ type: "color"
+							, config: {
+								color: {
+									list: [
+										{ time: 0, value: "a24eff" }
+										, { time: 0.33, value: "fc66f7" }
+										, { time: 0.5, value: "a24eff" }
+										, { time: 0.66, value: "933159" }
+										, { time: 1, value: "393268" }
+									]
+								}
+							}
+						}
+						, { type: "alpha"
+							, config: {
+								alpha: {
+									list: [
+										{ time: 0, value: 0.4 }
+										, { time: 1, value: 0.1 }
+									]
+								}
+							}
+						}
+						, { type: "scale"
+							, config: {
+								scale: {
+									list: [
+										{ time: 0, value: 25 }
+										, { time: 1, value: 10 }
+									]
+								}
+								, minMult: 0.25
+							}
+						}
+						, { type: "blendMode"
+							, config: { blendMode: "add" }
+						}
+						, { type: "moveSpeed",
+							config: {
+								speed: {
+									list: [
+										{ time: 0, value: 3 }
+										, { time: 1, value: 0 }
+									]
+								}
+							}
+						}
+						, { type: "spawnShape"
+							, config: {
+								type: "rect"
+								, data: { x: -10, y: -10, w: 20, h: 20 }
+							}
+						}
+					]
+					, spawnChance: 0.125
+				}
+			}]
+		}
+
+		, majeur: {
 			level: 9
 			, walkDistance: 0
 
