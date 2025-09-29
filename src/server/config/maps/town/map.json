@@ -1553,7 +1553,7 @@
                         }],
                  "properties":[
                         {
-                         "name":"cpnTeleport",
+                         "name":"cpnPortal",
                          "type":"string",
                          "value":"{\"zone\":\"patate\",\"pos\":{\"x\":183,\"y\":83}}"
                         }],
