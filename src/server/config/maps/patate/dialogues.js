@@ -75,6 +75,28 @@ module.exports = {
 
 			}]
 		}
+	}	, raymond: {
+		1: {
+			msg: [{
+				msg: "Bienvenue au snack bar"
+				, options: [1.1]
+			}]
+			, options: {
+				1.1: {
+					msg: "je vais te prendre un..."
+					, goto: "tradeBuy"
+				}
+			}
+
+		}
+		, tradeBuy: {
+			cpn: "trade"
+			, method: "startBuy"
+			, args: [{
+				targetName: "raymond"
+			}]
+		}
+		,
 	}
 	, gislain: {
 		1: {

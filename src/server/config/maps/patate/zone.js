@@ -23,7 +23,7 @@ module.exports = {
 					, rolls: 1
 				}
 			}
-		}
+		},
 		mouette: {
 			level: 2
 			, regular: {
@@ -139,6 +139,5 @@ module.exports = {
 				}
 			}
 		}
-
 	}
 };
