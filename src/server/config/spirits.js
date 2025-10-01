@@ -14,6 +14,10 @@ module.exports = {
 		, lynx: {
 			x: 3
 			, y: 0
+		},
+		necro: {
+			x: 1
+			, y: 0
 		}
 	}
 	, spells: {

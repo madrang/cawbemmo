@@ -22,7 +22,7 @@ const config = {
 	, magicien: {
 		name: "Magicien"
 		, sprite: [3, 0]
-		, defaultSpirit: "owl"
+		, defaultSpirit: "necro"
 		, default: true
 	}
 };
