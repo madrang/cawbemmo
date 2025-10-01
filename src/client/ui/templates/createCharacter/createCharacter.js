@@ -173,7 +173,7 @@ define([
 				owl: "The wise Owl guides you; granting you the focus needed to cast spells. <br /><br />Upon level up, you gain 1 Intellect."
 				, bear: "The towering Bear strenghtens you; lending force to your blows. <br /><br />Upon level up, you gain 1 Strength."
 				, lynx: "The nimble Lynx hastens you; allowing your strikes to land true. <br /><br />Upon level up, you gain 1 Dexterity."
-				, necro: "test d'ajout des necro"
+				//, necro: "test d'ajout des necro"
 			})[this.class];
 
 			events.emit("onShowTooltip", text, el[0], pos, 200);
@@ -187,7 +187,7 @@ define([
 
 		, changeClass: function (e) {
 			let el = $(e.target);
-			let classes = ["owl", "bear", "lynx","necro"];
+			let classes = ["owl", "bear", "lynx" ];
 			let nextIndex = (classes.indexOf(this.class) + 1) % classes.length;
 
 			let newClass = classes[nextIndex];

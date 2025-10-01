@@ -1115,7 +1115,17 @@ module.exports = {
 			"color": 3,
 			"stats": {},
 			"spiritStart": "bear"
-		},
+		},//{
+		//	"id": 107,
+		//	"pos": {
+		//		"x": 74,
+		//		"y": 55
+		//	},
+		//	"size": 0,
+		//	"color": 2,
+		//	"stats": {},
+		//	"spiritStart": "necro"
+		//},
 		{
 			"id": 105,
 			"pos": {
