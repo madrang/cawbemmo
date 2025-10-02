@@ -116,21 +116,21 @@ module.exports = {
 			cpn: "trade"
 			, method: "startBuy"
 			, args: [{
-				targetName: "hermit"
+				targetName: "peter"
 			}]
 		}
 		, tradeSell: {
 			cpn: "trade"
 			, method: "startSell"
 			, args: [{
-				targetName: "hermit"
+				targetName: "peter"
 			}]
 		}
 		, tradeBuyback: {
 			cpn: "trade"
 			, method: "startBuyback"
 			, args: [{
-				targetName: "hermit"
+				targetName: "peter"
 			}]
 		}
 	}, "mr giroux": {
