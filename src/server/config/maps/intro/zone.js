@@ -5,7 +5,7 @@ module.exports = {
     "ticket d\'autobus": {
       type: "herb",
       sheetName: "tiles",
-      cell: 57,
+      cell: 55,
       itemSprite: [2, 0],
       max: 4
     }
