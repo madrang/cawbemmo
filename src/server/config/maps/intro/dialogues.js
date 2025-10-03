@@ -91,7 +91,9 @@ module.exports = {
 				1.2: {
 					msg: "Le vla mon ticket d'autobus"
 					, prereq: function (obj) {
+						let inventory = obj.inventory;
 						let crystals = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+						inventory.destroyItem({ itemId: crystals.id });
 						return Boolean(crystals);
 					}
 					, goto: "teleportVille"
