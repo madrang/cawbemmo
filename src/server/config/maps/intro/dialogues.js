@@ -91,14 +91,11 @@ module.exports = {
 				1.2: {
 					msg: "Le vla mon ticket d'autobus"
 					, prereq: function (obj) {
-						let inventory = obj.inventory;
-						let crystals = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
-						inventory.destroyItem({ itemId: crystals.id });
-						return Boolean(crystals);
+						let tickets = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+						return Boolean(tickets);
 					}
-					, goto: "teleportVille"
+					, goto: "takeTicket"
 				}
-
 			}
 		},
 		2: {
@@ -120,6 +117,19 @@ module.exports = {
 			}]
 			, options: {
 
+			}
+		}, takeTicket: {
+			method: function (obj) {
+				let inventory = obj.inventory;
+				let ticket = inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+				if (!ticket) {
+					return;
+				}
+				inventory.destroyItem({ itemId: ticket.id  }, 1);
+				obj.dialogue.teleport({
+					toZone: "town"
+					,toPos: {"x":96,"y":96}
+				});
 			}
 		}
 		, teleportVille: {
