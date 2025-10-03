@@ -56,9 +56,21 @@ module.exports = {
 			, options: {
 				4.1: {
 					msg: "c\'est pour ca tu fait du pouce ?"
-					, goto: 3
+					, goto: 5
 				},
 				4.2: {
+					msg: "on es ou?"
+					, goto: 3
+				}
+			}
+		},
+		5: {
+			msg: [{
+				msg: "Faire du pouce, c’est mon dernier espoir. Dans le néant, y’a peut-être un camion fantôme, une navette dimensionnelle, ou juste quelqu’un qui comprend mon malaise qui va s’arrêter.",
+				options: [5.1]
+			}],
+			options: {
+				5.1: {
 					msg: "on es ou?"
 					, goto: 3
 				}
