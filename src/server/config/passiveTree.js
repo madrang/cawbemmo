@@ -1103,7 +1103,7 @@ module.exports = {
 			"size": 0,
 			"color": 1,
 			"stats": {},
-			"spiritStart": "owl"
+			"spiritStart": "concierge"
 		},
 		{
 			"id": 104,
@@ -1114,7 +1114,7 @@ module.exports = {
 			"size": 0,
 			"color": 3,
 			"stats": {},
-			"spiritStart": "bear"
+			"spiritStart": "pee wee"
 		},//{
 		//	"id": 107,
 		//	"pos": {
@@ -1135,7 +1135,7 @@ module.exports = {
 			"size": 0,
 			"color": 2,
 			"stats": {},
-			"spiritStart": "lynx"
+			"spiritStart": "party Animal"
 		},
 		{
 			"id": 106,
