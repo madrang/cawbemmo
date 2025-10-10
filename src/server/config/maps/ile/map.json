@@ -1413,6 +1413,18 @@
                  "width":8,
                  "x":1040,
                  "y":280
+                }, 
+                {
+                 "gid":524,
+                 "height":8,
+                 "id":1217,
+                 "name":"chauffeur",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8,
+                 "x":512,
+                 "y":272
                 }],
          "opacity":1,
          "properties":[
@@ -2106,7 +2118,7 @@
          "y":0
         }],
  "nextlayerid":31,
- "nextobjectid":1217,
+ "nextobjectid":1218,
  "orientation":"orthogonal",
  "properties":[
         {
