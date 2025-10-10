@@ -170,7 +170,7 @@ define([
 			};
 
 			let text = ({
-				concierge: "Le consierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />Upon level up, you gain 1 Intellect."
+				"concierge": "Le consierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />Upon level up, you gain 1 Intellect."
 				, "pee wee": "le pee wee commence faible mais devien de plus en plus fort plus la saison avance<br /><br />Upon level up, you gain 1 Strength."
 				, "party animal": "Le party animal n'est pas arrêtable il vas faire le party jusqu'a avoir couché tout le monde <br /><br />Upon level up, you gain 1 Dexterity."
 				//, necro: "test d'ajout des necro"

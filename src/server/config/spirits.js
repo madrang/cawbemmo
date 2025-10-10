@@ -3,7 +3,7 @@ let events = require("../misc/events");
 module.exports = {
 	list: ["concierge", "pee wee", "party animal", "necro"]
 	, portraits: {
-		concierge: {
+		"concierge": {
 			x: 0
 			, y: 0
 		}
@@ -21,13 +21,13 @@ module.exports = {
 		}
 	}
 	, spells: {
-		concierge: ["magic missile", "ice spear"]
+		"concierge": ["magic missile", "ice spear"]
 		, "pee wee": ["slash", "charge"]
 		, "party animal": ["flurry", "smokebomb"]
 		, necro: ["harvest life", "summon skeleton"]
 	}
 	, stats: {
-		concierge: {
+		"concierge": {
 			values: {
 				hpMax: 35
 				, hpPerLevel: 32
@@ -65,7 +65,7 @@ module.exports = {
 		}
 	}
 	, weapons: {
-		concierge: "Gnarled Staff"
+		"concierge": "Gnarled Staff"
 		, "pee wee": "Dagger"
 		, "party animal": "Sword"
 		, necro: "Sickle"
