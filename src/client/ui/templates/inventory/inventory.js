@@ -267,56 +267,56 @@ define([
 		, showContext: function (item, e) {
 			let menuItems = {
 				drop: {
-					text: "drop"
+					text: "échapé"
 					, callback: this.performItemAction.bind(this, item, "dropItem")
 				}
 				, destroy: {
-					text: "destroy"
+					text: "détruire"
 					, callback: this.performItemAction.bind(this, item, "destroyItem")
 				}
 				, salvage: {
-					text: "salvage"
+					text: "défaire"
 					, callback: this.performItemAction.bind(this, item, "salvageItem")
 					, hotkey: "f"
 				}
 				, stash: {
-					text: "stash"
+					text: "caché"
 					, callback: this.performItemAction.bind(this, item, "stashItem")
 				}
 				, learn: {
-					text: "learn"
+					text: "apprendre"
 					, callback: this.performItemAction.bind(this, item, "learnAbility")
 				}
 				, quickSlot: {
-					text: "quickslot"
+					text: "rapide"
 					, callback: this.performItemAction.bind(this, item, "setQuickSlot")
 				}
 				, use: {
-					text: "use"
+					text: "utilisé"
 					, callback: this.performItemAction.bind(this, item, "useItem")
 				}
 				, equip: {
-					text: "equip"
+					text: "équipé"
 					, callback: this.performItemAction.bind(this, item, "equip")
 				}
 				, split: {
-					text: "split stack"
+					text: "divisé la pile"
 					, callback: this.splitStackStart.bind(this, item)
 				}
 				, link: {
-					text: "link"
+					text: "lier"
 					, callback: this.onClick.bind(this, item, true)
 				}
 				, divider: "----------"
 			};
 
 			if (item.eq) {
-				menuItems.learn.text = "unlearn";
-				menuItems.equip.text = "unequip";
+				menuItems.learn.text = "désaprendre";
+				menuItems.equip.text = "déséquippé";
 			}
 
 			if (item.active) {
-				menuItems.activate.text = "deactivate";
+				menuItems.activate.text = "désactivé";
 			}
 
 			let ctxConfig = [];
