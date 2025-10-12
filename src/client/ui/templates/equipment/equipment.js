@@ -32,58 +32,58 @@ define([
 				, "vit": stats.vit
 			}
 			case "offense": return {
-				"global crit chance": stats.critChance.toFixed(1) + "%"
-				, "global crit multiplier": stats.critMultiplier.toFixed(1) + "%"
-				, "attack crit chance": (stats.critChance + stats.attackCritChance).toFixed(1) + "%"
-				, "attack crit multiplier": (stats.critMultiplier + stats.attackCritMultiplier).toFixed(1) + "%"
-				, "spell crit chance": (stats.critChance + stats.spellCritChance).toFixed(1) + "%"
-				, "spell crit multiplier": (stats.critMultiplier + stats.spellCritMultiplier).toFixed(1) + "%"
+				"Chance de coup critique global": stats.critChance.toFixed(1) + "%"
+				, "Multiplicateur de coup critique": stats.critMultiplier.toFixed(1) + "%"
+				, "Chance d'attaque critique": (stats.critChance + stats.attackCritChance).toFixed(1) + "%"
+				, "Multiplicateur d'attaque critique": (stats.critMultiplier + stats.attackCritMultiplier).toFixed(1) + "%"
+				, "Chance de magie critique": (stats.critChance + stats.spellCritChance).toFixed(1) + "%"
+				, "Multiplicateur de magie critique": (stats.critMultiplier + stats.spellCritMultiplier).toFixed(1) + "%"
 				, gap1: ""
-				, "arcane increase": stats.elementArcanePercent + "%"
-				, "fire increase": stats.elementFirePercent + "%"
-				, "frost increase": stats.elementFrostPercent + "%"
-				, "holy increase": stats.elementHolyPercent + "%"
-				, "poison increase": stats.elementPoisonPercent + "%"
-				, "physical increase": stats.physicalPercent + "%"
+				, "Augmentation Arcane": stats.elementArcanePercent + "%"
+				, "Augmentation de Feu": stats.elementFirePercent + "%"
+				, "Augmentation de glace": stats.elementFrostPercent + "%"
+				, "Augmentation saint": stats.elementHolyPercent + "%"
+				, "Augmentation de poision": stats.elementPoisonPercent + "%"
+				, "Augmentation physique": stats.physicalPercent + "%"
 				, gap2: ""
-				, "spell increase": stats.spellPercent + "%"
+				, "Augementation magique": stats.spellPercent + "%"
 				, gap3: ""
-				, "attack speed": (100 + stats.attackSpeed) + "%"
-				, "cast speed": (100 + stats.castSpeed) + "%"
+				, "Vitesse d'attaque": (100 + stats.attackSpeed) + "%"
+				, "Vitesse d'incantation": (100 + stats.castSpeed) + "%"
 			}
 			case "défense": return {
 				armor: stats.armor
-				, "chance to block attacks": stats.blockAttackChance + "%"
-				, "chance to block spells": stats.blockSpellChance + "%"
+				, "Chance de bloqué des attaques": stats.blockAttackChance + "%"
+				, "Chance de bloqué des incantation": stats.blockSpellChance + "%"
 				, gap1: ""
-				, "chance to dodge attacks": stats.dodgeAttackChance.toFixed(1) + "%"
-				, "chance to dodge spells": stats.dodgeSpellChance.toFixed(1) + "%"
+				, "Chance d'évité une attaque": stats.dodgeAttackChance.toFixed(1) + "%"
+				, "Chance d'évité une incantation": stats.dodgeSpellChance.toFixed(1) + "%"
 				, gap2: ""
-				, "arcane resist": stats.elementArcaneResist
-				, "fire resist": stats.elementFireResist
-				, "frost resist": stats.elementFrostResist
-				, "holy resist": stats.elementHolyResist
-				, "poison resist": stats.elementPoisonResist
+				, "Résistance arcane": stats.elementArcaneResist
+				, "Résistance au feu": stats.elementFireResist
+				, "Résistance au gel": stats.elementFrostResist
+				, "Résistance au dégats saint": stats.elementHolyResist
+				, "Résistance au poison": stats.elementPoisonResist
 				, gap3: ""
-				, "all resist": stats.elementAllResist
+				, "Résistance global": stats.elementAllResist
 				, gap4: ""
-				, "life gained on hit": stats.lifeOnHit
+				, "Vie gagné par coup": stats.lifeOnHit
 			}
 			case "autres": return {
-				"item quality": stats.magicFind + "%"
-				, "item quantity": stats.itemQuantity + "%"
+				"Qualité des items": stats.magicFind + "%"
+				, "Quantité des items": stats.itemQuantity + "%"
 				, gap1: ""
-				, "sprint chance": (stats.sprintChance?.toFixed(2) || 0) + "%"
+				, "Chance de courir": (stats.sprintChance?.toFixed(2) || 0) + "%"
 				, gap2: ""
-				, "xp increase": stats.xpIncrease + "%"
+				, "Augmentation d'expériance": stats.xpIncrease + "%"
 				, gap3: ""
-				, "chance to catch a fish": stats.catchChance + "%"
-				, "fishing speed": stats.catchSpeed + "%"
-				, "increased fish rarity": stats.fishRarity + "%"
-				, "increased fish weight": stats.fishWeight + "%"
-				, "chance to fish items": stats.fishItems + "%"
+				, "Chance d'attrapé un poisson": stats.catchChance + "%"
+				, "Vitesse de pêche": stats.catchSpeed + "%"
+				, "Chance de poisson rare": stats.fishRarity + "%"
+				, "Augmentation du poid": stats.fishWeight + "%"
+				, "Chance de pêché des items": stats.fishItems + "%"
 			}
-			default: throw new Error(`Unknown or missing section "${section}"`);
+			default: throw new Error(`Erreur écran non trouvé "${section}"`);
 		}
 	};
 	return {
