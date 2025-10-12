@@ -34,12 +34,50 @@ module.exports = {
 				msg: "Ou voulez vous allez?"
 				, options: [1.1,1.2]
 			}]
-			, options: {
+			, options: {,
 				1.1: {
-					msg: "La cabanne"
-					, goto: "teleportCabanne"
+					msg: "La Cabanne"
+					, prereq: function (obj) {
+						let tickets = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+						return Boolean(tickets);
+					}
+					, goto: "gotoCabane"
+				},
+				1.2: {
+					msg: "L'ile"
+					, prereq: function (obj) {
+						let tickets = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+						return Boolean(tickets);
+					}
+					, goto: "gotoIle"
 				}
 
+			}
+		} ,gotoCabane: {
+			method: function (obj) {
+				let inventory = obj.inventory;
+				let ticket = inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+				if (!ticket) {
+					return;
+				}
+				inventory.destroyItem({ itemId: ticket.id  }, 1);
+				obj.dialogue.teleport({
+					toZone: "cabane"
+					,toPos: {"x":96,"y":96}
+				});
+			}
+		},gotoIle: {
+			method: function (obj) {
+				let inventory = obj.inventory;
+				let ticket = inventory.items.find((i) => (i.name === "ticket d\'autobus"));
+				if (!ticket) {
+					return;
+				}
+				inventory.destroyItem({ itemId: ticket.id  }, 1);
+				obj.dialogue.teleport({
+					toZone: "ile"
+					,toPos: {"x":96,"y":96}
+				});
 			}
 		}
 		, teleportCabanne: {
