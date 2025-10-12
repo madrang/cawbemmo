@@ -21,7 +21,7 @@ define([
 
 		, onGetAnnouncement: function (e) {
 			if (isMobile) {
-				if (["press g to", "press u to"].some((f) => e.msg.toLowerCase().indexOf(f) > -1)) {
+				if (["Appuie sur 'G' pour", "Appuie sur 'U' pour"].some((f) => e.msg.toLowerCase().indexOf(f) > -1)) {
 					return;
 				}
 			}
