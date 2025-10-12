@@ -1135,7 +1135,7 @@ module.exports = {
 			"size": 0,
 			"color": 2,
 			"stats": {},
-			"spiritStart": "party Animal"
+			"spiritStart": "party animal"
 		},
 		{
 			"id": 106,
