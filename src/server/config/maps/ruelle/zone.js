@@ -1,6 +1,6 @@
 module.exports = {
-	name: "Bois"
-	, level: [13, 16]
+	name: "Ruelle"
+	, level: [3, 5]
 	, resources: {
 		champignon: {
 			type: "herb"
@@ -15,7 +15,7 @@ module.exports = {
 	, objects: {}
 	, mobs: {
 		default: {
-			level: 13
+			level: 4
 			, faction: "hostile"
 			, regular: {
 				drops: {
