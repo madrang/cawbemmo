@@ -34,7 +34,7 @@ module.exports = {
 				msg: "Ou voulez vous allez?"
 				, options: [1.1,1.2]
 			}]
-			, options: {,
+			, options: {
 				1.1: {
 					msg: "La Cabanne"
 					, prereq: function (obj) {
