@@ -131,13 +131,13 @@ define([
 			}
 			const isBlocked = window.player.social.isPlayerBlocked(char.name);
 			const actions = [
-				{ text: "invite to party"
+				{ text: "Invité dans le groupe"
 					, callback: this.invite.bind(this, char.id)
 				}
-				, { text: "whisper"
+				, { text: "chuchotté"
 					, callback: events.emit.bind(events, "onDoWhisper", char.name)
 				}
-				, { text: isBlocked ? "unblock" : "block"
+				, { text: isBlocked ? "débloqué" : "bloqué"
 					, callback: this.block.bind(this, char.name)
 				}
 				, ...this.actions.map(

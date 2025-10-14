@@ -58,12 +58,12 @@ define([
 
 		, onDeath: function (eventObj) {
 			if (!eventObj.source) {
-				this.find(".msg").html("you are dead");
+				this.find(".msg").html("Vous êtes mort");
 			} else {
-				this.find(".msg").html("you were killed by [ <div class=\"inner\">" + eventObj.source + "</div> ]");
+				this.find(".msg").html("Vous Avez été tué par [ <div class=\"inner\">" + eventObj.source + "</div> ]");
 			}
 			this.find(".penalty")
-				.html("you lost " + eventObj.xpLoss + " experience")
+				.html("Vous avez perdu " + eventObj.xpLoss + " experience")
 				.show();
 
 			if (!eventObj.xpLoss) {
@@ -75,7 +75,7 @@ define([
 		}
 
 		, onPermadeath: function (eventObj) {
-			this.find(".msg").html("you were killed by [ <div class=\"inner\">" + eventObj.source + "</div> ]");
+			this.find(".msg").html("Vous Avez été tué par [ <div class=\"inner\">" + eventObj.source + "</div> ]");
 			this.el.addClass("permadeath");
 			this.doShow();
 		}

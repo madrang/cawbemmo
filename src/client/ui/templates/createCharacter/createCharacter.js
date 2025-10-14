@@ -77,8 +77,8 @@ define([
 
 			this.costume = 0;
 
-			this.class = "owl";
-			this.find(".txtClass").html("Owl");
+			this.class = "concierge";
+			this.find(".txtClass").html("concierge");
 
 			this.changeCostume();
 		}
@@ -170,9 +170,10 @@ define([
 			};
 
 			let text = ({
-				owl: "The wise Owl guides you; granting you the focus needed to cast spells. <br /><br />Upon level up, you gain 1 Intellect."
-				, bear: "The towering Bear strenghtens you; lending force to your blows. <br /><br />Upon level up, you gain 1 Strength."
-				, lynx: "The nimble Lynx hastens you; allowing your strikes to land true. <br /><br />Upon level up, you gain 1 Dexterity."
+				"concierge": "Le concierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />1 point d'intelligence par niveau."
+				, "pee wee": "le pee wee commence faible mais devien de plus en plus fort plus la saison avance<br /><br />1 point de force par niveau"
+				, "party animal": "Le party animal n'est pas arrêtable il vas faire le party jusqu'a avoir couché tout le monde <br /><br />1 point de dextérité par niveau"
+				//, necro: "test d'ajout des necro"
 			})[this.class];
 
 			events.emit("onShowTooltip", text, el[0], pos, 200);
@@ -186,7 +187,7 @@ define([
 
 		, changeClass: function (e) {
 			let el = $(e.target);
-			let classes = ["owl", "bear", "lynx"];
+			let classes = ["concierge", "pee wee", "party animal" ];
 			let nextIndex = (classes.indexOf(this.class) + 1) % classes.length;
 
 			let newClass = classes[nextIndex];

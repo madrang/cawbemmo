@@ -751,7 +751,7 @@ module.exports = {
 		return (this.equipItemErrors(item).length === 0);
 	}
 
-	, notifyNoBagSpace: function (message = "Your bags are too full to loot any more items") {
+	, notifyNoBagSpace: function (message = "Ton sac es trop plein!") {
 		this.obj.social.notifySelf({ message });
 	}
 };
