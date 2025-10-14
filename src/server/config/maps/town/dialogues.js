@@ -28,11 +28,11 @@ module.exports = {
 			}
 		}
 	}
-		,chauffeur: {
+	, chauffeur: {
 		1: {
 			msg: [{
 				msg: "Ou voulez vous allez?"
-				, options: [1.1,1.2]
+				, options: [ 1.1, 1.2 ]
 			}]
 			, options: {
 				1.1: {
@@ -42,8 +42,8 @@ module.exports = {
 						return Boolean(tickets);
 					}
 					, goto: "gotoCabane"
-				},
-				1.2: {
+				}
+				, 1.2: {
 					msg: "L'ile"
 					, prereq: function (obj) {
 						let tickets = obj.inventory.items.find((i) => (i.name === "ticket d\'autobus"));
@@ -53,30 +53,32 @@ module.exports = {
 				}
 
 			}
-		} ,gotoCabane: {
+		}
+		, gotoCabane: {
 			method: function (obj) {
 				let inventory = obj.inventory;
 				let ticket = inventory.items.find((i) => (i.name === "ticket d\'autobus"));
 				if (!ticket) {
 					return;
 				}
-				inventory.destroyItem({ itemId: ticket.id  }, 1);
+				inventory.destroyItem({ itemId: ticket.id }, 1);
 				obj.dialogue.teleport({
 					toZone: "cabane"
-					,toPos: {"x":96,"y":96}
+					, toPos: { x: 96, y: 96 }
 				});
 			}
-		},gotoIle: {
+		}
+		, gotoIle: {
 			method: function (obj) {
 				let inventory = obj.inventory;
 				let ticket = inventory.items.find((i) => (i.name === "ticket d\'autobus"));
 				if (!ticket) {
 					return;
 				}
-				inventory.destroyItem({ itemId: ticket.id  }, 1);
+				inventory.destroyItem({ itemId: ticket.id }, 1);
 				obj.dialogue.teleport({
 					toZone: "ile"
-					,toPos: {"x":96,"y":96}
+					, toPos: { x: 96, y: 96 }
 				});
 			}
 		}
@@ -85,10 +87,10 @@ module.exports = {
 			, method: "teleport"
 			, args: [{
 				toZone: "cabanne"
-				,toPos: {"x":72,"y":106}
+				, toPos: { x: 72, y: 106 }
 			}]
 		}
-		}
+	}
 
 	, peter: {
 		1: {
@@ -192,7 +194,6 @@ module.exports = {
 				targetName: "mr giroux"
 			}]
 		}
-		,
 	}
 	, raymond: {
 		1: {
@@ -215,7 +216,6 @@ module.exports = {
 				targetName: "raymond"
 			}]
 		}
-		,
 	}, gislain: {
 		1: {
 			msg: [{
@@ -245,7 +245,7 @@ module.exports = {
 				}
 			}
 		}
-		, 2 : {
+		, 2: {
 			msg: [{
 				msg: "Oui j'ai perdu mon courrier avec plein de lettre d'admiratrice."
 				, options: [2.1]
@@ -257,7 +257,7 @@ module.exports = {
 				}
 			}
 		}
-		, 3 : {
+		, 3: {
 			msg: [{
 				msg: "Je lai ai perdu pres de la track de train au sud du village"
 				, options: [3.1, 3.2, 3.3]
@@ -275,7 +275,6 @@ module.exports = {
 					msg: "J'ai peut être de quoi qui vas t'intéressé."
 					, goto: "tradeSell"
 				}
-				,
 			}
 		}
 		, tradeBuy: {
