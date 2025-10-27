@@ -156,14 +156,13 @@ define([
 			this.selectedIndex = charIndex;
 			this.el.addClass("disabled");
 
-			let el = $(e.target);
+			const el = $(e.target);
 			el.parent().find(".selected").removeClass("selected");
 			el.addClass("selected");
 
-			let charInfo = this.characterInfo[charName];
+			const charInfo = this.characterInfo[charName];
 			if (charInfo) {
 				this.onGetCharacter(charName, charInfo);
-
 				return;
 			}
 
@@ -198,7 +197,9 @@ define([
 			let stats = result.components.find(function (c) {
 				return (c.type === "stats");
 			});
-			if (stats) {
+			if (typeof result.class === "object") {
+				this.find(".class").html(`${result.class.name.capitalize()} - Error: ${result.class.error}`);
+			} else if (stats && typeof result.class === "string") {
 				this.find(".class").html(`Lvl ${stats.values.level} ${result.class.capitalize()}`);
 			} else {
 				this.find(".class").html("");
@@ -209,20 +210,26 @@ define([
 			this.characterInfo[charName] = result;
 			this.selected = charName;
 
-			let prophecies = result.components.find(function (c) {
+			if (result.permadead) {
+				this.find(".name").html(charName + " (hc - rip)");
+				this.find(".btnPlay").addClass("disabled");
+				return;
+			}
+			if (typeof result.class === "object") {
+				//uiFactory.build("createCharacter", {});
+				//this.destroy();
+				this.find(".btnPlay").addClass("disabled");
+				return;
+			}
+
+			const prophecies = result.components.find(function (c) {
 				return (c.type === "prophecies");
 			});
-
-			if ((prophecies) && (prophecies.list.indexOf("hardcore") > -1)) {
+			if (prophecies && prophecies.list.indexOf("hardcore") >= 0) {
 				this.find(".name").html(charName + " (hc)");
 			}
 
 			this.find(".btnPlay").removeClass("disabled");
-
-			if (result.permadead) {
-				this.find(".name").html(charName + " (hc - rip)");
-				this.find(".btnPlay").addClass("disabled");
-			}
 		}
 
 		, setMessage: function (msg) {

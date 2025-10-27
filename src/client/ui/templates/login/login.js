@@ -27,7 +27,7 @@ define([
 				tempEl.find(".logo").attr("src", logoPath);
 			}
 			if (changeLog) {
-				tempEl.find(".version").html(function() {
+				tempEl.find(".version").html(function () {
 					return $(this).html().replace("$VERSION$", changeLog.version);
 				});
 			}

@@ -161,6 +161,9 @@ module.exports = {
 		});
 
 		fixes.fixCharacter(character);
+		if (!spirits.list.includes(character.class)) {
+			character.class = { name: character.class, error: "Missing class!" };
+		}
 
 		character.cell = skins.getCell(character.skinId);
 		character.sheetName = skins.getSpritesheet(character.skinId);

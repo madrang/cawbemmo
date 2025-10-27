@@ -45,7 +45,7 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 
 (async function () {
 	// Init database
-	await new Promise(resolve => io.init(resolve));
+	await new Promise((resolve) => io.init(resolve));
 	// Add crash loggers
 	const onCrash = async (e) => {
 		if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
