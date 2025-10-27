@@ -334,11 +334,11 @@ module.exports = {
 
 	, onEvent: function (eventName, callback) {
 		this.eventListeners.push({ eventName, callback });
-		return this.offEvent.bind(this, entry);
+		return this.offEvent.bind(this, eventName);
 	}
 
-	, offEvent: function (entry) {
-		this.eventListeners.spliceWhere((e) => e === entry);
+	, offEvent: function (eventName) {
+		this.eventListeners.spliceWhere((l) => l.eventName === eventName);
 	}
 
 	, fireEvent: function (event, ...args) {

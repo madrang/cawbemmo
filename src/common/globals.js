@@ -3,9 +3,10 @@
 (function() {
 	//eslint-disable-next-line no-extend-native
 	Object.defineProperties(Array.prototype, {
-		"spliceWhere": { enumerable: false
+		spliceWhere: { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
+				const splicedItems = [];
 				for (let idx = (arrObj.length || 0) - 1; idx >= 0; --idx) {
 					if (!(idx in arrObj)) {
 						continue;
@@ -13,11 +14,12 @@
 					if (!callback.call(thisArg, arrObj[idx], idx, arrObj)) {
 						continue;
 					}
-					arrObj.splice(idx, 1);
+					splicedItems.push(...arrObj.splice(idx, 1));
 				}
+				return splicedItems;
 			}
 		}
-		, "spliceFirstWhere": { enumerable: false
+		, spliceFirstWhere: { enumerable: false
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -35,7 +37,7 @@
 			}
 		}
 
-		, "shuffle": { enumerable: false, writable: true
+		, shuffle: { enumerable: false, writable: true
 			, value: function shuffle() {
 				let currentIndex = this.length;
 				let randomIndex;
