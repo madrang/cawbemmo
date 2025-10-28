@@ -1,18 +1,4 @@
-define([
-	"js/system/globals"
-], function (
-	globals
-) {
-	const mRandom = Math.random.bind(Math);
-	let customRenderer = null;
-
-	const renderCustomLoginBg = async (renderer, path) => {
-		if (!customRenderer) {
-			customRenderer = await new Promise((res) => require([path], res));
-		}
-		customRenderer(renderer);
-	};
-
+define([], () => {
 	const BACKGROUND_REGIONS = {
 		snow: 4
 		, grass: 6
@@ -29,18 +15,6 @@ define([
 	};
 
 	const renderLoginBackground = (renderer) => {
-		if (customRenderer) {
-			customRenderer(renderer);
-			return true;
-		}
-		let { loginBackgroundGeneratorPath } = globals.clientConfig;
-		if (Array.isArray(loginBackgroundGeneratorPath)) {
-			loginBackgroundGeneratorPath = _.randomObj(loginBackgroundGeneratorPath);
-		}
-		if (loginBackgroundGeneratorPath) {
-			renderCustomLoginBg(renderer, loginBackgroundGeneratorPath);
-			return true;
-		}
 		renderer.setPosition({ x: 0, y: 0 }, true);
 		const { width, height, layers } = renderer;
 		const w = Math.ceil(width / scale) + 1;
@@ -56,12 +30,12 @@ define([
 				for (const region in BACKGROUND_REGIONS) {
 					tile += BACKGROUND_REGIONS[region] + (Math.random() * noiseFactor);
 					if (tile > distance) {
-						tile = BACKGROUND_TILES[region]
+						tile = BACKGROUND_TILES[region];
 						break;
 					}
 				}
 
-				let alpha = mRandom();
+				let alpha = Math.random();
 				if ([...BACKGROUND_TILES.grass, ...BACKGROUND_TILES.water] .includes(tile)) {
 					alpha *= 2;
 				}
@@ -80,7 +54,7 @@ define([
 				sprite.width = scale;
 				sprite.height = scale;
 
-				if (mRandom() < 0.5) {
+				if (Math.random() < 0.5) {
 					sprite.position.x += scale;
 					sprite.scale.x = -scaleMult;
 				}
