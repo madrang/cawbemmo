@@ -41,7 +41,7 @@ define([
 					x = _.constrain(this.obj.x, msg.x, msg.width);
 					y = _.constrain(this.obj.y, msg.y, msg.height);
 				} else {
-					[ x, y ] = _.randomObj(validPos);
+					[ x, y ] = _.getRandomObj(validPos);
 				}
 
 				this.obj.flipX = (x < this.obj.x);

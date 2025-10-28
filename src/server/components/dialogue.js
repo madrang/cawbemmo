@@ -70,7 +70,7 @@ module.exports = {
 						gotos.push(g.number);
 					}
 				}
-				state = _.randomObj(gotos);
+				state = _.getRandomObj(gotos);
 			} else {
 				state = goto;
 			}

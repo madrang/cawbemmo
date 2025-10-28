@@ -170,7 +170,7 @@ define([
 			};
 
 			let text = ({
-				"concierge": "Le concierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />1 point d'intelligence par niveau."
+				concierge: "Le concierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />1 point d'intelligence par niveau."
 				, "pee wee": "le pee wee commence faible mais devien de plus en plus fort plus la saison avance<br /><br />1 point de force par niveau"
 				, "party animal": "Le party animal n'est pas arrêtable il vas faire le party jusqu'a avoir couché tout le monde <br /><br />1 point de dextérité par niveau"
 				//, necro: "test d'ajout des necro"

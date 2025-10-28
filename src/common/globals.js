@@ -437,28 +437,31 @@
 			});
 		}
 
-		, randomInt: function (min, max) {
+		, getRandomInt: function (min, max) {
 			//The maximum is exclusive and the minimum is inclusive
 			min = Math.ceil(min);
 			max = Math.floor(max);
 			return Math.floor(Math.random() * (max - min)) + min;
 		}
-		, randomKey: function (o) {
+		, getRandomKey: function (o) {
 			const keys = Object.keys(o);
 			return keys[Math.floor(Math.random() * keys.length)];
 		}
-		, randomObj: function (...args) {
+		, getRandomObj: function (args) {
 			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
 				return undefined;
 			}
-			if (args.length === 1) {
-				if (Array.isArray(args[0])) {
-					// If single item array at pos zero.
-					args = args[0];
-				} else {
-					// Only a single choice possible.
-					return args[0];
-				}
+			if (args.length === 1) { // If single item array.
+				return args[0];
+			}
+			return args[Math.floor(Math.random() * args.length)];
+		}
+		, getRandomFrom: function (...args) {
+			if (typeof args === "undefined" || !Array.isArray(args) || args.length <= 0) {
+				return undefined;
+			}
+			if (args.length === 1) { // If single item array.
+				return args[0];
 			}
 			return args[Math.floor(Math.random() * args.length)];
 		}

@@ -1,11 +1,13 @@
+/* eslint-disable max-lines-per-function
+ */
 define([
 	"js/rendering/effects"
 	, "js/rendering/renderer"
-], function (
-	effects,
-	renderer
-) {
-	const getEmitterConfig = function(pos, blueprint, maxAlpha) {
+], (
+	effects
+	, renderer
+) => {
+	const getEmitterConfig = function (pos, blueprint, maxAlpha) {
 		return {
 			lifetime: blueprint.lifetime || {
 				min: 1
@@ -24,7 +26,7 @@ define([
 						color: {
 							list: blueprint.color || [
 								{ time: 0, value: "ffeb38" }
-								, { time: 1, value: _.randomObj("ff6942", "d43346") }
+								, { time: 1, value: _.getRandomFrom("ff6942", "d43346") }
 							]
 						}
 					}
@@ -43,8 +45,8 @@ define([
 					, config: { blendMode: "screen" }
 				}
 
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 4 }
@@ -64,8 +66,8 @@ define([
 						, minMult: 0.5
 					}
 				}
-				, { type: "rotationStatic",
-					config: { min: 0, max: 360 }
+				, { type: "rotationStatic"
+					, config: { min: 0, max: 360 }
 				}
 
 				, { type: "spawnShape"
@@ -80,8 +82,8 @@ define([
 					}
 				}
 			]
-		}
-	}
+		};
+	};
 	return {
 		type: "light"
 

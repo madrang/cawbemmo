@@ -40,7 +40,7 @@ define([], () => {
 					alpha *= 2;
 				}
 				if (Math.random() < 0.3) {
-					tile = _.randomObj(tile);
+					tile = _.getRandomObj(tile);
 				} else {
 					tile = tile[0];
 				}

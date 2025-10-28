@@ -19,7 +19,6 @@ define([
 	, spritePool
 	, globals
 ) => {
-	const mRandom = Math.random.bind(Math);
 	const asyncRequire = (path) => new Promise((res) => require([path], res));
 
 	const particleLayers = ["particlesUnder", "particles"];
@@ -79,9 +78,9 @@ define([
 			PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
 			PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 			if (PIXI.settings.SPRITE_MAX_TEXTURES < PIXI_REQUIRED_SPRITE_MAX_TEXTURES) {
-				console.warn("Texture limit of %s lower then minimum of %s", PIXI.settings.SPRITE_MAX_TEXTURES, PIXI_REQUIRED_SPRITE_MAX_TEXTURES);
+				_.log.renderer.warn("Texture limit of %s lower then minimum of %s", PIXI.settings.SPRITE_MAX_TEXTURES, PIXI_REQUIRED_SPRITE_MAX_TEXTURES);
 				PIXI.settings.SPRITE_MAX_TEXTURES = PIXI_REQUIRED_SPRITE_MAX_TEXTURES;
-				console.warn("Low texture limit raised to %s", PIXI.settings.SPRITE_MAX_TEXTURES);
+				_.log.renderer.warn("Low texture limit raised to %s", PIXI.settings.SPRITE_MAX_TEXTURES);
 			}
 			PIXI.settings.RESOLUTION = 1;
 
@@ -206,7 +205,7 @@ define([
 
 			let { loginBackgroundGeneratorPath } = globals.clientConfig;
 			if (Array.isArray(loginBackgroundGeneratorPath)) {
-				loginBackgroundGeneratorPath = _.randomObj(loginBackgroundGeneratorPath);
+				loginBackgroundGeneratorPath = _.getRandomObj(loginBackgroundGeneratorPath);
 			}
 			if (!loginBackgroundGeneratorPath) {
 				loginBackgroundGeneratorPath = "js/rendering/renderLoginBackground";
@@ -309,7 +308,7 @@ define([
 			tile.position.y = j * scale;
 			tile.width = scale;
 			tile.height = scale;
-			if (tileOpacity.canFlip(c) && mRandom() < 0.5) {
+			if (tileOpacity.canFlip(c) && Math.random() < 0.5) {
 				tile.position.x += scale;
 				tile.scale.x = -scaleMult;
 			}
@@ -454,16 +453,13 @@ define([
 				if (playerInHider) {
 					if (interior && !tileInHider) {
 						foundHiddenLayer = layer;
-
 						return;
 					}
 				} else if (tileInHider && !discovered) {
 					foundHiddenLayer = layer;
-
 					return;
 				} else if (tileInHider && discovered) {
 					foundVisibleLayer = layer;
-
 					return;
 				}
 
@@ -475,11 +471,9 @@ define([
 			});
 
 			//We compare hider layers to cater for hiders inside hiders
-			return (
-				foundHiddenLayer > foundVisibleLayer ||
-				(
-					foundHiddenLayer === 0 &&
-					foundVisibleLayer === null
+			return (foundHiddenLayer > foundVisibleLayer
+				|| (foundHiddenLayer === 0
+					&& foundVisibleLayer === null
 				)
 			);
 		}
@@ -613,7 +607,7 @@ define([
 
 						let flipped = "";
 						if (tileOpacity.canFlip(c)) {
-							if (mRandom() < 0.5) {
+							if (Math.random() < 0.5) {
 								flipped = "flip";
 							}
 						}

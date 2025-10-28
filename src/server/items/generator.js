@@ -145,7 +145,7 @@ module.exports = {
 
 	, removeStat: function (item, stat) {
 		if (!stat) {
-			stat = _.randomObj(
+			stat = _.getRandomObj(
 				Object.keys(item.stats).filter((s) => s !== "armor")
 			);
 		}
