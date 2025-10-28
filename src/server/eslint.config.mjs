@@ -193,7 +193,7 @@ export default [{
 		}]
 
 		, "new-parens": 2
-		, "no-inline-comments": 2
+		, "no-inline-comments": "off"
 		, "no-lonely-if": 2
 		, "no-mixed-spaces-and-tabs": 2
 
