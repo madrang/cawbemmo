@@ -12,6 +12,8 @@ define([
 			});
 			return response.ok;
 		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(err);
 			return false;
 		}
 	};
@@ -81,9 +83,12 @@ define([
 				msg: "Connection lost, please wait while we try to reconnect..."
 				, ttl: 350
 			});
-			do {
+			let isOnline = false;
+			while (!isOnline) {
 				await _.asyncDelay(3000);
-			} while (!(await canReachServer()));
+				isOnline = await canReachServer();
+			}
+			// Reload page
 			window.location = window.location;
 		}
 
