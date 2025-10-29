@@ -17,6 +17,59 @@ define([
 			return false;
 		}
 	};
+	const createRequestFunction = (sendRequestFn, msgBase) => {
+		return new Proxy(sendRequestFn, {
+			apply (target, thisArg, argumentsList) {
+				if (!msgBase || !msgBase.method) {
+					throw new Error("Request method is missing, needed before apply!");
+				}
+				const promiseSrc = new _.PromiseSource();
+				const tRef = setTimeout(() => {
+					promiseSrc.reject(new Error("Request timeout out!"));
+				}, 30 * 1000);
+				const reqObj = Object.assign({
+					callback: (value) => {
+						clearTimeout(tRef);
+						promiseSrc.resolve(value);
+					}
+				}, msgBase);
+				if (Array.isArray(argumentsList) && argumentsList.length > 0) {
+					reqObj.data = argumentsList[0];
+				}
+				target(reqObj);
+				return promiseSrc.promise;
+			}
+		});
+	};
+	const createRequestProxy = (clientTarget, propName, msgBase = {}) => {
+		if (!propName) {
+			throw new Error("Missing propName!");
+		}
+		const childsMap = new Map();
+		return new Proxy(clientTarget, {
+			get (target, prop, receiver) {
+				const cachedInstance = childsMap.get(prop);
+				if (cachedInstance) {
+					return cachedInstance;
+				}
+
+				const newMsgBase = Object.assign({ [propName]: prop }, msgBase);
+
+				if (propName === "method") {
+					const fnProx = createRequestFunction(target.request.bind(target), newMsgBase);
+					childsMap.set(prop, fnProx);
+					return fnProx;
+				}
+
+				const objProx = createRequestProxy(target, "method", newMsgBase);
+				childsMap.set(prop, objProx);
+				return objProx;
+			}
+			, set (target, prop, value) {
+				throw new Error("Read only value!");
+			}
+		});
+	};
 	const client = {
 		doneConnect: false
 
@@ -37,6 +90,10 @@ define([
 			for (const k in this.processAction) {
 				this.processAction[k] = this.processAction[k].bind(this);
 			}
+
+			this.moduleProxy = createRequestProxy(this, "module");
+			this.componentProxy = createRequestProxy(this, "cpn");
+			this.threadProxy = createRequestProxy(this, "threadModule");
 		}
 
 		, onRezoneStart: function () {

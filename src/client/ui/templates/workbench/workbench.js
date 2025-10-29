@@ -13,6 +13,7 @@ define([
 	renderItem,
 	statTranslations
 ) {
+	const performAction = client.componentProxy.player.performAction;
 	return {
 		tpl: template
 
@@ -83,19 +84,14 @@ define([
 			el.parent().find(".selected").removeClass("selected");
 			el.addClass("selected");
 
-			client.request({
-				cpn: "player"
-				, method: "performAction"
+			performAction({
+				cpn: "workbench"
+				, method: "getRecipe"
 				, data: {
-					cpn: "workbench"
-					, method: "getRecipe"
-					, data: {
-						targetId: this.workbenchId
-						, name: recipeName
-					}
+					targetId: this.workbenchId
+					, name: recipeName
 				}
-				, callback: this.onGetRecipe.bind(this, false)
-			});
+			}).then(this.onGetRecipe.bind(this, false));
 		}
 
 		, onGetRecipe: function (persistNeedItems, recipe) {
@@ -212,24 +208,16 @@ define([
 
 			const allItemsSelected = this.selectedNeedItems.every((i) => Boolean(i));
 			if (allItemsSelected && this.currentRecipe.dynamicMaterials) {
-				const pickedItemIds = this.selectedNeedItems.map((i) => i.id);
-
-				client.request({
-					cpn: "player"
-					, method: "performAction"
+				performAction({
+					cpn: "workbench"
+					, method: "getRecipe"
 					, data: {
-						cpn: "workbench"
-						, method: "getRecipe"
-						, data: {
-							targetId: this.workbenchId
-							, name: this.currentRecipe.name
-							, pickedItemIds
-						}
+						targetId: this.workbenchId
+						, name: this.currentRecipe.name
+						, pickedItemIds: this.selectedNeedItems.map((i) => i.id)
 					}
-					, callback: this.onGetRecipe.bind(this, true)
-				});
+				}).then(this.onGetRecipe.bind(this, true));
 			}
-
 			this.find(".itemPicker").hide();
 		}
 
@@ -268,24 +256,15 @@ define([
 
 		, craft: function () {
 			const selectedRecipe = this.find(".left .list .item.selected").html();
-
-			const pickedItemIds = this.selectedNeedItems
-				.map((item) => item.id);
-
-			client.request({
-				cpn: "player"
-				, method: "performAction"
+			performAction({
+				cpn: "workbench"
+				, method: "craft"
 				, data: {
-					cpn: "workbench"
-					, method: "craft"
-					, data: {
-						targetId: this.workbenchId
-						, name: selectedRecipe
-						, pickedItemIds
-					}
+					targetId: this.workbenchId
+					, name: selectedRecipe
+					, pickedItemIds: this.selectedNeedItems.map((item) => item.id)
 				}
-				, callback: this.onCraft.bind(this)
-			});
+			}).then(this.onCraft.bind(this));
 		}
 
 		, onCraft: function ({ recipe, resultMsg }) {

@@ -7,16 +7,16 @@ define([
 	, "js/objects/objects"
 	, "js/system/client"
 	, "js/sound/sound"
-], function (
-	events,
-	template,
-	styles,
-	renderer,
-	factory,
-	objects,
-	client,
-	sound
-) {
+], (
+	events
+	, template
+	, styles
+	, renderer
+	, factory
+	, objects
+	, client
+	, sound
+) => {
 	return {
 		tpl: template
 
@@ -49,17 +49,11 @@ define([
 			window.open("https://patreon.com/bigbadwaffle", "_blank");
 		}
 
-		, charSelect: function () {
+		, charSelect: async function () {
 			this.el.addClass("disabled");
 
-			client.request({
-				module: "cons"
-				, method: "unzone"
-				, callback: this.onCharSelect.bind(this)
-			});
-		}
+			await client.moduleProxy.cons.unzone();
 
-		, onCharSelect: function () {
 			events.emit("destroyAllObjects");
 			events.emit("resetRenderer");
 			events.emit("resetPhysics");

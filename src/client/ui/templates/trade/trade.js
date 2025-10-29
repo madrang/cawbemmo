@@ -5,14 +5,14 @@ define([
 	, "css!ui/templates/trade/styles"
 	, "html!ui/templates/inventory/templateItem"
 	, "ui/shared/renderItem"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	tplItem,
-	renderItem
-) {
+], (
+	events
+	, client
+	, template
+	, styles
+	, tplItem
+	, renderItem
+) => {
 	return {
 		tpl: template
 
@@ -100,25 +100,21 @@ define([
 			events.emit("onShowOverlay", this.el);
 		}
 
-		, onClick: function (el, item, action, e) {
+		, onClick: async function (el, item, action, e) {
 			el.addClass("disabled");
 
-			client.request({
-				cpn: "player"
-				, method: "performAction"
+			await client.componentProxy.player.performAction({
+				cpn: "trade"
+				, method: "buySell"
 				, data: {
-					cpn: "trade"
-					, method: "buySell"
-					, data: {
-						itemId: item.id
-						, action: action
-					}
+					itemId: item.id
+					, action: action
 				}
-				, callback: this.onServerRespond.bind(this, el)
 			});
 			events.emit("onBuySellItem", this.el);
 
-			let uiInventory = $(".uiInventory").data("ui");
+			el.removeClass("disabled");
+			const uiInventory = $(".uiInventory").data("ui");
 			uiInventory.hideTooltip(el, item, e);
 		}
 
@@ -147,10 +143,6 @@ define([
 		, beforeHide: function () {
 			events.emit("onHideOverlay", this.el);
 			$(".uiInventory").data("ui").hideTooltip();
-		}
-
-		, onServerRespond: function (el) {
-			el.removeClass("disabled");
 		}
 	};
 });

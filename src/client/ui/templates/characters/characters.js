@@ -83,24 +83,12 @@ define([
 			}
 		}
 
-		, onPlayClick: function () {
-			let char = this.selected;
-			if (!char) {
+		, onPlayClick: async function () {
+			if (!this.selected) {
 				return;
 			}
-
 			this.el.addClass("disabled");
-
-			client.request({
-				cpn: "auth"
-				, method: "play"
-				, data: {
-					name: this.selected
-				}
-				, callback: this.onPlay.bind(this)
-			});
-		}
-		, onPlay: function () {
+			await client.componentProxy.auth.play({ name: this.selected });
 			this.el.removeClass("disabled");
 			this.destroy();
 		}
@@ -110,23 +98,20 @@ define([
 			this.destroy();
 		}
 
-		, getCharacters: function () {
-			this.el.addClass("disabled");
+		, getCharacters: async function (characters) {
+			if (characters) {
+				this.characters = characters;
+			} else {
+				this.el.addClass("disabled");
+				this.characters = await client.componentProxy.auth.getCharacterList();
+			}
 
-			client.request({
-				cpn: "auth"
-				, method: "getCharacterList"
-				, callback: this.onGetCharacters.bind(this)
-			});
-		}
-		, onGetCharacters: function (characters) {
-			this.characters = characters;
 			this.find(".sprite").css("background", "");
 			this.find(".info div").html("");
 
 			this.el.removeClass("disabled");
 
-			let list = this.find(".left")
+			const list = this.find(".left")
 				.empty();
 
 			this.characters
@@ -152,39 +137,31 @@ define([
 					}
 				}, this);
 		}
-		, onCharacterClick: function (charName, charIndex, e) {
-			this.selectedIndex = charIndex;
+		, onCharacterClick: async function (charName, charIndex, e) {
 			this.el.addClass("disabled");
+
+			this.selectedIndex = charIndex;
+			this.selected = charName;
 
 			const el = $(e.target);
 			el.parent().find(".selected").removeClass("selected");
 			el.addClass("selected");
 
-			const charInfo = this.characterInfo[charName];
-			if (charInfo) {
-				this.onGetCharacter(charName, charInfo);
-				return;
+			let charInfo = this.characterInfo[charName];
+			if (!charInfo) {
+				charInfo = await client.componentProxy.auth.getCharacter({ name: charName });
+				this.characterInfo[charName] = charInfo;
 			}
 
-			client.request({
-				cpn: "auth"
-				, method: "getCharacter"
-				, data: {
-					name: charName
-				}
-				, callback: this.onGetCharacter.bind(this, charName)
-			});
-		}
-		, onGetCharacter: function (charName, result) {
 			this.find(".btn").removeClass("disabled");
 
-			let spriteY = Math.floor(result.cell / 8);
-			let spirteX = result.cell - (spriteY * 8);
+			let spriteY = Math.floor(charInfo.cell / 8);
+			let spirteX = charInfo.cell - (spriteY * 8);
 
 			spirteX = -(spirteX * 8);
 			spriteY = -(spriteY * 8);
 
-			let spritesheet = result.sheetName;
+			let spritesheet = charInfo.sheetName;
 			if (spritesheet === "characters") {
 				spritesheet = "../../../images/characters.png";
 			}
@@ -194,38 +171,30 @@ define([
 				.show();
 
 			this.find(".name").html(charName);
-			let stats = result.components.find(function (c) {
-				return (c.type === "stats");
-			});
-			if (typeof result.class === "object") {
-				this.find(".class").html(`${result.class.name.capitalize()} - Error: ${result.class.error}`);
-			} else if (stats && typeof result.class === "string") {
-				this.find(".class").html(`Lvl ${stats.values.level} ${result.class.capitalize()}`);
+
+			const stats = charInfo.components.find((c) => c.type === "stats");
+			if (typeof charInfo.class === "object") {
+				this.find(".class").html(`${charInfo.class.name.capitalize()} - Error: ${charInfo.class.error}`);
+			} else if (stats && typeof charInfo.class === "string") {
+				this.find(".class").html(`Lvl ${stats.values.level} ${charInfo.class.capitalize()}`);
 			} else {
 				this.find(".class").html("");
 			}
 
 			this.el.removeClass("disabled");
 
-			this.characterInfo[charName] = result;
-			this.selected = charName;
-
-			if (result.permadead) {
+			if (charInfo.permadead) {
 				this.find(".name").html(charName + " (hc - rip)");
 				this.find(".btnPlay").addClass("disabled");
 				return;
 			}
-			if (typeof result.class === "object") {
-				//uiFactory.build("createCharacter", {});
-				//this.destroy();
+			if (typeof charInfo.class === "object") {
 				this.find(".btnPlay").addClass("disabled");
 				return;
 			}
 
-			const prophecies = result.components.find(function (c) {
-				return (c.type === "prophecies");
-			});
-			if (prophecies && prophecies.list.indexOf("hardcore") >= 0) {
+			const prophecies = charInfo.components.find((c) => c.type === "prophecies");
+			if (prophecies?.list?.includes("hardcore")) {
 				this.find(".name").html(charName + " (hc)");
 			}
 
@@ -257,25 +226,13 @@ define([
 
 			this.el.addClass("disabled");
 
-			const result = await new Promise((res) => {
-				client.request({
-					cpn: "auth"
-					, method: "deleteCharacter"
-					, data: {
-						name: this.selected
-					}
-					, callback: res
-				});
-			});
-
+			const result = await client.componentProxy.auth.deleteCharacter({ name: this.selected });
 			if (!result.success) {
 				this.setMessage(result.msg);
 				this.el.removeClass("disabled");
-
 				return;
 			}
-
-			this.onGetCharacters(result.characterList);
+			this.getCharacters(result.characterList);
 		}
 
 		, onDeleteReset: function () {

@@ -5,14 +5,14 @@ define([
 	, "css!ui/templates/createCharacter/styles"
 	, "ui/factory"
 	, "js/system/globals"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	uiFactory,
-	globals
-) {
+], (
+	events
+	, client
+	, template
+	, styles
+	, uiFactory
+	, globals
+) => {
 	return {
 		tpl: template
 		, centered: true
@@ -57,23 +57,10 @@ define([
 				.on("mouseleave", this.onProphecyUnhover.bind(this));
 		}
 
-		, getSkins: function () {
+		, getSkins: async function () {
 			this.el.addClass("disabled");
-
-			client.request({
-				cpn: "auth"
-				, method: "getSkinList"
-				, data: {
-
-				}
-				, callback: this.onGetSkins.bind(this)
-			});
-		}
-
-		, onGetSkins: function (result) {
+			this.classSprites = await client.componentProxy.auth.getSkinList({});
 			this.el.removeClass("disabled");
-
-			this.classSprites = result;
 
 			this.costume = 0;
 
@@ -107,9 +94,7 @@ define([
 			let pName = el.attr("prophecy");
 
 			if (el.hasClass("active")) {
-				this.prophecies.spliceWhere(function (p) {
-					return (p === pName);
-				});
+				this.prophecies.spliceWhere((p) => p === pName);
 				el.removeClass("active");
 			} else {
 				this.prophecies.push(pName);
@@ -130,7 +115,7 @@ define([
 			uiFactory.build("characters", {});
 		}
 
-		, create: function () {
+		, create: async function () {
 			this.el.addClass("disabled");
 
 			const eCreateCharacter = {
@@ -142,22 +127,14 @@ define([
 
 			events.emit("beforeCreateCharacter", eCreateCharacter);
 
-			client.request({
-				cpn: "auth"
-				, method: "createCharacter"
-				, data: eCreateCharacter
-				, callback: this.onCreate.bind(this)
-			});
-		}
-
-		, onCreate: function (result) {
+			const result = await client.componentProxy.auth.createCharacter(eCreateCharacter);
 			this.el.removeClass("disabled");
 
-			if (!result) {
+			if (result) {
+				this.el.find(".message").html(result);
+			} else {
 				this.clear();
 				this.destroy();
-			} else {
-				this.el.find(".message").html(result);
 			}
 		}
 

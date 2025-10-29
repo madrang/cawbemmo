@@ -60,16 +60,8 @@ define([
 			client.init(this.onClientReady.bind(this));
 		}
 
-		, onClientReady: function () {
-			client.request({
-				module: "clientConfig"
-				, method: "getClientConfig"
-				, callback: this.onGetClientConfig.bind(this)
-			});
-		}
-
-		, onGetClientConfig: async function (config) {
-			globals.clientConfig = config;
+		, onClientReady: async function () {
+			globals.clientConfig = await client.moduleProxy.clientConfig.getClientConfig();
 
 			await resources.init();
 			await components.init();

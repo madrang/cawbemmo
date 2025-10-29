@@ -4,13 +4,13 @@ define([
 	, "html!ui/templates/leaderboard/template"
 	, "css!ui/templates/leaderboard/styles"
 	, "js/system/globals"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	globals
-) {
+], (
+	events
+	, client
+	, template
+	, styles
+	, globals
+) => {
 	return {
 		tpl: template
 
@@ -40,16 +40,13 @@ define([
 		}
 
 		, onPage: function (e) {
-			let el = $(e.target);
-			let offset = ~~el.attr("offset");
-
-			this.offset += offset;
+			const el = $(e.target);
+			this.offset += Number.parseInt(el.attr("offset"));
 			if (this.offset < 0) {
 				this.offset = 0;
 			} else if (this.offset > this.maxOffset) {
 				this.offset = this.maxOffset;
 			}
-
 			this.getList(true);
 		}
 
@@ -62,7 +59,7 @@ define([
 
 			prophecies.forEach(function (p) {
 				this.onProphecyClick({
-					currentTarget: this.find(".prophecy[prophecy=\"" + p + "\"]")
+					currentTarget: this.find(`.prophecy[prophecy="${p}"]`)
 				});
 			}, this);
 		}
@@ -96,7 +93,7 @@ define([
 			}
 		}
 
-		, getList: function (keepOffset) {
+		, getList: async function (keepOffset) {
 			this.el.addClass("disabled");
 
 			if (!this.prophecyFilter) {
@@ -105,56 +102,37 @@ define([
 				this.prophecyFilter = _.assign([], this.prophecyFilter);
 			}
 
-			client.request({
-				module: "leaderboard"
-				, method: "requestList"
-				, data: {
-					prophecies: this.prophecyFilter
-					, offset: this.offset * this.pageSize
-				}
-				, callback: this.onGetList.bind(this, keepOffset)
+			this.records = await client.moduleProxy.leaderboard.requestList({
+				prophecies: this.prophecyFilter
+				, offset: this.offset * this.pageSize
 			});
-		}
-
-		, onGetList: function (keepOffset, result) {
-			this.records = result;
 
 			if (!keepOffset) {
 				this.offset = 0;
-				let foundIndex = this.records.list.findIndex(function (r) {
-					return (r.name === window.player.name);
-				}, this);
-				if (foundIndex !== -1) {
+				const foundIndex = this.records.list.findIndex((r) => r.name === window.player.name);
+				if (foundIndex >= 0) {
 					this.offset = Math.floor(foundIndex / this.pageSize);
 				}
 			}
 
-			let container = this.find(".list").empty();
-			this.maxOffset = Math.ceil(result.length / this.pageSize) - 1;
+			const container = this.find(".list").empty();
+			this.maxOffset = Math.ceil(this.records.length / this.pageSize) - 1;
 
 			for (let i = 0; i < this.records.list.length; i++) {
-				let r = this.records.list[i];
+				const r = this.records.list[i];
 
-				let html = "<div class=\"row\"><div class=\"col\">" + r.level + "</div><div class=\"col\">" + r.name + "</div></div>";
-				let el = $(html)
-					.appendTo(container);
+				const html = `<div class="row"><div class="col">${r.level}</div><div class="col">${r.name}</div></div>`;
+				const el = $(html).appendTo(container);
 
 				if (r.name === window.player.name) {
 					el.addClass("self");
-				} else {
-					let online = globals.onlineList.some(function (o) {
-						return (o.name === r.name);
-					});
-					if (online) {
-						el.addClass("online");
-					}
+				} else if (globals.onlineList.some((o) => o.name === r.name)) {
+					el.addClass("online");
 				}
-
 				if (r.dead) {
 					el.addClass("disabled");
 				}
 			}
-
 			this.updatePaging();
 
 			this.el.removeClass("disabled");
@@ -176,12 +154,8 @@ define([
 			this.find(".prophecy[prophecy]").removeClass("selected");
 			let prophecies = window.player.prophecies;
 			prophecies = prophecies ? prophecies.list : [];
-			prophecies.forEach(function (p) {
-				this.find(".prophecy[prophecy=\"" + p + "\"]").addClass("selected");
-			}, this);
-
+			prophecies.forEach((p) => this.find(`.prophecy[prophecy="${p}"]`).addClass("selected"), this);
 			this.prophecyFilter = null;
-
 			this.getList();
 		}
 	};

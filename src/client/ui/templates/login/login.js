@@ -69,48 +69,40 @@ define([
 			this.show();
 		}
 
-		, onLoginClick: function () {
+		, onLoginClick: async function () {
 			if (this.el.hasClass("disabled")) {
 				return;
 			}
-
 			this.el.addClass("disabled");
 
-			client.request({
-				cpn: "auth"
-				, method: "login"
-				, data: {
-					username: this.val(".txtUsername")
-					, password: this.val(".txtPassword")
-				}
-				, callback: this.onLogin.bind(this)
+			const res = await client.componentProxy.auth.login({
+				username: this.val(".txtUsername")
+				, password: this.val(".txtPassword")
 			});
+			this.onLogin(res);
 		}
 		, onLogin: function (res) {
 			this.el.removeClass("disabled");
-
-			if (!res) {
+			if (res) {
+				this.el.find(".message").html(res);
+			} else {
 				uiFactory.preload();
-
 				$(".uiLoginExtra").remove();
 				this.destroy();
-			} else {
-				this.el.find(".message").html(res);
 			}
 		}
 
-		, onRegisterClick: function () {
+		, onRegisterClick: async function () {
+			if (this.el.hasClass("disabled")) {
+				return;
+			}
 			this.el.addClass("disabled");
 
-			client.request({
-				cpn: "auth"
-				, method: "register"
-				, data: {
-					username: this.val(".txtUsername")
-					, password: this.val(".txtPassword")
-				}
-				, callback: this.onLogin.bind(this)
+			const res = await client.componentProxy.auth.register({
+				username: this.val(".txtUsername")
+				, password: this.val(".txtPassword")
 			});
+			this.onLogin(res);
 		}
 	};
 });
