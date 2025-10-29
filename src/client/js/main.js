@@ -12,20 +12,20 @@ define([
 	, "js/system/globals"
 	, "js/components/components"
 	, "ui/templates/tooltips/tooltips"
-], function (
-	client,
-	uiFactory,
-	renderer,
-	objects,
-	effects,
-	numbers,
-	input,
-	events,
-	resources,
-	sound,
-	globals,
-	components
-) {
+], (
+	client
+	, uiFactory
+	, renderer
+	, objects
+	, effects
+	, numbers
+	, input
+	, events
+	, resources
+	, sound
+	, globals
+	, components
+) => {
 	let fnQueueTick = null;
 	const getQueueTick = (updateMethod) => {
 		return () => requestAnimationFrame(updateMethod);

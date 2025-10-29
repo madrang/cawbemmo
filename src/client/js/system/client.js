@@ -1,10 +1,10 @@
 define([
 	"socket"
 	, "js/system/events"
-], function (
+], (
 	io,
 	events
-) {
+) => {
 	const canReachServer = async () => {
 		try {
 			const response = await fetch("/", {

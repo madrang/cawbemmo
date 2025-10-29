@@ -1,9 +1,7 @@
 define([
-
-], function (
-
-) {
-	let stats = {
+], (
+) => {
+	const stats = {
 		vit: "vitality"
 		, regenHp: "health regeneration"
 		, manaMax: "maximum mana"

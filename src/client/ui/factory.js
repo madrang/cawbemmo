@@ -17,9 +17,9 @@ define([
 				// Some UIs are strings. In these cases,
 				// the path should default to the client/ui/templates folder
 				list[i] = {
-					type: l,
-					path: `ui/templates/${l}`,
-					autoLoadOnPlay: true
+					type: l
+					, path: `ui/templates/${l}`
+					, autoLoadOnPlay: true
 				};
 			} else if (!l.type) {
 				l.type = l.path.split("/").pop();
@@ -64,8 +64,8 @@ define([
 				events.clearQueue();
 				await Promise.all(
 					globals.clientConfig.uiList
-						.filter(u => u.autoLoadOnPlay !== false)
-						.map(u => this.buildFromConfig(u))
+						.filter((u) => u.autoLoadOnPlay !== false)
+						.map((u) => this.buildFromConfig(u))
 				);
 				this.ingameUisBuilt = true;
 			}
@@ -77,7 +77,7 @@ define([
 		}
 
 		, build: function (type) {
-			const config = globals.clientConfig.uiList.find(u => u.type === type);
+			const config = globals.clientConfig.uiList.find((u) => u.type === type);
 			if (!config) {
 				throw new Error(`Can't build ${type}! Missing configuration.`);
 			}
@@ -125,7 +125,7 @@ define([
 			}
 		}
 
-		, onUiAction: function(actionEvent) {
+		, onUiAction: function (actionEvent) {
 			if (actionEvent.action === "mainmenu") {
 				for (const u of this.uis) {
 					if (!u.modal || !u.shown) {
@@ -147,8 +147,8 @@ define([
 
 		, preload: function () {
 			const modList = globals.clientConfig.uiList
-				.filter(u => u.preload !== false)
-				.map(u => `${u.path}/${u.type}`);
+				.filter((u) => u.preload !== false)
+				.map((u) => `${u.path}/${u.type}`);
 			_.log.ui.factory.preload.debug("Preloading UI modules %o", modList);
 			require(modList, this.afterPreload.bind(this));
 		}

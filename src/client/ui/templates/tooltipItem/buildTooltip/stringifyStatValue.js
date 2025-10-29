@@ -1,8 +1,6 @@
 define([
-
-], function (
-
-) {
+], (
+) => {
 	const percentageStats = [
 		"addCritChance"
 		, "addCritMultiplier"

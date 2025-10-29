@@ -145,7 +145,7 @@ define([
 				return;
 			}
 			if (action.startsWith(ACTION_HEADER)) {
-				this.triggerSpell(action.substring(ACTION_HEADER.length))
+				this.triggerSpell(action.substring(ACTION_HEADER.length));
 			}
 		}
 
