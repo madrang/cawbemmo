@@ -141,8 +141,8 @@ define([
 
 			links.forEach((l) => {
 				let linked = (
-					nodes.find((n) => n.id === l.from.id).selected &&
-					nodes.find((n) => n.id === l.to.id).selected
+					nodes.find((n) => n.id === l.from.id).selected
+					&& nodes.find((n) => n.id === l.to.id).selected
 				);
 				this.renderers.line.call(this, l.from, l.to, linked);
 			});

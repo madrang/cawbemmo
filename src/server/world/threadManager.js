@@ -247,7 +247,7 @@ module.exports = {
 		}
 		return thread;
 	}
-	, doesThreadExist:({ zoneName, zoneId }) => {
+	, doesThreadExist: ({ zoneName, zoneId }) => {
 		for (const t of threads) {
 			if (t.name === zoneName
 				&& (t.id === zoneId

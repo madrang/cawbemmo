@@ -1,16 +1,15 @@
 /* eslint-disable max-lines-per-function */
-
 define([
 	"js/system/client"
 	, "js/rendering/renderer"
 	, "js/system/events"
 	, "js/input"
-], function (
-	client,
-	renderer,
-	events,
-	input
-) {
+], (
+	client
+	, renderer
+	, events
+	, input
+) => {
 	let objects = null;
 	require(["js/objects/objects"], function (o) {
 		objects = o;

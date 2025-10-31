@@ -25,14 +25,15 @@ define([
 		, "fishItems"
 	];
 	const stringifyStatValue = (statName, statValue) => {
-		let res = statValue;
-		if (statName.indexOf("CritChance") > -1) {
-			res = res / 20;
+		if (statName.includes("CritChance")) {
+			statValue = statValue / 20;
 		}
-		if (percentageStats.includes(statName) || statName.indexOf("Percent") > -1 || (statName.indexOf("element") === 0 && statName.indexOf("Resist") === -1)) {
-			res += "%";
+		if (percentageStats.includes(statName) || statName.includes("Percent")
+			|| (statName.startsWith("element") && !statName.includes("Resist"))
+		) {
+			statValue += "%";
 		}
-		return res + "";
+		return statValue + "";
 	};
 	return stringifyStatValue;
 });

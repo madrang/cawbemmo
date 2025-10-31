@@ -180,7 +180,7 @@ export default [{
 		}]
 
 		, "func-style": [1, "expression"]
-		, indent: [2, "tab"]
+		, indent: [2, "tab", { ignoreComments: true, SwitchCase: 1 }]
 
 		, "key-spacing": [2, {
 			afterColon: true

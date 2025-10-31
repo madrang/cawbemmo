@@ -5,14 +5,14 @@ define([
 	, "html!ui/templates/online/template"
 	, "css!ui/templates/online/styles"
 	, "html!ui/templates/online/templateListItem"
-], function (
-	events,
-	client,
-	globals,
-	template,
-	styles,
-	templateListItem
-) {
+], (
+	events
+	, client
+	, globals
+	, template
+	, styles
+	, templateListItem
+) => {
 	return {
 		tpl: template
 		, centered: true

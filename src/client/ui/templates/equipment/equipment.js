@@ -5,32 +5,32 @@ define([
 	, "css!ui/templates/equipment/styles"
 	, "js/input"
 	, "ui/shared/renderItem"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	input,
-	renderItem
-) {
-	const getStatsAsStrings = function(stats, section) {
+], (
+	events
+	, client
+	, template
+	, styles
+	, input
+	, renderItem
+) => {
+	const getStatsAsStrings = function (stats, section) {
 		switch (section) {
 			case "info": return {
-				"niveau": stats.level
+				niveau: stats.level
 				, "prochain niveau": (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "xp"
 				, gap1: ""
-				, "Argent": window.player.trade.gold
+				, Argent: window.player.trade.gold
 				, gap2: ""
-				, "hp": `${Math.floor(stats.hp)}/${Math.floor(stats.hpMax)}`
-				, "mana": `${Math.floor(stats.mana)}/${Math.floor(stats.manaMax)}`
+				, hp: `${Math.floor(stats.hp)}/${Math.floor(stats.hpMax)}`
+				, mana: `${Math.floor(stats.mana)}/${Math.floor(stats.manaMax)}`
 				, "hp regen": stats.regenHp
 				, "mana regen": Math.floor(stats.regenMana) + "%"
 				, gap3: ""
-				, "str": stats.str
-				, "int": stats.int
-				, "dex": stats.dex
-				, "vit": stats.vit
-			}
+				, str: stats.str
+				, int: stats.int
+				, dex: stats.dex
+				, vit: stats.vit
+			};
 			case "offense": return {
 				"Chance de coup critique global": stats.critChance.toFixed(1) + "%"
 				, "Multiplicateur de coup critique": stats.critMultiplier.toFixed(1) + "%"
@@ -50,7 +50,7 @@ define([
 				, gap3: ""
 				, "Vitesse d'attaque": (100 + stats.attackSpeed) + "%"
 				, "Vitesse d'incantation": (100 + stats.castSpeed) + "%"
-			}
+			};
 			case "défense": return {
 				armor: stats.armor
 				, "Chance de bloqué des attaques": stats.blockAttackChance + "%"
@@ -68,7 +68,7 @@ define([
 				, "Résistance global": stats.elementAllResist
 				, gap4: ""
 				, "Vie gagné par coup": stats.lifeOnHit
-			}
+			};
 			case "autres": return {
 				"Qualité des items": stats.magicFind + "%"
 				, "Quantité des items": stats.itemQuantity + "%"
@@ -82,7 +82,7 @@ define([
 				, "Chance de poisson rare": stats.fishRarity + "%"
 				, "Augmentation du poid": stats.fishWeight + "%"
 				, "Chance de pêché des items": stats.fishItems + "%"
-			}
+			};
 			default: throw new Error(`Erreur écran non trouvé "${section}"`);
 		}
 	};

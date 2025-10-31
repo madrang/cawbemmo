@@ -1,18 +1,18 @@
 const { routerConfig: { signatures, allowed, allowTargetId, secondaryAllowed, globalAllowed, secondaryAllowTargetId } } = require("./routerConfig");
 
 const DATA_TYPES_VALIDATORS = {
-	"boolean": (value) => typeof value === "boolean"
-	, "string": (value) => typeof value === "string"
-	, "stringOrNull": (value) => value === null || typeof(value) === "string"
+	boolean: (value) => typeof value === "boolean"
+	, string: (value) => typeof value === "string"
+	, stringOrNull: (value) => value === null || typeof(value) === "string"
 
-	, "number": (value) => Number.isFinite(value)
-	, "numberOrString": (value) => typeof value === "string" || Number.isFinite(value)
+	, number: (value) => Number.isFinite(value)
+	, numberOrString: (value) => typeof value === "string" || Number.isFinite(value)
 
-	, "integer": (value) => Number.isInteger(value)
-	, "integerOrString": (value) => typeof value === "string" || Number.isInteger(value)
+	, integer: (value) => Number.isInteger(value)
+	, integerOrString: (value) => typeof value === "string" || Number.isInteger(value)
 
-	, "arrayOfStrings": (value) => Array.isArray(value) && value.every((v) => typeof(v) === "string")
-	, "arrayOfIntegers": (value) => Array.isArray(value) && value.every((v) => Number.isInteger(v))
+	, arrayOfStrings: (value) => Array.isArray(value) && value.every((v) => typeof(v) === "string")
+	, arrayOfIntegers: (value) => Array.isArray(value) && value.every((v) => Number.isInteger(v))
 };
 
 const keysCorrect = function (obj, specs) {
@@ -48,7 +48,7 @@ const keysCorrect = function (obj, specs) {
 		}
 	}
 	return true;
-}
+};
 
 DATA_TYPES_VALIDATORS.arrayOfObjects = (value, spec) => (
 	Array.isArray(value)
@@ -108,11 +108,11 @@ module.exports = {
 	}
 
 	, allowedGlobal: function (msg) {
-		return globalAllowed[msg.module] && globalAllowed[msg.module].includes(msg.method);
+		return globalAllowed[msg.module]?.includes(msg.method);
 	}
 
 	, allowedGlobalCall: function (threadModule, method) {
-		return globalAllowed[threadModule] && globalAllowed[threadModule].includes(method);
+		return globalAllowed[threadModule]?.includes(method);
 	}
 
 	, keysCorrect
