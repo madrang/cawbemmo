@@ -6,8 +6,8 @@ describe("Server", () => {
 		});
 	}, 60 * 1000);
 	describe("when ready", () => {
-		beforeAll((done) => {
-			client.init(done);
+		beforeAll(async () => {
+			await client.init();
 		});
 		it("has connected websocket", () => {
 			expect(client.socket.connected).toBeTrue();
