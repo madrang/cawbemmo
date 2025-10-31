@@ -742,21 +742,21 @@ define([
 				, size: 0
 				, color: 1
 				, stats: {}
-				, spiritStart: "owl"
+				, spiritStart: "concierge"
 			}
 			, { id: 104
 				, pos: { x: 56, y: 39 }
 				, size: 0
 				, color: 3
 				, stats: {}
-				, spiritStart: "bear"
+				, spiritStart: "pee wee"
 			}
 			, { id: 105
 				, pos: { x: 71, y: 42 }
 				, size: 0
 				, color: 2
 				, stats: {}
-				, spiritStart: "lynx"
+				, spiritStart: "party animal"
 			}
 			, { id: 106
 				, pos: { x: 50, y: 45 }
