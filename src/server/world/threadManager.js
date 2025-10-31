@@ -216,36 +216,36 @@ module.exports = {
 		return threads.find((t) => t.id === threadId);
 	}
 	, getThread: ({ zoneName, zoneId }) => {
-		let thread = threads.find(
-			(t) => (t.name === zoneName
-				&& (t.id === zoneId || t.id === t.name)
-			)
-		);
-		if (!thread) {
-			const mapList = getMapList();
-			const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
-			if (map.name !== zoneName) {
-				thread = threads.find((t) => t.name === map.name && t.id === t.name);
-				if (thread) {
-					return thread;
-				}
+		let thread = threads.find((t) => t.name === zoneName && (t.id === zoneId || t.id === t.name));
+		if (thread) {
+			return thread;
+		}
+
+		const mapList = getMapList();
+		const map = mapList.find((m) => m.name === zoneName) || getDefaultMap(mapList);
+		if (map.name !== zoneName) {
+			thread = threads.find((t) => t.name === map.name && t.id === t.name);
+			if (thread) {
+				return thread;
 			}
-			thread = spawnThread(map);
 		}
-		if (!thread) {
-			io.logError({
-				sourceModule: "threadManager"
-				, sourceMethod: "getThread"
-				, error: "No thread found"
-				, info: {
-					requestedZoneName: zoneName
-					, requestedZoneId: zoneId
-					, useMapName: map.name
-				}
-			});
-			process.exit();
+
+		thread = spawnThread(map);
+		if (thread) {
+			return thread;
 		}
-		return thread;
+
+		io.logError({
+			sourceModule: "threadManager"
+			, sourceMethod: "getThread"
+			, error: "No thread found"
+			, info: {
+				requestedZoneName: zoneName
+				, requestedZoneId: zoneId
+				, useMapName: map.name
+			}
+		});
+		process.exit();
 	}
 	, doesThreadExist: ({ zoneName, zoneId }) => {
 		for (const t of threads) {
