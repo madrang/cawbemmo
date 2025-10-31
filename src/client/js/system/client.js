@@ -71,14 +71,16 @@ define([
 		});
 	};
 	const client = {
-		doneConnect: false
-
-		, init: function (onReady) {
+		init: async function () {
 			this.socket = io({
 				transports: [ "websocket" ]
 			});
 
-			this.socket.on("connect", this.onConnected.bind(this, onReady));
+			const promiseSrc = new _.PromiseSource();
+			const tRef = setTimeout(() => {
+				promiseSrc.reject(new Error("Websocket connection timeout out!"));
+			}, 30 * 1000);
+			this.socket.on("connect", promiseSrc.resolve);
 			this.socket.on("handshake", this.onHandshake.bind(this));
 			this.socket.on("event", this.onEvent.bind(this));
 			this.socket.on("events", this.onEvents.bind(this));
@@ -94,6 +96,9 @@ define([
 			this.moduleProxy = createRequestProxy(this, "module");
 			this.componentProxy = createRequestProxy(this, "cpn");
 			this.threadProxy = createRequestProxy(this, "threadModule");
+
+			await promiseSrc.promise;
+			clearTimeout(tRef);
 		}
 
 		, onRezoneStart: function () {
@@ -120,18 +125,6 @@ define([
 				, method: "clientAck"
 				, data: {}
 			});
-		}
-
-		, onConnected: function (onReady) {
-			if (this.doneConnect) {
-				this.onDisconnect();
-			} else {
-				this.doneConnect = true;
-			}
-
-			if (onReady) {
-				onReady();
-			}
 		}
 
 		, onDisconnect: async function () {
@@ -194,7 +187,6 @@ define([
 
 		, onEvent: function ({ event: eventName, data: eventData }) {
 			const handler = this.processAction[eventName] || this.processAction.default;
-
 			handler(eventName, [eventData]);
 		}
 

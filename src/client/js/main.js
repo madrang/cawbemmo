@@ -57,12 +57,8 @@ define([
 				$(".ui-container").addClass("hideMonetization");
 			}
 
-			client.init(this.onClientReady.bind(this));
-		}
-
-		, onClientReady: async function () {
-			globals.clientConfig = await client.moduleProxy.clientConfig.getClientConfig();
-
+			await client.init();
+			await globals.init();
 			await resources.init();
 			await components.init();
 
