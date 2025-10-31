@@ -152,7 +152,11 @@ define([
 
 		, onAfterShow: function () {
 			//Calculate midpoint
-			let start = this.data.nodes.find((n) => n.spiritStart === window.player.class);
+			const pClass = window.player.class;
+			const start = this.data.nodes.find((n) => n.spiritStart === pClass);
+			if (!start) {
+				throw new Error(`Passive start node of ${pClass} is missing!`);
+			}
 
 			this.pos.x = start.pos.x * constants.gridSize;
 			this.pos.y = start.pos.y * constants.gridSize;
