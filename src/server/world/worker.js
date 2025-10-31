@@ -112,6 +112,7 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 
 	// Start listening to messages.
 	process.on("message", (m) => {
+		//_.log.worker.trace("New message %o", m);
 		if (m.module) {
 			const instances = instancer.instances;
 			const iLen = instances.length;
@@ -122,21 +123,27 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 					const object = objects[j];
 					if (object.name === m.args[0]) {
 						const mod = object.instance[m.module];
+						//_.log.worker.trace("Sending message to instancer module.");
 						return mod[m.method].apply(mod, m.args);
 					}
 				}
 			}
+			_.log.worker.warn("Missing handler module for message %o", m);
 			return;
 		}
 		if (m.threadModule) {
+			//_.log.worker.trace("Sending message to thread module.");
 			return global[m.threadModule][m.method](m.data);
 		}
 		if (m.method) {
+			//_.log.worker.trace("Sending message to instancer.");
 			return instancer[m.method](m.args);
 		}
 		if (m.event) {
+			//_.log.worker.trace("Sending message to eventEmitter.");
 			return eventEmitter.emit(m.event, m.data);
 		}
+		_.log.worker.warn("Discarded invalid message %o", m);
 	});
 	// Notify parent that worker is ready.
 	process.send({

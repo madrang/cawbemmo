@@ -6,7 +6,6 @@ define([
 	, "html!ui/templates/passives/template"
 	, "css!ui/templates/passives/styles"
 	, "ui/templates/passives/constants"
-	, "ui/templates/passives/temp"
 	, "ui/templates/passives/input"
 	, "js/misc/statTranslations"
 ], function (
@@ -15,10 +14,10 @@ define([
 	tpl,
 	styles,
 	constants,
-	temp,
 	input,
 	statTranslations
 ) {
+	const performAction = client.componentProxy.player.performAction;
 	return {
 		tpl: tpl
 
@@ -52,18 +51,19 @@ define([
 
 		, handlerResize: null
 
-		, postRender: function () {
+		, postRender: async function () {
 			input.init(this.el, zoom);
 
+			await _.asyncDelay(2500); // Fails if runs too early...
+			const temp = await performAction({
+				cpn: "passives", method: "getTree"
+				, data: {}
+			});
 			this.data.nodes = temp.nodes;
 			this.data.links = temp.links.map((l) => {
 				return {
-					from: {
-						id: l.from
-					}
-					, to: {
-						id: l.to
-					}
+					from: { id: l.from }
+					, to: { id: l.to }
 				};
 			});
 
@@ -89,11 +89,11 @@ define([
 
 			this.ctx.lineWidth = constants.lineWidth;
 
-			$(this.canvas)
-				.on("contextmenu", function () {
+			$(this.canvas).on("contextmenu"
+				, () => {
 					return false;
-				});
-
+				}
+			);
 			this.find(".btnReset").on("click", this.events.onReset.bind(this));
 
 			this.onEvent("onKeyDown", this.onKeyDown.bind(this));
@@ -223,13 +223,7 @@ define([
 					if (l.from.id !== node.id && l.to.id !== node.id) {
 						return false;
 					}
-
-					return this.data.nodes.some((n) => {
-						return (
-							(n.id === l.from.id && n.selected) ||
-							(n.id === l.to.id && n.selected)
-						);
-					});
+					return this.data.nodes.some((n) => (n.id === l.from.id || n.id === l.to.id) && n.selected);
 				});
 
 				if (!linked) {
@@ -456,17 +450,8 @@ define([
 				}
 
 				const canReachNode = this.data.links.some((l) => {
-					return (
-						(
-							l.to.id === node.id ||
-							l.from.id === node.id
-						) &&
-						this.data.nodes.some((n) => {
-							return (
-								(n.id === l.from.id && n.selected) ||
-								(n.id === l.to.id && n.selected)
-							);
-						})
+					return ((l.to.id === node.id || l.from.id === node.id)
+						&& this.data.nodes.some((n) => (n.id === l.from.id || n.id === l.to.id) && n.selected)
 					);
 				});
 
@@ -477,11 +462,9 @@ define([
 				events.emit("onTryTickPassiveNode", { tick: !node.selected });
 
 				client.request({
-					cpn: "player"
-					, method: "performAction"
+					cpn: "player", method: "performAction"
 					, data: {
-						cpn: "passives"
-						, method: node.selected ? "untickNode" : "tickNode"
+						cpn: "passives", method: node.selected ? "untickNode" : "tickNode"
 						, data: {
 							nodeId: node.id
 						}
@@ -504,11 +487,9 @@ define([
 
 			, onReset: function () {
 				client.request({
-					cpn: "player"
-					, method: "performAction"
+					cpn: "player", method: "performAction"
 					, data: {
-						cpn: "passives"
-						, method: "untickNode"
+						cpn: "passives", method: "untickNode"
 						, data: {}
 					}
 				});

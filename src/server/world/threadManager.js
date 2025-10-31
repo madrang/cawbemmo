@@ -264,7 +264,10 @@ module.exports = {
 	, sendMessageToThread: ({ threadId, msg }) => {
 		const thread = threads.find((t) => t.id === threadId);
 		if (thread) {
+			//_.log.threadManager.trace("Sending message %o to thread %s", msg, threadId);
 			thread.worker.send(msg);
+		} else {
+			_.log.threadManager.error("Thread %s not found! Can't send message %o", threadId, msg);
 		}
 	}
 

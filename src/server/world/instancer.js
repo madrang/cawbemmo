@@ -304,8 +304,10 @@ module.exports = {
 			}
 		}
 		if (!obj) {
+			_.log.instancer.warn("Discarded message to unknown id %s, message %o", targetId || msg.id, msg);
 			return;
 		}
+		//_.log.instancer.trace("performAction %o to object %s", msg.action, obj.type || obj.name || obj.id);
 		obj.performAction(msg.action);
 	}
 

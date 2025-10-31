@@ -47,6 +47,7 @@ const keysCorrect = function (obj, specs) {
 			return false;
 		}
 	}
+	//_.log.router.trace("Message keys correct.");
 	return true;
 };
 
@@ -120,8 +121,10 @@ module.exports = {
 	, signatureCorrect: function (msg, config) {
 		if (config.callback !== "deferred") {
 			if (config.callback && !msg.callback) {
+				_.log.router.debug("Message callback missing!");
 				return false;
 			} else if (!config.callback && msg.callback) {
+				_.log.router.debug("Unexpected message callback!");
 				return false;
 			}
 		}
@@ -148,6 +151,7 @@ module.exports = {
 			signature = signatures.cpnMethods[msg.cpn]?.[msg.method];
 		}
 		if (!signature) {
+			_.log.router.debug("Message signature not found!");
 			return false;
 		}
 		const result = this.signatureCorrect(msg, signature);
@@ -159,6 +163,7 @@ module.exports = {
 		}
 		const signatureThreadMsg = signatures.threadCpnMethods[msg.data.cpn]?.[msg.data.method];
 		if (!signatureThreadMsg) {
+			_.log.router.debug("ThreadMessage signature not found!");
 			return false;
 		}
 		return this.signatureCorrect(msg.data, signatureThreadMsg);
