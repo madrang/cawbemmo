@@ -113,7 +113,6 @@ define([
 			} else if (actionModule || threadModule) {
 				data.targetId = sendTargetServerId ? this.target.serverId : this.target.id;
 			}
-
 			client.request({
 				module: actionModule
 				, threadModule

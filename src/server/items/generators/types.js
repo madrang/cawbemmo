@@ -34,8 +34,7 @@ module.exports = {
 			type = _.getRandomKey(possibleTypes);
 		}
 
-		let typeBlueprint = configTypes.types[item.slot][type] || {};
-
+		const typeBlueprint = configTypes.types[item.slot][type] || {};
 		if (!typeBlueprint) {
 			return;
 		}

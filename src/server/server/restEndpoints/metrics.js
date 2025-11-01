@@ -18,7 +18,7 @@ const MEMORY_DISPLAY_NAMES = {
 const formatMetrics = (rawMetrics) => {
 	const cleanedMetrics = {};
 	if (rawMetrics.playerCount) {
-		cleanedMetrics["PlayerCount"] = rawMetrics.playerCount;
+		cleanedMetrics.PlayerCount = rawMetrics.playerCount;
 	}
 	const heapStatistics = rawMetrics.heapStatistics;
 	if (heapStatistics) {
@@ -30,10 +30,10 @@ const formatMetrics = (rawMetrics) => {
 				memoryMetrics[newName] = (heapStatistics[heapKey] / 1048576).toFixed(2);
 			}
 		}
-		cleanedMetrics["Memory"] = memoryMetrics;
+		cleanedMetrics.Memory = memoryMetrics;
 		cleanedMetrics["Global Handles"] = {
-			"Used": heapStatistics.used_global_handles_size
-			, "Total": heapStatistics.total_global_handles_size
+			Used: heapStatistics.used_global_handles_size
+			, Total: heapStatistics.total_global_handles_size
 		};
 		if (heapStatistics.number_of_native_contexts > 1) {
 			cleanedMetrics["Native Contexts"] = heapStatistics.number_of_native_contexts;
@@ -52,7 +52,7 @@ module.exports = {
 			const metrics = await getThreadStatus(thread, true);
 			threadsMetrics[thread.id] = formatMetrics(metrics);
 		}
-		threadsMetrics["MainThread"] = formatMetrics({
+		threadsMetrics.MainThread = formatMetrics({
 			playerCount: cons.players.length
 			, heapStatistics: v8.getHeapStatistics()
 		});

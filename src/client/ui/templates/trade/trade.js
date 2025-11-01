@@ -104,8 +104,7 @@ define([
 			el.addClass("disabled");
 
 			await client.componentProxy.player.performAction({
-				cpn: "trade"
-				, method: "buySell"
+				cpn: "trade", method: "buySell"
 				, data: {
 					itemId: item.id
 					, action: action
