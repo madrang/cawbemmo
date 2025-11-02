@@ -266,9 +266,9 @@ async function showMenu(event, menuId) {
 	}
 
 	if (menuId === "error-item") {
+		const menuBtn = document.getElementById("selected-text-btn");
 		const selectedText = getSelectedText();
 		if (selectedText) {
-			const menuBtn = document.getElementById("selected-text-btn");
 			menuBtn.textContent = selectedText;
 			menuBtn.hidden = false;
 		} else {
