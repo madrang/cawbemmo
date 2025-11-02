@@ -60,7 +60,9 @@ require([
 			const errElm = errorTpl.cloneNode(true);
 			errElm.innerHTML = errElm.innerHTML
 				.replaceAll("{{date}}", eventDate.toLocaleString())
-				.replaceAll("{{error}}", errEvent.value.replaceAll("\u003C", "&lt;").replaceAll("\u003E", "&gt;"));
+				.replaceAll("{{error}}", errEvent.value.replaceAll("\u003C", "&lt;").replaceAll("\u003E", "&gt;")
+					.replaceAll("\\n", "<br>").replaceAll("\\t", "&#9;")
+				);
 			errElm.dataset.table = "errors";
 			errElm.dataset.key = errEvent.key;
 			errElm.id = "errorEntry-" + eventDate.getTime();
