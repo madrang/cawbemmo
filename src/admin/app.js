@@ -180,6 +180,15 @@ function buildClose (uiElm, onClose) {
 	btnClose.addEventListener("click", onClose.bind(btnClose, uiElm));
 }
 
+function getSelectedText() {
+	if (window.getSelection) { // Standard browsers
+		return window.getSelection().toString();
+	} else if (document.selection && document.selection.createRange) { // Legacy browsers.
+		return document.selection.createRange().text;
+	}
+	return undefined;
+}
+
 function makeElementDraggable (elmnt) {
 	if (!elmnt) {
 		throw new Error("Element is undefined.");
@@ -235,6 +244,7 @@ async function showMenu(event, menuId) {
 	if (!menuId) {
 		menuId = targetId;
 	}
+
 	const menuElm = document.getElementById(menuId + "-contextmenu");
 	menuElm.style.display = "block";
 	const offsets = target.getBoundingClientRect();
@@ -252,11 +262,23 @@ async function showMenu(event, menuId) {
 	if (targetId) {
 		menuElm.dataset.parent = targetId;
 	}
+
+	if (menuId === "error-item") {
+		const selectedText = getSelectedText();
+		if (selectedText) {
+			const menuBtn = document.getElementById("selected-text-btn");
+			menuBtn.textContent = selectedText;
+			menuBtn.hidden = false;
+		} else {
+			menuBtn.hidden = true;
+		}
+	}
+
 	// asyncDelay is to allow document to process current click event.
 	await _.asyncDelay(33);
+
 	const hideMenu = (e) => {
 		if (e.target === target) {
-			//document.addEventListener("click", hideMenu, { once: true });
 			return;
 		}
 		menuElm.style.display = "none";
@@ -285,13 +307,10 @@ function removeUiElement(uiElm) {
 	//events.emit("onRemovedUi", uiElm);
 }
 
-async function deleteEntry(event) {
-	const target = event.target;
-	const menuElm = target.closest(".contextmenu");
-	if (!menuElm.dataset.parent) {
-		throw new Error("Element has no data-parent attribute.");
+async function deleteEntryById(parentElm) {
+	if (typeof parentElm === "string") {
+		parentElm = document.getElementById(parentElm);
 	}
-	const parentElm = document.getElementById(menuElm.dataset.parent);
 	if (!parentElm) {
 		throw new Error("Parent element not found.");
 	}
@@ -320,3 +339,38 @@ async function deleteEntry(event) {
 	_.log.deleteEntry.debug("Request completed! Result:", result);
 	removeUiElement(parentElm);
 }
+
+async function deleteEntry(event) {
+	const target = event.target;
+	const menuElm = target.closest(".contextmenu");
+	if (!menuElm.dataset.parent) {
+		throw new Error("Element has no data-parent attribute.");
+	}
+	return deleteEntryById(menuElm.dataset.parent);
+}
+
+async function deleteSelectedText(event) {
+	const target = event.target;
+	const menuElm = target.closest(".contextmenu");
+	if (!menuElm.dataset.parent) {
+		throw new Error("Element has no data-parent attribute.");
+	}
+	const parentElm = document.getElementById(menuElm.dataset.parent);
+	if (!parentElm) {
+		throw new Error("Parent element not found.");
+	}
+	const listElm = parentElm.closest(".list");
+	if (!listElm) {
+		throw new Error("Parent list element not found.");
+	}
+	const textContent = target.textContent;
+	for (const elm of listElm.querySelectorAll(".item .value")) {
+		if (!elm.textContent.includes(textContent)) {
+			continue;
+		}
+		_.log.deleteSelectedText.debug("Deleting element ", elm);
+		await deleteEntryById(elm.closest(".item"));
+	}
+	_.log.deleteSelectedText.trace("Done!");
+}
+
