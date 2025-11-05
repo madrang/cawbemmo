@@ -7,9 +7,10 @@ define([
 	, "js/rendering/numbers"
 	, "js/input"
 	, "js/system/events"
-	, "js/resources"
 	, "js/sound/sound"
 	, "js/system/globals"
+	, "js/locale/index"
+	, "js/resources"
 	, "js/components/components"
 	, "ui/templates/tooltips/tooltips"
 ], (
@@ -21,9 +22,10 @@ define([
 	, numbers
 	, input
 	, events
-	, resources
 	, sound
 	, globals
+	, locale
+	, resources
 	, components
 ) => {
 	let fnQueueTick = null;
@@ -59,6 +61,7 @@ define([
 
 			await client.init();
 			await globals.init();
+			await locale.init();
 			await resources.init();
 			await components.init();
 

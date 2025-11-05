@@ -1,14 +1,14 @@
 define([
 	"js/input"
-	, "js/misc/statTranslations"
+	, "js/locale/index"
 	, "ui/templates/tooltipItem/buildTooltip/lineBuilders"
 	, "ui/templates/tooltipItem/buildTooltip/getCompareItem"
-], function (
-	input,
-	statTranslations,
-	lineBuilders,
-	getCompareItem
-) {
+], (
+	input
+	, locale
+	, lineBuilders
+	, getCompareItem
+) => {
 	const { init: initLineBuilders, lineBuilders: g } = lineBuilders;
 
 	const buildTooltipHtml = ({ quality }) => {

@@ -1,10 +1,8 @@
 define([
-	"js/misc/statTranslations"
-	, "ui/templates/tooltipItem/buildTooltip/stringifyStatValue"
-], function (
-	statTranslations,
-	stringifyStatValue
-) {
+	"js/locale/index"
+], (
+	locale
+) => {
 	let item = null;
 	let compare = null;
 	let shiftDown = null;
@@ -87,8 +85,8 @@ define([
 
 			const html = tempImplicitStats
 				.map(({ stat, value }) => {
-					let statName = statTranslations.translate(stat);
-					const prettyValue = stringifyStatValue(stat, value);
+					let statName = locale.translate(stat);
+					const prettyValue = locale.stringifyStatValue(stat, value);
 					let rowClass = "";
 					if (compare) {
 						if (prettyValue.indexOf("-") > -1) {
@@ -153,8 +151,8 @@ define([
 						statName = statName.substr(1);
 					}
 
-					const prettyValue = stringifyStatValue(statName, tempStats[s]);
-					statName = statTranslations.translate(statName);
+					const prettyValue = locale.stringifyStatValue(statName, tempStats[s]);
+					statName = locale.translate(statName);
 
 					let rowClass = "";
 

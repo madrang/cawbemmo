@@ -1,17 +1,17 @@
 define([
 	"js/system/events"
 	, "js/system/client"
+	, "ui/shared/renderItem"
+	, "js/locale/index"
 	, "html!ui/templates/workbench/template"
 	, "css!ui/templates/workbench/styles"
-	, "ui/shared/renderItem"
-	, "js/misc/statTranslations"
 ], function (
-	events,
-	client,
-	template,
-	styles,
-	renderItem,
-	statTranslations
+	events
+	, client
+	, renderItem
+	, locale
+	, template
+	, styles
 ) {
 	const performAction = client.componentProxy.player.performAction;
 	return {
@@ -276,7 +276,7 @@ define([
 				let msg = baseMsg;
 
 				addStatMsgs.forEach((a) => {
-					const statName = statTranslations.translate(a.stat);
+					const statName = locale.translate(a.stat);
 					msg += `<br />${(a.value > 0) ? "+" : ""}${a.value} ${statName}`;
 				});
 

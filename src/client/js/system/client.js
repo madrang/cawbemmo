@@ -17,7 +17,7 @@ define([
 			return false;
 		}
 	};
-	const createRequestFunction = (sendRequestFn, msgBase) => {
+	const createProxyFunction = (sendRequestFn, msgBase) => {
 		return new Proxy(sendRequestFn, {
 			apply (target, thisArg, argumentsList) {
 				if (!msgBase || !msgBase.method) {
@@ -56,7 +56,7 @@ define([
 				const newMsgBase = Object.assign({ [propName]: prop }, msgBase);
 
 				if (propName === "method") {
-					const fnProx = createRequestFunction(target.request.bind(target), newMsgBase);
+					const fnProx = createProxyFunction(target.request.bind(target), newMsgBase);
 					childsMap.set(prop, fnProx);
 					return fnProx;
 				}
@@ -147,8 +147,11 @@ define([
 			this.socket.emit("handshake");
 		}
 
-		, request: function (msg) {
-			this.socket.emit("request", msg, msg.callback);
+		, request: function (...args) {
+			if (args.length === 1) {
+				return this.socket.emit("request", args[0], args[0].callback);
+			}
+			return this.socket.emit("request", ...args);
 		}
 
 		, processAction: {

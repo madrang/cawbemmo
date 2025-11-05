@@ -66,10 +66,7 @@ define([
 		, fishWeight: "increased fish weight"
 		, fishItems: "extra chance to hook items"
 	};
-
 	return {
-		translate: function (stat) {
-			return stats[stat];
-		}
+		stats
 	};
 });

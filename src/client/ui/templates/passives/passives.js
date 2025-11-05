@@ -3,20 +3,20 @@ let zoom = 1;
 define([
 	"js/system/events"
 	, "js/system/client"
-	, "html!ui/templates/passives/template"
-	, "css!ui/templates/passives/styles"
 	, "ui/templates/passives/constants"
 	, "ui/templates/passives/input"
-	, "js/misc/statTranslations"
-], function (
-	events,
-	client,
-	tpl,
-	styles,
-	constants,
-	input,
-	statTranslations
-) {
+	, "js/locale/index"
+	, "html!ui/templates/passives/template"
+	, "css!ui/templates/passives/styles"
+], (
+	events
+	, client
+	, constants
+	, input
+	, locale
+	, tpl
+	, styles
+) => {
 	const performAction = client.componentProxy.player.performAction;
 	return {
 		tpl: tpl
@@ -338,7 +338,7 @@ define([
 
 					let text = Object.keys(node.stats)
 						.map(function (s) {
-							let statName = statTranslations.translate(s);
+							let statName = locale.translate(s);
 							let statValue = node.stats[s];
 							if (s.indexOf("CritChance") > -1) {
 								statValue /= 20;
