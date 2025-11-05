@@ -1,9 +1,9 @@
 /** globals.js - Export global vars to both client and server.
+ * eslint-disable-next-line no-extend-native
  */
 (function() {
-	//eslint-disable-next-line no-extend-native
 	Object.defineProperties(Array.prototype, {
-		spliceWhere: { enumerable: false
+		spliceWhere: { enumerable: false, writable: true
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				const splicedItems = [];
@@ -19,7 +19,7 @@
 				return splicedItems;
 			}
 		}
-		, spliceFirstWhere: { enumerable: false
+		, spliceFirstWhere: { enumerable: false, writable: true
 			, value: function (callback, thisArg) {
 				const arrObj = Object(this);
 				let len = arrObj.length || 0;
@@ -54,7 +54,6 @@
 		}
 	});
 
-	//eslint-disable-next-line no-extend-native
 	Object.defineProperty(Object.prototype, "has", {
 		enumerable: false, writable: true
 		, value: function (prop) {
@@ -63,7 +62,6 @@
 	});
 
 	if (!String.prototype.padStart) {
-		//eslint-disable-next-line no-extend-native
 		String.prototype.padStart = function padStart (targetLength, padString) {
 			targetLength = targetLength >> 0;
 			padString = String(typeof padString !== "undefined" ? padString : " ");
@@ -79,13 +77,13 @@
 	}
 	Object.defineProperties(String.prototype, {
 		capitalize: {
-			enumerable: false
+			enumerable: false, writable: true
 			, value: function() {
 				return this[0].toUpperCase() + this.substr(1);
 			}
 		}
 		, indexOfAny: {
-			enumerable: false
+			enumerable: false, writable: true
 			, value: function (charsArr) {
 				const sLen = this.length;
 				for (let i = 0; i < sLen; ++i) {
@@ -97,13 +95,13 @@
 			}
 		}
 		, isAlphanumeric: {
-			enumerable: false
+			enumerable: false, writable: true
 			, value: function () {
 				return /^[0-9a-zA-Z]+$/.test(this);
 			}
 		}
 		, replaceAllWith: {
-			enumerable: false
+			enumerable: false, writable: true
 			, value: function(template) {
 				return
 			}
