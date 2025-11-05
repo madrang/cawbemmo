@@ -15,24 +15,24 @@
 					newObj[i] = assignRecursive(newObj[i], objSrc[i]);
 					continue;
 				}
-				let result = remapCallback(newObj, objSrc[i], path, i);
+				const remap = remapCallback(newObj, objSrc[i], path, i);
 				const iPath = (path ? `${path}[${i}]` : `[${i}]`);
-				if (typeof result !== "object") {
-					if (result) {
-						_.log.assignRecursive.error("Invalid remapCallback results '%s'.", result);
+				if (typeof remap !== "object") {
+					if (remap) {
+						_.log.assignRecursive.error("Invalid remapCallback results '%s'.", remap);
 					}
 					newObj[i] = assignRecursive(newObj[i], objSrc[i], remapCallback, iPath);
 					continue;
 				}
-				if (!result.has("index")) {
-					result.index = i;
-				} else if (result.index < 0) {
-					result.index = newObj.length;
+				if (!remap.has("index")) {
+					remap.index = i;
+				} else if (remap.index < 0) {
+					remap.index = newObj.length;
 				}
-				if (result.hasOwnProperty("value")) {
-					newObj[result.index] = assignRecursive(undefined, result.value);
+				if (remap.hasOwnProperty("value")) {
+					newObj[remap.index] = assignRecursive(undefined, remap.value);
 				} else {
-					newObj[result.index] = assignRecursive(newObj[result.index], objSrc[i], remapCallback, iPath);
+					newObj[remap.index] = assignRecursive(newObj[remap.index], objSrc[i], remapCallback, iPath);
 				}
 			}
 			return newObj;
@@ -56,22 +56,22 @@
 				newObj[propName] = assignRecursive(newObj[propName], objSrc[propName]);
 				continue;
 			}
-			let result = remapCallback(newObj, objSrc[propName], path, propName);
+			const remap = remapCallback(newObj, objSrc[propName], path, propName);
 			const nPath = (path ? `${path}.${propName}` : propName);
-			if (typeof result !== "object") {
-				if (result) {
-					_.log.assignRecursive.error("Invalid remapCallback results '%s'.", result);
+			if (typeof remap !== "object") {
+				if (remap) {
+					_.log.assignRecursive.error("Invalid remapCallback results '%s'.", remap);
 				}
 				newObj[propName] = assignRecursive(newObj[propName], objSrc[propName], remapCallback, nPath);
 				continue;
 			}
-			if (!result.has("index")) {
-				result.index = propName;
+			if (!remap.has("index")) {
+				remap.index = propName;
 			}
-			if (result.hasOwnProperty("value")) {
-				newObj[result.index] = assignRecursive(undefined, result.value);
+			if (remap.hasOwnProperty("value")) {
+				newObj[remap.index] = assignRecursive(undefined, remap.value);
 			} else {
-				newObj[result.index] = assignRecursive(newObj[result.index], objSrc[propName], remapCallback, nPath);
+				newObj[remap.index] = assignRecursive(newObj[remap.index], objSrc[propName], remapCallback, nPath);
 			}
 		}
 		return newObj;
