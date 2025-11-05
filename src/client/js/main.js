@@ -31,7 +31,7 @@ define([
 		return () => requestAnimationFrame(updateMethod);
 	};
 
-	const loadLongPress = async () => {
+	const loadLongPress = () => {
 		return new Promise((res) => {
 			require(["longPress"], res);
 		});
