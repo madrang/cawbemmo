@@ -28,16 +28,10 @@ define([
 		, size: {}
 		, ctx: null
 
-		, mouse: {
-			x: 0
-			, y: 0
-		}
+		, mouse: { x: 0, y: 0 }
 
 		, currentZoom: 1
-		, pos: {
-			x: 0
-			, y: 0
-		}
+		, pos: { x: 0, y: 0 }
 		, oldPos: null
 
 		, panOrigin: null
@@ -293,26 +287,14 @@ define([
 				if (this.mouse.x === pos.x && this.mouse.y === pos.y) {
 					return;
 				}
-
-				this.mouse = {
-					x: pos.x
-					, y: pos.y
-				};
-
-				let cell = {
+				this.mouse = { x: pos.x, y: pos.y };
+				const cell = {
 					x: Math.floor((this.pos.x + this.mouse.x) / constants.gridSize)
 					, y: Math.floor((this.pos.y + this.mouse.y) / constants.gridSize)
 				};
-
-				let node = this.hoverNode = this.data.nodes.find(function (n) {
-					return (
-						(n.pos.x === cell.x) &&
-						(n.pos.y === cell.y)
-					);
-				});
-
+				const node = this.hoverNode = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
 				if (node) {
-					let percentageStats = [
+					const percentageStats = [
 						"addCritChance"
 						, "addCritMultiplier"
 						, "addAttackCritChance"
@@ -337,8 +319,8 @@ define([
 					];
 
 					let text = Object.keys(node.stats)
-						.map(function (s) {
-							let statName = locale.translate(s);
+						.map((s) => {
+							let statName = locale.translate("stats", s);
 							let statValue = node.stats[s];
 							if (s.indexOf("CritChance") > -1) {
 								statValue /= 20;
@@ -347,7 +329,6 @@ define([
 							if (percentageStats.includes(s)) {
 								statValue += "%";
 							}
-
 							return ((negative ? "" : "+") + statValue + " " + statName);
 						})
 						.join("<br />");
@@ -358,11 +339,10 @@ define([
 						text = "Starting node for " + node.spiritStart + " spirits";
 					}
 
-					let tooltipPos = {
+					const tooltipPos = {
 						x: (input.mouse.raw.clientX + 15) / zoom
 						, y: (input.mouse.raw.clientY) / zoom
 					};
-
 					events.emit("onShowTooltip", text, this.el[0], tooltipPos);
 					this.tooltipId = node.id;
 				} else {
@@ -378,18 +358,11 @@ define([
 						, y: Math.floor((this.pos.y + e.y) / constants.gridSize)
 					};
 
-					let node = this.data.nodes.find(function (n) {
-						return (
-							(n.pos.x === cell.x) &&
-							(n.pos.y === cell.y)
-						);
-					});
-
+					const node = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
 					if (this.hoverNode && node && node.id !== this.hoverNode.id) {
 						this.events.onMouseMove.call(this, e);
 						return;
 					}
-
 					if (!node) {
 						this.hoverNode = null;
 					}
@@ -413,14 +386,9 @@ define([
 					this.events.onMouseMove.call(this, e);
 					return;
 				}
-
 				if (!this.oldPos) {
-					this.oldPos = {
-						x: this.pos.x
-						, y: this.pos.y
-					};
+					this.oldPos = { x: this.pos.x, y: this.pos.y };
 				}
-
 				let zoomPanMultiplier = this.currentZoom;
 				let scrollSpeed = constants.scrollSpeed / zoomPanMultiplier;
 
@@ -430,10 +398,7 @@ define([
 				this.pos.x += (this.panOrigin.x - rawX) * scrollSpeed;
 				this.pos.y += (this.panOrigin.y - rawY) * scrollSpeed;
 
-				this.panOrigin = {
-					x: rawX
-					, y: rawY
-				};
+				this.panOrigin = { x: rawX, y: rawY };
 
 				this.renderNodes();
 			}
@@ -443,24 +408,20 @@ define([
 			}
 
 			, onTryClickNode: function (node) {
-				if ((node.spiritStart) || (node.selected)) {
+				if (node.spiritStart || node.selected) {
 					return;
 				} else if (isMobile && this.tooltipId !== node.id) {
 					return;
 				}
-
 				const canReachNode = this.data.links.some((l) => {
 					return ((l.to.id === node.id || l.from.id === node.id)
 						&& this.data.nodes.some((n) => (n.id === l.from.id || n.id === l.to.id) && n.selected)
 					);
 				});
-
 				if (!canReachNode) {
 					return;
 				}
-
 				events.emit("onTryTickPassiveNode", { tick: !node.selected });
-
 				client.request({
 					cpn: "player", method: "performAction"
 					, data: {
@@ -476,7 +437,6 @@ define([
 				this.data.nodes.forEach((n) => {
 					n.selected = selected.some((s) => s === n.id);
 				});
-
 				this.renderNodes();
 			}
 

@@ -276,7 +276,7 @@ define([
 				let msg = baseMsg;
 
 				addStatMsgs.forEach((a) => {
-					const statName = locale.translate(a.stat);
+					const statName = locale.translate("stats", a.stat);
 					msg += `<br />${(a.value > 0) ? "+" : ""}${a.value} ${statName}`;
 				});
 

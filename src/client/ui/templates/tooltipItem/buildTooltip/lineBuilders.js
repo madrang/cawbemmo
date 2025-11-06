@@ -85,7 +85,7 @@ define([
 
 			const html = tempImplicitStats
 				.map(({ stat, value }) => {
-					let statName = locale.translate(stat);
+					let statName = locale.translate("stats", stat);
 					const prettyValue = locale.stringifyStatValue(stat, value);
 					let rowClass = "";
 					if (compare) {
@@ -152,10 +152,9 @@ define([
 					}
 
 					const prettyValue = locale.stringifyStatValue(statName, tempStats[s]);
-					statName = locale.translate(statName);
+					statName = locale.translate("stats", statName);
 
 					let rowClass = "";
-
 					if (compare) {
 						if (prettyValue.indexOf("-") > -1) {
 							rowClass = "loseStat";
@@ -170,16 +169,12 @@ define([
 					return `<div class="${rowClass}">${prettyValue} ${statName}</div>`;
 				})
 				.sort((a, b) => {
-					return (a.replace(" enchanted", "").length - b.replace(" enchanted", "").length);
-				})
-				.sort((a, b) => {
-					if (a.indexOf("enchanted") > -1 && b.indexOf("enchanted") === -1) {
+					if (a.includes("enchanted") && !b.includes("enchanted")) {
 						return 1;
-					} else if (a.indexOf("enchanted") === -1 && b.indexOf("enchanted") > -1) {
+					} else if (!a.includes("enchanted") && b.includes("enchanted")) {
 						return -1;
 					}
-
-					return 0;
+					return (a.replace(" enchanted", "").length - b.replace(" enchanted", "").length);
 				})
 				.join("");
 			if (!html) {
