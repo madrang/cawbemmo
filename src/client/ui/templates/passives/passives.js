@@ -3,7 +3,6 @@ let zoom = 1;
 define([
 	"js/system/events"
 	, "js/system/client"
-	, "ui/templates/passives/constants"
 	, "ui/templates/passives/input"
 	, "js/locale/index"
 	, "html!ui/templates/passives/template"
@@ -11,12 +10,17 @@ define([
 ], (
 	events
 	, client
-	, constants
 	, input
 	, locale
 	, tpl
 	, styles
 ) => {
+	const constants = {
+		lineWidth: 5
+		, blockSize: 20
+		, gridSize: 30
+		, scrollSpeed: 0.75
+	};
 	const performAction = client.componentProxy.player.performAction;
 	return {
 		tpl: tpl
