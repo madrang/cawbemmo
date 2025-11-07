@@ -292,7 +292,11 @@ define([
 					x: Math.floor((this.pos.x + this.mouse.x) / constants.gridSize)
 					, y: Math.floor((this.pos.y + this.mouse.y) / constants.gridSize)
 				};
-				const node = this.hoverNode = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
+				const node = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
+				if (node === this.hoverNode) {
+					return;
+				}
+				this.hoverNode = node;
 				if (node) {
 					const percentageStats = [
 						"addCritChance"
