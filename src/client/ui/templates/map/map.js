@@ -46,7 +46,7 @@ define([
 			this.el.css("display", "block");
 		}
 
-		, toggleMap: function() {
+		, toggleMap: function () {
 			if (this.el.hasClass("uiMapBig")) {
 				this.uiContainer.removeClass("blocking");
 				this.el.removeClass("uiMapBig");
@@ -59,7 +59,7 @@ define([
 			this.drawMap();
 		}
 
-		, drawMap: _.debounce(function() {
+		, drawMap: _.debounce(function () {
 			if (!physics.grid) {
 				return;
 			}
@@ -110,13 +110,13 @@ define([
 			viewCtx.translate(-player.x, -player.y);
 			viewCtx.imageSmoothingEnabled = false;
 			viewCtx.drawImage(this.mapCanvas, 0, 0);
-		// 250ms - 4 FPS
+		// 250ms = 4 FPS
 		}, 250, true, true)
 
-		, getItemType: function(obj) {
+		, getItemType: function (obj) {
 			if (obj.isVisible && obj.sprite) {
 				if (obj.account || obj.player) {
-					if (window.player.id == obj.id) {
+					if (window.player.id === obj.id) {
 						return "me";
 					}
 					return ["player", obj.account || obj.name];
@@ -130,11 +130,11 @@ define([
 			//obj.isRare
 			return ["hidden", obj.name];
 		}
-		, getMapItemColor: function(itemTypeInfo) {
-			if (typeof itemTypeInfo == "object") {
+		, getMapItemColor: function (itemTypeInfo) {
+			if (typeof itemTypeInfo === "object") {
 				itemTypeInfo = this.getItemType(itemTypeInfo);
 			}
-			if (typeof itemTypeInfo == "string") {
+			if (typeof itemTypeInfo === "string") {
 				itemTypeInfo = itemTypeInfo.split(".");
 			}
 			const colorDef = this.itemColors[itemTypeInfo[0]];
@@ -145,7 +145,7 @@ define([
 			}
 			return this.itemColors.default;
 		}
-		, drawMapItem: function(rawImage, obj) {
+		, drawMapItem: function (rawImage, obj) {
 			const pix = rawImage.data;
 			const i = (obj.y * rawImage.width + obj.x) * 4;
 			const colorArr = this.getMapItemColor(obj);
@@ -156,7 +156,7 @@ define([
 		}
 
 		, events: {
-			onGetObject: function(object) {
+			onGetObject: function (object) {
 				if (!object.id) {
 					return;
 				}
@@ -166,20 +166,20 @@ define([
 				if (!key) {
 					return;
 				}
-				if (this.el.css("display") != "block") {
+				if (this.el.css("display") !== "block") {
 					// Map hidden...
 					return;
 				}
-				if (key == "m") {
+				if (key === "m") {
 					this.toggleMap();
 					return;
 				}
-				if (key == "13" && this.mapScale > CANVAS_SCALE) {
+				if (key === "13" && this.mapScale > CANVAS_SCALE) {
 					this.mapScale--;
 					this.drawMap();
 					return;
 				}
-				if (key == "11" && this.mapScale < 11) {
+				if (key === "11" && this.mapScale < 11) {
 					this.mapScale++;
 					this.drawMap();
 					return;
