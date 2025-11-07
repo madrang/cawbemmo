@@ -47,7 +47,7 @@ define([
 		return getMessage(subTarget, nParts, curPath);
 	};
 
-	const _reLocAllMsg = new RegExp("\${(\S+?)}", "gm");
+	const _reLocAllMsg = new RegExp("\\${(\\S+?)}", "gm");
 	const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 		// Parse messages and replace localized strings tokens when found.
 		// Return unmoddified message if not a localized string.
