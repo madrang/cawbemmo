@@ -70,9 +70,10 @@ define([
 			mapCtx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 			const rawImage = mapCtx.getImageData(0, 0, physics.grid.length, physics.grid[0].length);
 			const pix = rawImage.data;
+			const imgWidth = rawImage.width;
 			for (let x = 0; x < physics.grid.length; x++) {
 				for (let y = 0; y < physics.grid[x].length; y++) {
-					const i = (y * rawImage.width + x) * 4;
+					const i = (y * imgWidth + x) * 4;
 					if (physics.grid[x][y]) {
 						// Collision
 						pix[i] = 117;
