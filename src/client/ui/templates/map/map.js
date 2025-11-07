@@ -66,7 +66,7 @@ define([
 			// Render map.
 			this.mapCanvas.width = physics.grid.length;
 			this.mapCanvas.height = physics.grid[0].length;
-			const mapCtx = this.mapCanvas.getContext("2d");
+			const mapCtx = this.mapCanvas.getContext("2d", { willReadFrequently: true });
 			mapCtx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
 			const rawImage = mapCtx.getImageData(0, 0, physics.grid.length, physics.grid[0].length);
 			const pix = rawImage.data;
