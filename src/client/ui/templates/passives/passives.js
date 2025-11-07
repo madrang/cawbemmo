@@ -334,9 +334,9 @@ define([
 						.join("<br />");
 
 					if (node.spiritStart === window.player.class) {
-						text = "Your starting node";
+						text = locale.translate("passives", "nodes", "myStart");
 					} else if (node.spiritStart) {
-						text = "Starting node for " + node.spiritStart + " spirits";
+						text = locale.translate("passives", "nodes", "spiritStart", { spirit: node.spiritStart });
 					}
 
 					const tooltipPos = {
@@ -441,8 +441,9 @@ define([
 			}
 
 			, onGetPassivePoints: function (points) {
+				const pointsTxt = locale.translate("passives", "points", { points });
 				this.find(".points")
-					.html("Points Available: " + points);
+					.html(pointsTxt);
 			}
 
 			, onReset: function () {

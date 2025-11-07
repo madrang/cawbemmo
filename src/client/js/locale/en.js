@@ -66,7 +66,15 @@ define([
 		, fishWeight: "increased fish weight"
 		, fishItems: "extra chance to hook items"
 	};
+	const passives = {
+		points: "Points Available: ${points}"
+		, nodes: {
+			myStart: "Your starting node"
+			, spiritStart: "Starting node for ${spirit} spirits"
+		}
+	};
 	return {
 		stats
+		, passives
 	};
 });
