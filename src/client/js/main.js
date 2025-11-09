@@ -11,7 +11,7 @@ define([
 	, "js/system/globals"
 	, "js/locale/index"
 	, "js/resources"
-	, "js/components/components"
+	, "js/components"
 	, "ui/templates/tooltips/tooltips"
 ], (
 	client

@@ -248,18 +248,18 @@ module.exports = {
 	config
 
 	, init: async function () {
-		for (const f of fileLister.getFiles("./clientComponents")) {
+		for (const f of fileLister.getFiles("../client/js/components")) {
 			if (!f.endsWith(".js")) {
 				return;
 			}
 			config.clientComponents.push({
 				type: f.split(".")[0]
-				, path: "server/clientComponents/" + f
+				, path: "js/components/" + f
 			});
 		}
 		config.clientComponents.push({
 			extends: "effects"
-			, path: "server/clientComponents/effects/auras.js"
+			, path: "js/components/effects/auras.js"
 		});
 
 		events.emit("onBeforeGetClientConfig", config);

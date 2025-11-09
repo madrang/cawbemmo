@@ -1,5 +1,5 @@
 define([
-	"js/components/components"
+	"js/components"
 	, "js/rendering/renderer"
 	, "js/system/events"
 	, "js/config"
