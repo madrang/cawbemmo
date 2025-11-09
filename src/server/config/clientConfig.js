@@ -297,19 +297,7 @@ module.exports = {
 			await this.calculateAtlasTextureDimensions();
 		}
 
-		const indexOfSheet = atlasTextures.indexOf(spriteSheet);
-
-		let tileCountBeforeSheet = 0;
-		for (let i = 0; i < indexOfSheet; i++) {
-			const sheet = atlasTextures[i];
-			const { width, height } = atlasTextureDimensions[sheet];
-
-			const spSize = config.spriteSizes[sheet] || 8;
-			tileCountBeforeSheet += ((width / spSize) * (height / spSize));
-		}
-
-		//Tile index 0 is 'no tile' in map files so we need to increment by 1
-		return tileCountBeforeSheet + tileIndexInSource + 1;
+		return this.getTileIndexInAtlasSync(spriteSheet, tileIndexInSource);
 	}
 
 	, getTileIndexInAtlasSync: function (spriteSheet, tileIndexInSource) {
