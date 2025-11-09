@@ -90,17 +90,11 @@ const handler = (obj, item, event, firedEventName) => {
 		target = obj;
 	} else if (castTarget === "none") {
 		target = undefined;
-	}
-	//Need to write a generic way to apply these
-	else if (castTarget === "{{event.oldPos}}") {
+	} else if (castTarget === "{{event.oldPos}}") { //Need to write a generic way to apply these
 		target = _.assign({}, event.oldPos);
-	} else if (JSON.stringify(castTarget) === "{\"x\":\"{{event.follower.x}}\",\"y\":\"{{event.follower.y}}\"}") {
-		target = {
-			x: event.follower.x
-			, y: event.follower.y
-		};
+	} else if (JSON.stringify(castTarget) === `{"x":"{{event.follower.x}}","y":"{{event.follower.y}}"}`) {
+		target = { x: event.follower.x, y: event.follower.y };
 	}
-
 	builtSpell.cast({ target });
 };
 

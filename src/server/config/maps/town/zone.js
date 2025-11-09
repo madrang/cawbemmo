@@ -225,7 +225,7 @@ module.exports = {
 						, quality: 0
 						, infinite: true
 					}
-					,{
+					, {
 						name: "pain"
 						, material: true
 						, sprite: [1, 5]

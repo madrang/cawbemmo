@@ -1,24 +1,24 @@
 define([
 	"js/system/events"
-	, "html!ui/templates/messages/template"
-	, "html!ui/templates/messages/tplTab"
-	, "css!ui/templates/messages/styles"
-	, "ui/templates/messages/mobile"
-	, "ui/templates/messages/channelPicker"
 	, "js/input"
 	, "js/system/client"
 	, "js/config"
-], function (
-	events,
-	template,
-	tplTab,
-	styles,
-	messagesMobile,
-	channelPicker,
-	input,
-	client,
-	config
-) {
+	, "ui/templates/messages/mobile"
+	, "ui/templates/messages/channelPicker"
+	, "html!ui/templates/messages/template"
+	, "html!ui/templates/messages/tplTab"
+	, "css!ui/templates/messages/styles"
+], (
+	events
+	, input
+	, client
+	, config
+	, messagesMobile
+	, channelPicker
+	, template
+	, tplTab
+	, styles
+) => {
 	return {
 		tpl: template
 
@@ -225,10 +225,10 @@ define([
 
 				if (m.item) {
 					const [source, useMessage] = message.split(": {");
-					message = source + ": <span class=\"q" + (m.item.quality || 0) + "\">&nbsp;{" + useMessage + "</span>";
+					message = `${source}: <span class="q${m.item.quality || 0}">&nbsp;{${useMessage}</span>`;
 				}
 
-				let el = $("<div class=\"list-message " + m.class + "\">" + message + "</div>")
+				let el = $(`<div class="list-message ${m.class}">${message}</div>`)
 					.appendTo(container);
 
 				if (m.has("type")) {
@@ -257,7 +257,7 @@ define([
 				if (m.type) {
 					const isChannel = m?.subType === "custom";
 					if (isChannel) {
-						if (this.find(".filter[filter=\"" + m.channel + "\"]").hasClass("active")) {
+						if (this.find(`.filter[filter="${m.channel}"]`).hasClass("active")) {
 							el.css({ display: "flex" });
 						} else {
 							el.css({ display: "none" });
@@ -332,7 +332,9 @@ define([
 				textbox.val("");
 				this.el.removeClass("picking");
 
-				if (["direct", "custom"].includes(this.currentChannel) && (!this.currentSubChannel || ["join new", "leave"].includes(this.currentSubChannel))) {
+				if (["direct", "custom"].includes(this.currentChannel)
+					&& (!this.currentSubChannel || ["join new", "leave"].includes(this.currentSubChannel))
+				) {
 					this.currentSubChannel = null;
 					this.currentChannel = "global";
 				}

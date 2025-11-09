@@ -28,11 +28,11 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 };
 
 (async function () {
-	await new Promise(resolve => io.init(resolve));
+	await new Promise((resolve) => io.init(resolve));
 	await fixes.fixDb();
 
 	const onError = async (e) => {
-		if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
+		if (e.toString().includes("ERR_IPC_CHANNEL_CLOSED")) {
 			return;
 		}
 		const errMsg = `MainThread Crashed! ${e}\r\n${e.stack}`;

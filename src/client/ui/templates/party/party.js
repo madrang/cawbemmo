@@ -3,22 +3,22 @@ define([
 	, "js/system/client"
 	, "js/system/globals"
 	, "js/objects/objects"
+	, "js/config"
 	, "html!ui/templates/party/template"
-	, "css!ui/templates/party/styles"
 	, "html!ui/templates/party/templateInvite"
 	, "html!ui/templates/party/templatePartyMember"
-	, "js/config"
-], function (
-	events,
-	client,
-	globals,
-	objects,
-	template,
-	styles,
-	templateInvite,
-	templatePartyMember,
-	config
-) {
+	, "css!ui/templates/party/styles"
+], (
+	events
+	, client
+	, globals
+	, objects
+	, config
+	, template
+	, templateInvite
+	, templatePartyMember
+	, styles
+) => {
 	return {
 		tpl: template
 
@@ -62,7 +62,7 @@ define([
 				}
 
 				if (mId !== playerId) {
-					const el = this.find(".member[memberId=\"" + mId + "\"]");
+					const el = this.find(`.member[memberId="${mId}"]`);
 					el.removeClass("differentZone");
 
 					if (mZone !== playerZone) {

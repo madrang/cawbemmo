@@ -179,10 +179,14 @@ module.exports = {
 
 	, addSpellFromRune: function (runeSpell, spellId) {
 		let type = runeSpell.type;
-		let playerSpell = playerSpells.map.get(runeSpell.name.toLowerCase()) || Array.from(playerSpells.map.values()).find((s) => s.type === type);
+		let playerSpell = playerSpells.map.get(runeSpell.name.toLowerCase());
+		if (!playerSpell) {
+			_.log.spellbook.addSpellFromRune.notice("RuneSpell %s of type %s was not found by name!", runeSpell.name, runeSpell.type);
+			playerSpell = Array.from(playerSpells.map.values()).find((s) => s.type === type);
+		}
 		let playerSpellConfig = playerSpell.config;// || playerSpellsConfig.spells[runeSpell.type];
 		if (!playerSpellConfig) {
-			_.log.spellbook.addSpellFromRune.notice("RuneSpell %s of type %s has no config defined!", runeSpell.name, runeSpell.type);
+			_.log.spellbook.addSpellFromRune.warn("RuneSpell %s of type %s has no config defined!", runeSpell.name, runeSpell.type);
 			return -1;
 		}
 
