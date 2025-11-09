@@ -4,14 +4,16 @@ define([
 	, "js/rendering/renderer"
 	, "js/system/events"
 	, "js/input"
+	, "js/locale/index"
 ], (
 	client
 	, renderer
 	, events
 	, input
+	, locale
 ) => {
 	let objects = null;
-	require(["js/objects/objects"], function (o) {
+	require(["js/objects/objects"], (o) => {
 		objects = o;
 	});
 
@@ -187,13 +189,13 @@ define([
 				if (this.groundTargetSpell === key) {
 					this.groundTargetSpell = null;
 					events.emit("onGetAnnouncement", {
-						msg: `Cancelled casting ${spell.name}`
+						msg: locale.translate("spellbook", "cancelled", { spellName: spell.name })
 					});
 					return;
 				}
 				this.groundTargetSpell = key;
 				events.emit("onGetAnnouncement", {
-					msg: `Pick a location to cast ${spell.name}`
+					msg: locale.translate("spellbook", "pickLocation", { spellName: spell.name })
 				});
 				return;
 			}
