@@ -64,7 +64,7 @@ module.exports = {
 			} else {
 				this.name = "Ramasseux d'item Rare";
 				this.quality = 0;
-				this.slot = slotNames[Math.floor(Math.random() * slotNames.length)];
+				this.slot = _.getRandomObj(slotNames);
 				this.slotName = this.slot.capitalize();
 				this.description = "Loot 1x " + this.slotName + " slot item";
 			}

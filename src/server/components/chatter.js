@@ -27,7 +27,7 @@ module.exports = {
 		}
 		if (this.cd === 0 && Math.random() < this.chance) {
 			this.cd = this.cdMax;
-			let pick = this.chats[Math.floor(Math.random() * this.chats.length)];
+			let pick = _.getRandomObj(this.chats);
 			if (!this.global) {
 				this.obj.syncer.set(false, "chatter", "msg", pick.msg);
 			} else {

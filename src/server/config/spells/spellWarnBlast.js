@@ -87,10 +87,9 @@ module.exports = {
 
 		const physics = obj.instance.physics;
 		const syncer = obj.instance.syncer;
-		const useRow = (row !== null) ? row : rowOptions[Math.floor(Math.random() * rowOptions.length)];
+		const useRow = (row !== null) ? row : _.getRandomObj(rowOptions);
 		const effect = {
-			x: x
-			, y: y
+			x, y
 			, components: [{
 				type: "attackAnimation"
 				, destroyObject: true

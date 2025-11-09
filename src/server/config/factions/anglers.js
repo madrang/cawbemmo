@@ -46,14 +46,12 @@ module.exports = {
 
 		, events: {
 			beforeGatherResourceComplete: function (item, { items }) {
-				let effect = item.effects.find((e) => (e.factionId === "anglers"));
-
-				let roll = Math.random() * 100;
+				const effect = item.effects.find((e) => (e.factionId === "anglers"));
+				const roll = Math.random() * 100;
 				if (roll >= effect.chance) {
 					return;
 				}
-
-				let pick = items[Math.floor(Math.random() * items.length)];
+				const pick = _.getRandomObj(items);
 				items.push(_.assign({}, pick));
 			}
 		}

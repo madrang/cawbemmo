@@ -169,7 +169,7 @@ define([
 			if (!amount) {
 				position = Math.random() < 0.5 ? POSITION.TOP_CENTER : POSITION.BOTTOM_CENTER;
 			}
-			const element = ["default", "arcane", "frost", "fire", "holy", "poison"][Math.floor(Math.random() * 6)];
+			const element = _.getRandomFrom("default", "arcane", "frost", "fire", "holy", "poison");
 			const crit = amount > 50;
 			onGetDamage({
 				id: o.id

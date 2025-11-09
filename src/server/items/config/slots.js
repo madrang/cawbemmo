@@ -40,18 +40,16 @@ module.exports = {
 	}
 
 	, getRandomSlot: function (exclude) {
-		let chances = [];
+		const chances = [];
 		for (let c in this.chance) {
 			if (c === exclude) {
 				continue;
 			}
-
 			let rolls = this.chance[c];
 			for (let i = 0; i < rolls; i++) {
 				chances.push(c);
 			}
 		}
-
-		return chances[Math.floor(Math.random() * chances.length)];
+		return _.getRandomObj(chances);
 	}
 };

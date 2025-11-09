@@ -12,7 +12,7 @@ module.exports = {
 
 			this.need = quantity[0] + Math.floor(Math.random() * (quantity[1] - quantity[0]));
 
-			this.gatherType = subType ?? ["herb", "fish"][Math.floor(Math.random() * 2)];
+			this.gatherType = subType ?? _.getRandomFrom("herb", "fish");
 
 			if (this.gatherType === "fish") {
 				this.name = "Une pause a la pêche";

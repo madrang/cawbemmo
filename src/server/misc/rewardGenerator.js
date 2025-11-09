@@ -52,7 +52,7 @@ module.exports = (itemCount, useConfig) => {
 	const pool = useConfig ? buildPool(useConfig) : defaultPool;
 	const items = [];
 	for (let i = 0; i < itemCount; i++) {
-		let pickName = pool[Math.floor(Math.random() * pool.length)];
+		let pickName = _.getRandomObj(pool);
 		const pick = config.find((f) => f.name === pickName);
 
 		let item = items.find((f) => f.name === pickName);

@@ -51,7 +51,7 @@ define([
 						alpha = 1 - (j / steps);
 					}
 
-					let c = (config.colors || [0xffeb38, 0xfaac45, 0xfafcfc])[Math.floor(Math.random() * (config.colors ? config.colors.length : 3))];
+					let c = _.getRandomObj(config.colors) || _.getRandomFrom(0xffeb38, 0xfaac45, 0xfafcfc);
 					line.sprites.push(renderer.buildRectangle({
 						x: Math.floor(x / scaleMult) * scaleMult
 						, y: Math.floor(y / scaleMult) * scaleMult
