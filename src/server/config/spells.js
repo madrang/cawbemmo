@@ -5,6 +5,15 @@ const spells = [
 		, description: "Performs a quick melee attack."
 		, type: "melee"
 		, icon: [7, 0]
+		, config: {
+			auto: true
+			, cdMax: 10
+			, castTimeMax: 0
+			, useWeaponRange: true
+			, random: {
+				damage: [3, 11.4]
+			}
+		}
 	}
 
 	, { name: "Projectile"
@@ -15,6 +24,16 @@ const spells = [
 		, row: 11
 		, col: 4
 		, speed: 110
+		, config: {
+			auto: true
+			, cdMax: 10
+			, castTimeMax: 0
+			, manaCost: 0
+			, range: 9
+			, random: {
+				damage: [2, 7.2]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 1 }
 			, behaviors: [
@@ -62,6 +81,18 @@ const spells = [
 		, type: "projectile"
 		, icon: [1, 0]
 		, animation: "hitStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "arcane"
+			, cdMax: 7
+			, castTimeMax: 6
+			, manaCost: 5
+			, range: 9
+			, random: {
+				damage: [4, 32]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 3 }
 			, behaviors: [
@@ -109,6 +140,19 @@ const spells = [
 		, type: "iceSpear"
 		, icon: [1, 1]
 		, animation: "hitStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "frost"
+			, cdMax: 10
+			, castTimeMax: 2
+			, manaCost: 4
+			, range: 9
+			, random: {
+				damage: [2, 15]
+				, i_freezeDuration: [6, 10]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 2 }
 			, behaviors: [
@@ -156,6 +200,19 @@ const spells = [
 		, type: "fireblast"
 		, icon: [1, 2]
 		, animation: "raiseStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "fire"
+			, cdMax: 4
+			, castTimeMax: 2
+			, manaCost: 5
+			, random: {
+				damage: [2, 10]
+				, i_radius: [1, 2.2]
+				, i_pushback: [2, 5]
+			}
+		}
 		, particles: {
 			emitterLifetime: 0.15
 			, behaviors: [
@@ -193,8 +250,8 @@ const spells = [
 						}
 					}
 				}
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 24 }
@@ -217,6 +274,19 @@ const spells = [
 		, col: 0
 		, icon: [0, 0]
 		, animation: "hitStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "holy"
+			, cdMax: 6
+			, castTimeMax: 3
+			, range: 9
+			, manaCost: 7
+			, random: {
+				damage: [4, 14]
+				, i_stunDuration: [6, 10]
+			}
+		}
 	}
 
 	, { name: "Consecrate"
@@ -224,6 +294,20 @@ const spells = [
 		, type: "healingCircle"
 		, icon: [0, 1]
 		, animation: "raiseStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "holy"
+			, cdMax: 15
+			, castTimeMax: 4
+			, manaCost: 12
+			, range: 9
+			, radius: 3
+			, random: {
+				healing: [0.3, 0.5]
+				, i_duration: [7, 13]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 3 }
 			, behaviors: [
@@ -261,8 +345,8 @@ const spells = [
 						}
 					}
 				}
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 12 }
@@ -283,6 +367,18 @@ const spells = [
 		, spellType: "heal"
 		, icon: [0, 3]
 		, animation: "raiseStaff"
+		, config: {
+			statType: "int"
+			, statMult: 1
+			, element: "holy"
+			, cdMax: 5
+			, castTimeMax: 3
+			, manaCost: 8
+			, range: 9
+			, random: {
+				healing: [1, 3]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 3 }
 			, behaviors: [
@@ -320,8 +416,8 @@ const spells = [
 						}
 					}
 				}
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 12 }
@@ -350,6 +446,18 @@ const spells = [
 		, col: 0
 		, icon: [3, 0]
 		, animation: "hitSword"
+		, config: {
+			statType: "str"
+			, statMult: 1
+			, threatMult: 4
+			, cdMax: 9
+			, castTimeMax: 1
+			, manaCost: 4
+			, useWeaponRange: true
+			, random: {
+				damage: [6, 23]
+			}
+		}
 	}
 
 	, { name: "Charge"
@@ -357,6 +465,19 @@ const spells = [
 		, description: "Charges at a foe, dealing damage and stunning them for a short period."
 		, icon: [3, 1]
 		, animation: "raiseShield"
+		, config: {
+			statType: "str"
+			, statMult: 1
+			, threatMult: 3
+			, cdMax: 14
+			, castTimeMax: 1
+			, range: 10
+			, manaCost: 3
+			, random: {
+				damage: [2, 11]
+				, i_stunDuration: [6, 10]
+			}
+		}
 	}
 
 	, { name: "Reflect Damage"
@@ -373,6 +494,17 @@ const spells = [
 		, row: 1
 		, col: 0
 		, icon: [2, 3]
+		, config: {
+			statType: "dex"
+			, statMult: 1
+			, cdMax: 20
+			, castTimeMax: 0
+			, manaCost: 10
+			, random: {
+				i_duration: [10, 20]
+				, i_chance: [30, 60]
+			}
+		}
 	}
 
 	, { name: "Smokebomb"
@@ -380,6 +512,19 @@ const spells = [
 		, description: "Envelops the caster in a cloud of poisonous smoke, dealing damage to enemies every tick until it dissipates."
 		, animation: "raiseHands"
 		, icon: [2, 1]
+		, config: {
+			statType: "dex"
+			, statMult: 1
+			, element: "poison"
+			, cdMax: 7
+			, castTimeMax: 0
+			, manaCost: 6
+			, random: {
+				damage: [0.25, 1.2]
+				, i_radius: [1, 3]
+				, i_duration: [7, 13]
+			}
+		}
 		, particles: {
 			lifetime: { min: 1, max: 3 }
 			, behaviors: [
@@ -421,8 +566,8 @@ const spells = [
 					, config: { blendMode: "screen" }
 				}
 
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 12 }
@@ -443,6 +588,18 @@ const spells = [
 		, row: 5
 		, col: 0
 		, frames: 3
+		, config: {
+			statType: "str"
+			, statMult: 1
+			, threatMult: 6
+			, cdMax: 12
+			, castTimeMax: 2
+			, manaCost: 7
+			, random: {
+				i_range: [1, 2.5]
+				, damage: [4, 18]
+			}
+		}
 	}
 
 	, { name: "Ambush"
@@ -450,6 +607,18 @@ const spells = [
 		, description: "Step into the shadows and reappear behind your target before delivering a concussing blow."
 		, icon: [2, 4]
 		, animation: "raiseShield"
+		, config: {
+			statType: "dex"
+			, statMult: 1
+			, cdMax: 15
+			, castTimeMax: 3
+			, range: 10
+			, manaCost: 7
+			, random: {
+				damage: [8, 35]
+				, i_stunDuration: [4, 7]
+			}
+		}
 	}
 
 	, { name: "Stealth"
@@ -463,6 +632,23 @@ const spells = [
 		, type: "warnBlast"
 		, animation: "raiseHands"
 		, icon: [0, 7]
+		, config: {
+			statType: ["dex", "int"]
+			, statMult: 1
+			, manaCost: 14
+			, needLos: true
+			, cdMax: 15
+			, castTimeMax: 0
+			, range: 9
+			, isAttack: true
+			, random: {
+				damage: [3, 18]
+				, i_delay: [1, 4]
+			}
+			, negativeStats: [
+				"i_delay"
+			]
+		}
 		, particles: {
 			lifetime: { min: 1, max: 1 }
 			, behaviors: [
@@ -500,8 +686,8 @@ const spells = [
 						, minMult: 0.33
 					}
 				}
-				, { type: "moveSpeed",
-					config: {
+				, { type: "moveSpeed"
+					, config: {
 						speed: {
 							list: [
 								{ time: 0, value: 16 }
@@ -528,6 +714,20 @@ const spells = [
 		, type: "aura"
 		, spellType: "aura"
 		, icon: [3, 3]
+		, config: {
+			statType: ["str"]
+			, statMult: 1
+			, manaReserve: {
+				percentage: 0.25
+			}
+			, cdMax: 10
+			, castTimeMax: 0
+			, auraRange: 9
+			, effect: "regenHp"
+			, random: {
+				regenPercentage: [0.3, 1.5]
+			}
+		}
 	}
 
 	, { name: "Tranquility"
@@ -535,6 +735,21 @@ const spells = [
 		, type: "aura"
 		, spellType: "aura"
 		, icon: [3, 4]
+		, config: {
+			statType: ["int"]
+			, statMult: 1
+			, element: "holy"
+			, manaReserve: {
+				percentage: 0.25
+			}
+			, cdMax: 10
+			, castTimeMax: 0
+			, auraRange: 9
+			, effect: "regenMana"
+			, random: {
+				regenPercentage: [4, 10]
+			}
+		}
 	}
 
 	, { name: "Swiftness"
@@ -542,12 +757,31 @@ const spells = [
 		, type: "aura"
 		, spellType: "aura"
 		, icon: [3, 5]
+		, config: {
+			statType: ["dex"]
+			, statMult: 1
+			, element: "fire"
+			, manaReserve: {
+				percentage: 0.4
+			}
+			, cdMax: 10
+			, castTimeMax: 0
+			, auraRange: 9
+			, effect: "swiftness"
+			, random: {
+				chance: [8, 20]
+			}
+		}
 	}
 ];
 
 module.exports = {
-	spells
+	map: new Map()
 	, init: function () {
-		events.emit("onBeforeGetSpellsInfo", spells);
+		const list = _.assign([], spells);
+		events.emit("onBeforeGetSpellsInfo", list);
+		for (const spell of list) {
+			this.map.set(spell.name.toLowerCase(), spell);
+		}
 	}
 };

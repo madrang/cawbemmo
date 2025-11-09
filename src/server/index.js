@@ -14,7 +14,6 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	, animations: "./config/animations"
 	, classes: "./config/spirits"
 
-	, spellsConfig: "./config/spellsConfig"
 	, spells: "./config/spells"
 	, recipes: "./config/recipes/recipes"
 	, itemTypes: "./items/config/types"
