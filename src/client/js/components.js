@@ -73,7 +73,7 @@ define([
 			if (type === "lightpatch") {
 				type = "lightPatch";
 			}
-			return templates.find((t) => t.type === type) || { type: type };
+			return templates.find((t) => t.type === type) || { type };
 		}
 	};
 });

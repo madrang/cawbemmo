@@ -248,19 +248,24 @@ module.exports = {
 	config
 
 	, init: async function () {
-		for (const f of fileLister.getFiles("../client/js/components")) {
-			if (!f.endsWith(".js")) {
+		for (const jsFile of fileLister.getFiles("../client/js/components")) {
+			if (!jsFile.endsWith(".js")) {
 				return;
 			}
 			config.clientComponents.push({
-				type: f.split(".")[0]
-				, path: "js/components/" + f
+				type: jsFile.split(".")[0]
+				, path: "js/components/" + jsFile
 			});
 		}
-		config.clientComponents.push({
-			extends: "effects"
-			, path: "js/components/effects/auras.js"
-		});
+		for (const jsFile of fileLister.getFiles("../client/js/components/effects")) {
+			if (!jsFile.endsWith(".js")) {
+				return;
+			}
+			config.clientComponents.push({
+				extends: "effects"
+				, path: "js/components/effects/" + jsFile
+			});
+		}
 
 		events.emit("onBeforeGetClientConfig", config);
 		await this.calculateAtlasTextureDimensions();
