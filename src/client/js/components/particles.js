@@ -1,59 +1,55 @@
-define([
-	"js/rendering/renderer"
-], function (
-	renderer
-) {
-	return {
-		type: "particles"
-		, emitter: null
+import renderer from "/js/rendering/renderer.js";
 
-		, init: function (blueprint) {
-			this.blueprint = this.blueprint || {};
-			this.blueprint.pos = {
-				x: (this.obj.x * scale) + (scale / 2)
-				, y: (this.obj.y * scale) + (scale / 2)
-			};
-			this.ttl = blueprint.ttl;
-			this.blueprint.obj = this.obj;
+export default {
+	type: "particles"
+	, emitter: null
 
-			this.emitter = renderer.buildEmitter(this.blueprint);
+	, init: function (blueprint) {
+		this.blueprint = this.blueprint || {};
+		this.blueprint.pos = {
+			x: (this.obj.x * scale) + (scale / 2)
+			, y: (this.obj.y * scale) + (scale / 2)
+		};
+		this.ttl = blueprint.ttl;
+		this.blueprint.obj = this.obj;
 
-			this.setVisible(this.obj.isVisible);
+		this.emitter = renderer.buildEmitter(this.blueprint);
+
+		this.setVisible(this.obj.isVisible);
+	}
+
+	, setVisible: function (visible) {
+		//Sometimes, we make emitters stop emitting for a reason
+		// for example, when an explosion stops
+		if (!this.emitter.disabled) {
+			this.emitter.emit = visible;
 		}
+	}
 
-		, setVisible: function (visible) {
-			//Sometimes, we make emitters stop emitting for a reason
-			// for example, when an explosion stops
-			if (!this.emitter.disabled) {
-				this.emitter.emit = visible;
-			}
-		}
+	, update: function () {
+		const { ttl, destroyObject, emitter, obj } = this;
 
-		, update: function () {
-			const { ttl, destroyObject, emitter, obj } = this;
-
-			if (ttl !== null) {
-				this.ttl--;
-				if (this.ttl <= 0) {
-					if (destroyObject) {
-						this.obj.destroyed = true;
-					} else {
-						this.destroyed = true;
-					}
-					return;
+		if (ttl !== null) {
+			this.ttl--;
+			if (this.ttl <= 0) {
+				if (destroyObject) {
+					this.obj.destroyed = true;
+				} else {
+					this.destroyed = true;
 				}
-			}
-
-			if (!emitter.emit) {
 				return;
 			}
-
-			emitter.spawnPos.x = (obj.x * scale) + (scale / 2) + obj.offsetX;
-			emitter.spawnPos.y = (obj.y * scale) + (scale / 2) + obj.offsetY;
 		}
 
-		, destroy: function () {
-			renderer.destroyEmitter(this.emitter);
+		if (!emitter.emit) {
+			return;
 		}
-	};
-});
+
+		emitter.spawnPos.x = (obj.x * scale) + (scale / 2) + obj.offsetX;
+		emitter.spawnPos.y = (obj.y * scale) + (scale / 2) + obj.offsetY;
+	}
+
+	, destroy: function () {
+		renderer.destroyEmitter(this.emitter);
+	}
+};

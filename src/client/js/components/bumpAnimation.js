@@ -1,68 +1,64 @@
-define([
-	"js/rendering/effects"
-], function (
-	effects
-) {
-	return {
-		type: "bumpAnimation"
+import effects from "/js/rendering/effects.js";
 
-		, deltaX: 0
-		, deltaY: 0
+export default {
+	type: "bumpAnimation"
 
-		, updateCd: 0
-		, updateCdMax: 1
+	, deltaX: 0
+	, deltaY: 0
 
-		, direction: 1
-		, speed: 2
+	, updateCd: 0
+	, updateCdMax: 1
 
-		, duration: 3
-		, durationCounter: 0
+	, direction: 1
+	, speed: 2
 
-		, infinite: false
+	, duration: 3
+	, durationCounter: 0
 
-		, init: function (blueprint) {
-			//Only allow one bumper at a time
-			if (this.obj.components.some((c) => c.type === this.type)) {
-				return true;
-			}
+	, infinite: false
+
+	, init: function (blueprint) {
+		//Only allow one bumper at a time
+		if (this.obj.components.some((c) => c.type === this.type)) {
+			return true;
+		}
+	}
+
+	, update: function () {
+		let deltaX = this.deltaX;
+		if (deltaX < 0) {
+			this.obj.flipX = true;
+		} else if (deltaX > 0) {
+			this.obj.flipX = false;
 		}
 
-		, update: function () {
-			let deltaX = this.deltaX;
-			if (deltaX < 0) {
-				this.obj.flipX = true;
-			} else if (deltaX > 0) {
-				this.obj.flipX = false;
-			}
+		if (this.updateCd > 0) {
+			this.updateCd--;
+		} else {
+			this.obj.offsetX += (this.deltaX * this.direction * this.speed);
+			this.obj.offsetY += (this.deltaY * this.direction * this.speed);
 
-			if (this.updateCd > 0) {
-				this.updateCd--;
-			} else {
-				this.obj.offsetX += (this.deltaX * this.direction * this.speed);
-				this.obj.offsetY += (this.deltaY * this.direction * this.speed);
+			this.updateCd = this.updateCdMax;
+			this.durationCounter++;
 
-				this.updateCd = this.updateCdMax;
-				this.durationCounter++;
-
-				if (this.durationCounter === this.duration) {
-					this.durationCounter = 0;
-					this.direction *= -1;
-					if ((this.direction === 1) && (!this.infinite)) {
-						this.destroyed = true;
-					}
+			if (this.durationCounter === this.duration) {
+				this.durationCounter = 0;
+				this.direction *= -1;
+				if ((this.direction === 1) && (!this.infinite)) {
+					this.destroyed = true;
 				}
 			}
-
-			this.obj.setSpritePosition();
 		}
 
-		, destroy: function () {
-			this.obj.offsetX = 0;
-			this.obj.offsetY = 0;
+		this.obj.setSpritePosition();
+	}
 
-			this.obj.setSpritePosition();
+	, destroy: function () {
+		this.obj.offsetX = 0;
+		this.obj.offsetY = 0;
 
-			effects.unregister(this);
-		}
-	};
-});
+		this.obj.setSpritePosition();
+
+		effects.unregister(this);
+	}
+};

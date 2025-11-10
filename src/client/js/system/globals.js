@@ -1,13 +1,9 @@
-define([
-	"js/system/client"
-], (
-	client
-) => {
-	return {
-		clientConfig: null
+import client from "/js/system/client.js";
 
-		, async init () {
-			this.clientConfig = await client.moduleProxy.clientConfig.getClientConfig();
-		}
-	};
-});
+export default {
+	clientConfig: null
+
+	, async init () {
+		this.clientConfig = await client.moduleProxy.clientConfig.getClientConfig();
+	}
+};

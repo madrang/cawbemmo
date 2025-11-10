@@ -1,41 +1,37 @@
-define([
-	"js/system/events"
-], function (
-	events
-) {
-	return {
-		type: "social"
+import events from "/js/system/events.js";
 
-		, customChannels: null
-		, blockedPlayers: null
+export default {
+	type: "social"
 
-		, init: function (blueprint) {
-			if (this.customChannels) {
-				events.emit("onGetCustomChatChannels", this.customChannels);
-			}
+	, customChannels: null
+	, blockedPlayers: null
 
-			if (blueprint.blockedPlayers) {
-				this.blockedList = blueprint.blockedList;
-			}
-
-			if (blueprint.actions) {
-				this.actions = blueprint.actions;
-				events.emit("onGetSocialActions", this.actions);
-			}
+	, init: function (blueprint) {
+		if (this.customChannels) {
+			events.emit("onGetCustomChatChannels", this.customChannels);
 		}
 
-		, extend: function (blueprint) {
-			if (blueprint.blockedPlayers) {
-				this.blockedPlayers = blueprint.blockedPlayers;
-			}
+		if (blueprint.blockedPlayers) {
+			this.blockedList = blueprint.blockedList;
 		}
 
-		, isPlayerBlocked: function (playerName) {
-			if (!this.blockedPlayers) {
-				return false;
-			}
-
-			return this.blockedPlayers.includes(playerName);
+		if (blueprint.actions) {
+			this.actions = blueprint.actions;
+			events.emit("onGetSocialActions", this.actions);
 		}
-	};
-});
+	}
+
+	, extend: function (blueprint) {
+		if (blueprint.blockedPlayers) {
+			this.blockedPlayers = blueprint.blockedPlayers;
+		}
+	}
+
+	, isPlayerBlocked: function (playerName) {
+		if (!this.blockedPlayers) {
+			return false;
+		}
+
+		return this.blockedPlayers.includes(playerName);
+	}
+};

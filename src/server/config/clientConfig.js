@@ -9,7 +9,7 @@ const tos = require("./tos");
 const config = {
 	logoPath: "images/logo_CWB.png"
 	// loginBackground, using undefined means default will load. Randomly using static as a broken login.
-	, loginBackgroundGeneratorPath: [ undefined, "js/rendering/backgrounds/static", undefined ]
+	, loginBackgroundGeneratorPath: [ undefined, "/js/rendering/backgrounds/static.js", undefined ]
 	, resourceList: []
 	, textureList: [
 		"tiles"
@@ -253,8 +253,8 @@ module.exports = {
 				return;
 			}
 			config.clientComponents.push({
-				type: jsFile.split(".")[0]
-				, path: "js/components/" + jsFile
+				type: "module"
+				, path: "/js/components/" + jsFile
 			});
 		}
 		for (const jsFile of fileLister.getFiles("../client/js/components/effects")) {
@@ -262,8 +262,8 @@ module.exports = {
 				return;
 			}
 			config.clientComponents.push({
-				extends: "effects"
-				, path: "js/components/effects/" + jsFile
+				type: "module"
+				, path: "/js/components/effects/" + jsFile
 			});
 		}
 

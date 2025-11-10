@@ -1,53 +1,49 @@
-define([
-	"js/rendering/effects"
-], function (
-	effects
-) {
-	return {
-		type: "fadeInOut"
+import effects from "/js/rendering/effects.js";
 
-		, delta: 1
+export default {
+	type: "fadeInOut"
 
-		, updateCd: 0
-		, updateCdMax: 10
+	, delta: 1
 
-		, alphaMax: 1
-		, alphaMin: 0
+	, updateCd: 0
+	, updateCdMax: 10
 
-		, infinite: false
+	, alphaMax: 1
+	, alphaMin: 0
 
-		, init: function (blueprint) {
-			if (this.obj.components.some((c) => c.type === this.type)) {
-				return true;
+	, infinite: false
+
+	, init: function (blueprint) {
+		if (this.obj.components.some((c) => c.type === this.type)) {
+			return true;
+		}
+	}
+
+	, update: function () {
+		let { updateCd, delta } = this;
+		const { updateCdMax, alphaMin, alphaMax, infinite, obj: { sprite } } = this;
+
+		updateCd += delta;
+		if (updateCd === updateCdMax) {
+			if (!infinite) {
+				this.destroyed = true;
+			} else {
+				delta *= -1;
 			}
 		}
 
-		, update: function () {
-			let { updateCd, delta } = this;
-			const { updateCdMax, alphaMin, alphaMax, infinite, obj: { sprite } } = this;
+		this.updateCd = updateCd;
+		this.delta = delta;
 
-			updateCd += delta;
-			if (updateCd === updateCdMax) {
-				if (!infinite) {
-					this.destroyed = true;
-				} else {
-					delta *= -1;
-				}
-			}
-
-			this.updateCd = updateCd;
-			this.delta = delta;
-
-			if (!sprite) {
-				return;
-			}
-
-			const alpha = alphaMin + ((updateCd / updateCdMax) * (alphaMax - alphaMin));
-			sprite.alpha = alpha;
+		if (!sprite) {
+			return;
 		}
 
-		, destroy: function () {
-			effects.unregister(this);
-		}
-	};
-});
+		const alpha = alphaMin + ((updateCd / updateCdMax) * (alphaMax - alphaMin));
+		sprite.alpha = alpha;
+	}
+
+	, destroy: function () {
+		effects.unregister(this);
+	}
+};

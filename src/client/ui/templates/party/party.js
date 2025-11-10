@@ -1,248 +1,241 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "js/system/globals"
-	, "js/objects/objects"
-	, "js/config"
-	, "html!ui/templates/party/template"
-	, "html!ui/templates/party/templateInvite"
-	, "html!ui/templates/party/templatePartyMember"
-	, "css!ui/templates/party/styles"
-], (
-	events
-	, client
-	, globals
-	, objects
-	, config
-	, template
-	, templateInvite
-	, templatePartyMember
-	, styles
-) => {
-	return {
-		tpl: template
+import events from "/js/system/events.js";
+import client from "/js/system/client.js";
+import globals from "/js/system/globals.js";
+import objects from "/js/objects/objects.js";
+import config from "/js/config.js";
 
-		, invite: null
-		, party: null
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, postRender: function () {
-			this.onEvent("onGetInvite", this.onGetInvite.bind(this));
-			this.onEvent("onGetParty", this.onGetParty.bind(this));
-			this.onEvent("onPartyDisband", this.onPartyDisband.bind(this));
+const template = await _.loadHTML("/ui/templates/party/template.html", { raw: true });
+const templateInvite = await _.loadHTML("/ui/templates/party/templateInvite.html", { raw: true });
+const templatePartyMember = await _.loadHTML("/ui/templates/party/templatePartyMember.html", { raw: true });
 
-			this.onEvent("globalObjectListUpdated", this.globalObjectListUpdated.bind(this));
+export default {
+	tpl: template
 
-			this.onEvent("onGetPartyStats", this.onGetPartyStats.bind(this));
+	, invite: null
+	, party: null
 
-			this.onEvent("onTogglePartyView", this.onTogglePartyView.bind(this));
-			this.onTogglePartyView(config.partyView);
+	, postRender: function () {
+		this.onEvent("onGetInvite", this.onGetInvite.bind(this));
+		this.onEvent("onGetParty", this.onGetParty.bind(this));
+		this.onEvent("onPartyDisband", this.onPartyDisband.bind(this));
+
+		this.onEvent("globalObjectListUpdated", this.globalObjectListUpdated.bind(this));
+
+		this.onEvent("onGetPartyStats", this.onGetPartyStats.bind(this));
+
+		this.onEvent("onTogglePartyView", this.onTogglePartyView.bind(this));
+		this.onTogglePartyView(config.partyView);
+	}
+
+	, globalObjectListUpdated: function ({ onlineList }) {
+		if (!window.player || !onlineList) {
+			return;
 		}
+		const { party } = this;
+		const { player: { serverId: playerId } } = window;
 
-		, globalObjectListUpdated: function ({ onlineList }) {
-			if (!window.player || !onlineList) {
-				return;
-			}
-			const { party } = this;
-			const { player: { serverId: playerId } } = window;
-
-			const playerInList = onlineList.find((l) => l.id === playerId);
-			if (!playerInList) {
-				return;
-			}
-			const { zoneId: playerZone } = playerInList;
-
-			if (!party) {
-				return;
-			}
-			onlineList.forEach((l) => {
-				const { id: mId, zoneId: mZone, level: mLevel } = l;
-
-				if (!party.includes(mId)) {
-					return;
-				}
-
-				if (mId !== playerId) {
-					const el = this.find(`.member[memberId="${mId}"]`);
-					el.removeClass("differentZone");
-
-					if (mZone !== playerZone) {
-						el.addClass("differentZone");
-					}
-
-					el.find(".txtLevel").html("level: " + mLevel);
-				}
-			});
+		const playerInList = onlineList.find((l) => l.id === playerId);
+		if (!playerInList) {
+			return;
 		}
+		const { zoneId: playerZone } = playerInList;
 
-		, onGetPartyStats: function (id, stats) {
-			let party = this.party;
-			if (!party) {
-				return;
-			}
-
-			let el = this.find(`.member[memberId="${id}"]`);
-			if (el.length === 0) {
-				return;
-			}
-
-			if (stats.hp !== null && stats.hpMax !== null) {
-				let hpPercentage = Math.min(100, (stats.hp / stats.hpMax) * 100);
-				el.find(".statHp").css("width", hpPercentage + "%");
-			}
-
-			if ((stats.mana !== null) && (stats.manaMax !== null)) {
-				let manaPercentage = Math.min((stats.mana / stats.manaMax) * 100, 100);
-				el.find(".statMana").css("width", manaPercentage + "%");
-			}
-
-			if (stats.level !== null) {
-				el.find(".txtLevel").html("level: " + stats.level);
-			}
+		if (!party) {
+			return;
 		}
+		onlineList.forEach((l) => {
+			const { id: mId, zoneId: mZone, level: mLevel } = l;
 
-		, onPartyDisband: function () {
-			this.find(".party .list")
-				.empty();
-		}
-
-		, onGetParty: function (party) {
-			// Destroy invite frame if you join a party
-			if (this.invite) {
-				this.destroyInvite();
-			}
-
-			let container = this.find(".party .list")
-				.empty();
-
-			this.party = party;
-			if (!party) {
+			if (!party.includes(mId)) {
 				return;
 			}
 
-			party.forEach((p) => {
-				if (p === window.player.serverId) {
-					return;
-				}
+			if (mId !== playerId) {
+				const el = this.find(`.member[memberId="${mId}"]`);
+				el.removeClass("differentZone");
 
-				let player = globals.onlineList.find((o) => o.id === p);
-				let playerName = player ? player.name : "unknown";
-				let level = "level: " + (player ? player.level : "?");
-
-				let html = templatePartyMember
-					.replace("$NAME$", playerName)
-					.replace("$LEVEL$", level);
-
-				let el = $(html)
-					.appendTo(container)
-					.attr("memberId", p)
-					.on("contextmenu", this.showContext.bind(this, playerName, p));
-
-				if (player.zoneId !== window.player.zoneId) {
+				if (mZone !== playerZone) {
 					el.addClass("differentZone");
 				}
 
-				//Find stats
-				let memberObj = objects.objects.find((o) => o.serverId === p);
-				if ((memberObj) && (memberObj.stats)) {
-					this.onGetPartyStats(p, memberObj.stats.values);
-				}
-			});
+				el.find(".txtLevel").html("level: " + mLevel);
+			}
+		});
+	}
+
+	, onGetPartyStats: function (id, stats) {
+		let party = this.party;
+		if (!party) {
+			return;
 		}
 
-		, showContext: function (charName, id, e) {
-			events.emit("onContextMenu", [{
-				text: "whisper"
-				, callback: events.emit.bind(events, "onDoWhisper", charName)
-			}, {
-				text: "remove from party"
-				, callback: this.removeFromParty.bind(this, id)
-			}, {
-				text: "leave party"
-				, callback: this.leaveParty.bind(this)
-			}], e);
-
-			e.preventDefault();
-			return false;
+		let el = this.find(`.member[memberId="${id}"]`);
+		if (el.length === 0) {
+			return;
 		}
 
-		, onGetInvite: function (sourceId) {
-			if (this.invite) {
-				this.destroyInvite();
+		if (stats.hp !== null && stats.hpMax !== null) {
+			let hpPercentage = Math.min(100, (stats.hp / stats.hpMax) * 100);
+			el.find(".statHp").css("width", hpPercentage + "%");
+		}
+
+		if ((stats.mana !== null) && (stats.manaMax !== null)) {
+			let manaPercentage = Math.min((stats.mana / stats.manaMax) * 100, 100);
+			el.find(".statMana").css("width", manaPercentage + "%");
+		}
+
+		if (stats.level !== null) {
+			el.find(".txtLevel").html("level: " + stats.level);
+		}
+	}
+
+	, onPartyDisband: function () {
+		this.find(".party .list")
+			.empty();
+	}
+
+	, onGetParty: function (party) {
+		// Destroy invite frame if you join a party
+		if (this.invite) {
+			this.destroyInvite();
+		}
+
+		let container = this.find(".party .list")
+			.empty();
+
+		this.party = party;
+		if (!party) {
+			return;
+		}
+
+		party.forEach((p) => {
+			if (p === window.player.serverId) {
+				return;
 			}
 
-			let sourcePlayer = globals.onlineList.find((o) => o.id === sourceId);
+			let player = globals.onlineList.find((o) => o.id === p);
+			let playerName = player ? player.name : "unknown";
+			let level = "level: " + (player ? player.level : "?");
 
-			let html = templateInvite
-				.replace("$NAME$", sourcePlayer.name);
+			let html = templatePartyMember
+				.replace("$NAME$", playerName)
+				.replace("$LEVEL$", level);
 
 			let el = $(html)
-				.appendTo(this.el);
-			el
-				.find(".btn")
-				.on("click", this.destroyInvite.bind(this));
+				.appendTo(container)
+				.attr("memberId", p)
+				.on("contextmenu", this.showContext.bind(this, playerName, p));
 
-			this.invite = {
-				fromId: sourcePlayer.id
-				, fromName: sourcePlayer.name
-				, el: el
-			};
-		}
-
-		, destroyInvite: function (e) {
-			if (e) {
-				if ($(e.target).hasClass("btnAccept")) {
-					this.acceptInvite();
-				} else {
-					this.declineInvite();
-				}
+			if (player.zoneId !== window.player.zoneId) {
+				el.addClass("differentZone");
 			}
 
-			this.invite.el.remove();
-			this.invite = null;
+			//Find stats
+			let memberObj = objects.objects.find((o) => o.serverId === p);
+			if ((memberObj) && (memberObj.stats)) {
+				this.onGetPartyStats(p, memberObj.stats.values);
+			}
+		});
+	}
 
-			events.emit("onUiHover", false);
+	, showContext: function (charName, id, e) {
+		events.emit("onContextMenu", [{
+			text: "whisper"
+			, callback: events.emit.bind(events, "onDoWhisper", charName)
+		}, {
+			text: "remove from party"
+			, callback: this.removeFromParty.bind(this, id)
+		}, {
+			text: "leave party"
+			, callback: this.leaveParty.bind(this)
+		}], e);
+
+		e.preventDefault();
+		return false;
+	}
+
+	, onGetInvite: function (sourceId) {
+		if (this.invite) {
+			this.destroyInvite();
 		}
 
-		, acceptInvite: function () {
-			client.request({
-				cpn: "social"
-				, method: "acceptInvite"
-				, data: {
-					targetId: this.invite.fromId
-				}
-			});
+		let sourcePlayer = globals.onlineList.find((o) => o.id === sourceId);
+
+		let html = templateInvite
+			.replace("$NAME$", sourcePlayer.name);
+
+		let el = $(html)
+			.appendTo(this.el);
+		el
+			.find(".btn")
+			.on("click", this.destroyInvite.bind(this));
+
+		this.invite = {
+			fromId: sourcePlayer.id
+			, fromName: sourcePlayer.name
+			, el: el
+		};
+	}
+
+	, destroyInvite: function (e) {
+		if (e) {
+			if ($(e.target).hasClass("btnAccept")) {
+				this.acceptInvite();
+			} else {
+				this.declineInvite();
+			}
 		}
 
-		, declineInvite: function () {
-			client.request({
-				cpn: "social"
-				, method: "declineInvite"
-				, data: {
-					targetId: this.invite.fromId
-				}
-			});
-		}
+		this.invite.el.remove();
+		this.invite = null;
 
-		, removeFromParty: function (id) {
-			client.request({
-				cpn: "social"
-				, method: "removeFromParty"
-				, data: {
-					id
-				}
-			});
-		}
+		events.emit("onUiHover", false);
+	}
 
-		, leaveParty: function () {
-			client.request({
-				cpn: "social"
-				, method: "leaveParty"
-			});
-		}
+	, acceptInvite: function () {
+		client.request({
+			cpn: "social"
+			, method: "acceptInvite"
+			, data: {
+				targetId: this.invite.fromId
+			}
+		});
+	}
 
-		, onTogglePartyView: function (state) {
-			this.el.removeClass("full compact minimal");
-			this.el.addClass(state);
-		}
-	};
-});
+	, declineInvite: function () {
+		client.request({
+			cpn: "social"
+			, method: "declineInvite"
+			, data: {
+				targetId: this.invite.fromId
+			}
+		});
+	}
+
+	, removeFromParty: function (id) {
+		client.request({
+			cpn: "social"
+			, method: "removeFromParty"
+			, data: {
+				id
+			}
+		});
+	}
+
+	, leaveParty: function () {
+		client.request({
+			cpn: "social"
+			, method: "leaveParty"
+		});
+	}
+
+	, onTogglePartyView: function (state) {
+		this.el.removeClass("full compact minimal");
+		this.el.addClass(state);
+	}
+};

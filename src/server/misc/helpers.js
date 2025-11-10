@@ -1,5 +1,7 @@
-const logging = require("../../common/logging");
-const gExports = require("../../common/globals");
+//import logging from "../../common/logging.js";
+//import gExports from "../../common/globals.js";
+const logging = require("../../common/logging").default;
+const gExports = require("../../common/globals").default;
 
 let consoleLogLevel = (process.env.NODE_ENV === "production"
 	? logging.EventLevels.STANDARD

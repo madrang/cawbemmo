@@ -1,7 +1,4 @@
-define([], function () {
-	return {
-		type: "stash"
-
-		, init: function () {}
-	};
-});
+export default {
+	type: "stash"
+	, init: function () {}
+};

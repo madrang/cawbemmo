@@ -1,76 +1,70 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "js/input"
-], function (
-	events,
-	client,
-	input
-) {
-	return {
-		type: "serverActions"
+import client from "/js/system/client.js";
+import events from "/js/system/events.js";
+import input from "/js/input.js";
 
-		, actions: []
+export default {
+	type: "serverActions"
 
-		, init: function (blueprint) {
-			this.hookEvent("onKeyUp", this.onKeyUp.bind(this));
+	, actions: []
+
+	, init: function (blueprint) {
+		this.hookEvent("onKeyUp", this.onKeyUp.bind(this));
+	}
+
+	, hasAction: function (actionId) {
+		return this.actions.some((a) => a.id === actionId);
+	}
+
+	, onKeyUp: function (key) {
+		if (!input.isKeyAllowed(key)) {
+			return;
 		}
 
-		, hasAction: function (actionId) {
-			return this.actions.some((a) => a.id === actionId);
-		}
-
-		, onKeyUp: function (key) {
-			if (!input.isKeyAllowed(key)) {
+		this.actions.forEach((a) => {
+			if (a.key !== key) {
 				return;
 			}
 
-			this.actions.forEach((a) => {
-				if (a.key !== key) {
+			client.request({
+				cpn: "player"
+				, method: "performAction"
+				, data: a.action
+			});
+		});
+	}
+
+	, extend: function (blueprint) {
+		if (blueprint.addActions) {
+			blueprint.addActions.forEach(function (a) {
+				this.actions.spliceWhere((f) => f.key === a.key);
+
+				let exists = this.actions.some(function (ta) {
+					return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
+				});
+				if (exists) {
 					return;
 				}
 
-				client.request({
-					cpn: "player"
-					, method: "performAction"
-					, data: a.action
+				this.actions.push(a);
+			}, this);
+
+			delete blueprint.addActions;
+		}
+
+		if (blueprint.removeActions) {
+			blueprint.removeActions.forEach(function (a) {
+				this.actions.spliceWhere(function (ta) {
+					return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
 				});
-			});
+			}, this);
+
+			delete blueprint.removeActions;
 		}
 
-		, extend: function (blueprint) {
-			if (blueprint.addActions) {
-				blueprint.addActions.forEach(function (a) {
-					this.actions.spliceWhere((f) => f.key === a.key);
+		events.emit("onGetServerActions", this.actions);
+	}
 
-					let exists = this.actions.some(function (ta) {
-						return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
-					});
-					if (exists) {
-						return;
-					}
-
-					this.actions.push(a);
-				}, this);
-
-				delete blueprint.addActions;
-			}
-
-			if (blueprint.removeActions) {
-				blueprint.removeActions.forEach(function (a) {
-					this.actions.spliceWhere(function (ta) {
-						return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
-					});
-				}, this);
-
-				delete blueprint.removeActions;
-			}
-
-			events.emit("onGetServerActions", this.actions);
-		}
-
-		, destroy: function () {
-			this.unhookEvents();
-		}
-	};
-});
+	, destroy: function () {
+		this.unhookEvents();
+	}
+};

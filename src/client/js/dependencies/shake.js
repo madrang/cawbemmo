@@ -1,20 +1,10 @@
-/*
+/* Shake.js
  * Author: Alex Gibson
  * https://github.com/alexgibson/shake.js
  * License: MIT license
  */
-
-(function (global, factory) {
-	if (typeof define === 'function' && define.amd) {
-		define(function () {
-			return factory(global, global.document);
-		});
-	} else if (typeof module !== 'undefined' && module.exports) 
-		module.exports = factory(global, global.document);
-	else 
-		global.Shake = factory(global, global.document);
-})(typeof window !== 'undefined' ? window : this, function (window, document) {
-	function Shake (options) {
+export default class Shake {
+	constructor(options) {
 		//feature detect
 		this.hasDeviceMotion = 'ondevicemotion' in window;
 
@@ -25,7 +15,7 @@
 
 		if (typeof options === 'object') {
 			for (let i in options) {
-				if (options.hasOwnProperty(i)) 
+				if (options.hasOwnProperty(i))
 					this.options[i] = options[i];
 			}
 		}
@@ -47,35 +37,32 @@
 		} else if (typeof document.createEvent === 'function') {
 			this.event = document.createEvent('Event');
 			this.event.initEvent('shake', true, true);
-		} else 
+		}
+		else
 			return false;
 	}
-
 	//reset timer values
-	Shake.prototype.reset = function () {
+	reset() {
 		this.lastTime = new Date();
 		this.lastX = null;
 		this.lastY = null;
 		this.lastZ = null;
-	};
-
+	}
 	//start listening for devicemotion
-	Shake.prototype.start = function () {
+	start() {
 		this.reset();
-		if (this.hasDeviceMotion) 
+		if (this.hasDeviceMotion)
 			window.addEventListener('devicemotion', this, false);
-	};
-
+	}
 	//stop listening for devicemotion
-	Shake.prototype.stop = function () {
-		if (this.hasDeviceMotion) 
+	stop() {
+		if (this.hasDeviceMotion)
 			window.removeEventListener('devicemotion', this, false);
-        
-		this.reset();
-	};
 
+		this.reset();
+	}
 	//calculates if shake did occur
-	Shake.prototype.devicemotion = function (e) {
+	devicemotion(e) {
 		let current = e.accelerationIncludingGravity;
 		let currentTime;
 		let timeDifference;
@@ -108,13 +95,10 @@
 		this.lastX = current.x;
 		this.lastY = current.y;
 		this.lastZ = current.z;
-	};
-
+	}
 	//event handler
-	Shake.prototype.handleEvent = function (e) {
-		if (typeof (this[e.type]) === 'function') 
+	handleEvent(e) {
+		if (typeof (this[e.type]) === 'function')
 			return this[e.type](e);
-	};
-
-	return Shake;
-});
+	}
+}

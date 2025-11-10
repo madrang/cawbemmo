@@ -1,73 +1,69 @@
-define([
-	"js/rendering/effects"
-], function (
-	effects
-) {
-	return {
-		type: "whirlwind"
+import effects from "/js/rendering/effects.js";
 
-		, source: null
+export default {
+	type: "whirlwind"
 
-		, row: null
-		, col: null
-		, frames: 4
-		, frameDelay: 4
-		, spriteSheet: "attacks"
+	, source: null
 
-		, delay: 32
-		, coordinates: []
+	, row: null
+	, col: null
+	, frames: 4
+	, frameDelay: 4
+	, spriteSheet: "attacks"
 
-		, objects: null
+	, delay: 32
+	, coordinates: []
 
-		, init: async function (blueprint) {
-			await this.getObjectsModule();
+	, objects: null
 
-			if (!this.source) {
-				this.obj.destroyed = true;
-				return;
-			}
+	, init: async function (blueprint) {
+		await this.getObjectsModule();
 
-			this.coordinates.forEach(([x, y], i) => {
-				const wait = i * this.delay;
+		if (!this.source) {
+			this.obj.destroyed = true;
+			return;
+		}
 
-				setTimeout(this.spawnThing.bind(this, x, y), wait);
+		this.coordinates.forEach(([x, y], i) => {
+			const wait = i * this.delay;
+
+			setTimeout(this.spawnThing.bind(this, x, y), wait);
+		});
+
+		effects.register(this);
+	}
+
+	, getObjectsModule: async function () {
+		return new Promise((res) => {
+			require(["js/objects/objects"], (o) => {
+				this.objects = o;
+				res();
 			});
+		});
+	}
 
-			effects.register(this);
-		}
+	, spawnThing: function (x, y) {
+		const { frames: frameCount, row, col, spriteSheet, frameDelay } = this;
 
-		, getObjectsModule: async function () {
-			return new Promise((res) => {
-				require(["js/objects/objects"], (o) => {
-					this.objects = o;
-					res();
-				});
-			});
-		}
+		this.objects.buildObject({
+			x
+			, y
+			, components: [{
+				type: "attackAnimation"
+				, row
+				, col
+				, frames: frameCount
+				, spriteSheet
+				, frameDelay
+			}]
+		});
+	}
 
-		, spawnThing: function (x, y) {
-			const { frames: frameCount, row, col, spriteSheet, frameDelay } = this;
+	, renderManual: function () {
 
-			this.objects.buildObject({
-				x
-				, y
-				, components: [{
-					type: "attackAnimation"
-					, row
-					, col
-					, frames: frameCount
-					, spriteSheet
-					, frameDelay
-				}]
-			});
-		}
+	}
 
-		, renderManual: function () {
-
-		}
-
-		, destroy: function () {
-			effects.unregister(this);
-		}
-	};
-});
+	, destroy: function () {
+		effects.unregister(this);
+	}
+};

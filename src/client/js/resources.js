@@ -1,27 +1,38 @@
-define([
-	"js/system/globals"
-], function (
-	globals
-) {
-	return {
-		sprites: {}
+import events from "/js/system/events.js";
+import globals from "/js/system/globals.js";
 
-		, init: async function () {
-			const { sprites } = this;
-			const { clientConfig: { resourceList, textureList } } = globals;
+export default {
+	sprites: {}
 
-			const fullList = [].concat(resourceList, textureList);
+	, loadSprite: function (s) {
+		return new Promise((resolve, reject) => {
+			const spriteSource = s.includes(".png") ? s : `images/${s}.png`;
 
-			return Promise.all(fullList.map((s) => {
-				return new Promise((res) => {
-					const spriteSource = s.includes(".png") ? s : `images/${s}.png`;
+			const sprite = new Image();
+			this.sprites[s] = sprite;
+			sprite.onload = resolve;
+			sprite.onerror = () => {
+				const errMsg = `❌ Failed to load image: ${s}`;
+				_.log.resources.error(errMsg);
+				reject(new Error(errMsg));
+			};
+			sprite.src = spriteSource;
+		});
+	}
 
-					const sprite = new Image();
-					sprites[s] = sprite;
-					sprite.onload = res;
-					sprite.src = spriteSource;
+	, init: async function () {
+		const { clientConfig: { resourceList, textureList } } = globals;
+
+		const fullList = [ ...resourceList, ...textureList ];
+		let loadedCount = 0;
+		return Promise.all(fullList.map((s) => {
+			return this.loadSprite(s).then(() => {
+				loadedCount++;
+				events.emit("loaderProgress", {
+					type: "resources"
+					, progress: loadedCount / fullList.length
 				});
-			}));
-		}
-	};
-});
+			});
+		}));
+	}
+};

@@ -1,39 +1,33 @@
-define([
+export default {
+	pool: {}
 
-], function (
+	, clean: function () {
+		this.pool = {};
+	}
 
-) {
-	return {
-		pool: {}
+	, getSprite: function (type) {
+		let list = this.pool[type];
+		if (!list) {
+			return null;
+		} else if (list.length === 0) {
+			return null;
+		}
+		return list.pop();
+	}
 
-		, clean: function () {
-			this.pool = {};
+	, store: function (sprite) {
+		let pool = this.pool;
+		let type = sprite.type;
+		if (sprite.scale.x < 0) {
+			type = "flip" + type;
+		}
+		let list = pool[type];
+		if (!list) {
+			list = pool[type] = [];
 		}
 
-		, getSprite: function (type) {
-			let list = this.pool[type];
-			if (!list) {
-				return null;
-			} else if (list.length === 0) {
-				return null;
-			}
-			return list.pop();
-		}
+		delete sprite.isFake;
 
-		, store: function (sprite) {
-			let pool = this.pool;
-			let type = sprite.type;
-			if (sprite.scale.x < 0) {
-				type = "flip" + type;
-			}
-			let list = pool[type];
-			if (!list) {
-				list = pool[type] = [];
-			}
-
-			delete sprite.isFake;
-
-			list.push(sprite);
-		}
-	};
-});
+		list.push(sprite);
+	}
+};

@@ -1,78 +1,75 @@
-define([
-	"js/system/events"
-	, "html!ui/templates/announcements/template"
-	, "css!ui/templates/announcements/styles"
-	, "html!ui/templates/announcements/templateLine"
-], function (
-	events,
-	template,
-	styles,
-	templateLine
-) {
-	return {
-		tpl: template
+//import events from "/js/system/events.js";
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, message: null
-		, maxTtl: 160
+const template = await _.loadHTML("/ui/templates/announcements/template.html", { raw: true });
+const templateLine = await _.loadHTML("/ui/templates/announcements/templateLine.html", { raw: true });
 
-		, postRender: function () {
-			this.onEvent("onGetAnnouncement", this.onGetAnnouncement.bind(this));
+export default {
+	tpl: template
+
+	, message: null
+	, maxTtl: 160
+
+	, postRender: function () {
+		this.onEvent("onGetAnnouncement", this.onGetAnnouncement.bind(this));
+	}
+
+	, onGetAnnouncement: function (e) {
+		if (isMobile) {
+			if (["Appuie sur 'G' pour", "Appuie sur 'U' pour"].some((f) => e.msg.toLowerCase().indexOf(f) > -1)) {
+				return;
+			}
 		}
 
-		, onGetAnnouncement: function (e) {
-			if (isMobile) {
-				if (["Appuie sur 'G' pour", "Appuie sur 'U' pour"].some((f) => e.msg.toLowerCase().indexOf(f) > -1)) {
-					return;
-				}
-			}
+		this.clearMessage();
 
+		let container = this.find(".list");
+
+		let html = templateLine
+			.replace("$MSG$", e.msg);
+
+		let el = $(html)
+			.appendTo(container);
+
+		if (e.type) {
+			el.addClass(e.type);
+		}
+		if (e.zIndex) {
+			el.css("z-index", e.zIndex);
+		}
+		if (e.top) {
+			el.css("margin-top", e.top);
+		}
+
+		this.message = {
+			ttl: e.ttl ?? this.maxTtl
+			, el: el
+		};
+	}
+
+	, update: function () {
+		let message = this.message;
+		if (!message) {
+			return;
+		}
+
+		message.ttl--;
+
+		if (message.ttl <= 0) {
 			this.clearMessage();
+		}
+	}
 
-			let container = this.find(".list");
-
-			let html = templateLine
-				.replace("$MSG$", e.msg);
-
-			let el = $(html)
-				.appendTo(container);
-
-			if (e.type) {
-				el.addClass(e.type);
-			}
-			if (e.zIndex) {
-				el.css("z-index", e.zIndex);
-			}
-			if (e.top) {
-				el.css("margin-top", e.top);
-			}
-
-			this.message = {
-				ttl: e.ttl ?? this.maxTtl
-				, el: el
-			};
+	, clearMessage: function () {
+		let message = this.message;
+		if (!message) {
+			return;
 		}
 
-		, update: function () {
-			let message = this.message;
-			if (!message) {
-				return;
-			}
-
-			message.ttl--;
-
-			if (message.ttl <= 0) {
-				this.clearMessage();
-			}
-		}
-
-		, clearMessage: function () {
-			let message = this.message;
-			if (!message) {
-				return;
-			}
-
-			this.message = null;
-			message.el.remove();
-		}
-	};
-});
+		this.message = null;
+		message.el.remove();
+	}
+};

@@ -1,78 +1,74 @@
-define([
-	"js/rendering/renderer"
-], function (
-	renderer
-) {
-	return {
-		type: "flash"
+import renderer from "/js/rendering/renderer.js";
 
-		, color: "#48edff"
+export default {
+	type: "flash"
 
-		, filter: null
+	, color: "#48edff"
 
-		, lum: -1
-		, lumDir: 0.075
+	, filter: null
 
-		, state: 0
-		, maxState: 0
+	, lum: -1
+	, lumDir: 0.075
 
-		, frame: 1
+	, state: 0
+	, maxState: 0
 
-		, oldTexture: null
+	, frame: 1
 
-		, init: function () {
-			//Destroy self
-			if (!this.obj.sprite) {
-				return true;
-			}
-			this.oldTexture = this.obj.sprite.texture;
-			renderer.setSprite({
-				sprite: this.obj.sprite
-				, cell: 8 + this.frame
-				, sheetName: "animChar"
-			});
-			this.maxState = ((Math.abs(this.lum) / this.lumDir) + (Math.abs(this.lum) / (this.lumDir))) / 5;
+	, oldTexture: null
+
+	, init: function () {
+		//Destroy self
+		if (!this.obj.sprite) {
+			return true;
 		}
+		this.oldTexture = this.obj.sprite.texture;
+		renderer.setSprite({
+			sprite: this.obj.sprite
+			, cell: 8 + this.frame
+			, sheetName: "animChar"
+		});
+		this.maxState = ((Math.abs(this.lum) / this.lumDir) + (Math.abs(this.lum) / (this.lumDir))) / 5;
+	}
 
-		, getColor: function () {
-			let hex = String(this.color).replace(/[^0-9a-f]/gi, "");
-			if (hex.length < 6) {
-				hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-			}
-			let rgb = "0x";
-			for (let i = 0; i < 3; i++) {
-				let c = parseInt(hex.substr(i * 2, 2), 16);
-				c = Math.round(Math.min(Math.max(0, c + (c * this.lum)), 255)).toString(16);
-				rgb += ("00" + c).substr(c.length);
-			}
-			return rgb;
+	, getColor: function () {
+		let hex = String(this.color).replace(/[^0-9a-f]/gi, "");
+		if (hex.length < 6) {
+			hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
 		}
+		let rgb = "0x";
+		for (let i = 0; i < 3; i++) {
+			let c = parseInt(hex.substr(i * 2, 2), 16);
+			c = Math.round(Math.min(Math.max(0, c + (c * this.lum)), 255)).toString(16);
+			rgb += ("00" + c).substr(c.length);
+		}
+		return rgb;
+	}
 
-		, update: function () {
-			this.state++;
-			if (this.state >= this.maxState) {
-				this.state = 0;
-				this.frame++;
+	, update: function () {
+		this.state++;
+		if (this.state >= this.maxState) {
+			this.state = 0;
+			this.frame++;
 
-				if (this.frame <= 5) {
-					renderer.setSprite({
-						sprite: this.obj.sprite
-						, cell: 8 + this.frame
-						, sheetName: "animChar"
-					});
-				}
-			}
-			this.lum += this.lumDir;
-
-			if (this.lumDir > 0 && this.lum >= 0) {
-				this.lumDir = -Math.abs(this.lumDir);
-			} else if (this.lumDir <= 0 && this.lum <= -1) {
-				this.destroyed = true;
+			if (this.frame <= 5) {
+				renderer.setSprite({
+					sprite: this.obj.sprite
+					, cell: 8 + this.frame
+					, sheetName: "animChar"
+				});
 			}
 		}
+		this.lum += this.lumDir;
 
-		, destroy: function () {
-			this.obj.sprite.texture = this.oldTexture;
+		if (this.lumDir > 0 && this.lum >= 0) {
+			this.lumDir = -Math.abs(this.lumDir);
+		} else if (this.lumDir <= 0 && this.lum <= -1) {
+			this.destroyed = true;
 		}
-	};
-});
+	}
+
+	, destroy: function () {
+		this.obj.sprite.texture = this.oldTexture;
+	}
+};

@@ -1,85 +1,81 @@
-define([
-	"js/system/events"
-], function (
-	events
-) {
-	return {
-		type: "inventory"
+import events from "/js/system/events.js";
 
-		, items: []
+export default {
+	type: "inventory"
 
-		, init: function (blueprint) {
-			events.emit("onGetItems", this.items);
+	, items: []
+
+	, init: function (blueprint) {
+		events.emit("onGetItems", this.items);
+	}
+
+	, extend: function ({ destroyItems, getItems }) {
+		const { items } = this;
+
+		let rerenderNeeded = false;
+
+		if (destroyItems) {
+			rerenderNeeded = true;
+			events.emit("onDestroyItems", destroyItems, this.items);
 		}
 
-		, extend: function ({ destroyItems, getItems }) {
-			const { items } = this;
+		if (getItems) {
+			getItems.forEach((g) => {
+				const findItem = items.find((i) => i.id === g.id);
 
-			let rerenderNeeded = false;
+				if (!findItem) {
+					rerenderNeeded = true;
 
-			if (destroyItems) {
-				rerenderNeeded = true;
-				events.emit("onDestroyItems", destroyItems, this.items);
-			}
+					const clonedItem = _.assign({}, g);
+					clonedItem.isNew = true;
 
-			if (getItems) {
-				getItems.forEach((g) => {
-					const findItem = items.find((i) => i.id === g.id);
+					items.push(clonedItem);
 
-					if (!findItem) {
-						rerenderNeeded = true;
+					return;
+				}
 
-						const clonedItem = _.assign({}, g);
-						clonedItem.isNew = true;
+				if (!rerenderNeeded) {
+					rerenderNeeded = (
+						findItem.pos !== g.pos ||
+						findItem.eq !== g.eq ||
+						findItem.active !== g.active ||
+						findItem.quickSlot !== g.quickSlot ||
+						findItem.quantity !== g.quantity
+					);
+				}
 
-						items.push(clonedItem);
-
-						return;
-					}
-
-					if (!rerenderNeeded) {
-						rerenderNeeded = (
-							findItem.pos !== g.pos ||
-							findItem.eq !== g.eq ||
-							findItem.active !== g.active ||
-							findItem.quickSlot !== g.quickSlot ||
-							findItem.quantity !== g.quantity
-						);
-					}
-
-					Object.getOwnPropertyNames(findItem).forEach((p) => {
-						delete findItem[p];
-					});
-
-					_.assign(findItem, g);
+				Object.getOwnPropertyNames(findItem).forEach((p) => {
+					delete findItem[p];
 				});
 
-				events.emit("onGetItems", this.items, rerenderNeeded, getItems);
-			}
+				_.assign(findItem, g);
+			});
+
+			events.emit("onGetItems", this.items, rerenderNeeded, getItems);
+		}
+	}
+
+	, equipItemErrors: function (item) {
+		const { obj: { reputation, stats: { values: statValues } } } = this;
+
+		const errors = [];
+
+		if (item.level > statValues.level) {
+			errors.push("level");
 		}
 
-		, equipItemErrors: function (item) {
-			const { obj: { reputation, stats: { values: statValues } } } = this;
-
-			const errors = [];
-
-			if (item.level > statValues.level) {
-				errors.push("level");
-			}
-
-			if (item.requires && item.requires[0] && statValues[item.requires[0].stat] < item.requires[0].value) {
-				errors.push("stats");
-			}
-
-			if (item.factions?.some((f) => reputation.getTier(f.id) < f.tier)) {
-				errors.push("faction");
-			}
-
-			return errors;
+		if (item.requires && item.requires[0] && statValues[item.requires[0].stat] < item.requires[0].value) {
+			errors.push("stats");
 		}
 
-		, canEquipItem: function (item) {
-			return (this.equipItemErrors(item).length === 0);
+		if (item.factions?.some((f) => reputation.getTier(f.id) < f.tier)) {
+			errors.push("faction");
 		}
-	};
-});
+
+		return errors;
+	}
+
+	, canEquipItem: function (item) {
+		return (this.equipItemErrors(item).length === 0);
+	}
+};
