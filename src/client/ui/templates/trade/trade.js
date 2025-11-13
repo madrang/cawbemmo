@@ -35,7 +35,7 @@ export default {
 
 		this.find(".heading-text").html(action);
 
-		let uiInventory = $(".uiInventory").data("ui");
+		let uiInventory = $("#uiInventory").data("ui");
 		let container = this.el.find(".grid").empty();
 		let buyItems = itemList.items;
 
@@ -110,12 +110,12 @@ export default {
 		events.emit("onBuySellItem", this.el);
 
 		el.removeClass("disabled");
-		const uiInventory = $(".uiInventory").data("ui");
+		const uiInventory = $("#uiInventory").data("ui");
 		uiInventory.hideTooltip(el, item, e);
 	}
 
 	, onHover: function (el, item, action, e) {
-		let uiInventory = $(".uiInventory").data("ui");
+		let uiInventory = $("#uiInventory").data("ui");
 		uiInventory.onHover(el, item, e);
 
 		let canAfford = true;
@@ -138,6 +138,6 @@ export default {
 
 	, beforeHide: function () {
 		events.emit("onHideOverlay", this.el);
-		$(".uiInventory").data("ui").hideTooltip();
+		$("#uiInventory").data("ui").hideTooltip();
 	}
 };

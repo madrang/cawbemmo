@@ -23,7 +23,7 @@ export default {
 	}
 
 	, onLogout: function () {
-		$(".uiMainMenu").data("ui").charSelect();
+		$("#uiMainMenu").data("ui").charSelect();
 	}
 
 	, performRespawn: function () {
