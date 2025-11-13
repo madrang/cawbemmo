@@ -48,8 +48,8 @@ export default {
 		setUiTypes(globals.clientConfig.uiLoginList);
 		setUiTypes(globals.clientConfig.uiList);
 
-		for (const u of globals.clientConfig.uiLoginList) {
-			this.buildFromConfig(u);
+		for (const uiConfig of globals.clientConfig.uiLoginList) {
+			this.buildFromConfig(uiConfig);
 		}
 	}
 

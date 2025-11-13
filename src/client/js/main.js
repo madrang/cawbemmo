@@ -46,8 +46,19 @@ const main = {
 		await client.init();
 		await globals.init();
 		await locale.init();
-		await resources.init();
-		await components.init();
+
+		this.loader = await uiFactory.buildFromConfig({
+			type: "loader"
+			, path: "/ui/templates/loader"
+		});
+		$(".loader-container").remove();
+		this.loader.init();
+
+		await Promise.all([
+			resources.init()
+			, components.init()
+			, sound.init()
+		]);
 
 		events.emit("onResourcesLoaded");
 		this.start();
@@ -59,8 +70,6 @@ const main = {
 
 		$(window).on("contextmenu", this.onContextMenu.bind(this));
 
-		sound.init();
-
 		objects.init();
 		renderer.init();
 		input.init();
@@ -68,11 +77,11 @@ const main = {
 		numbers.init();
 
 		uiFactory.init();
+		this.loader.destroy();
+		delete this.loader;
 
 		fnQueueTick = getQueueTick(this.update.bind(this));
 		fnQueueTick();
-
-		$(".loader-container").remove();
 	}
 
 	, onFocus: function (hasFocus) {
