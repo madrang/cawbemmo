@@ -45,10 +45,16 @@ export default {
 					loadCount++;
 					events.emit("loaderProgress", {
 						type: "sounds"
-						, progress: totalToLoad ? loadCount / totalToLoad : 1
+						, progress: loadCount / totalToLoad
 					});
 				});
 			}
+		}
+		if (totalToLoad <= 0) { // No sounds to preload, emit loaderProgress completed event.
+			events.emit("loaderProgress", {
+				type: "sounds"
+				, progress: 1
+			});
 		}
 		this.onToggleAudio(config.playAudio);
 	}
