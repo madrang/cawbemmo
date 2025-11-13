@@ -18,6 +18,10 @@ describe("Client", () => {
 	it("is in secure context", () => {
 		expect(window.isSecureContext).toBeTrue();
 	});
+	it("can use templates", () => {
+		const template = document.createElement("template");
+		expect("content" in template).toBeTrue();
+	});
 	describe("localstorage", () => {
 		const cleanStorage = function () {
 			// Remove all storage items created while testing.

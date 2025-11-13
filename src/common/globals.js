@@ -461,6 +461,28 @@ const tmpExport = {
 		}
 		return args[Math.floor(Math.random() * args.length)];
 	}
+
+	, isPlainObject: function (obj) {
+		const oprop = obj.isPrototypeOf && "isPrototypeOf" || "hasOwnProperty";
+		const hasOwn = Object.prototype.hasOwnProperty;
+		if (!obj
+			|| Object.prototype.toString.call(obj) !== "[object Object]"
+			|| !(oprop in obj)
+			|| hasOwn.call(obj, oprop)
+		) {
+			return false;
+		}
+		if (obj.constructor
+			&& !hasOwn.call(obj, "constructor")
+			&& obj.constructor.prototype
+			&& !hasOwn.call(obj.constructor.prototype, oprop)
+		) {
+			return false;
+		}
+		let prop;
+		for (prop in obj) {} // Get last iterable key of obj.
+		return prop === undefined || hasOwn.call(obj, prop);
+	}
 };
 
 import assignModule from "./assign.js";

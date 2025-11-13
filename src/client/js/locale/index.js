@@ -30,9 +30,8 @@ const getMessage = function getMessage (target, nParts, curPath = []) {
 	}
 	if (typeof target !== "object") {
 		_.log.locale.getMessage.error(`Current path ${curPath.join(".")} is missing ${nParts.join(".")}`);
-		return target;
+		return undefined;
 	}
-
 	const np = nParts.shift();
 	const subTarget = target[np];
 	curPath.push(np);

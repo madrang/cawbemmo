@@ -1,3 +1,6 @@
+export const loader = {
+	loading: "Chargement ${progress}%"
+};
 export const party = {
 	leave: "leave party"
 	, remove: "remove from party"

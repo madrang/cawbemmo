@@ -36,6 +36,9 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 		return newObj;
 	}
 	if (!newObj) {
+		if (!_.isPlainObject(objSrc)) {
+			return objSrc;
+		}
 		newObj = {};
 	}
 	/* Debug for particles

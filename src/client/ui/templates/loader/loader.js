@@ -1,4 +1,5 @@
 import events from "/js/system/events.js";
+import locale from "/js/locale/index.js";
 import factory from "/ui/factory.js";
 
 import styles from "./styles.css" with { type: "css" };
@@ -6,7 +7,7 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 	document.adoptedStyleSheets.push(styles);
 }
 
-const template = await _.loadHTML("/ui/templates/loader/template.html", { raw: true });
+const template = await _.loadHTML("/ui/templates/loader/template.html");
 
 const loadingProgress = {
 	resources: 0
@@ -29,22 +30,45 @@ const setLoaderProgress = ({ type, progress }) => {
 
 	const uiLoader = factory.getUi("loader");
 	if (uiLoader) {
-		uiLoader.setLoaderProgress(totalProgress);
+		uiLoader.setLoaderProgress(totalProgress, type, progress);
 	}
 };
 
+const createTemplate = function () {
+	const tpl = template.content.cloneNode(true);
+	const progressContainer = tpl.querySelector(".progress-container");
+	progressContainer.parentNode.removeChild(progressContainer);
+	_.log.loader.debug("Loader template %o", tpl);
+	return tpl.childNodes;
+};
+
 export default {
-	tpl: template
+	tpl: createTemplate()
 	, init: function () {
 		events.on("loaderProgress", setLoaderProgress);
 	}
 	, beforeDestroy: function () {
 		events.off("loaderProgress", setLoaderProgress);
 	}
-	, setLoaderProgress: async function (pctProgress) {
+	, setLoaderProgress: async function (totalProgress, subType, subProgress) {
+		if (!this.el) {
+			return;
+		}
+		let ct = this.el.find("#progress-container-" + subType);
+		if (!ct || ct.length <= 0) {
+			ct = $(template.content.querySelector(".progress-container").cloneNode(true));
+			ct.attr("id", "progress-container-" + subType);
+			const pbar = ct.find(".progress-bar-fill");
+			pbar.addClass(subType);
+			ct.insertBefore(this.el.find(".loader-text"));
+		}
+		ct.find(".progress-bar-fill").width(`${Math.floor(subProgress * 100)}%`);
+		ct.find(".progress-label").text(`${subType} ${(subProgress * 100).toFixed(2)}%`);
+		this.el.find(".loader-text").text(locale.translate("loader", "loading", { progress: (totalProgress * 100).toFixed(2) }));
+
 		// Handle fade out animation when loading is complete
-		if (pctProgress >= 1 && this.el) {
-			this.el.classList.add("fade-out"); // Add fade-out class to trigger animation
+		if (totalProgress >= 1) {
+			this.el.addClass("fade-out"); // Add fade-out class to trigger animation
 			await _.asyncDelay(500);
 			this.el.hide();
 		}

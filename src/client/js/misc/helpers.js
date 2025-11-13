@@ -222,7 +222,7 @@ window._ = {
 
 	, loadHTML: async function (url, options = {}) {
 		options = Object.assign({
-			parentElement: "div"
+			parentElement: "template"
 			, raw: false
 		}, options);
 		const response = await fetch(url);
@@ -235,11 +235,7 @@ window._ = {
 		}
 		const element = document.createElement(options.parentElement);
 		element.innerHTML = htmlSrc;
-		const nodes = [];
-		for (const childNode of element.childNodes.values()) {
-			nodes.push(element.removeChild(childNode));
-		}
-		return nodes;
+		return element;
 	}
 
 	, log: logging.createLogger({ name: "System", loggerCtor: logging.createLogHandler(printEvent, consoleLogFilter) })
