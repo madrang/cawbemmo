@@ -8,16 +8,19 @@
 		<link rel="stylesheet" href="jasmine/jasmine.css">
 		<link rel="stylesheet" href="main.css">
 
-		<script src="/js/system/addons.js"></script>
-		<script src="/js/dependencies/require.min.js"></script>
-		<script src="/plugins/selftest/app.js"></script>
-
 		<script src="jasmine/jasmine.js"></script>
 		<script src="jasmine/jasmine-html.js"></script>
 		<script src="jasmine/boot0.js"></script>
 		<!-- optional: include a file here that configures the Jasmine env -->
 		<script src="jasmine/boot1.js"></script>
 
+		<script src="/js/system/addons.js"></script>
+		<script>
+			window.addEventListener("load", function() {
+				jasmine.DEFAULT_TIMEOUT_INTERVAL = 15 * 1000;
+				console.log("Page loaded... Applied jasmine settings.");
+			});
+		</script>
 		<script type="module" src="ClientSpec.js"></script>
 		<script type="module" src="ServerSpec.js"></script>
 	</head>
