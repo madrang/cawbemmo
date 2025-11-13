@@ -1,9 +1,8 @@
 describe("Server", () => {
 	let client;
 	beforeAll(async () => {
-		client = await new Promise(res => {
-			require(["/js/system/client.js"], res);
-		});
+		const module = await import("/js/system/client.js");
+		client = module.default;
 	}, 60 * 1000);
 	describe("when ready", () => {
 		beforeAll(async () => {

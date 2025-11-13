@@ -1,17 +1,13 @@
+import "/js/misc/helpers.js";
+
 describe("Client", () => {
 	let browserStorage;
-	beforeAll(() => new Promise(res => {
-		require([ "helpers"
-			, "/js/system/browserStorage.js"
-		], (glExport
-			, browserStorage_module
-		) => {
-			browserStorage = browserStorage_module;
-			browserStorage.prefix = "testing";
-			_.log.jasmine.info("Ready!");
-			res();
-		});
-	}), 60 * 1000);
+	beforeAll(async () => {
+		const module = await import("/js/system/browserStorage.js");
+		browserStorage = module.default;
+		browserStorage.prefix = "testing";
+		_.log.jasmine.info("Ready!");
+	}, 60 * 1000);
 	it("should be able to use WebGL", () => {
 		const canvas = document.createElement("canvas");
 		// Get WebGLRenderingContext from canvas element.
