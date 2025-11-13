@@ -1,5 +1,6 @@
 import client from "/js/system/client.js";
 import events from "/js/system/events.js";
+import factory from "/ui/factory.js";
 
 import styles from "./styles.css" with { type: "css" };
 if (!document.adoptedStyleSheets.includes(styles)) {
@@ -23,7 +24,7 @@ export default {
 	}
 
 	, onLogout: function () {
-		$("#uiMainMenu").data("ui").charSelect();
+		factory.getUi("mainMenu").charSelect();
 	}
 
 	, performRespawn: function () {

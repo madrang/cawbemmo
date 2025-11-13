@@ -43,6 +43,7 @@ export default {
 		events.on("onUiKeyDown", this.onUiKeyDown.bind(this));
 		events.on("onUiAction", this.onUiAction.bind(this));
 		events.on("onResize", this.onResize.bind(this));
+		events.on("onDestroyedUi", this.onDestroyedUi.bind(this));
 
 		setUiTypes(globals.clientConfig.uiLoginList);
 		setUiTypes(globals.clientConfig.uiList);
@@ -50,6 +51,15 @@ export default {
 		for (const u of globals.clientConfig.uiLoginList) {
 			this.buildFromConfig(u);
 		}
+	}
+
+	, onDestroyedUi: function (ui) {
+		if (!ui || !ui.type) {
+			_.log.factory.onDestroyedUi.error("Invalid UI reference: %o", this);
+			return;
+		}
+		_.log.factory.trace("Cleaning destroyed UI %o", this);
+		this.uis.spliceWhere((u) => u.type === ui.type);
 	}
 
 	, onBuildIngameUis: async function () {
@@ -80,16 +90,15 @@ export default {
 	, buildFromConfig: async function (config) {
 		const { type, path } = config;
 
-		const className = "ui" + type.capitalize();
-		const el = $("." + className);
-		if (el.length > 0) {
+		let ui = this.getUi(type);
+		if (ui) {
 			_.log.ui.factory.buildFromConfig.warn("UI module '%s' already loaded.", type);
-			return;
+			return ui;
 		}
 
 		_.log.ui.factory.buildFromConfig.debug("Loading UI module '%s'.", type);
 		const template = await import(`${path}/${type}.js`);
-		const ui = _.assign({ type }, uiBase, template.default);
+		ui = _.assign({ type }, uiBase, template.default);
 		const renderUI = this.renderUi.bind(this, ui);
 		await new Promise(
 			(res) => requestAnimationFrame(

@@ -1,5 +1,6 @@
 import events from "/js/system/events.js";
 import client from "/js/system/client.js";
+import factory from "/ui/factory.js";
 import renderItem from "/ui/shared/renderItem.js";
 
 import styles from "./styles.css" with { type: "css" };
@@ -35,7 +36,7 @@ export default {
 
 		this.find(".heading-text").html(action);
 
-		let uiInventory = $("#uiInventory").data("ui");
+		let uiInventory = factory.getUi("inventory");
 		let container = this.el.find(".grid").empty();
 		let buyItems = itemList.items;
 
@@ -110,12 +111,13 @@ export default {
 		events.emit("onBuySellItem", this.el);
 
 		el.removeClass("disabled");
-		const uiInventory = $("#uiInventory").data("ui");
+
+		const uiInventory = factory.getUi("inventory");
 		uiInventory.hideTooltip(el, item, e);
 	}
 
 	, onHover: function (el, item, action, e) {
-		let uiInventory = $("#uiInventory").data("ui");
+		const uiInventory = factory.getUi("inventory");
 		uiInventory.onHover(el, item, e);
 
 		let canAfford = true;
@@ -128,7 +130,7 @@ export default {
 			}
 		}
 
-		let uiTooltipItem = $(".uiTooltipItem").data("ui");
+		const uiTooltipItem = factory.getUi("tooltipItem");
 		uiTooltipItem.showWorth(canAfford);
 
 		if (isMobile) {
@@ -138,6 +140,7 @@ export default {
 
 	, beforeHide: function () {
 		events.emit("onHideOverlay", this.el);
-		$("#uiInventory").data("ui").hideTooltip();
+		const uiInventory = factory.getUi("inventory");
+		uiInventory.hideTooltip();
 	}
 };

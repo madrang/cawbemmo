@@ -18,10 +18,12 @@ export default {
 		if (this.beforeRender) {
 			this.beforeRender();
 		}
+
+		_.log.uiBase.trace("Loading template %o to container %s", this.tpl, container);
 		this.el = $(this.tpl)
 			.appendTo(container)
 			.data("ui", this);
-		_.log.uiBase.debug("Element %o linked to UI %o", this.el, this);
+		_.log.uiBase.trace("UI %o loaded element %o", this, this.el);
 
 		this.el.on("mouseenter", this.onMouseEnter.bind(this, true));
 		this.el.on("mouseleave", this.onMouseEnter.bind(this, false));
@@ -151,11 +153,13 @@ export default {
 	}
 
 	, destroy: function () {
+		_.log.uiBase.trace("Destroying UI %o", this);
 		this.offEvents();
 		if (this.beforeDestroy) {
 			this.beforeDestroy();
 		}
 		this.el.remove();
+		events.emit("onDestroyedUi", this);
 	}
 
 	, val: function (selector) {
