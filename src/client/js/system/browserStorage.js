@@ -26,7 +26,7 @@ const buildConfigObj = (prefix, obj) => {
 };
 const loadValue = (config, key) => {
 	const currentValue = browserStorage.get(config.getKeyName(key));
-	if (currentValue === undefined) {
+	if (currentValue === null || currentValue === undefined) {
 		return;
 	}
 	if (["true", "false"].includes(currentValue)) {
