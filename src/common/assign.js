@@ -37,6 +37,7 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 	}
 	if (!newObj) {
 		if (!_.isPlainObject(objSrc)) {
+			_.log.assign.debug("objSrc is not a plain object! Object %o will be returned unmodified.", objSrc);
 			return objSrc;
 		}
 		newObj = {};

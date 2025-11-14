@@ -9,7 +9,7 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 
 const template = await _.loadHTML("/ui/templates/terms/template.html", { raw: true });
 
-return {
+export default {
 	tpl: template
 	, centered: true
 
