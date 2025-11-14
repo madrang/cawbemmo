@@ -5,7 +5,7 @@ const socketIo = require("socket.io");
 
 const express = require("express");
 const compression = require("compression");
-const minify = require("express-minify");
+//const minify = require("express-minify");
 const lessMiddleware = require("less-middleware");
 const cookieParser = require("cookie-parser");
 
@@ -76,9 +76,9 @@ const init = async function () {
 	global.cons.sockets = this.socketServer.sockets;
 
 	app.use(compression());
-	if (IS_PROD) {
-		app.use(minify());
-	}
+	//if (IS_PROD) {
+	//	app.use(minify());
+	//}
 
 	app.use(cookieParser());
 	app.use(express.json({ limit: "50mb" }));
