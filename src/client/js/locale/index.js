@@ -146,6 +146,9 @@ export default {
 	, dictionary: {}
 
 	, init: async function (language) {
+		if (language && !this.availableLanguages.includes(language)) {
+			throw new Error(`Language ${language} isn't available!`);
+		}
 		if (!this.language || language) {
 			this.language = language || this.getLanguage();
 		}

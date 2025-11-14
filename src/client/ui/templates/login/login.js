@@ -3,6 +3,7 @@ import client from "/js/system/client.js";
 import uiFactory from "/ui/factory.js";
 import renderer from "/js/rendering/renderer.js";
 import globals from "/js/system/globals.js";
+import locale from "/js/locale/index.js";
 
 import styles from "./styles.css" with { type: "css" };
 if (!document.adoptedStyleSheets.includes(styles)) {
@@ -36,9 +37,12 @@ export default {
 		this.on(".btnLogin", "click", this.onLoginClick.bind(this));
 		this.on(".btnRegister", "click", this.onRegisterClick.bind(this));
 
+		this.el.find(".selectLanguage")
+			.val(locale.language);
+		this.on(".selectLanguage", "change", this.onSelectLanguage.bind(this));
+
 		this.find(".extra, .version")
-			.appendTo($("<div class=\"uiLoginExtra\"></div>")
-				.appendTo(".ui-container"));
+			.appendTo($("<div class=\"uiLoginExtra\"></div>").appendTo(".ui-container"));
 
 		$(".uiLoginExtra").find(".btn").on("click", this.redirect.bind(this));
 
@@ -99,5 +103,21 @@ export default {
 			, password: this.val(".txtPassword")
 		});
 		this.onLogin(res);
+	}
+
+	, onSelectLanguage: async function () {
+		const langSelector = this.el.find(".selectLanguage");
+		let selectedLanguage = langSelector.val();
+		if (!selectedLanguage) {
+			if (!locale.language) {
+				return;
+			}
+			langSelector.val(locale.language);
+			return;
+		}
+		if (selectedLanguage === locale.language) {
+			return;
+		}
+		await locale.init(selectedLanguage);
 	}
 };
