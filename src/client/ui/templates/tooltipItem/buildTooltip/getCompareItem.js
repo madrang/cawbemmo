@@ -1,86 +1,82 @@
-define([
-	"js/input"
-], function (
-	input
-) {
-	const getCompareItem = (msg) => {
-		const shiftDown = input.isKeyDown("shift", true);
+import input from "/js/input.js";
 
-		let item = msg.item;
-		let items = window.player.inventory.items;
+const getCompareItem = (msg) => {
+	const shiftDown = input.isKeyDown("shift", true);
 
-		let compare = null;
-		if (item.slot) {
-			compare = items.find((i) => i.eq && i.slot === item.slot);
+	let item = msg.item;
+	let items = window.player.inventory.items;
 
-			// check special cases for mismatched weapon/offhand scenarios (only valid when comparing)
-			if (!compare) {
-				let equippedTwoHanded = items.find((i) => i.eq && i.slot === "twoHanded");
-				let equippedOneHanded = items.find((i) => i.eq && i.slot === "oneHanded");
-				let equippedOffhand = items.find((i) => i.eq && i.slot === "offHand");
+	let compare = null;
+	if (item.slot) {
+		compare = items.find((i) => i.eq && i.slot === item.slot);
 
-				if (item.slot === "twoHanded") {
-					if (!equippedOneHanded) {
-						compare = equippedOffhand;
-					} else if (!equippedOffhand) {
-						compare = equippedOneHanded;
-					} else {
-						// compare against oneHanded and offHand combined by creating a virtual item that is the sum of the two
-						compare = _.assign({}, equippedOneHanded);
-						compare.refItem = equippedOneHanded;
+		// check special cases for mismatched weapon/offhand scenarios (only valid when comparing)
+		if (!compare) {
+			let equippedTwoHanded = items.find((i) => i.eq && i.slot === "twoHanded");
+			let equippedOneHanded = items.find((i) => i.eq && i.slot === "oneHanded");
+			let equippedOffhand = items.find((i) => i.eq && i.slot === "offHand");
 
-						for (let s in equippedOffhand.stats) {
-							if (!compare.stats[s]) {
-								compare.stats[s] = 0;
-							}
+			if (item.slot === "twoHanded") {
+				if (!equippedOneHanded) {
+					compare = equippedOffhand;
+				} else if (!equippedOffhand) {
+					compare = equippedOneHanded;
+				} else {
+					// compare against oneHanded and offHand combined by creating a virtual item that is the sum of the two
+					compare = _.assign({}, equippedOneHanded);
+					compare.refItem = equippedOneHanded;
 
-							compare.stats[s] += equippedOffhand.stats[s];
+					for (let s in equippedOffhand.stats) {
+						if (!compare.stats[s]) {
+							compare.stats[s] = 0;
 						}
 
-						if (!compare.implicitStats) {
-							compare.implicitStats = [];
-						}
-
-						(equippedOffhand.implicitStats || []).forEach((s) => {
-							let f = compare.implicitStats.find((i) => i.stat === s.stat);
-							if (!f) {
-								compare.implicitStats.push({
-									stat: s.stat
-									, value: s.value
-								});
-							} else {
-								f.value += s.value;
-							}
-						});
+						compare.stats[s] += equippedOffhand.stats[s];
 					}
-				}
 
-				if (item.slot === "oneHanded") {
-					compare = equippedTwoHanded;
-				}
+					if (!compare.implicitStats) {
+						compare.implicitStats = [];
+					}
 
-				// this case is kind of ugly, but we don't want to go in when comparing an offHand to (oneHanded + empty offHand) - that should just use the normal compare which is offHand to empty
-				if (item.slot === "offHand" && equippedTwoHanded && shiftDown) {
-					// since we're comparing an offhand to an equipped Twohander, we need to clone the 'spell' values over (setting damage to zero) so that we can properly display how much damage
-					// the player would lose by switching to the offhand (which would remove the twoHander)
-					// keep a reference to the original item for use in onHideToolTip
-					let spellClone = _.assign({}, equippedTwoHanded.spell);
-					spellClone.name = "";
-					spellClone.values.damage = 0;
-
-					let clone = _.assign({}, item, {
-						spell: spellClone
+					(equippedOffhand.implicitStats || []).forEach((s) => {
+						let f = compare.implicitStats.find((i) => i.stat === s.stat);
+						if (!f) {
+							compare.implicitStats.push({
+								stat: s.stat
+								, value: s.value
+							});
+						} else {
+							f.value += s.value;
+						}
 					});
-					clone.refItem = item;
-					msg.item = clone;
-
-					compare = equippedTwoHanded;
 				}
 			}
+
+			if (item.slot === "oneHanded") {
+				compare = equippedTwoHanded;
+			}
+
+			// this case is kind of ugly, but we don't want to go in when comparing an offHand to (oneHanded + empty offHand) - that should just use the normal compare which is offHand to empty
+			if (item.slot === "offHand" && equippedTwoHanded && shiftDown) {
+				// since we're comparing an offhand to an equipped Twohander, we need to clone the 'spell' values over (setting damage to zero) so that we can properly display how much damage
+				// the player would lose by switching to the offhand (which would remove the twoHander)
+				// keep a reference to the original item for use in onHideToolTip
+				let spellClone = _.assign({}, equippedTwoHanded.spell);
+				spellClone.name = "";
+				spellClone.values.damage = 0;
+
+				let clone = _.assign({}, item, {
+					spell: spellClone
+				});
+				clone.refItem = item;
+				msg.item = clone;
+
+				compare = equippedTwoHanded;
+			}
 		}
+	}
 
-		msg.compare = compare;
-	};
+	msg.compare = compare;
+};
 
-	return getCompareItem;
-});
+export default getCompareItem;

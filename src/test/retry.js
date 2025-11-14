@@ -2,22 +2,22 @@
 //import { expect} from "chai"
 const sinon = require("sinon");
 
-global._ = require("../common/globals.js");
-const logging = require("../common/logging.js");
-_.log = logging.createLogger({ name: "System", loggerCtor: logging.createLogHandler(() => {}, () => {})});
-
-const { asyncDelay, retry } = _;
-
-let assert, expect;
-before(async () => {
-	const chai = (await import("chai"));
-	const chaiAsPromised = (await import("chai-as-promised")).default;
-	chai.use(chaiAsPromised);
-	assert = chai.assert;
-	expect = chai.expect;
-});
+const { asyncDelay, retry } = require("../common/globals.js");
 
 describe("retry", () => {
+	let assert, expect;
+	before(async () => {
+		const chai = (await import("chai"));
+		const chaiAsPromised = (await import("chai-as-promised")).default;
+		chai.use(chaiAsPromised);
+		assert = chai.assert;
+		expect = chai.expect;
+
+		global._ = require("../common/globals.js");
+		const logging = require("../common/logging.js");
+		//_.log = logging.createLogger({ name: "System", loggerCtor: logging.createLogHandler(() => {}, () => {})});
+		_.log = logging.createLogger({ name: "System", loggerCtor: logging.createLogHandler((thisLogger, logLevel, args) => console.log(args), () => true)});
+	});
 	it("will execute", async () => {
 		const fakeFn = sinon.fake();
 		const reFn = retry(fakeFn, 1, () => {

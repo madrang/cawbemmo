@@ -11,6 +11,7 @@ const onDisconnect = (socket) => {
 };
 
 const onRequest = (socket, msg, callback) => {
+	//_.log.onRequest.trace("Socket %s new message %o with callback %o", socket.id, msg, callback);
 	msg.callback = callback;
 	if (!msg.data) {
 		msg.data = {};
@@ -18,7 +19,7 @@ const onRequest = (socket, msg, callback) => {
 
 	const source = cons.players.find((p) => p.socket.id === socket.id);
 	if (!router.isMsgValid(msg, source)) {
-		_.log.route.warn("Discarded invalid message %o from %s", msg, source.name || source.id || "unknown");
+		_.log.onRequest.warn("Discarded invalid message %o from %s", msg, source.name || source.id || "unknown");
 		return;
 	}
 	if (msg.cpn || msg.threadModule) {

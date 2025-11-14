@@ -40,7 +40,7 @@ module.exports = {
 				if (keys.length === 0) {
 					return false;
 				}
-				this.mobType = keys[Math.floor(Math.random() * keys.length)];
+				this.mobType = _.getRandomObj(keys);
 				let needMax = 8;
 				this.mobName = this.mobType.replace(/\w\S*/g, function (txt) {
 					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();

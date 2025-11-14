@@ -5,7 +5,7 @@ const MAP_DIR = "config/maps";
 // Time to keep the last map list before checking again. In seconds.
 const BUFFER_TTL = 60;
 
-const getMapInfos = function(path, name) {
+const getMapInfos = function (path, name) {
 	const map = {
 		name
 		, path
@@ -36,7 +36,7 @@ const getDefaultMap = function (mapList) {
 		_.log.mapManager.warn("No defaultZone found, using any available maps.");
 		defaultMaps = mapList;
 	}
-	return _.randomObj(defaultMaps);
+	return _.getRandomObj(defaultMaps);
 };
 
 module.exports = {

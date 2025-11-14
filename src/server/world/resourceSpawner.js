@@ -110,7 +110,7 @@ module.exports = {
 			if (position.length === 0) {
 				return;
 			}
-			return _.randomObj(position);
+			return _.getRandomObj(position);
 		}
 	}
 

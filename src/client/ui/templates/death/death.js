@@ -1,83 +1,82 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "html!ui/templates/death/template"
-	, "css!ui/templates/death/styles"
-], function (
-	events,
-	client,
-	template,
-	styles
-) {
-	return {
-		tpl: template
+import client from "/js/system/client.js";
+import events from "/js/system/events.js";
+import factory from "/ui/factory.js";
 
-		, modal: true
-		, centered: true
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, postRender: function () {
-			this.onEvent("onDeath", this.onDeath.bind(this));
-			this.onEvent("onPermadeath", this.onPermadeath.bind(this));
+const template = await _.loadHTML("/ui/templates/death/template.html", { raw: true });
 
-			this.find(".btn-logout").on("click", this.onLogout.bind(this));
-			this.find(".btn-respawn").on("click", this.performRespawn.bind(this));
-		}
+export default {
+	tpl: template
 
-		, onLogout: function () {
-			$(".uiMainMenu").data("ui").charSelect();
-		}
+	, modal: true
+	, centered: true
 
-		, performRespawn: function () {
-			events.emit("onHideOverlay", this.el);
-			this.hide(true);
+	, postRender: function () {
+		this.onEvent("onDeath", this.onDeath.bind(this));
+		this.onEvent("onPermadeath", this.onPermadeath.bind(this));
 
-			client.request({
-				cpn: "player"
-				, method: "performAction"
-				, data: {
-					cpn: "stats"
-					, method: "respawn"
-					, data: {}
-				}
-			});
-		}
+		this.find(".btn-logout").on("click", this.onLogout.bind(this));
+		this.find(".btn-respawn").on("click", this.performRespawn.bind(this));
+	}
 
-		, hide: function (force) {
-			if (!force) {
-				return;
+	, onLogout: function () {
+		factory.getUi("mainMenu").charSelect();
+	}
+
+	, performRespawn: function () {
+		events.emit("onHideOverlay", this.el);
+		this.hide(true);
+
+		client.request({
+			cpn: "player"
+			, method: "performAction"
+			, data: {
+				cpn: "stats"
+				, method: "respawn"
+				, data: {}
 			}
+		});
+	}
 
-			this.shown = false;
-			this.el.hide();
+	, hide: function (force) {
+		if (!force) {
+			return;
 		}
 
-		, doShow: function () {
-			this.show();
-			events.emit("onShowOverlay", this.el);
-		}
+		this.shown = false;
+		this.el.hide();
+	}
 
-		, onDeath: function (eventObj) {
-			if (!eventObj.source) {
-				this.find(".msg").html("Vous êtes mort");
-			} else {
-				this.find(".msg").html("Vous Avez été tué par [ <div class=\"inner\">" + eventObj.source + "</div> ]");
-			}
-			this.find(".penalty")
-				.html("Vous avez perdu " + eventObj.xpLoss + " experience")
-				.show();
+	, doShow: function () {
+		this.show();
+		events.emit("onShowOverlay", this.el);
+	}
 
-			if (!eventObj.xpLoss) {
-				this.find(".penalty").hide();
-			}
-
-			this.el.removeClass("permadeath");
-			this.doShow();
-		}
-
-		, onPermadeath: function (eventObj) {
+	, onDeath: function (eventObj) {
+		if (!eventObj.source) {
+			this.find(".msg").html("Vous êtes mort");
+		} else {
 			this.find(".msg").html("Vous Avez été tué par [ <div class=\"inner\">" + eventObj.source + "</div> ]");
-			this.el.addClass("permadeath");
-			this.doShow();
 		}
-	};
-});
+		this.find(".penalty")
+			.html("Vous avez perdu " + eventObj.xpLoss + " experience")
+			.show();
+
+		if (!eventObj.xpLoss) {
+			this.find(".penalty").hide();
+		}
+
+		this.el.removeClass("permadeath");
+		this.doShow();
+	}
+
+	, onPermadeath: function (eventObj) {
+		this.find(".msg").html("Vous Avez été tué par [ <div class=\"inner\">" + eventObj.source + "</div> ]");
+		this.el.addClass("permadeath");
+		this.doShow();
+	}
+};

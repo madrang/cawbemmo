@@ -204,7 +204,7 @@ const countRe = (str, re) => {
 	return reMatches.length;
 };
 
-const tmpExport = {
+export default {
 	EventLevels
 	, createLogger
 	, createLogHandler
@@ -214,8 +214,3 @@ const tmpExport = {
 	, replaceErrors
 	, valueToString
 };
-if (typeof define === "function") {
-	define([], tmpExport);
-} else {
-	module.exports = tmpExport;
-}

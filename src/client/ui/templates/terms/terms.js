@@ -1,42 +1,39 @@
-define([
-	"ui/factory"
-	, "html!ui/templates/terms/template"
-	, "css!ui/templates/terms/styles"
-	, "js/system/globals"
-	, "js/system/browserStorage"
-], function (
-	uiFactory,
-	template,
-	styles,
-	globals,
-	browserStorage
-) {
-	return {
-		tpl: template
-		, centered: true
+import globals from "/js/system/globals.js";
+import browserStorage from "/js/system/browserStorage.js";
+import uiFactory from "/ui/factory.js";
 
-		, postRender: function () {
-			const { clientConfig: { tos: { content, version } } } = globals;
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-			const elHeading = this.find(".heading");
-			elHeading.html(`${elHeading.html()} (v${version})`);
+const template = await _.loadHTML("/ui/templates/terms/template.html", { raw: true });
 
-			const morphedContent = content.replaceAll("\n", "<br />");
-			this.find(".content").html(morphedContent);
+return {
+	tpl: template
+	, centered: true
 
-			this.find(".btnDecline").on("click", this.onDeclineClick.bind(this));
-			this.find(".btnAccept").on("click", this.onAcceptClick.bind(this, version));
-		}
+	, postRender: function () {
+		const { clientConfig: { tos: { content, version } } } = globals;
 
-		, onDeclineClick: function () {
-			browserStorage.set("tos_accepted_version", null);
-			window.location = window.location;
-		}
+		const elHeading = this.find(".heading");
+		elHeading.html(`${elHeading.html()} (v${version})`);
 
-		, onAcceptClick: function (version) {
-			browserStorage.set("tos_accepted_version", version);
-			this.destroy();
-			uiFactory.build("characters");
-		}
-	};
-});
+		const morphedContent = content.replaceAll("\n", "<br />");
+		this.find(".content").html(morphedContent);
+
+		this.find(".btnDecline").on("click", this.onDeclineClick.bind(this));
+		this.find(".btnAccept").on("click", this.onAcceptClick.bind(this, version));
+	}
+
+	, onDeclineClick: function () {
+		browserStorage.set("tos_accepted_version", null);
+		window.location = window.location;
+	}
+
+	, onAcceptClick: function (version) {
+		browserStorage.set("tos_accepted_version", version);
+		this.destroy();
+		uiFactory.build("characters");
+	}
+};

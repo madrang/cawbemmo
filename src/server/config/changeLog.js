@@ -5,4 +5,4 @@ module.exports = {
 		Première version BETA grand public.
 
 		vous trouverez ici les nouveauté et amélioration a chaque nouvelle version.
-`};
+` };

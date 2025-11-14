@@ -150,7 +150,7 @@ const build = (mob, blueprint, type, zoneName) => {
 	}
 	mob.addComponent("equipment");
 
-	const preferStat = _.randomObj(statSelector);
+	const preferStat = _.getRandomObj(statSelector);
 
 	for (const fn of fnComponentGenerators) {
 		fn(mob, blueprint, typeDefinition, preferStat);

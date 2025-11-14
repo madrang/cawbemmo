@@ -5,11 +5,10 @@ const events = require("../misc/events");
 const generator = require("../items/generator");
 const salvager = require("../items/salvager");
 const classes = require("../config/spirits");
-const factions = require("../config/factions");
+const Factions = require("../config/factions");
 const itemEffects = require("../items/itemEffects");
 
 //Helpers
-const simplifyItem = require("./inventory/simplifyItem");
 const getItem = require("./inventory/getItem");
 const dropBag = require("./inventory/dropBag");
 const useItem = require("./inventory/useItem");
@@ -109,7 +108,33 @@ module.exports = {
 	}
 
 	, simplifyItem: function (item) {
-		return simplifyItem(this, item);
+		const result = _.assign({}, item);
+		if (result.effects) {
+			result.effects = result.effects.map((e) => ({
+				factionId: e.factionId ?? null
+				, text: e.text ?? null
+				, properties: e.properties ?? null
+				, type: e.type ?? null
+				, rolls: e.rolls ?? null
+			}));
+		}
+		if (result.factions) {
+			result.factions = result.factions.map((f) => {
+				const faction = Factions.getById(f.id);
+				if (!faction) {
+					_.log.simplifyItem.faction.error("Faction '%s' can't be found!", f.id);
+					return;
+				}
+				const tierDefinition = faction.tiers[f.tier];
+				return {
+					id: f.id
+					, tier: f.tier
+					, tierName: tierDefinition?.name || null
+					, name: faction.name
+				};
+			}).filter((f) => Boolean(f));
+		}
+		return result;
 	}
 
 	, update: function () {
@@ -180,7 +205,7 @@ module.exports = {
 
 	, splitStack: function (msg) {
 		let { stackSize = 1 } = msg;
-		stackSize = ~~stackSize;
+		stackSize = Math.floor(stackSize);
 
 		let item = this.findItem(msg.itemId);
 		if (!item || !item.quantity || item.quantity <= stackSize || stackSize < 1 || item.quest) {
@@ -383,7 +408,7 @@ module.exports = {
 			if (item.effects) {
 				item.effects.forEach(function (e) {
 					if (e.factionId) {
-						let faction = factions.getFaction(e.factionId);
+						let faction = Factions.getById(e.factionId);
 						let statGenerator = faction.uniqueStat;
 						statGenerator.generate(item);
 						return;

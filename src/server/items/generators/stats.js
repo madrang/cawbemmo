@@ -547,7 +547,7 @@ module.exports = {
 			let useStats = _.assign([], blueprint.stats);
 			let addStats = Math.min(statCount, blueprint.stats.length);
 			for (let i = 0; i < addStats; i++) {
-				let choice = useStats[Math.floor(Math.random() * useStats.length)];
+				let choice = _.getRandomObj(useStats);
 				useStats.spliceFirstWhere((s) => s === choice);
 				this.buildStat(item, blueprint, choice, result);
 				statCount--;
@@ -605,7 +605,7 @@ module.exports = {
 				return true;
 			});
 
-			stat = options[Math.floor(Math.random() * options.length)];
+			stat = _.getRandomObj(options);
 			statBlueprint = statOptions[stat];
 		} else {
 			statBlueprint = statOptions[stat];

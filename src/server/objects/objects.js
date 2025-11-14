@@ -171,18 +171,23 @@ module.exports = {
 		for (let p in o) {
 			newO[p] = o[p];
 		}
-		const len = components.length;
-		for (let i = 0; i < len; i++) {
-			const c = components[i];
-			const newC = newO.addComponent(c.type, c);
-			_.assign(newC, c);
+		try {
+			const len = components.length;
+			for (let i = 0; i < len; i++) {
+				const c = components[i];
+				const newC = newO.addComponent(c.type, c);
+				_.assign(newC, c);
+			}
+			this.pushObjectToList(newO);
+			if (!newO.dead) {
+				this.physics.addObject(newO, newO.x, newO.y);
+			}
+			callback(newO);
+			return newO;
+		} catch (error) {
+			_.log.objects.addObject.error("Component failed to initialize. Error: ", error);
+			return undefined;
 		}
-		this.pushObjectToList(newO);
-		if (!newO.dead) {
-			this.physics.addObject(newO, newO.x, newO.y);
-		}
-		callback(newO);
-		return newO;
 	}
 
 	, sendEvent: function (msg, { name: sourceZone }) {

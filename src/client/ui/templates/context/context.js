@@ -1,109 +1,107 @@
-define([
-	"js/system/events"
-	, "html!ui/templates/context/template"
-	, "css!ui/templates/context/styles"
-	, "html!ui/templates/context/templateItem"
-], function (
-	events,
-	template,
-	styles,
-	templateItem
-) {
-	return {
-		tpl: template
-		, modal: true
+import events from "/js/system/events.js";
 
-		, config: null
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, postRender: function () {
-			this.onEvent("onContextMenu", this.onContextMenu.bind(this));
-			this.onEvent("onHideContextMenu", this.onMouseDown.bind(this));
-			this.onEvent("mouseDown", this.onMouseDown.bind(this));
-			this.onEvent("onUiKeyDown", this.onUiKeyDown.bind(this));
+const template = await _.loadHTML("/ui/templates/context/template.html", { raw: true });
+const templateItem = await _.loadHTML("/ui/templates/context/templateItem.html", { raw: true });
 
-			$(".ui-container").on("mouseup", this.onMouseDown.bind(this));
-		}
+export default {
+	tpl: template
+	, modal: true
 
-		, onContextMenu: function (config, e) {
-			this.config = config;
+	, config: null
 
-			let container = this.el.find(".list")
-				.empty();
+	, postRender: function () {
+		this.onEvent("onContextMenu", this.onContextMenu.bind(this));
+		this.onEvent("onHideContextMenu", this.onMouseDown.bind(this));
+		this.onEvent("mouseDown", this.onMouseDown.bind(this));
+		this.onEvent("onUiKeyDown", this.onUiKeyDown.bind(this));
 
-			config.forEach((c, i) => {
-				const text = (c.text || c);
-				const hotkey = c.hotkey;
-				const suffix = c.suffix;
+		$(".ui-container").on("mouseup", this.onMouseDown.bind(this));
+	}
 
-				const html = templateItem
-					.replace("$TEXT$", text);
+	, onContextMenu: function (config, e) {
+		this.config = config;
 
-				const row = $(html)
-					.appendTo(container);
+		let container = this.el.find(".list")
+			.empty();
 
-				if (hotkey) {
-					row.find(".hotkey").html(`(${hotkey})`);
-				} else if (suffix) {
-					row.find(".hotkey").html(`${suffix}`);
+		config.forEach((c, i) => {
+			const text = (c.text || c);
+			const hotkey = c.hotkey;
+			const suffix = c.suffix;
+
+			const html = templateItem
+				.replace("$TEXT$", text);
+
+			const row = $(html)
+				.appendTo(container);
+
+			if (hotkey) {
+				row.find(".hotkey").html(`(${hotkey})`);
+			} else if (suffix) {
+				row.find(".hotkey").html(`${suffix}`);
+			}
+
+			if (c.callback) {
+				row.on("click", this.onClick.bind(this, i, c.callback));
+				row.on("click", events.emit.bind(events, "onClickContextItem"));
+			} else {
+				row.addClass("no-hover");
+
+				if (text.includes("---")) {
+					row.addClass("divider");
 				}
-
-				if (c.callback) {
-					row.on("click", this.onClick.bind(this, i, c.callback));
-					row.on("click", events.emit.bind(events, "onClickContextItem"));
-				} else {
-					row.addClass("no-hover");
-
-					if (text.includes("---")) {
-						row.addClass("divider");
-					}
-				}
-			});
-
-			const pos = {
-				left: e.clientX
-				, top: e.clientY
-			};
-
-			//Check for a customEvent, like long touch
-			if (_.isIos()) {
-				pos.left = e.detail.clientX;
-				pos.top = e.detail.clientY;
 			}
+		});
 
-			pos["max-height"] = window.innerHeight - pos.top - 10;
+		const pos = {
+			left: e.clientX
+			, top: e.clientY
+		};
 
-			this.el
-				.css(pos)
-				.show();
+		//Check for a customEvent, like long touch
+		if (_.isIos()) {
+			pos.left = e.detail.clientX;
+			pos.top = e.detail.clientY;
 		}
 
-		, onClick: function (index, callback) {
-			this.el.hide();
-			callback();
+		pos["max-height"] = window.innerHeight - pos.top - 10;
+
+		this.el
+			.css(pos)
+			.show();
+	}
+
+	, onClick: function (index, callback) {
+		this.el.hide();
+		callback();
+	}
+
+	, onMouseDown: function (e) {
+		if (!this.el.is(":visible") || (e && (e.cancel || e.button === 2))) {
+			return;
 		}
 
-		, onMouseDown: function (e) {
-			if (!this.el.is(":visible") || (e && (e.cancel || e.button === 2))) {
-				return;
-			}
+		this.config = null;
+		this.el.hide();
+	}
 
-			this.config = null;
-			this.el.hide();
+	, onUiKeyDown: function (keyEvent) {
+		if (!this.config || !this.el.is(":visible")) {
+			return;
 		}
 
-		, onUiKeyDown: function (keyEvent) {
-			if (!this.config || !this.el.is(":visible")) {
-				return;
-			}
-
-			const configEntry = this.config.find(({ hotkey }) => hotkey === keyEvent.key);
-			if (!configEntry) {
-				return;
-			}
-
-			configEntry.callback();
-			keyEvent.consumed = true;
-			this.el.hide();
+		const configEntry = this.config.find(({ hotkey }) => hotkey === keyEvent.key);
+		if (!configEntry) {
+			return;
 		}
-	};
-});
+
+		configEntry.callback();
+		keyEvent.consumed = true;
+		this.el.hide();
+	}
+};

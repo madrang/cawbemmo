@@ -68,7 +68,7 @@ module.exports = {
 						, components: [{
 							type: "attackAnimation"
 							, destroyObject: true
-							, row: [10, 10, 10, 10, 10, 10, 10, 8, 8, 8, 7, 7, 7][Math.floor(Math.random() * 13)]
+							, row: _.getRandomFrom(10, 10, 10, 10, 10, 10, 10, 8, 8, 8, 7, 7, 7)
 							, col: 4
 							, frameDelay: 1 + Math.floor(Math.random() * 10)
 						}, {

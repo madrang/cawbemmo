@@ -93,8 +93,7 @@ module.exports = {
 			let particles = this.particles;
 
 			let spike = this.obj.instance.objects.buildObjects([{
-				x: this.obj.x
-				, y: this.obj.y
+				x: this.obj.x, y: this.obj.y
 				, properties: {
 					cpnHealPatch: cpnSpikePatch
 					, cpnAttackAnimation: {
@@ -102,7 +101,7 @@ module.exports = {
 							return {
 								type: "attackAnimation"
 								, destroyObject: true
-								, row: [9, 9, 9, 9, 9, 9, 9, 9][Math.floor(Math.random() * 8)]
+								, row: _.getRandomFrom(9, 9, 9, 9, 9, 9, 9, 9) //FIXME
 								, col: 4
 								, frameDelay: 6 + Math.floor(Math.random() * 7)
 								, loop: -1

@@ -1,218 +1,213 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "html!ui/templates/stash/template"
-	, "css!ui/templates/stash/styles"
-	, "html!ui/templates/inventory/templateItem"
-	, "js/input"
-	, "ui/shared/renderItem"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	tplItem,
-	input,
-	renderItem
-) {
-	return {
-		tpl: template
+import events from "/js/system/events.js";
+import client from "/js/system/client.js";
+//import input from "/js/input.js";
+import renderItem from "/ui/shared/renderItem.js";
 
-		, centered: true
-		, hoverItem: null
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, items: []
-		, maxItems: null
+const template = await _.loadHTML("/ui/templates/stash/template.html", { raw: true });
+//const tplItem = await _.loadHTML("/ui/templates/inventory/templateItem.html", { raw: true });
 
-		, modal: true
-		, hasClose: true
+export default {
+	tpl: template
 
-		, postRender: function () {
-			[
-				"onKeyUp"
-				, "onKeyDown"
-				, "onOpenStash"
-				, "onAddStashItems"
-				, "onRemoveStashItems"
-			]
-				.forEach((e) => {
-					this.onEvent(e, this[e].bind(this));
-				});
-		}
+	, centered: true
+	, hoverItem: null
 
-		, build: function () {
-			const { el, maxItems, items } = this;
+	, items: []
+	, maxItems: null
 
-			el.removeClass("scrolls");
-			if (maxItems > 50) {
-				el.addClass("scrolls");
-			}
+	, modal: true
+	, hasClose: true
 
-			const container = this.el.find(".grid").empty();
-
-			const renderItemCount = Math.max(items.length, maxItems);
-
-			for (let i = 0; i < renderItemCount; i++) {
-				const item = items[i];
-				const itemEl = renderItem(container, item);
-
-				if (!item) {
-					continue;
-				}
-
-				let moveHandler = this.onHover.bind(this, itemEl, item);
-				let downHandler = () => {};
-				if (isMobile) {
-					moveHandler = () => {};
-					downHandler = this.onHover.bind(this, itemEl, item);
-				}
-
-				itemEl
-					.data("item", item)
-					.on("mousedown", downHandler)
-					.on("mousemove", moveHandler)
-					.on("mouseleave", this.hideTooltip.bind(this, itemEl, item))
-					.find(".icon")
-					.on("contextmenu", this.showContext.bind(this, item));
-			}
-		}
-
-		, showContext: function (item, e) {
-			events.emit("onContextMenu", [{
-				text: "withdraw"
-				, callback: this.withdraw.bind(this, item)
-			}], e);
-
-			e.preventDefault();
-			return false;
-		}
-
-		, hideTooltip: function () {
-			events.emit("onHideItemTooltip", this.hoverItem);
-			this.hoverItem = null;
-		}
-
-		, onHover: function (el, item, e) {
-			if (item) {
-				this.hoverItem = item;
-			} else {
-				item = this.hoverItem;
-			}
-
-			let ttPos = null;
-
-			if (el) {
-				el.removeClass("new");
-				delete item.isNew;
-
-				let elOffset = el.offset();
-				ttPos = {
-					x: Math.floor(elOffset.left + 74)
-					, y: Math.floor(elOffset.top + 4)
-				};
-			}
-
-			events.emit("onShowItemTooltip", item, ttPos, true);
-		}
-
-		, onGetStashItems: function (items) {
-			this.items = items;
-
-			if (this.shown) {
-				this.build();
-			}
-		}
-
-		, onAddStashItems: function (addItems) {
-			const { items } = this;
-
-			addItems.forEach((newItem) => {
-				const existIndex = items.findIndex((i) => i.id === newItem.id);
-				if (existIndex !== -1) {
-					items.splice(existIndex, 1, newItem);
-				} else {
-					items.push(newItem);
-				}
+	, postRender: function () {
+		[
+			"onKeyUp"
+			, "onKeyDown"
+			, "onOpenStash"
+			, "onAddStashItems"
+			, "onRemoveStashItems"
+		]
+			.forEach((e) => {
+				this.onEvent(e, this[e].bind(this));
 			});
+	}
+
+	, build: function () {
+		const { el, maxItems, items } = this;
+
+		el.removeClass("scrolls");
+		if (maxItems > 50) {
+			el.addClass("scrolls");
 		}
 
-		, onRemoveStashItems: function (removeItemIds) {
-			const { items } = this;
+		const container = this.el.find(".grid").empty();
 
-			removeItemIds.forEach((id) => {
-				const item = items.find((i) => i.id === id);
-				if (item === this.hoverItem) {
-					this.hideTooltip();
-				}
+		const renderItemCount = Math.max(items.length, maxItems);
 
-				items.spliceWhere((i) => i.id === id);
-			});
+		for (let i = 0; i < renderItemCount; i++) {
+			const item = items[i];
+			const itemEl = renderItem(container, item);
 
-			if (this.shown) {
-				this.build();
+			if (!item) {
+				continue;
 			}
+
+			let moveHandler = this.onHover.bind(this, itemEl, item);
+			let downHandler = () => {};
+			if (isMobile) {
+				moveHandler = () => {};
+				downHandler = this.onHover.bind(this, itemEl, item);
+			}
+
+			itemEl
+				.data("item", item)
+				.on("mousedown", downHandler)
+				.on("mousemove", moveHandler)
+				.on("mouseleave", this.hideTooltip.bind(this, itemEl, item))
+				.find(".icon")
+				.on("contextmenu", this.showContext.bind(this, item));
+		}
+	}
+
+	, showContext: function (item, e) {
+		events.emit("onContextMenu", [{
+			text: "withdraw"
+			, callback: this.withdraw.bind(this, item)
+		}], e);
+
+		e.preventDefault();
+		return false;
+	}
+
+	, hideTooltip: function () {
+		events.emit("onHideItemTooltip", this.hoverItem);
+		this.hoverItem = null;
+	}
+
+	, onHover: function (el, item, e) {
+		if (item) {
+			this.hoverItem = item;
+		} else {
+			item = this.hoverItem;
 		}
 
-		, onAfterShow: function () {
-			if ((!this.shown) && (!window.player.stash.active)) {
-				return;
-			}
+		let ttPos = null;
 
-			events.emit("onShowOverlay", this.el);
+		if (el) {
+			el.removeClass("new");
+			delete item.isNew;
+
+			let elOffset = el.offset();
+			ttPos = {
+				x: Math.floor(elOffset.left + 74)
+				, y: Math.floor(elOffset.top + 4)
+			};
+		}
+
+		events.emit("onShowItemTooltip", item, ttPos, true);
+	}
+
+	, onGetStashItems: function (items) {
+		this.items = items;
+
+		if (this.shown) {
 			this.build();
 		}
+	}
 
-		, beforeHide: function () {
-			if ((!this.shown) && (!window.player.stash.active)) {
-				return;
+	, onAddStashItems: function (addItems) {
+		const { items } = this;
+
+		addItems.forEach((newItem) => {
+			const existIndex = items.findIndex((i) => i.id === newItem.id);
+			if (existIndex !== -1) {
+				items.splice(existIndex, 1, newItem);
+			} else {
+				items.push(newItem);
+			}
+		});
+	}
+
+	, onRemoveStashItems: function (removeItemIds) {
+		const { items } = this;
+
+		removeItemIds.forEach((id) => {
+			const item = items.find((i) => i.id === id);
+			if (item === this.hoverItem) {
+				this.hideTooltip();
 			}
 
-			events.emit("onHideOverlay", this.el);
-			events.emit("onHideContextMenu");
+			items.spliceWhere((i) => i.id === id);
+		});
+
+		if (this.shown) {
+			this.build();
+		}
+	}
+
+	, onAfterShow: function () {
+		if ((!this.shown) && (!window.player.stash.active)) {
+			return;
 		}
 
-		, onOpenStash: function ({ items, maxItems }) {
-			this.maxItems = maxItems;
+		events.emit("onShowOverlay", this.el);
+		this.build();
+	}
 
-			this.show();
-
-			this.onGetStashItems(items);
+	, beforeHide: function () {
+		if ((!this.shown) && (!window.player.stash.active)) {
+			return;
 		}
 
-		, beforeDestroy: function () {
-			events.emit("onHideOverlay", this.el);
+		events.emit("onHideOverlay", this.el);
+		events.emit("onHideContextMenu");
+	}
+
+	, onOpenStash: function ({ items, maxItems }) {
+		this.maxItems = maxItems;
+
+		this.show();
+
+		this.onGetStashItems(items);
+	}
+
+	, beforeDestroy: function () {
+		events.emit("onHideOverlay", this.el);
+	}
+
+	, withdraw: function (item) {
+		if (!item) {
+			return;
 		}
 
-		, withdraw: function (item) {
-			if (!item) {
-				return;
-			}
-
-			client.request({
-				cpn: "player"
-				, method: "performAction"
+		client.request({
+			cpn: "player"
+			, method: "performAction"
+			, data: {
+				cpn: "stash"
+				, method: "withdraw"
 				, data: {
-					cpn: "stash"
-					, method: "withdraw"
-					, data: {
-						itemId: item.id
-					}
+					itemId: item.id
 				}
-			});
-		}
-
-		, onKeyDown: function (key) {
-			if (key === "shift" && this.hoverItem) {
-				this.onHover();
-			} else if (key === "esc" && this.shown) {
-				this.toggle();
 			}
-		}
+		});
+	}
 
-		, onKeyUp: function (key) {
-			if (key === "shift" && this.hoverItem) {
-				this.onHover();
-			}
+	, onKeyDown: function (key) {
+		if (key === "shift" && this.hoverItem) {
+			this.onHover();
+		} else if (key === "esc" && this.shown) {
+			this.toggle();
 		}
-	};
-});
+	}
+
+	, onKeyUp: function (key) {
+		if (key === "shift" && this.hoverItem) {
+			this.onHover();
+		}
+	}
+};

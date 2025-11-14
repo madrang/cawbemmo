@@ -37,7 +37,7 @@ module.exports = {
 			} else if (item.slot === "twoHanded") {
 				list = list.concat(prefixes.weapons);
 			}
-			let pick = list[Math.floor(Math.random() * list.length)];
+			let pick = _.getRandomObj(list);
 			item.name = pick.capitalize();
 			if (item.name.indexOf("%") > -1) {
 				const replacer = (Math.random() < 0.5) ? "'s" : "";
@@ -57,7 +57,7 @@ module.exports = {
 					list = list.concat(suffixes.weapons);
 				}
 			}
-			let pick = list[Math.floor(Math.random() * list.length)];
+			const pick = _.getRandomObj(list);
 			item.name += " " + pick.capitalize();
 		}
 	}

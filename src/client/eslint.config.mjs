@@ -97,7 +97,7 @@ export default [{
 		}]
 
 		, "func-style": [1, "expression"]
-		, indent: [2, "tab"]
+		, indent: [2, "tab", { ignoreComments: true, SwitchCase: 1 }]
 
 		, "key-spacing": [2, {
 			afterColon: true
@@ -139,7 +139,7 @@ export default [{
 		, "no-func-assign": 2
 		, "no-implicit-globals": 2
 		, "no-implied-eval": 2
-		, "no-inline-comments": 2
+		, "no-inline-comments": "off"
 		, "no-inner-declarations": [2, "functions"]
 		, "no-invalid-regexp": 2
 		, "no-irregular-whitespace": 2

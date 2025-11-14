@@ -1,492 +1,490 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "html!ui/templates/equipment/template"
-	, "css!ui/templates/equipment/styles"
-	, "js/input"
-	, "ui/shared/renderItem"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	input,
-	renderItem
-) {
-	const getStatsAsStrings = function(stats, section) {
-		switch (section) {
-			case "info": return {
-				"niveau": stats.level
-				, "prochain niveau": (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "xp"
-				, gap1: ""
-				, "Argent": window.player.trade.gold
-				, gap2: ""
-				, "hp": `${Math.floor(stats.hp)}/${Math.floor(stats.hpMax)}`
-				, "mana": `${Math.floor(stats.mana)}/${Math.floor(stats.manaMax)}`
-				, "hp regen": stats.regenHp
-				, "mana regen": Math.floor(stats.regenMana) + "%"
-				, gap3: ""
-				, "str": stats.str
-				, "int": stats.int
-				, "dex": stats.dex
-				, "vit": stats.vit
-			}
-			case "offense": return {
-				"Chance de coup critique global": stats.critChance.toFixed(1) + "%"
-				, "Multiplicateur de coup critique": stats.critMultiplier.toFixed(1) + "%"
-				, "Chance d'attaque critique": (stats.critChance + stats.attackCritChance).toFixed(1) + "%"
-				, "Multiplicateur d'attaque critique": (stats.critMultiplier + stats.attackCritMultiplier).toFixed(1) + "%"
-				, "Chance de magie critique": (stats.critChance + stats.spellCritChance).toFixed(1) + "%"
-				, "Multiplicateur de magie critique": (stats.critMultiplier + stats.spellCritMultiplier).toFixed(1) + "%"
-				, gap1: ""
-				, "Augmentation Arcane": stats.elementArcanePercent + "%"
-				, "Augmentation de Feu": stats.elementFirePercent + "%"
-				, "Augmentation de glace": stats.elementFrostPercent + "%"
-				, "Augmentation saint": stats.elementHolyPercent + "%"
-				, "Augmentation de poision": stats.elementPoisonPercent + "%"
-				, "Augmentation physique": stats.physicalPercent + "%"
-				, gap2: ""
-				, "Augementation magique": stats.spellPercent + "%"
-				, gap3: ""
-				, "Vitesse d'attaque": (100 + stats.attackSpeed) + "%"
-				, "Vitesse d'incantation": (100 + stats.castSpeed) + "%"
-			}
-			case "défense": return {
-				armor: stats.armor
-				, "Chance de bloqué des attaques": stats.blockAttackChance + "%"
-				, "Chance de bloqué des incantation": stats.blockSpellChance + "%"
-				, gap1: ""
-				, "Chance d'évité une attaque": stats.dodgeAttackChance.toFixed(1) + "%"
-				, "Chance d'évité une incantation": stats.dodgeSpellChance.toFixed(1) + "%"
-				, gap2: ""
-				, "Résistance arcane": stats.elementArcaneResist
-				, "Résistance au feu": stats.elementFireResist
-				, "Résistance au gel": stats.elementFrostResist
-				, "Résistance au dégats saint": stats.elementHolyResist
-				, "Résistance au poison": stats.elementPoisonResist
-				, gap3: ""
-				, "Résistance global": stats.elementAllResist
-				, gap4: ""
-				, "Vie gagné par coup": stats.lifeOnHit
-			}
-			case "autres": return {
-				"Qualité des items": stats.magicFind + "%"
-				, "Quantité des items": stats.itemQuantity + "%"
-				, gap1: ""
-				, "Chance de courir": (stats.sprintChance?.toFixed(2) || 0) + "%"
-				, gap2: ""
-				, "Augmentation d'expériance": stats.xpIncrease + "%"
-				, gap3: ""
-				, "Chance d'attrapé un poisson": stats.catchChance + "%"
-				, "Vitesse de pêche": stats.catchSpeed + "%"
-				, "Chance de poisson rare": stats.fishRarity + "%"
-				, "Augmentation du poid": stats.fishWeight + "%"
-				, "Chance de pêché des items": stats.fishItems + "%"
-			}
-			default: throw new Error(`Erreur écran non trouvé "${section}"`);
+import events from "/js/system/events.js";
+import client from "/js/system/client.js";
+//import input from "/js/input.js";
+//import config from "/js/config.js";
+import renderItem from "/ui/shared/renderItem.js";
+
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
+
+const template = await _.loadHTML("/ui/templates/equipment/template.html", { raw: true });
+
+const getStatsAsStrings = function (stats, section) {
+	switch (section) {
+		case "info": return {
+			niveau: stats.level
+			, "prochain niveau": (stats.xpMax - stats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "xp"
+			, gap1: ""
+			, Argent: window.player.trade.gold
+			, gap2: ""
+			, hp: `${Math.floor(stats.hp)}/${Math.floor(stats.hpMax)}`
+			, mana: `${Math.floor(stats.mana)}/${Math.floor(stats.manaMax)}`
+			, "hp regen": stats.regenHp
+			, "mana regen": Math.floor(stats.regenMana) + "%"
+			, gap3: ""
+			, str: stats.str
+			, int: stats.int
+			, dex: stats.dex
+			, vit: stats.vit
+		};
+		case "offense": return {
+			"Chance de coup critique global": stats.critChance.toFixed(1) + "%"
+			, "Multiplicateur de coup critique": stats.critMultiplier.toFixed(1) + "%"
+			, "Chance d'attaque critique": (stats.critChance + stats.attackCritChance).toFixed(1) + "%"
+			, "Multiplicateur d'attaque critique": (stats.critMultiplier + stats.attackCritMultiplier).toFixed(1) + "%"
+			, "Chance de magie critique": (stats.critChance + stats.spellCritChance).toFixed(1) + "%"
+			, "Multiplicateur de magie critique": (stats.critMultiplier + stats.spellCritMultiplier).toFixed(1) + "%"
+			, gap1: ""
+			, "Augmentation Arcane": stats.elementArcanePercent + "%"
+			, "Augmentation de Feu": stats.elementFirePercent + "%"
+			, "Augmentation de glace": stats.elementFrostPercent + "%"
+			, "Augmentation saint": stats.elementHolyPercent + "%"
+			, "Augmentation de poision": stats.elementPoisonPercent + "%"
+			, "Augmentation physique": stats.physicalPercent + "%"
+			, gap2: ""
+			, "Augementation magique": stats.spellPercent + "%"
+			, gap3: ""
+			, "Vitesse d'attaque": (100 + stats.attackSpeed) + "%"
+			, "Vitesse d'incantation": (100 + stats.castSpeed) + "%"
+		};
+		case "défense": return {
+			armor: stats.armor
+			, "Chance de bloqué des attaques": stats.blockAttackChance + "%"
+			, "Chance de bloqué des incantation": stats.blockSpellChance + "%"
+			, gap1: ""
+			, "Chance d'évité une attaque": stats.dodgeAttackChance.toFixed(1) + "%"
+			, "Chance d'évité une incantation": stats.dodgeSpellChance.toFixed(1) + "%"
+			, gap2: ""
+			, "Résistance arcane": stats.elementArcaneResist
+			, "Résistance au feu": stats.elementFireResist
+			, "Résistance au gel": stats.elementFrostResist
+			, "Résistance au dégats saint": stats.elementHolyResist
+			, "Résistance au poison": stats.elementPoisonResist
+			, gap3: ""
+			, "Résistance global": stats.elementAllResist
+			, gap4: ""
+			, "Vie gagné par coup": stats.lifeOnHit
+		};
+		case "autres": return {
+			"Qualité des items": stats.magicFind + "%"
+			, "Quantité des items": stats.itemQuantity + "%"
+			, gap1: ""
+			, "Chance de courir": (stats.sprintChance?.toFixed(2) || 0) + "%"
+			, gap2: ""
+			, "Augmentation d'expériance": stats.xpIncrease + "%"
+			, gap3: ""
+			, "Chance d'attrapé un poisson": stats.catchChance + "%"
+			, "Vitesse de pêche": stats.catchSpeed + "%"
+			, "Chance de poisson rare": stats.fishRarity + "%"
+			, "Augmentation du poid": stats.fishWeight + "%"
+			, "Chance de pêché des items": stats.fishItems + "%"
+		};
+		default: throw new Error(`Erreur écran non trouvé "${section}"`);
+	}
+};
+
+export default {
+	tpl: template
+
+	, centered: true
+
+	, modal: true
+	, hasClose: true
+
+	, stats: null
+	, equipment: null
+
+	, hoverItem: null
+	, hoverEl: null
+	, hoverCompare: null
+
+	, isInspecting: false
+
+	, postRender: function () {
+		this.onEvent("onGetStats", this.onGetStats.bind(this));
+		this.onEvent("onGetItems", this.onGetItems.bind(this));
+
+		this.onEvent("onInspectTarget", this.onInspectTarget.bind(this));
+
+		this.onEvent("onShowEquipment", this.toggle.bind(this));
+
+		this.find(".tab").on("click", this.onTabClick.bind(this));
+
+		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+		this.onEvent("onKeyUp", this.onKeyUp.bind(this));
+	}
+
+	, beforeHide: function () {
+		this.isInspecting = false;
+		delete this.result;
+
+		this.find(".itemList").hide();
+
+		this.onHoverItem(null, null, null);
+	}
+
+	, onAfterShow: function () {
+		this.find(".itemList").hide();
+
+		this.onGetStats();
+		this.onGetItems();
+
+		this.onHoverItem(null, null, null);
+	}
+
+	, onKeyDown: function (key) {
+		if (key === "j") {
+			this.toggle();
+		} else if (key === "shift" && this.hoverItem) {
+			this.onHoverItem(this.hoverEl, this.hoverItem, this.hoverCompare);
 		}
-	};
-	return {
-		tpl: template
+	}
+	, onKeyUp: function (key) {
+		if (key === "shift" && this.hoverItem) {
+			this.onHoverItem(this.hoverEl, this.hoverItem, null);
+		}
+	}
 
-		, centered: true
+	, onTabClick: function (e) {
+		this.find(".tab.selected").removeClass("selected");
 
-		, modal: true
-		, hasClose: true
+		$(e.target).addClass("selected");
 
-		, stats: null
-		, equipment: null
+		let stats = this.isInspecting ? this.result.stats : this.stats;
 
-		, hoverItem: null
-		, hoverEl: null
-		, hoverCompare: null
+		this.onGetStats(stats);
+	}
 
-		, isInspecting: false
+	, onGetItems: function (items) {
+		items = items || this.items;
 
-		, postRender: function () {
-			this.onEvent("onGetStats", this.onGetStats.bind(this));
-			this.onEvent("onGetItems", this.onGetItems.bind(this));
-
-			this.onEvent("onInspectTarget", this.onInspectTarget.bind(this));
-
-			this.onEvent("onShowEquipment", this.toggle.bind(this));
-
-			this.find(".tab").on("click", this.onTabClick.bind(this));
-
-			this.onEvent("onKeyDown", this.onKeyDown.bind(this));
-			this.onEvent("onKeyUp", this.onKeyUp.bind(this));
+		if (!this.isInspecting) {
+			this.items = items;
 		}
 
-		, beforeHide: function () {
-			this.isInspecting = false;
-			delete this.result;
-
-			this.find(".itemList").hide();
-
-			this.onHoverItem(null, null, null);
+		if (!this.shown) {
+			return;
 		}
 
-		, onAfterShow: function () {
-			this.find(".itemList").hide();
+		this.find(".slot").addClass("empty");
 
-			this.onGetStats();
-			this.onGetItems();
+		this.find("[slot]")
+			.removeData("item")
+			.addClass("empty show-default-icon")
+			.find(".info")
+			.html("")
+			.parent()
+			.find(".icon")
+			.off()
+			.css("background-image", "")
+			.css("background-position", "")
+			.on("click", this.buildSlot.bind(this));
 
-			this.onHoverItem(null, null, null);
-		}
-
-		, onKeyDown: function (key) {
-			if (key === "j") {
-				this.toggle();
-			} else if (key === "shift" && this.hoverItem) {
-				this.onHoverItem(this.hoverEl, this.hoverItem, this.hoverCompare);
-			}
-		}
-		, onKeyUp: function (key) {
-			if (key === "shift" && this.hoverItem) {
-				this.onHoverItem(this.hoverEl, this.hoverItem, null);
-			}
-		}
-
-		, onTabClick: function (e) {
-			this.find(".tab.selected").removeClass("selected");
-
-			$(e.target).addClass("selected");
-
-			let stats = this.isInspecting ? this.result.stats : this.stats;
-
-			this.onGetStats(stats);
-		}
-
-		, onGetItems: function (items) {
-			items = items || this.items;
-
-			if (!this.isInspecting) {
-				this.items = items;
-			}
-
-			if (!this.shown) {
-				return;
-			}
-
-			this.find(".slot").addClass("empty");
-
-			this.find("[slot]")
-				.removeData("item")
-				.addClass("empty show-default-icon")
-				.find(".info")
-				.html("")
-				.parent()
-				.find(".icon")
-				.off()
-				.css("background-image", "")
-				.css("background-position", "")
-				.on("click", this.buildSlot.bind(this));
-
-			this.find("[slot]").toArray().forEach((el) => {
-				el = $(el);
-				let slot = el.attr("slot");
-				let newItems = window.player.inventory.items.some((i) => {
-					if (slot.indexOf("finger") === 0) {
-						slot = "finger";
-					} else if (slot === "oneHanded") {
-						return (["oneHanded", "twoHanded"].includes(i.slot) && i.isNew);
-					}
-
-					return (i.slot === slot && i.isNew);
-				});
-
-				if (newItems) {
-					el.find(".info").html("new");
+		this.find("[slot]").toArray().forEach((el) => {
+			el = $(el);
+			let slot = el.attr("slot");
+			let newItems = window.player.inventory.items.some((i) => {
+				if (slot.indexOf("finger") === 0) {
+					slot = "finger";
+				} else if (slot === "oneHanded") {
+					return (["oneHanded", "twoHanded"].includes(i.slot) && i.isNew);
 				}
+
+				return (i.slot === slot && i.isNew);
 			});
 
-			items
-				.filter((item) => item.has("quickSlot") || (item.eq && (item.slot || item.has("runeSlot"))))
-				.forEach((item) => {
-					let slot = item.slot;
-					if (item.has("runeSlot")) {
-						let runeSlot = item.runeSlot;
-						slot = "rune-" + runeSlot;
-					} else if (item.has("quickSlot")) {
-						slot = "quick-" + item.quickSlot;
-					}
+			if (newItems) {
+				el.find(".info").html("new");
+			}
+		});
 
-					slot = item.equipSlot || slot;
-
-					const elSlot = this.find("[slot=\"" + slot + "\"]")
-						.removeClass("empty show-default-icon");
-
-					const itemEl = renderItem(null, item, elSlot);
-
-					itemEl
-						.data("item", item)
-						.removeClass("empty show-default-icon")
-						.find(".icon")
-						.off()
-						.on("contextmenu", this.showContext.bind(this, item))
-						.on("mousedown", this.buildSlot.bind(this, elSlot))
-						.on("mousemove", this.onHoverItem.bind(this, elSlot, item, null))
-						.on("mouseleave", this.onHoverItem.bind(this, null, null));
-				});
-		}
-
-		, showContext: function (item, e) {
-			const menuItems = {
-				unequip: {
-					text: "unequip"
-					, callback: this.unequipItem.bind(this, item)
+		items
+			.filter((item) => item.has("quickSlot") || (item.eq && (item.slot || item.has("runeSlot"))))
+			.forEach((item) => {
+				let slot = item.slot;
+				if (item.has("runeSlot")) {
+					let runeSlot = item.runeSlot;
+					slot = "rune-" + runeSlot;
+				} else if (item.has("quickSlot")) {
+					slot = "quick-" + item.quickSlot;
 				}
-			};
-			const config = [];
-			config.push(menuItems.unequip);
 
-			events.emit("onContextMenu", config, e);
+				slot = item.equipSlot || slot;
 
-			e.preventDefault();
-			return false;
-		}
+				const elSlot = this.find("[slot=\"" + slot + "\"]")
+					.removeClass("empty show-default-icon");
 
-		, unequipItem: function (item) {
-			const isQuickslot = item.has("quickSlot");
-			const method = isQuickslot ? "setQuickSlot" : "unequip";
-			const data = isQuickslot ? { slot: item.quickSlot } : { itemId: item.id };
+				const itemEl = renderItem(null, item, elSlot);
 
-			client.request({
-				cpn: "player"
-				, method: "performAction"
-				, data: {
-					cpn: "equipment"
-					, method
-					, data
-				}
+				itemEl
+					.data("item", item)
+					.removeClass("empty show-default-icon")
+					.find(".icon")
+					.off()
+					.on("contextmenu", this.showContext.bind(this, item))
+					.on("mousedown", this.buildSlot.bind(this, elSlot))
+					.on("mousemove", this.onHoverItem.bind(this, elSlot, item, null))
+					.on("mouseleave", this.onHoverItem.bind(this, null, null));
 			});
+	}
+
+	, showContext: function (item, e) {
+		const menuItems = {
+			unequip: {
+				text: "unequip"
+				, callback: this.unequipItem.bind(this, item)
+			}
+		};
+		const config = [];
+		config.push(menuItems.unequip);
+
+		events.emit("onContextMenu", config, e);
+
+		e.preventDefault();
+		return false;
+	}
+
+	, unequipItem: function (item) {
+		const isQuickslot = item.has("quickSlot");
+		const method = isQuickslot ? "setQuickSlot" : "unequip";
+		const data = isQuickslot ? { slot: item.quickSlot } : { itemId: item.id };
+
+		client.request({
+			cpn: "player"
+			, method: "performAction"
+			, data: {
+				cpn: "equipment"
+				, method
+				, data
+			}
+		});
+	}
+
+	, onInspectTarget: function (result) {
+		this.isInspecting = true;
+
+		this.show();
+
+		this.result = result;
+
+		this.onGetStats(result.stats);
+		this.onGetItems(result.equipment);
+	}
+
+	, buildSlot: function (el, e) {
+		if (e && e.button !== 0) {
+			return;
+		}
+		if (this.isInspecting) {
+			return;
+		}
+		if (el.target) {
+			el = $(el.target).parent();
 		}
 
-		, onInspectTarget: function (result) {
-			this.isInspecting = true;
+		const slot = el.attr("slot");
+		const isRune = (slot.indexOf("rune") === 0);
+		const isConsumable = (slot.indexOf("quick") === 0);
 
-			this.show();
+		const container = this.find(".itemList")
+			.empty()
+			.show();
 
-			this.result = result;
-
-			this.onGetStats(result.stats);
-			this.onGetItems(result.equipment);
-		}
-
-		, buildSlot: function (el, e) {
-			if (e && e.button !== 0) {
-				return;
-			}
-			if (this.isInspecting) {
-				return;
-			}
-			if (el.target) {
-				el = $(el.target).parent();
-			}
-
-			const slot = el.attr("slot");
-			const isRune = (slot.indexOf("rune") === 0);
-			const isConsumable = (slot.indexOf("quick") === 0);
-
-			const container = this.find(".itemList")
-				.empty()
-				.show();
-
-			const hoverCompare = this.hoverCompare = el.data("item");
-			let items = this.items
-				.filter((item) => {
-					if (isRune) {
-						return (!item.slot && item.spell && !item.eq);
-					} else if (isConsumable) {
-						return (item.type === "consumable" && !item.has("quickSlot"));
-					}
-					const checkSlot = (slot.indexOf("finger") === 0) ? "finger" : slot;
-					if (slot === "oneHanded") {
-						return (!item.eq && (item.slot === "oneHanded" || item.slot === "twoHanded"));
-					}
-					return (item.slot === checkSlot && !item.eq);
-				});
-
-			if (isConsumable) {
-				items = items.filter((item, i) => items.findIndex((f) => f.name === item.name) === i);
-			}
-
-			items.splice(0, 0, {
-				name: "None"
-				, slot: hoverCompare ? hoverCompare.slot : null
-				, id: (hoverCompare && !isConsumable) ? hoverCompare.id : null
-				, type: isConsumable ? "consumable" : null
-				, empty: true
-			});
-			if (hoverCompare) {
-				items.splice(1, 0, hoverCompare);
-			}
-
-			items
-				.forEach(function (item, i) {
-					let sprite = item.sprite || [7, 0];
-
-					let spriteSheet = item.empty ? "../../../images/uiIcons.png" : item.spritesheet || "../../../images/items.png";
-					if (i > 0 && item.type === "consumable") {
-						spriteSheet = "../../../images/consumables.png";
-					}
-					let imgX = -sprite[0] * 64;
-					let imgY = -sprite[1] * 64;
-
-					let itemEl = $("<div class=\"slot\"><div class=\"icon\"></div></div>")
-						.appendTo(container);
-
-					itemEl
-						.find(".icon")
-						.css("background", "url(\"" + spriteSheet + "\") " + imgX + "px " + imgY + "px")
-						.on("mousedown", this.equipItem.bind(this, item, slot))
-						.on("mousemove", this.onHoverItem.bind(this, itemEl, item, null))
-						.on("mouseleave", this.onHoverItem.bind(this, null, null));
-
-					if (item === hoverCompare) {
-						itemEl.find(".icon").addClass("eq");
-					} else if (item.isNew) {
-						el.find(".icon").addClass("new");
-					}
-				}, this);
-
-			if (!items.length) {
-				container.hide();
-			}
-
-			if (e) {
-				e.preventDefault();
-				return false;
-			}
-		}
-
-		, equipItem: function (item, slot, e) {
-			let isNew = window.player.inventory.items.some((f) => (f.equipSlot === slot && f.isNew));
-			if (!isNew) {
-				this.find("[slot=\"" + slot + "\"] .info").html("");
-			}
-
-			if (item === this.hoverCompare) {
-				this.find(".itemList").hide();
-				return;
-			}
-
-			let cpn = "equipment";
-			let method = "equip";
-			let data = { itemId: item.id };
-
-			if (item.empty) {
-				method = "unequip";
-			}
-
-			if (item.type === "consumable") {
-				cpn = "equipment";
-				method = "setQuickSlot";
-				data = {
-					itemId: item.id
-					, slot: ~~slot.replace("quick-", "")
-				};
-			} else if (!item.slot) {
-				cpn = "inventory";
-				method = "learnAbility";
-				data = {
-					itemId: item.id
-					, slot: ~~slot.replace("rune-", "")
-				};
-
-				if (item.empty) {
-					if (!this.hoverCompare) {
-						this.find(".itemList").hide();
-						return;
-					}
-					method = "unlearnAbility";
-					data.itemId = this.hoverCompare.id;
-					delete data.slot;
+		const hoverCompare = this.hoverCompare = el.data("item");
+		let items = this.items
+			.filter((item) => {
+				if (isRune) {
+					return (!item.slot && item.spell && !item.eq);
+				} else if (isConsumable) {
+					return (item.type === "consumable" && !item.has("quickSlot"));
 				}
-			} else if (item.slot === "finger") {
-				data = {
-					itemId: item.id
-					, slot: slot
-				};
-			}
-
-			client.request({
-				cpn: "player"
-				, method: "performAction"
-				, data: {
-					cpn: cpn
-					, method: method
-					, data: data
+				const checkSlot = (slot.indexOf("finger") === 0) ? "finger" : slot;
+				if (slot === "oneHanded") {
+					return (!item.eq && (item.slot === "oneHanded" || item.slot === "twoHanded"));
 				}
+				return (item.slot === checkSlot && !item.eq);
 			});
 
-			this.find(".itemList").hide();
-
-			e.preventDefault();
-			return false;
+		if (isConsumable) {
+			items = items.filter((item, i) => items.findIndex((f) => f.name === item.name) === i);
 		}
 
-		, onHoverItem: function (el, item, compare, e) {
-			if (el) {
-				this.hoverItem = item;
-				this.hoverEl = el;
-
-				if ((item.isNew) && (!item.eq)) {
-					delete item.isNew;
-					el.find(".icon").removeClass("new");
-				}
-
-				let ttPos = null;
-				if (e) {
-					ttPos = {
-						x: Math.floor(e.clientX + 32)
-						, y: Math.floor(e.clientY)
-					};
-				}
-
-				events.emit("onShowItemTooltip", item, ttPos, this.hoverCompare);
-			} else {
-				events.emit("onHideItemTooltip", this.hoverItem);
-				this.hoverItem = null;
-			}
+		items.splice(0, 0, {
+			name: "None"
+			, slot: hoverCompare ? hoverCompare.slot : null
+			, id: (hoverCompare && !isConsumable) ? hoverCompare.id : null
+			, type: isConsumable ? "consumable" : null
+			, empty: true
+		});
+		if (hoverCompare) {
+			items.splice(1, 0, hoverCompare);
 		}
 
-		, onGetStats: function (stats) {
-			if (stats && !this.isInspecting) {
-				this.stats = stats;
-			}
-			stats = stats || this.stats;
+		items
+			.forEach(function (item, i) {
+				let sprite = item.sprite || [7, 0];
 
-			if (!this.shown) {
-				return;
-			}
-			const container = this.el.find(".stats");
-			container
-				.children("*:not(.tabs)")
-				.remove();
-
-			const newStats = getStatsAsStrings(stats, this.find(".tab.selected").html());
-			for (const statName in newStats) {
-				let label = "";
-				let value = "";
-				const isGap = statName.startsWith("gap");
-				if (!isGap) {
-					label = statName + ": ";
-					value = newStats[statName];
+				let spriteSheet = item.empty ? "../../../images/uiIcons.png" : item.spritesheet || "../../../images/items.png";
+				if (i > 0 && item.type === "consumable") {
+					spriteSheet = "../../../images/consumables.png";
 				}
-				const row = $(`<div class=\"stat\"><font class=\"q0\">${label}</font><font color=\"#999\">${value}</font></div>`)
+				let imgX = -sprite[0] * 64;
+				let imgY = -sprite[1] * 64;
+
+				let itemEl = $("<div class=\"slot\"><div class=\"icon\"></div></div>")
 					.appendTo(container);
 
-				if (statName === "gold") {
-					row.addClass("gold");
-				} else if (statName === "level" || statName === "next level") {
-					row.addClass("blueText");
+				itemEl
+					.find(".icon")
+					.css("background", "url(\"" + spriteSheet + "\") " + imgX + "px " + imgY + "px")
+					.on("mousedown", this.equipItem.bind(this, item, slot))
+					.on("mousemove", this.onHoverItem.bind(this, itemEl, item, null))
+					.on("mouseleave", this.onHoverItem.bind(this, null, null));
+
+				if (item === hoverCompare) {
+					itemEl.find(".icon").addClass("eq");
+				} else if (item.isNew) {
+					el.find(".icon").addClass("new");
 				}
-				if (isGap) {
-					row.addClass("empty");
+			}, this);
+
+		if (!items.length) {
+			container.hide();
+		}
+
+		if (e) {
+			e.preventDefault();
+			return false;
+		}
+	}
+
+	, equipItem: function (item, slot, e) {
+		let isNew = window.player.inventory.items.some((f) => (f.equipSlot === slot && f.isNew));
+		if (!isNew) {
+			this.find("[slot=\"" + slot + "\"] .info").html("");
+		}
+
+		if (item === this.hoverCompare) {
+			this.find(".itemList").hide();
+			return;
+		}
+
+		let cpn = "equipment";
+		let method = "equip";
+		let data = { itemId: item.id };
+
+		if (item.empty) {
+			method = "unequip";
+		}
+
+		if (item.type === "consumable") {
+			cpn = "equipment";
+			method = "setQuickSlot";
+			data = {
+				itemId: item.id
+				, slot: ~~slot.replace("quick-", "")
+			};
+		} else if (!item.slot) {
+			cpn = "inventory";
+			method = "learnAbility";
+			data = {
+				itemId: item.id
+				, slot: ~~slot.replace("rune-", "")
+			};
+
+			if (item.empty) {
+				if (!this.hoverCompare) {
+					this.find(".itemList").hide();
+					return;
 				}
+				method = "unlearnAbility";
+				data.itemId = this.hoverCompare.id;
+				delete data.slot;
+			}
+		} else if (item.slot === "finger") {
+			data = {
+				itemId: item.id
+				, slot: slot
+			};
+		}
+
+		client.request({
+			cpn: "player"
+			, method: "performAction"
+			, data: {
+				cpn: cpn
+				, method: method
+				, data: data
+			}
+		});
+
+		this.find(".itemList").hide();
+
+		e.preventDefault();
+		return false;
+	}
+
+	, onHoverItem: function (el, item, compare, e) {
+		if (el) {
+			this.hoverItem = item;
+			this.hoverEl = el;
+
+			if ((item.isNew) && (!item.eq)) {
+				delete item.isNew;
+				el.find(".icon").removeClass("new");
+			}
+
+			let ttPos = null;
+			if (e) {
+				ttPos = {
+					x: Math.floor(e.clientX + 32)
+					, y: Math.floor(e.clientY)
+				};
+			}
+
+			events.emit("onShowItemTooltip", item, ttPos, this.hoverCompare);
+		} else {
+			events.emit("onHideItemTooltip", this.hoverItem);
+			this.hoverItem = null;
+		}
+	}
+
+	, onGetStats: function (stats) {
+		if (stats && !this.isInspecting) {
+			this.stats = stats;
+		}
+		stats = stats || this.stats;
+
+		if (!this.shown) {
+			return;
+		}
+		const container = this.el.find(".stats");
+		container
+			.children("*:not(.tabs)")
+			.remove();
+
+		const newStats = getStatsAsStrings(stats, this.find(".tab.selected").html());
+		for (const statName in newStats) {
+			let label = "";
+			let value = "";
+			const isGap = statName.startsWith("gap");
+			if (!isGap) {
+				label = statName + ": ";
+				value = newStats[statName];
+			}
+			const row = $(`<div class=\"stat\"><font class=\"q0\">${label}</font><font color=\"#999\">${value}</font></div>`)
+				.appendTo(container);
+
+			if (statName === "gold") {
+				row.addClass("gold");
+			} else if (statName === "level" || statName === "next level") {
+				row.addClass("blueText");
+			}
+			if (isGap) {
+				row.addClass("empty");
 			}
 		}
-	};
-});
+	}
+};

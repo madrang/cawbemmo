@@ -6,14 +6,12 @@ const registerCallback = (callback) => {
 		id: ++lastCallbackId
 		, callback
 	});
-
+	//_.log.atlas.trace("Message callback %s registered in atlas.", lastCallbackId);
 	return lastCallbackId;
 };
 
 const removeCallback = (callbackId) => {
-	const callback = callbacks.spliceFirstWhere((c) => c.id === callbackId);
-
-	return callback;
+	return callbacks.spliceFirstWhere((c) => c.id === callbackId);
 };
 
 module.exports = {

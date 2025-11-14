@@ -534,9 +534,13 @@ module.exports = {
 	}
 
 	, addLevelAttributes: function (singleLevel) {
-		const gainStats = spirits.stats[this.obj.class].gainStats;
+		const spiritStatsObj = spirits.stats[this.obj.class];
+		if (!spiritStatsObj) {
+			throw new Error(`${this.obj.class} is not a spirits.stats!`);
+		}
+		const gainStats = spiritStatsObj.gainStats;
 		const count = singleLevel ? 1 : this.values.level;
-		for (let s in gainStats) {
+		for (const s in gainStats) {
 			this.addStat(s, gainStats[s] * count);
 		}
 	}

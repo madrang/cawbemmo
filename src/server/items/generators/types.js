@@ -18,10 +18,8 @@ module.exports = {
 				})
 				.filter((m, i) => i === typeArray.findIndex((t) => t[1].material === m));
 
-			const material = materials[Math.floor(Math.random() * materials.length)];
-
+			const material = _.getRandomObj(materials);
 			const possibleTypes = {};
-
 			Object.entries(types)
 				.forEach((t) => {
 					const [ typeName, typeConfig ] = t;
@@ -31,11 +29,10 @@ module.exports = {
 					}
 				});
 
-			type = _.randomKey(possibleTypes);
+			type = _.getRandomKey(possibleTypes);
 		}
 
-		let typeBlueprint = configTypes.types[item.slot][type] || {};
-
+		const typeBlueprint = configTypes.types[item.slot][type] || {};
 		if (!typeBlueprint) {
 			return;
 		}

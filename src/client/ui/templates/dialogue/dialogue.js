@@ -1,57 +1,55 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "html!ui/templates/dialogue/template"
-	, "css!ui/templates/dialogue/styles"
-], function (
-	events,
-	client,
-	template,
-	styles
-) {
-	return {
-		tpl: template
-		, text: []
+//import events from "/js/system/events.js";
+//import client from "/js/system/client.js";
 
-		, centeredX: true
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, postRender: function () {
-			this.onEvent("onGetDialogue", this.onGetDialogue.bind(this));
-			this.onEvent("onRemoveDialogue", this.onRemoveDialogue.bind(this));
+const template = await _.loadHTML("/ui/templates/dialogue/template.html", { raw: true });
+
+export default {
+	tpl: template
+	, text: []
+
+	, centeredX: true
+
+	, postRender: function () {
+		this.onEvent("onGetDialogue", this.onGetDialogue.bind(this));
+		this.onEvent("onRemoveDialogue", this.onRemoveDialogue.bind(this));
+	}
+
+	, onGetDialogue: function (msg) {
+		if (isMobile && msg.msg.includes("(U to")) {
+			return;
 		}
+		this.text.spliceWhere((t) => t.src === msg.src);
+		this.text.push(msg);
+		this.setText();
+	}
 
-		, onGetDialogue: function (msg) {
-			if (isMobile && msg.msg.includes("(U to")) {
-				return;
-			}
-			this.text.spliceWhere((t) => t.src === msg.src);
-			this.text.push(msg);
-			this.setText();
-		}
+	, onRemoveDialogue: function (msg) {
+		this.text.spliceWhere((t) => t.src === msg.src);
+		this.setText();
+	}
 
-		, onRemoveDialogue: function (msg) {
-			this.text.spliceWhere((t) => t.src === msg.src);
-			this.setText();
-		}
+	, setText: function () {
+		let text = "";
+		for (let i = 0; i < this.text.length; i++) {
+			let t = this.text[i];
 
-		, setText: function () {
-			let text = "";
-			for (let i = 0; i < this.text.length; i++) {
-				let t = this.text[i];
-
-				text += t.msg;
-				if (i < this.text.length - 1) {
-					text += "<br /><hr>";
-				}
-			}
-
-			this.find(".textBox").html(text);
-
-			if (text !== "") {
-				this.show();
-			} else {
-				this.hide();
+			text += t.msg;
+			if (i < this.text.length - 1) {
+				text += "<br /><hr>";
 			}
 		}
-	};
-});
+
+		this.find(".textBox").html(text);
+
+		if (text !== "") {
+			this.show();
+		} else {
+			this.hide();
+		}
+	}
+};

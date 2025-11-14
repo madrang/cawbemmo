@@ -1,4 +1,4 @@
-let combat = require("../../combat/combat");
+const combat = require("../../combat/combat");
 
 module.exports = {
 	cd: 0

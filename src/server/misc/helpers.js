@@ -1,5 +1,7 @@
-const logging = require("../../common/logging");
-const gExports = require("../../common/globals");
+//import logging from "../../common/logging.js";
+//import gExports from "../../common/globals.js";
+const logging = require("../../common/logging").default;
+const gExports = require("../../common/globals").default;
 
 let consoleLogLevel = (process.env.NODE_ENV === "production"
 	? logging.EventLevels.STANDARD
@@ -17,26 +19,26 @@ const getColor = function (level) {
 		return "";
 	}
 	switch (level) {
-	case logging.EventLevels.TRACE:
-		return "\x1b[34m"; // Blue
-	case logging.EventLevels.DEBUG:
-		return "\x1b[36m"; // Cyan
-	case logging.EventLevels.INFORMATIVE:
-		return "\x1b[37m"; // White
-	case logging.EventLevels.NOTICE:
-		return "\x1b[32m"; // Green
-	case logging.EventLevels.WARNING:
-		return "\x1b[33m"; // Yellow
-	case logging.EventLevels.ERROR:
-		return "\x1b[31m"; // Red
-	case logging.EventLevels.FATAL:
-		return "\x1b[31m"; // Red
-	case logging.EventLevels.CRITICAL:
-		return "\x1b[35m"; // Magenta
-	case logging.EventLevels.EMERGENCY:
-		return "\x1b[35m"; // Magenta
-	default:
-		return "\x1b[37m"; // White
+		case logging.EventLevels.TRACE:
+			return "\x1b[34m"; // Blue
+		case logging.EventLevels.DEBUG:
+			return "\x1b[36m"; // Cyan
+		case logging.EventLevels.INFORMATIVE:
+			return "\x1b[37m"; // White
+		case logging.EventLevels.NOTICE:
+			return "\x1b[32m"; // Green
+		case logging.EventLevels.WARNING:
+			return "\x1b[33m"; // Yellow
+		case logging.EventLevels.ERROR:
+			return "\x1b[31m"; // Red
+		case logging.EventLevels.FATAL:
+			return "\x1b[31m"; // Red
+		case logging.EventLevels.CRITICAL:
+			return "\x1b[35m"; // Magenta
+		case logging.EventLevels.EMERGENCY:
+			return "\x1b[35m"; // Magenta
+		default:
+			return "\x1b[37m"; // White
 	}
 };
 
@@ -87,9 +89,9 @@ const prepArgs = function (thisLogger, logLevel, args, useColors) {
 };
 const consoleFnNames = {
 	error: logging.EventLevels.ERROR
-	 , warn: logging.EventLevels.WARNING
-	 , info: logging.EventLevels.INFORMATIVE
-	 , debug: logging.EventLevels.DEBUG
+	, warn: logging.EventLevels.WARNING
+	, info: logging.EventLevels.INFORMATIVE
+	, debug: logging.EventLevels.DEBUG
 };
 const printEvent = function (thisLogger, logLevel, args) {
 	if (!Number.isInteger(logLevel) || (logLevel !== 0 && (logLevel & consoleLogLevel) === 0)) {
@@ -101,7 +103,7 @@ const printEvent = function (thisLogger, logLevel, args) {
 			console[n].apply(console, prepArgs(thisLogger, logLevel, [ ...args ]));
 			break;
 		}
-		if (n == "debug") { //Last item...
+		if (n === "debug") { //Last item...
 			//eslint-disable-next-line no-console
 			(args?.length > 0 ? console.debug : console.trace).apply(console, prepArgs(thisLogger, logLevel, [ ...args ]));
 		}
@@ -124,29 +126,29 @@ const printEvent = function (thisLogger, logLevel, args) {
 
 module.exports = gExports.CONSTANTS(gExports, {
 	parseAcceptLanguage: (languageHeaderValue, options = {}) => {
-	if (!languageHeaderValue) {
-		return [];
-	}
-	const { ignoreWildcard = true, validate = (locale) => locale } = options;
-	return languageHeaderValue
-		.split(',')
-		.map((lang) => {
-			const [locale, q = 'q=1'] = lang.split(';');
-			const trimmedLocale = locale.trim();
-			const numQ = Number(q.replace(/q ?=/, ''));
-			return [ (isNaN(numQ) ? 0 : numQ), trimmedLocale ];
-		})
-		.sort(([q1], [q2]) => q2 - q1)
-		.flatMap(([_, locale]) => {
-			if (locale === '*' && ignoreWildcard) {
-				return [];
-			}
-			try {
-				return validate(locale) || [];
-			} catch {
-				return [];
-			}
-		});
+		if (!languageHeaderValue) {
+			return [];
+		}
+		const { ignoreWildcard = true, validate = (locale) => locale } = options;
+		return languageHeaderValue
+			.split(",")
+			.map((lang) => {
+				const [locale, q = "q=1"] = lang.split(";");
+				const trimmedLocale = locale.trim();
+				const numQ = Number(q.replace(/q ?=/, ""));
+				return [ (isNaN(numQ) ? 0 : numQ), trimmedLocale ];
+			})
+			.sort(([q1], [q2]) => q2 - q1)
+			.flatMap(([_q, locale]) => {
+				if (locale === "*" && ignoreWildcard) {
+					return [];
+				}
+				try {
+					return validate(locale) || [];
+				} catch {
+					return [];
+				}
+			});
 	}
 	, requireAll: async (moduleContext, moduleDefinitions, callback, logger) => {
 		const loadedConfigurationsComponents = {};
@@ -155,7 +157,7 @@ module.exports = gExports.CONSTANTS(gExports, {
 			(logger || _.log.NodeJS).debug("Loading %s", compName);
 			const component = moduleContext.require(path);
 			if (callback) {
-				await callback(component);
+				await callback(component, compName);
 			}
 			loadedConfigurationsComponents[compName] = component;
 		}

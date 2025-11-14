@@ -14,15 +14,11 @@ const route = function (socket, msg) {
 	msg.data.sourceId = source.id;
 
 	if (
-		(
-			(source.permadead) &&
-			(["getCharacterList", "getCharacter", "deleteCharacter"].indexOf(msg.method) === -1)
-		) ||
-		(
-			source.dead &&
-			!(
-				(msg.method === "performAction" && ["respawn"].includes(msg.data.method)) ||
-				(msg.method === "clientAck")
+		(source.permadead && (["getCharacterList", "getCharacter", "deleteCharacter"].indexOf(msg.method) === -1))
+		|| (source.dead
+			&& !(
+				(msg.method === "performAction" && ["respawn"].includes(msg.data.method))
+				|| msg.method === "clientAck"
 			)
 		)
 	) {
@@ -34,6 +30,7 @@ const route = function (socket, msg) {
 		if (msg.callback) {
 			msg.data.callbackId = atlas.registerCallback(msg.callback);
 		}
+		//_.log.route.trace(`Sending message to thread ${source.zoneId}`);
 		sendMessageToThread({
 			threadId: source.zoneId
 			, msg
@@ -55,7 +52,6 @@ const route = function (socket, msg) {
 		_.log.route.error("%s from $s couldn't be routed! Component %s can't be found.", msg.method, source.name, msg.cpn);
 		return;
 	}
-
 	const method = msg.method;
 	if (typeof cpn[method] === "function") {
 		cpn[method](msg);

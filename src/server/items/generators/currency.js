@@ -12,9 +12,9 @@ module.exports = {
 	generate: function (item, blueprint) {
 		let pick = null;
 		if (!blueprint.name) {
-			pick = chances[Math.floor(Math.random() * chances.length)];
+			pick = _.getRandomObj(chances);
 		} else {
-			pick = Object.keys(configCurrencies.currencies).find((c) => (c.toLowerCase().indexOf(blueprint.name.toLowerCase()) > -1));
+			pick = Object.keys(configCurrencies.currencies).find((c) => c.toLowerCase().includes(blueprint.name.toLowerCase()));
 		}
 		item.name = pick;
 		_.assign(item, configCurrencies.currencies[pick]);

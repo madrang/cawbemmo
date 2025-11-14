@@ -5,7 +5,8 @@
     "globals": "^15.5.0"
   }
   , "devDependencies": {
-    "@babel/eslint-parser": "^7.24.7"
+    "@babel/preset-env":"^7.28.3"
+    , "@babel/eslint-parser": "^7.28.3"
     , "@stylistic/eslint-plugin-js": "2.2.0"
     , "eslint": "9.5.0"
     , "eslint-plugin-prettier": "5.1.3"
