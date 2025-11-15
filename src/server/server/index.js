@@ -37,7 +37,7 @@ const sharedFolders = [
 	, "/mods"
 ];
 
-const onNewLogEvent = function(req, entry) {
+const onNewLogEvent = function (req, entry) {
 	if (typeof entry !== "object") {
 		_.log.UserLog[req.ip].info(entry);
 		return;
@@ -53,9 +53,9 @@ const onNewLogEvent = function(req, entry) {
 		userLogger = userLogger[loggerName.slice(2, -2)];
 	}
 	userLogger.print(logLevel, entry);
-}
+};
 
-const loadRoute = function(rName, options, loadedAPIs) {
+const loadRoute = function (rName, options, loadedAPIs) {
 	const routeModule = require("./routes/" + rName);
 	if ("createRouter" in routeModule) {
 		routeModule.router = routeModule.createRouter(options, loadedAPIs);
@@ -158,7 +158,7 @@ const close = async function () {
 	}
 	// Wait for client to close the connection.
 	let disconnectCountdown = 10;
-	while (disconnectCountdown > 0 && sockets.some(s => s.connected)) {
+	while (disconnectCountdown > 0 && sockets.some((s) => s.connected)) {
 		disconnectCountdown--;
 		await _.asyncDelay(1000);
 	}
@@ -167,7 +167,7 @@ const close = async function () {
 	_.log.Server.debug("Sockets closed...");
 
 	// Close the server instance.
-	await new Promise(resolve => this.server.close(resolve));
+	await new Promise((resolve) => this.server.close(resolve));
 	_.log.Server.debug("Server closed...");
 };
 
