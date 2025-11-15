@@ -25,7 +25,7 @@ export default {
 		}
 		if (changeLog) {
 			tempEl.find(".version").html(function () {
-				return $(this).html().replace("$VERSION$", changeLog.version);
+				return $(this).html().replace("${version}", changeLog.version);
 			});
 		}
 		this.tpl = tempEl.prop("outerHTML");
