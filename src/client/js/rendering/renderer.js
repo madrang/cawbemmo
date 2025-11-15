@@ -795,7 +795,7 @@ export default {
 		const { fontSize = 14, color = 0xF2F5F5 } = obj;
 
 		const textSprite = new PIXI.Text(text, {
-			fontFamily: "bitty"
+			fontFamily: "ari-w9500-bold"
 			, fontSize: fontSize
 			, fill: color
 			, stroke: 0x2d2136
