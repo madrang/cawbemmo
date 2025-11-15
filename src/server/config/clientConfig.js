@@ -40,7 +40,7 @@ const config = {
 		, walls: 8
 		, objects: 8
 		, mobs: 8
-		, characters: 8
+		, characters: 16
 
 		, animBigObjects: 24
 		, animBoss: 24
