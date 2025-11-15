@@ -151,11 +151,11 @@ export default {
 
 		this.find(".btn").removeClass("disabled");
 
-		let spriteY = Math.floor(charInfo.cell / 8);
-		let spirteX = charInfo.cell - (spriteY * 8);
+		let spriteY = Math.floor(charInfo.cell / 16);
+		let spirteX = charInfo.cell - (spriteY * 16);
 
-		spirteX = -(spirteX * 8);
-		spriteY = -(spriteY * 8);
+		spirteX = -(spirteX * 16);
+		spriteY = -(spriteY * 16);
 
 		let spritesheet = charInfo.sheetName;
 		if (spritesheet === "characters") {
