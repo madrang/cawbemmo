@@ -191,8 +191,8 @@ export default {
 	, setSprite: function () {
 		let classSprite = this.classSprites[this.costume];
 		let costume = classSprite.sprite.split(",");
-		let spirteX = -costume[0] * 8;
-		let spriteY = -costume[1] * 8;
+		let spirteX = -costume[0] * 16;
+		let spriteY = -costume[1] * 16;
 
 		let spritesheet = classSprite.spritesheet || "../../../images/characters.png";
 
