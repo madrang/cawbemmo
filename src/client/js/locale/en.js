@@ -1,11 +1,21 @@
 export const loader = {
 	loading: "Loading ${progress}%"
 };
+
+export const login = {
+	language: "Language"
+	, login: "Login"
+	, password: "Password"
+	, register: "Register"
+	, username: "UserName"
+};
+
 export const party = {
 	leave: "leave party"
 	, remove: "remove from party"
 	, whisper: "whisper"
 };
+
 export const passives = {
 	points: "Points Available: ${points}"
 	, nodes: {
@@ -13,19 +23,30 @@ export const passives = {
 		, spiritStart: "Starting node for ${spirit} spirits"
 	}
 };
+
 export const spellbook = {
 	cancelled: "Cancelled casting ${spellName}"
 	, pickLocation: "Pick a location to cast ${spellName}"
 };
+
 export const stats = {
-	vit: "vitality"
+	gold: "Gold"
+	, level: "Level"
+	, nextLevel: "Next Level"
+
+	, hp: "hp"
 	, regenHp: "health regeneration"
+
+	, mana: "mana"
 	, manaMax: "maximum mana"
 	, regenMana: "mana regeneration"
+
+	, armor: "armor"
+
 	, str: "strength"
 	, int: "intellect"
 	, dex: "dexterity"
-	, armor: "armor"
+	, vit: "vitality"
 
 	, blockAttackChance: "chance to block attacks"
 	, blockSpellChance: "chance to block spells"
@@ -75,10 +96,28 @@ export const stats = {
 
 	//Fishing
 	, weight: "lb"
+
 	//Rods
 	, catchChance: "extra catch chance"
 	, catchSpeed: "faster catch speed"
 	, fishRarity: "higher fish rarity"
 	, fishWeight: "increased fish weight"
 	, fishItems: "extra chance to hook items"
+};
+
+export const equipment = {
+	critChance: "global crit chance"
+	, critMultiplier: "global crit multiplier"
+	, attackCritChance: "attack crit chance"
+	, attackCritMultiplier: "attack crit multiplier"
+	, spellCritChance: "spell crit chance"
+	, spellCritMultiplier: "spell crit multiplier"
+
+	, pageTitle: "Hero"
+	, tabs: {
+		basic: "Basic"
+		, offense: "Offense"
+		, defense: "Defense"
+		, other: "Misc"
+	}
 };

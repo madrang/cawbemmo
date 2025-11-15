@@ -126,7 +126,7 @@ const localizeHTML = function localizeHTML (dictionary, element) {
 			_.log.localizeHTML.warn(`Unknown node type "${element.nodeName}.nodeType: ${element.nodeType}`);
 		}
 		if (hasChildNodes) {
-			for (const node of Array.from(element.childNodes)) {
+			for (const node of element.childNodes.values()) {
 				localizeHTML(dictionary, node);
 			}
 		}

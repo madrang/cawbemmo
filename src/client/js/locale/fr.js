@@ -1,11 +1,21 @@
 export const loader = {
 	loading: "Chargement ${progress}%"
 };
+
+export const login = {
+	language: "Language"
+	, login: "Connexion"
+	, password: "MDP"
+	, register: "S'enregistré"
+	, username: "Compte"
+};
+
 export const party = {
 	leave: "leave party"
 	, remove: "remove from party"
 	, whisper: "whisper"
 };
+
 export const passives = {
 	points: "Points Available: ${points}"
 	, nodes: {
@@ -13,25 +23,36 @@ export const passives = {
 		, spiritStart: "Starting node for ${spirit} spirits"
 	}
 };
+
 export const spellbook = {
 	cancelled: "Cancelled casting ${spellName}"
 	, pickLocation: "Pick a location to cast ${spellName}"
 };
+
 export const stats = {
-	vit: "vitality"
+	gold: "Argent"
+	, level: "Niveau"
+	, nextLevel: "Prochain Niveau"
+
+	, hp: "hp"
 	, regenHp: "health regeneration"
+
+	, mana: "mana"
 	, manaMax: "maximum mana"
 	, regenMana: "mana regeneration"
+
+	, armor: "Armure"
+
 	, str: "strength"
 	, int: "intellect"
 	, dex: "dexterity"
-	, armor: "armor"
+	, vit: "vitality"
 
-	, blockAttackChance: "chance to block attacks"
-	, blockSpellChance: "chance to block spells"
+	, blockAttackChance: "Chance de bloqué des attaques"
+	, blockSpellChance: "Chance de bloqué des incantation"
 
-	, dodgeAttackChance: "chance to dodge attacks"
-	, dodgeSpellChance: "chance to dodge spells"
+	, dodgeAttackChance: "Chance d'évité une attaque"
+	, dodgeSpellChance: "Chance d'évité une incantation"
 
 	, addCritChance: "global crit chance"
 	, addCritMultiplier: "global crit multiplier"
@@ -39,34 +60,34 @@ export const stats = {
 	, addAttackCritMultiplier: "attack crit multiplier"
 	, addSpellCritChance: "spell crit chance"
 	, addSpellCritMultiplier: "spell crit multiplier"
-	, magicFind: "increased item quality"
-	, itemQuantity: "increased item quantity"
-	, sprintChance: "sprint chance"
+	, magicFind: "Qualité des items"
+	, itemQuantity: "Quantité des items"
+	, sprintChance: "Chance de courir"
 	, allAttributes: "to all attributes"
-	, xpIncrease: "additional xp per kill"
+	, xpIncrease: "Augmentation d'expériance"
 	, lvlRequire: "level requirement reduction"
 
-	, elementArcanePercent: "increased arcane damage"
-	, elementFrostPercent: "increased frost damage"
-	, elementFirePercent: "increased fire damage"
-	, elementHolyPercent: "increased holy damage"
-	, elementPoisonPercent: "increased poison damage"
-	, physicalPercent: "increased physical damage"
+	, elementArcanePercent: "Augmentation Arcane"
+	, elementFrostPercent: "Augmentation de glace"
+	, elementFirePercent: "Augmentation de Feu"
+	, elementHolyPercent: "Augmentation saint"
+	, elementPoisonPercent: "Augmentation de poision"
+	, physicalPercent: "Augmentation physique"
 
 	, elementPercent: "increased elemental damage"
-	, spellPercent: "increased spell damage"
+	, spellPercent: "Augementation magique"
 
-	, elementAllResist: "all resistance"
-	, elementArcaneResist: "arcane resistance"
-	, elementFrostResist: "frost resistance"
-	, elementFireResist: "fire resistance"
-	, elementHolyResist: "holy resistance"
-	, elementPoisonResist: "poison resistance"
+	, elementAllResist: "Résistance global"
+	, elementArcaneResist: "Résistance arcane"
+	, elementFrostResist: "Résistance au gel"
+	, elementFireResist: "Résistance au feu"
+	, elementHolyResist: "Résistance au dégats saint"
+	, elementPoisonResist: "Résistance au poison"
 
-	, attackSpeed: "attack speed"
-	, castSpeed: "cast speed"
+	, attackSpeed: "Vitesse d'attaque"
+	, castSpeed: "Vitesse d'incantation"
 
-	, lifeOnHit: "life gained on dealing physical damage"
+	, lifeOnHit: "Vie gagné par coup"
 
 	, auraReserveMultiplier: "aura mana reservation multiplier"
 
@@ -75,10 +96,28 @@ export const stats = {
 
 	//Fishing
 	, weight: "lb"
+
 	//Rods
-	, catchChance: "extra catch chance"
-	, catchSpeed: "faster catch speed"
-	, fishRarity: "higher fish rarity"
-	, fishWeight: "increased fish weight"
-	, fishItems: "extra chance to hook items"
+	, catchChance: "Chance d'attrapé un poisson"
+	, catchSpeed: "Vitesse de pêche"
+	, fishRarity: "Chance de poisson rare"
+	, fishWeight: "Augmentation du poid"
+	, fishItems: "Chance de pêché des items"
+};
+
+export const equipment = {
+	critChance: "Chance de coup critique global"
+	, critMultiplier: "Multiplicateur de coup critique"
+	, attackCritChance: "Chance d'attaque critique"
+	, attackCritMultiplier: "Multiplicateur d'attaque critique"
+	, spellCritChance: "Chance de magie critique"
+	, spellCritMultiplier: "Multiplicateur de magie critique"
+
+	, pageTitle: "Hero"
+	, tabs: {
+		basic: "info"
+		, offense: "offense"
+		, defense: "défense"
+		, other: "autres"
+	}
 };
