@@ -464,7 +464,7 @@ export default {
 			.remove();
 
 		if (!stats.has("gold")) { //FIXME Gold should be in playerStats...
-			_.log.equipment.warn("stats.gold is missing in %o");
+			_.log.equipment.warn("stats.gold is missing in %o", stats);
 			//TODO Check if safe to extend stats...
 			//stats.gold = window.player.trade.gold;
 		}
