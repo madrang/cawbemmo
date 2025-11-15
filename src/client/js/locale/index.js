@@ -52,12 +52,12 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 	}
 	const logger = _.log.getLocalizedMessage;
 	return message.replaceAll(_reLocAllMsg, (match, msgName, offset, curString) => {
-		logger.debug(`Match "${match}"`);
 		msgName = msgName.trim();
 		if (!msgName) {
 			logger.warn(`The localised message "${match}" is invalid as it results into an empty name.`);
 			return match;
 		}
+		logger.trace(`Looking for "${msgName}"`);
 		if (!msgName.includes(".")) {
 			if (typeof dictionary === "object" && dictionary.has(msgName)) {
 				return dictionary[msgName];
@@ -75,7 +75,6 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 			}
 			return strMsg;
 		} else if (typeof dictionary === "object") {
-			logger.trace("Looking for" + msgName);
 			return getMessage(dictionary, nameParts);
 		}
 		logger.error(`dictionary "${dictionary}" does not declare "${msgName}"`);
