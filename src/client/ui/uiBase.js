@@ -11,14 +11,14 @@ export default {
 	, eventCallbacks: {}
 
 	, render: function () {
-		let container = ".ui-container";
-		if (this.container) {
-			container += " > " + this.container;
-		}
 		if (this.beforeRender) {
 			this.beforeRender();
 		}
 
+		let container = ".ui-container";
+		if (this.container) {
+			container += " > " + this.container;
+		}
 		_.log.uiBase.trace("Loading template %o to container %s", this.tpl, container);
 		this.el = $(this.tpl)
 			.appendTo(container)

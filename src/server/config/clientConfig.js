@@ -171,6 +171,10 @@ const config = {
 	, uiLoginList: [
 		"login"
 		, "announcements"
+		, { type: "credits"
+			, load: false
+			, preload: false
+		}
 	]
 	, uiList: [
 		"mainMenu"
@@ -179,11 +183,6 @@ const config = {
 		, "options"
 		, "progressBar"
 
-		, { type: "announcements"
-			// loaded on login, should already be loaded.
-			, autoLoadOnPlay: false
-			, preload: false
-		}
 		, "hud"
 		, "middleHud"
 		, "map"
@@ -215,19 +214,19 @@ const config = {
 		, "workbench"
 
 		, { type: "createCharacter"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "characters"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "terms"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "changeLog"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 	]

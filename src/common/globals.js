@@ -55,7 +55,7 @@ Object.defineProperties(Array.prototype, {
 Object.defineProperty(Object.prototype, "has", {
 	enumerable: false, writable: true
 	, value: function (prop) {
-		return (this.hasOwnProperty(prop) && this[prop] !== undefined && this[prop] !== null);
+		return (Object.prototype.hasOwnProperty.call(this, prop) && this[prop] !== undefined && this[prop] !== null);
 	}
 });
 

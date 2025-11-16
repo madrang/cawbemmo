@@ -44,9 +44,9 @@ export default {
 		this.find(".extra, .version")
 			.appendTo($("<div class=\"uiLoginExtra\"></div>").appendTo(".ui-container"));
 
-		$(".uiLoginExtra").find(".btn").on("click", this.redirect.bind(this));
+		$(".uiLoginExtra").find(".btn").on("click", this.buttonHandler.bind(this));
 
-		$(".news, .version").on("click", this.redirect.bind(this));
+		$(".news, .version").on("click", this.buttonHandler.bind(this));
 
 		this.find("input")
 			.on("keyup", this.onKeyDown.bind(this))
@@ -55,9 +55,26 @@ export default {
 		renderer.buildTitleScreen();
 	}
 
-	, redirect: function (e) {
-		let currentLocation = $(e.currentTarget).attr("location");
-		window.open(currentLocation, "_blank");
+	, buttonHandler: function (e) {
+		const target = $(e.currentTarget);
+		const uiType = target.data("ui");
+		if (uiType) {
+			const ui = uiFactory.getUi(uiType);
+			if (ui) {
+				ui.show();
+				return;
+			}
+			uiFactory.build(uiType, {
+				modal: true
+			});
+			return;
+		}
+		const href = target.data("href");
+		if (href) {
+			window.open(href, "_blank");
+			return;
+		}
+		_.log.login.buttonHandler.error("Target %o couldn't be handled.", target);
 	}
 
 	, onKeyDown: function (e) {

@@ -5,6 +5,21 @@ export const characters = {
 	, deleteCountdown: "click delete ${countdown} more time${s} to confirm"
 };
 
+export const credits = {
+	pageTitle: "Credits"
+	, homepage: "HomePage"
+	, sourceCode: "Source Code"
+
+	, isleward: "BigBadWaffle - Isleward:\nMain engine supporting the game."
+	, levikingman: "LeVikingMan - Art/Maps:\nMade the maps and sprites."
+	, madrang: "Madrang - Code:\nModded fork of Isleward."
+};
+
+export const changeLog = {
+	pageTitle: "ChangeLog"
+	, haveFun: "Please have fun!"
+};
+
 export const equipment = {
 	critChance: "global crit chance"
 	, critMultiplier: "global crit multiplier"
@@ -35,6 +50,11 @@ export const login = {
 	, register: "Register"
 	, username: "UserName"
 	, selfcheck: "Health Check"
+};
+
+export const menus = {
+	back: "Back"
+	, next: "Next"
 };
 
 export const party = {

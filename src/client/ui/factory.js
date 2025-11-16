@@ -12,7 +12,7 @@ const setUiTypes = (list) => {
 			list[i] = {
 				type: l
 				, path: `/ui/templates/${l}`
-				, autoLoadOnPlay: true
+				, load: true
 			};
 		} else if (!l.type) {
 			l.type = l.path.split("/").pop();
@@ -49,7 +49,15 @@ export default {
 		setUiTypes(globals.clientConfig.uiList);
 
 		for (const uiConfig of globals.clientConfig.uiLoginList) {
-			this.buildFromConfig(uiConfig);
+			if (!uiConfig.load) {
+				continue;
+			}
+			if (uiConfig.preload) {
+				_.log.ui.factory.preload.debug("Preloading UI module %o", uiConfig);
+				Promise.resolve(import(`${uiConfig.path}/${uiConfig.type}.js`)).catch(_.log.ui.factory.preload.error);
+			} else {
+				this.buildFromConfig(uiConfig);
+			}
 		}
 	}
 
@@ -67,7 +75,7 @@ export default {
 			events.clearQueue();
 			await Promise.all(
 				globals.clientConfig.uiList
-					.filter((u) => u.autoLoadOnPlay !== false)
+					.filter((u) => u.load)
 					.map((u) => this.buildFromConfig(u))
 			);
 			this.ingameUisBuilt = true;
@@ -79,7 +87,7 @@ export default {
 		});
 	}
 
-	, build: function (type) {
+	, build: function (type, options) {
 		let config = globals.clientConfig.uiList.find((u) => u.type === type);
 		if (!config) {
 			config = globals.clientConfig.uiLoginList.find((u) => u.type === type);
@@ -87,10 +95,10 @@ export default {
 		if (!config) {
 			throw new Error(`Can't build ${type}! Missing configuration.`);
 		}
-		return this.buildFromConfig(config);
+		return this.buildFromConfig(config, options);
 	}
 
-	, buildFromConfig: async function (config) {
+	, buildFromConfig: async function (config, options = {}) {
 		const { type, path } = config;
 
 		let ui = this.getUi(type);
@@ -101,7 +109,7 @@ export default {
 
 		_.log.ui.factory.buildFromConfig.debug("Loading UI module '%s'.", type);
 		const template = await import(`${path}/${type}.js`);
-		ui = _.assign({ type }, uiBase, template.default);
+		ui = _.assign({ type }, uiBase, template.default, options);
 		const renderUI = this.renderUi.bind(this, ui);
 		await new Promise(
 			(res) => requestAnimationFrame(

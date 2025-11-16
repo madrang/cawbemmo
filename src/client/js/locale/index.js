@@ -47,6 +47,9 @@ const _reLocAllMsg = new RegExp("\\${(\\S+?)}", "gm");
 const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 	// Parse messages and replace localized strings tokens when found.
 	// Return unmoddified message if not a localized string.
+	if (!dictionary) {
+		throw new Error("Missing dictionary!");
+	}
 	if (typeof message !== "string") {
 		return message;
 	}
@@ -59,7 +62,7 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 		}
 		logger.trace(`Looking for "${msgName}"`);
 		if (!msgName.includes(".")) {
-			if (typeof dictionary === "object" && dictionary.has(msgName)) {
+			if (typeof dictionary === "object" && Object.prototype.has.call(dictionary, msgName)) {
 				return dictionary[msgName];
 			} else if (typeof dictionary === "function") {
 				return dictionary(msgName);
@@ -108,7 +111,7 @@ const localizeHTML = function localizeHTML (dictionary, element) {
 					element.innerText = getLocalizedMessage(dictionary, element.innerText);
 				}
 			} else if (element instanceof SVGElement) {
-				_.log.localizeHTML.warn(`SVG elements are unsupported. Returning unmoddified element`);
+				_.log.localizeHTML.warn("SVG elements are unsupported. Returning unmoddified element");
 			} else {
 				_.log.localizeHTML.warn(`Unknown element "${element.id}" Returning unmoddified element %o`, element);
 			}
