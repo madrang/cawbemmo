@@ -19,14 +19,13 @@ export default {
 	, beforeRender: function () {
 		const { clientConfig: { logoPath, changeLog } } = globals;
 		// Add infos to template.
-		const tempEl = $(this.tpl);
+		const localDictionary = {};
+		if (changeLog) {
+			localDictionary.version = changeLog.version;
+		}
+		const tempEl = $(locale.getLocalizedMessage(Object.assign(localDictionary, locale.dictionary), this.tpl));
 		if (logoPath) {
 			tempEl.find(".logo").attr("src", logoPath);
-		}
-		if (changeLog) {
-			tempEl.find(".version").html(function () {
-				return $(this).html().replace("${version}", changeLog.version);
-			});
 		}
 		this.tpl = tempEl.prop("outerHTML");
 	}
@@ -40,6 +39,7 @@ export default {
 		this.el.find(".selectLanguage")
 			.val(locale.language);
 		this.on(".selectLanguage", "change", this.onSelectLanguage.bind(this));
+		$(`.selectLanguage option[value=""]`).remove();
 
 		this.find(".extra, .version")
 			.appendTo($("<div class=\"uiLoginExtra\"></div>").appendTo(".ui-container"));
@@ -119,5 +119,7 @@ export default {
 			return;
 		}
 		await locale.init(selectedLanguage);
+		this.destroy();
+		setTimeout(() => uiFactory.build("login"), 33);
 	}
 };

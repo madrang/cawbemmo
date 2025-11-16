@@ -60,7 +60,7 @@ export default {
 
 		factory.exitGame();
 
-		factory.build("characters", {});
+		factory.build("characters");
 	}
 
 	, onResize: function () {

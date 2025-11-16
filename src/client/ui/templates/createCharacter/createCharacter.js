@@ -106,10 +106,9 @@ export default {
 
 	, back: function () {
 		this.clear();
-
 		this.destroy();
 
-		uiFactory.build("characters", {});
+		uiFactory.build("characters");
 	}
 
 	, create: async function () {

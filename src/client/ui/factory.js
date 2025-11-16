@@ -80,7 +80,10 @@ export default {
 	}
 
 	, build: function (type) {
-		const config = globals.clientConfig.uiList.find((u) => u.type === type);
+		let config = globals.clientConfig.uiList.find((u) => u.type === type);
+		if (!config) {
+			config = globals.clientConfig.uiLoginList.find((u) => u.type === type);
+		}
 		if (!config) {
 			throw new Error(`Can't build ${type}! Missing configuration.`);
 		}

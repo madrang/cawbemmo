@@ -134,7 +134,7 @@ const localizeHTML = function localizeHTML (dictionary, element) {
 		// <p>${propName}</p>
 		return getLocalizedMessage(dictionary, element);
 	} else {
-		_.log.localizeHTML.warn(`Unknown instance type "${typeof element}" is unsupported.`);
+		_.log.localizeHTML.warn("Unknown instance type \"%o\" is unsupported.", element);
 	}
 	return element;
 };

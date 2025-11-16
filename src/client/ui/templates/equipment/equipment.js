@@ -50,7 +50,7 @@ const getStatsAsStrings = (playerStats) => ({
 		, "${stats.castSpeed}": (100 + playerStats.castSpeed) + "%"
 	}
 	, defense: {
-		armor: playerStats.armor
+		"${stats.armor}": playerStats.armor
 		, "${stats.blockAttackChance}": playerStats.blockAttackChance + "%"
 		, "${stats.blockSpellChance}": playerStats.blockSpellChance + "%"
 		, gap1: ""
@@ -336,7 +336,7 @@ export default {
 
 				itemEl
 					.find(".icon")
-					.css("background", "url(\"" + spriteSheet + "\") " + imgX + "px " + imgY + "px")
+					.css("background", `url("${spriteSheet}") ${imgX}px ${imgY}px`)
 					.on("mousedown", this.equipItem.bind(this, item, slot))
 					.on("mousemove", this.onHoverItem.bind(this, itemEl, item, null))
 					.on("mouseleave", this.onHoverItem.bind(this, null, null));

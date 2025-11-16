@@ -1,13 +1,40 @@
+export const characters = {
+	new: "Nouveau"
+	, delete: "Effacé"
+	, play: "Jouer"
+	, deleteCountdown: "click delete ${countdown} more time${s} to confirm"
+};
+
+export const equipment = {
+	critChance: "Chance de coup critique global"
+	, critMultiplier: "Multiplicateur de coup critique"
+	, attackCritChance: "Chance d'attaque critique"
+	, attackCritMultiplier: "Multiplicateur d'attaque critique"
+	, spellCritChance: "Chance de magie critique"
+	, spellCritMultiplier: "Multiplicateur de magie critique"
+
+	, pageTitle: "Hero"
+	, tabs: {
+		basic: "info"
+		, offense: "offense"
+		, defense: "défense"
+		, other: "autres"
+	}
+};
+
 export const loader = {
 	loading: "Chargement ${progress}%"
+	, wait: "Chargement..."
 };
 
 export const login = {
-	language: "Language"
+	credits: "Credits"
+	, language: "Language"
 	, login: "Connexion"
 	, password: "MDP"
 	, register: "S'enregistré"
 	, username: "Compte"
+	, selfcheck: "Validation Auto."
 };
 
 export const party = {
@@ -103,21 +130,4 @@ export const stats = {
 	, fishRarity: "Chance de poisson rare"
 	, fishWeight: "Augmentation du poid"
 	, fishItems: "Chance de pêché des items"
-};
-
-export const equipment = {
-	critChance: "Chance de coup critique global"
-	, critMultiplier: "Multiplicateur de coup critique"
-	, attackCritChance: "Chance d'attaque critique"
-	, attackCritMultiplier: "Multiplicateur d'attaque critique"
-	, spellCritChance: "Chance de magie critique"
-	, spellCritMultiplier: "Multiplicateur de magie critique"
-
-	, pageTitle: "Hero"
-	, tabs: {
-		basic: "info"
-		, offense: "offense"
-		, defense: "défense"
-		, other: "autres"
-	}
 };

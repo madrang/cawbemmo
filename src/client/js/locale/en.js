@@ -1,13 +1,40 @@
+export const characters = {
+	new: "New"
+	, delete: "Delete"
+	, play: "Play"
+	, deleteCountdown: "click delete ${countdown} more time${s} to confirm"
+};
+
+export const equipment = {
+	critChance: "global crit chance"
+	, critMultiplier: "global crit multiplier"
+	, attackCritChance: "attack crit chance"
+	, attackCritMultiplier: "attack crit multiplier"
+	, spellCritChance: "spell crit chance"
+	, spellCritMultiplier: "spell crit multiplier"
+
+	, pageTitle: "Hero"
+	, tabs: {
+		basic: "Basic"
+		, offense: "Offense"
+		, defense: "Defense"
+		, other: "Misc"
+	}
+};
+
 export const loader = {
 	loading: "Loading ${progress}%"
+	, wait: "Loading, please wait..."
 };
 
 export const login = {
-	language: "Language"
+	credits: "Credits"
+	, language: "Language"
 	, login: "Login"
 	, password: "Password"
 	, register: "Register"
 	, username: "UserName"
+	, selfcheck: "Health Check"
 };
 
 export const party = {
@@ -103,21 +130,4 @@ export const stats = {
 	, fishRarity: "higher fish rarity"
 	, fishWeight: "increased fish weight"
 	, fishItems: "extra chance to hook items"
-};
-
-export const equipment = {
-	critChance: "global crit chance"
-	, critMultiplier: "global crit multiplier"
-	, attackCritChance: "attack crit chance"
-	, attackCritMultiplier: "attack crit multiplier"
-	, spellCritChance: "spell crit chance"
-	, spellCritMultiplier: "spell crit multiplier"
-
-	, pageTitle: "Hero"
-	, tabs: {
-		basic: "Basic"
-		, offense: "Offense"
-		, defense: "Defense"
-		, other: "Misc"
-	}
 };
