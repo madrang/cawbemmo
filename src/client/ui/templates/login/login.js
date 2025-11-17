@@ -19,11 +19,13 @@ export default {
 	, beforeRender: function () {
 		const { clientConfig: { logoPath, changeLog } } = globals;
 		// Add infos to template.
-		const localDictionary = {};
+		const localeDictionary = {};
 		if (changeLog) {
-			localDictionary.version = changeLog.version;
+			localeDictionary.version = changeLog.version;
+		} else {
+			localeDictionary.version = "0.0";
 		}
-		const tempEl = $(locale.getLocalizedMessage(Object.assign(localDictionary, locale.dictionary), this.tpl));
+		const tempEl = $(locale.getLocalizedMessage(Object.assign(localeDictionary, locale.dictionary), this.tpl));
 		if (logoPath) {
 			tempEl.find(".logo").attr("src", logoPath);
 		}

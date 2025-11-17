@@ -117,14 +117,14 @@ const localizeHTML = function localizeHTML (dictionary, element) {
 			}
 		} else if (
 			// Text based nodes.
-			element instanceof Comment
-			|| element instanceof CDATASection
-			|| element instanceof Text
-			|| element.nodeType === Node.COMMENT_NODE
+			element.nodeType === Node.COMMENT_NODE
 			|| element.nodeType === Node.TEXT_NODE
+			|| element instanceof CDATASection
+			|| element instanceof Comment
+			|| element instanceof Text
 		) {
 			element.nodeValue = getLocalizedMessage(dictionary, element.nodeValue);
-		} else {
+		} else if (element.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) {
 			_.log.localizeHTML.warn(`Unknown node type "${element.nodeName}.nodeType: ${element.nodeType}`);
 		}
 		if (hasChildNodes) {
