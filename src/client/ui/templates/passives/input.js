@@ -46,6 +46,8 @@ export default {
 		this.zoom = zoom;
 
 		el
+			.on("keydown", this.events.keyboard.keyDown.bind(this))
+			.on("keyup", this.events.keyboard.keyUp.bind(this))
 			.on("mousedown", this.events.mouse.mouseDown.bind(this))
 			.on("mouseup", this.events.mouse.mouseUp.bind(this))
 			.on("mousemove", this.events.mouse.mouseMove.bind(this))

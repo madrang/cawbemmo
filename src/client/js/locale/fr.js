@@ -64,11 +64,13 @@ export const party = {
 };
 
 export const passives = {
-	points: "Points Available: ${points}"
+	pageTitle: "Arbre de talent passif"
+	, points: "Points Available: ${points}"
 	, nodes: {
 		myStart: "Your starting node"
 		, spiritStart: "Starting node for ${spirit} spirits"
 	}
+	, reset: "Réinitialisé"
 };
 
 export const quests = {

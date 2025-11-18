@@ -22,9 +22,7 @@ const constants = {
 const performAction = client.componentProxy.player.performAction;
 
 export default {
-	tpl: template
-
-	, modal: true
+	modal: true
 	, hasClose: true
 
 	, canvas: null
@@ -48,6 +46,9 @@ export default {
 
 	, handlerResize: null
 
+	, beforeRender: function () {
+		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
+	}
 	, postRender: async function () {
 		input.init(this.el, zoom);
 
@@ -93,7 +94,7 @@ export default {
 		);
 		this.find(".btnReset").on("click", this.events.onReset.bind(this));
 
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+		this.onEvent("onKeyDown", this.events.onKeyDown.bind(this));
 		this.onEvent("uiMouseUp", this.events.onPanEnd.bind(this));
 		this.onEvent("onGetPassives", this.events.onGetPassives.bind(this));
 		this.onEvent("onGetPassivePoints", this.events.onGetPassivePoints.bind(this));
@@ -171,12 +172,6 @@ export default {
 	, beforeHide: function () {
 		events.emit("onHideTooltip", this.el[0]);
 		this.tooltipId = null;
-	}
-
-	, onKeyDown: function (key) {
-		if (key === "p") {
-			this.toggle();
-		}
 	}
 
 	, renderers: {
@@ -286,7 +281,12 @@ export default {
 	}
 
 	, events: {
-		onMouseMove: function (pos) {
+		onKeyDown: function (key) {
+			if (key === "p") {
+				this.toggle();
+			}
+		}
+		, onMouseMove: function (pos) {
 			if (this.mouse.x === pos.x && this.mouse.y === pos.y) {
 				return;
 			}
