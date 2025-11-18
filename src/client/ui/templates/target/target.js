@@ -52,8 +52,8 @@ export default {
 			if (target.prophecies) {
 				const inspectContext = [
 					target.name
-					, "----------", {
-						text: "inspect"
+					, "----------"
+					, { text: "inspect"
 						, callback: this.onInspect.bind(this)
 					}
 				];

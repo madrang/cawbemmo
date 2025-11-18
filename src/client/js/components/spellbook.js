@@ -89,7 +89,8 @@ export default {
 			this.groundTargetSpell = null;
 		}
 		// Allow attack with mouse.
-		if (this.target
+		if (!isMobile && e?.button === 0
+			&& this.target
 			&& (
 				target?.id === this.target.id
 				|| this.hoverTarget?.id === this.target.id
