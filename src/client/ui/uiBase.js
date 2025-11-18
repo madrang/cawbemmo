@@ -20,9 +20,15 @@ export default {
 			container += " > " + this.container;
 		}
 		_.log.uiBase.trace("Loading template %o to container %s", this.tpl, container);
-		this.el = $(this.tpl)
-			.appendTo(container)
-			.data("ui", this);
+		if (typeof this.tpl === "object" && this.tpl instanceof Element && this.tpl.nodeName === "TEMPLATE") {
+			this.el = $(this.tpl.content.childNodes)
+				.appendTo(container)
+				.data("ui", this);
+		} else {
+			this.el = $(this.tpl)
+				.appendTo(container)
+				.data("ui", this);
+		}
 		_.log.uiBase.trace("UI %o loaded element %o", this, this.el);
 
 		this.el.on("mouseenter", this.onMouseEnter.bind(this, true));

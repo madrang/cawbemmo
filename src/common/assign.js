@@ -37,6 +37,10 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 	}
 	if (!newObj) {
 		if (!_.isPlainObject(objSrc)) {
+			if (typeof objSrc.clone === "function") {
+				_.log.assign.trace("Cloning %o using objSrc.clone().", objSrc);
+				return objSrc.clone();
+			}
 			_.log.assign.debug("objSrc is not a plain object! Object %o will be returned unmodified.", objSrc);
 			return objSrc;
 		}

@@ -52,6 +52,15 @@ Object.defineProperties(Array.prototype, {
 	}
 });
 
+if (typeof Node === "function" && Node.prototype) {
+	Object.defineProperty(Node.prototype, "clone", {
+		enumerable: false, writable: true
+		, value: function () {
+			return this.cloneNode(true);
+		}
+	});
+}
+
 Object.defineProperty(Object.prototype, "has", {
 	enumerable: false, writable: true
 	, value: function (prop) {

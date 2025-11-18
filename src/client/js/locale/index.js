@@ -93,6 +93,12 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
  */
 const localizeHTML = function localizeHTML (dictionary, element) {
 	if (element instanceof Node) {
+		if (element.nodeName === "TEMPLATE") {
+			for (const node of element.content.childNodes.values()) {
+				localizeHTML(dictionary, node);
+			}
+			return element;
+		}
 		const hasChildNodes = element.hasChildNodes();
 		if (element instanceof Element) {
 			if (element.hasAttributes()) {
