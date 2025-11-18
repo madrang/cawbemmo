@@ -237,7 +237,7 @@ export default {
 			if (!gamepad) {
 				continue;
 			}
-			for (button in gamepad.buttons) {
+			for (const button in gamepad.buttons) {
 				const gButtonInfo = gamepad.buttons[button];
 				if (!gButtonInfo) {
 					delete this.pressedGamepadButtons[button];
