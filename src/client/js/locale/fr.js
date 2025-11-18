@@ -71,6 +71,13 @@ export const passives = {
 	}
 };
 
+export const quests = {
+	pageTitle: "Quêtes"
+	, ready: "Click to turn in"
+	, reward: "Reward"
+	, noReward: "Reward: For reputation and glory."
+};
+
 export const spellbook = {
 	cancelled: "Cancelled casting ${spellName}"
 	, pickLocation: "Pick a location to cast ${spellName}"

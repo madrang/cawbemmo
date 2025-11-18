@@ -17,8 +17,8 @@ const getStatsAsStrings = (playerStats) => ({
 		"${stats.level}": playerStats.level
 		, "${stats.nextLevel}": (playerStats.xpMax - playerStats.xp).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "xp"
 		, gap1: ""
-		, "${stats.gold}": playerStats.gold || window.player.trade.gold //FIXME Use playerStats
-		, gap2: ""
+		, "${stats.gold}": playerStats.gold
+		, gap2: playerStats.has("gold")
 		, "${stats.hp}": `${Math.floor(playerStats.hp)}/${Math.floor(playerStats.hpMax)}`
 		, "${stats.mana}": `${Math.floor(playerStats.mana)}/${Math.floor(playerStats.manaMax)}`
 		, "${stats.regenHp}": playerStats.regenHp
@@ -84,10 +84,7 @@ const getStatsAsStrings = (playerStats) => ({
 });
 
 export default {
-	tpl: locale.getLocalizedMessage(locale.dictionary, template)
-
-	, centered: true
-
+	centered: true
 	, modal: true
 	, hasClose: true
 
@@ -100,6 +97,9 @@ export default {
 
 	, isInspecting: false
 
+	, beforeRender: function () {
+		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
+	}
 	, postRender: function () {
 		this.onEvent("onGetStats", this.onGetStats.bind(this));
 		this.onEvent("onGetItems", this.onGetItems.bind(this));
@@ -465,21 +465,31 @@ export default {
 
 		if (!stats.has("gold")) { //FIXME Gold should be in playerStats...
 			_.log.equipment.warn("stats.gold is missing in %o", stats);
-			//TODO Check if safe to extend stats...
-			//stats.gold = window.player.trade.gold;
+			stats = _.assign({
+				gold: window.player.trade.gold
+			}, stats);
 		}
 		const newStats = getStatsAsStrings(stats);
 		const tabName = this.find(".tab.selected").data("id");
 		const sectionInfo = newStats[tabName];
 		for (const statName in sectionInfo) {
 			let label = "";
-			let value = "";
-			const isGap = statName.startsWith("gap");
-			if (!isGap) {
-				label = locale.getLocalizedMessage(locale.dictionary, statName) + ": ";
-				value = sectionInfo[statName];
+			let value = sectionInfo[statName];
+			const valueType = typeof value;
+			if (valueType === "undefined") {
+				continue;
 			}
-			const row = $(`<div class=\"stat\"><font class=\"q0\">${label}</font><font color=\"#999\">${value}</font></div>`)
+			const isGap = statName.startsWith("gap");
+			if (isGap) {
+				if (value) {
+					value = "";
+				} else if (valueType === "boolean") {
+					continue;
+				}
+			} else {
+				label = locale.getLocalizedMessage(locale.dictionary, statName) + ": ";
+			}
+			const row = $(`<div class="stat"><font class="q0">${label}</font><font color="#999">${value}</font></div>`)
 				.appendTo(container);
 
 			if (statName === "${stats.gold}") {

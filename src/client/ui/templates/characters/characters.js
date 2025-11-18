@@ -13,9 +13,7 @@ const template = await _.loadHTML("/ui/templates/characters/template.html", { ra
 const templateListItem = await _.loadHTML("/ui/templates/characters/templateListItem.html", { raw: true });
 
 export default {
-	tpl: locale.getLocalizedMessage(locale.dictionary, template)
-
-	, centered: true
+	centered: true
 	, characterInfo: {}
 	, characters: null
 	, selected: null
@@ -23,6 +21,8 @@ export default {
 	, deleteCount: 0
 
 	, beforeRender: function () {
+		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
+
 		const { clientConfig: { logoPath } } = globals;
 		if (!logoPath) {
 			return;
