@@ -29,6 +29,9 @@ export default {
 				.appendTo(container)
 				.data("ui", this);
 		}
+		if (this.modal) { // Allow modal windows to be focused.
+			this.el.attr("tabindex", -1);
+		}
 		_.log.uiBase.trace("UI %o loaded element %o", this, this.el);
 
 		this.el.on("mouseenter", this.onMouseEnter.bind(this, true));
