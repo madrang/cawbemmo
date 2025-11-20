@@ -617,8 +617,11 @@ export default {
 				if (e.target !== this.uiContainer
 					|| this.uiContainer.classList.contains("blocking")
 				) {
+					this.mouse.target = "ui";
 					return;
 				}
+				this.mouse.target = "world";
+
 				const mouseEvent = _.assign({
 					event: e
 				}, this.mouse);
@@ -641,8 +644,11 @@ export default {
 				if (e.target !== this.uiContainer
 					|| this.uiContainer.classList.contains("blocking")
 				) {
+					this.mouse.target = "ui";
 					return;
 				}
+				this.mouse.target = "world";
+
 				const mouseEvent = _.assign({
 					event: e
 				}, this.mouse);
@@ -660,8 +666,11 @@ export default {
 				if (e.target !== this.uiContainer
 					|| this.uiContainer.classList.contains("blocking")
 				) {
+					this.mouse.target = "ui";
 					return;
 				}
+				this.mouse.target = "world";
+
 				const mouseEvent = _.assign({
 					event: e
 				}, this.mouse);

@@ -128,15 +128,18 @@ export default {
 		this.moveCd = this.moveCdMax;
 		this.obj.pather.add(newX, newY);
 	}
-	, onMouseInput: function (e) {
-		if (!e || !e.buttons.includes(0)) {
+	, onMouseInput: function (mouse) {
+		if (!mouse
+			|| !mouse.buttons.includes(0)
+			|| mouse.target !== "world"
+		) {
 			return;
 		}
 		if (!this.obj.pather) {
 			return;
 		}
-		let dx = Math.floor(e.worldX / scale) - this.obj.pather.pathPos.x;
-		let dy = Math.floor(e.worldY / scale) - this.obj.pather.pathPos.y;
+		let dx = Math.floor(mouse.worldX / scale) - this.obj.pather.pathPos.x;
+		let dy = Math.floor(mouse.worldY / scale) - this.obj.pather.pathPos.y;
 		const distance = Math.max(Math.abs(dx), Math.abs(dy));
 		if (distance <= 0 || distance > MOUSE_PATH_DISTANCE) {
 			return;
