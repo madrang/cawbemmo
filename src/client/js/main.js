@@ -71,7 +71,7 @@ const main = {
 
 		objects.init();
 		renderer.init();
-		input.init();
+		input.init("#ui-container");
 
 		numbers.init();
 
@@ -106,6 +106,7 @@ const main = {
 			return;
 		}
 
+		input.update();
 		objects.update();
 		renderer.update();
 		uiFactory.update();

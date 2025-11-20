@@ -174,18 +174,15 @@ export default {
 
 	, update: function () {
 		let target = this.target;
-
 		if (!target) {
 			return;
 		}
-
 		if (target.destroyed) {
 			this.onSetTarget();
 			return;
 		}
 
 		let stats = target.stats.values;
-
 		if (stats.level !== this.lastLevel) {
 			this.el.find(".infoLevel")
 				.html("(" + stats.level + ")")
@@ -196,12 +193,10 @@ export default {
 				this.el.find(".infoLevel").addClass("high-level");
 			}
 		}
-
 		if (stats.hp !== this.lastHp) {
 			this.buildBar(0, stats.hp, stats.hpMax);
 			this.lastHp = stats.hp;
 		}
-
 		if (stats.mana !== this.lastMana) {
 			this.buildBar(1, stats.mana, stats.manaMax);
 			this.lastMana = stats.mana;

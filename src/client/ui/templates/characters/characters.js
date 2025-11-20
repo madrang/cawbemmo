@@ -43,7 +43,7 @@ export default {
 
 		this.getCharacters();
 
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+		this.onEvent("keydown", this.onKeyDown.bind(this));
 	}
 
 	, onKeyDown: function (key) {

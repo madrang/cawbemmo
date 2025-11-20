@@ -11,6 +11,14 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 const template = await _.loadHTML("/ui/templates/stash/template.html", { raw: true });
 //const tplItem = await _.loadHTML("/ui/templates/inventory/templateItem.html", { raw: true });
 
+const eventMap = {
+	keyup: "onKeyUp"
+	, keydown: "onKeyDown"
+	, onOpenStash: "onOpenStash"
+	, onAddStashItems: "onAddStashItems"
+	, onRemoveStashItems: "onRemoveStashItems"
+};
+
 export default {
 	tpl: template
 
@@ -24,16 +32,9 @@ export default {
 	, hasClose: true
 
 	, postRender: function () {
-		[
-			"onKeyUp"
-			, "onKeyDown"
-			, "onOpenStash"
-			, "onAddStashItems"
-			, "onRemoveStashItems"
-		]
-			.forEach((e) => {
-				this.onEvent(e, this[e].bind(this));
-			});
+		for (const [key, fn] of Object.entries(eventMap)) {
+			this.onEvent(key, this[fn].bind(this));
+		}
 	}
 
 	, build: function () {

@@ -13,6 +13,20 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 
 const template = await _.loadHTML("/ui/templates/options/template.html", { raw: true });
 
+const eventMap = {
+	onResize: "onResize"
+	, uikeypress: "onUiKeyPress"
+	, onToggleNameplates: "onToggleNameplates"
+	, onToggleQualityIndicators: "onToggleQualityIndicators"
+	, onToggleUnusableIndicators: "onToggleUnusableIndicators"
+	, onToggleEventsVisibility: "onToggleEventsVisibility"
+	, onToggleQuestsVisibility: "onToggleQuestsVisibility"
+	, onToggleLastChannel: "onToggleLastChannel"
+	, onVolumeChange: "onVolumeChange"
+	, onTogglePartyView: "onTogglePartyView"
+	, onToggleDamageNumbers: "onToggleDamageNumbers"
+};
+
 export default {
 	tpl: template
 	, centered: true
@@ -25,7 +39,7 @@ export default {
 	, postRender: function () {
 		this.onEvent("onOpenOptions", this.show.bind(this));
 
-		this.find("#options-nameplates .name").on("click", events.emit.bind(events, "onUiKeyDown", { key: "v" }));
+		this.find("#options-nameplates .name").on("click", events.emit.bind(events, "uikeypress", { key: "v" }));
 		this.find("#options-quests .name").on("click", this.toggleQuests.bind(this));
 		this.find("#options-events .name").on("click", this.toggleEvents.bind(this));
 		this.find("#options-quality .name").on("click", this.toggleQualityIndicators.bind(this));
@@ -40,21 +54,9 @@ export default {
 
 		this.find(".item.volume .btn").on("click", this.modifyVolume.bind(this));
 
-		[
-			"onResize"
-			, "onUiKeyDown"
-			, "onToggleNameplates"
-			, "onToggleQualityIndicators"
-			, "onToggleUnusableIndicators"
-			, "onToggleEventsVisibility"
-			, "onToggleQuestsVisibility"
-			, "onToggleLastChannel"
-			, "onVolumeChange"
-			, "onTogglePartyView"
-			, "onToggleDamageNumbers"
-		].forEach((e) => {
-			this.onEvent(e, this[e].bind(this));
-		});
+		for (const [key, fn] of Object.entries(eventMap)) {
+			this.onEvent(key, this[fn].bind(this));
+		}
 
 		this.find(".item").on("click", events.emit.bind(events, "onClickOptionsItem"));
 
@@ -256,7 +258,7 @@ export default {
 		this.build();
 	}
 
-	, onUiKeyDown: function (keyEvent) {
+	, onUiKeyPress: function (keyEvent) {
 		const { key } = keyEvent;
 
 		if (key === "v") {

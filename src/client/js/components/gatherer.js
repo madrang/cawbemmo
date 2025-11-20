@@ -7,7 +7,7 @@ export default {
 	, effect: null
 
 	, init: function () {
-		this.obj.on("onKeyDown", this.onKeyDown.bind(this));
+		this.obj.on("keydown", this.onKeyDown.bind(this));
 	}
 
 	, extend: function (msg) {

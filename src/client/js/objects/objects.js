@@ -35,9 +35,9 @@ export default {
 			}
 
 			let dx = Math.abs(o.x - x);
-			if ((dx < 3) && (dx < closest)) {
+			if (dx < 3 && dx < closest) {
 				let dy = Math.abs(o.y - y);
-				if ((dy < 3) && (dy < closest)) {
+				if (dy < 3 && dy < closest) {
 					mob = o;
 					closest = Math.max(dx, dy);
 				}

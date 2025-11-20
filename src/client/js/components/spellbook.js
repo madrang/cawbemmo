@@ -42,8 +42,8 @@ export default {
 
 		this.obj.on("onDeath", this.onDeath.bind(this));
 		this.obj.on("onMobHover", this.onMobHover.bind(this));
-		this.obj.on("mouseDown", this.onMouseDown.bind(this));
-		this.obj.on("onAction", this.onAction.bind(this));
+		this.obj.on("mousedown", this.onMouseDown.bind(this));
+		this.obj.on("inputaction", this.onInputAction.bind(this));
 	}
 
 	, extend: function (blueprint) {
@@ -78,7 +78,7 @@ export default {
 		this.hoverTarget = target;
 	}
 
-	, onMouseDown: function (e, target) {
+	, onMouseDown: function (e) {
 		if (isMobile && this.groundTargetSpell) {
 			// Allow attacking ground on mobile.
 			this.groundTarget = {
@@ -88,14 +88,10 @@ export default {
 			this.triggerSpell(this.groundTargetSpell);
 			this.groundTargetSpell = null;
 		}
-		// Allow attack with mouse.
 		if (!isMobile && e?.button === 0
 			&& this.target
-			&& (
-				target?.id === this.target.id
-				|| this.hoverTarget?.id === this.target.id
-			)
-		) {
+			&& this.hoverTarget?.id === this.target.id
+		) { // Allow attack with mouse.
 			client.request({
 				cpn: "player"
 				, method: "castSpell"
@@ -108,7 +104,7 @@ export default {
 			return;
 		}
 		// Update current target
-		this.target = target || this.hoverTarget;
+		this.target = this.hoverTarget;
 		// Update target sprite
 		if (this.target) {
 			this.targetSprite.x = this.target.x * scale;
@@ -129,7 +125,7 @@ export default {
 		events.emit("onSetTarget", this.target, null);
 	}
 
-	, onAction: function (action) {
+	, onInputAction: function (action) {
 		if (action === "target") {
 			this.tabTarget();
 			return;

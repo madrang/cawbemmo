@@ -8,7 +8,7 @@ export default {
 	, actions: []
 
 	, init: function (blueprint) {
-		this.hookEvent("onKeyUp", this.onKeyUp.bind(this));
+		this.hookEvent("keyup", this.onKeyUp.bind(this));
 	}
 
 	, hasAction: function (actionId) {

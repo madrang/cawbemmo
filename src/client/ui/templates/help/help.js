@@ -15,7 +15,7 @@ export default {
 	, isFlex: true
 
 	, postRender: function () {
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
+		this.onEvent("keydown", this.onKeyDown.bind(this));
 		this.onEvent("onShowHelp", this.toggle.bind(this));
 
 		this.on(".toslink", "click", this.redirect.bind(this));

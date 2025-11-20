@@ -34,8 +34,8 @@ export default {
 		this.onEvent("onCloseWorkbench", this.hide.bind(this));
 		this.onEvent("onGetItems", this.onGetItems.bind(this));
 
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
-		this.onEvent("onKeyUp", this.onKeyUp.bind(this));
+		this.onEvent("keydown", this.onKeyDown.bind(this));
+		this.onEvent("keyup", this.onKeyUp.bind(this));
 
 		this.on(".btnCraft", "click", this.craft.bind(this));
 		this.on(".btnCancel", "click", this.hide.bind(this));

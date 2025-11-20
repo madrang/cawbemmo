@@ -13,6 +13,17 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 const template = await _.loadHTML("/ui/templates/messages/template.html", { raw: true });
 const tplTab = await _.loadHTML("/ui/templates/messages/tplTab.html", { raw: true });
 
+const eventMap = {
+	onGetMessages: "onGetMessages"
+	, onDoWhisper: "onDoWhisper"
+	, onJoinChannel: "onJoinChannel"
+	, onLeaveChannel: "onLeaveChannel"
+	, onClickFilter: "onClickFilter"
+	, onGetCustomChatChannels: "onGetCustomChatChannels"
+	, keydown: "onKeyDown"
+	, keyup: "onKeyUp"
+};
+
 export default {
 	tpl: template
 
@@ -31,16 +42,9 @@ export default {
 	, lastCustomChannel: null
 
 	, postRender: function () {
-		[
-			"onGetMessages"
-			, "onDoWhisper"
-			, "onJoinChannel"
-			, "onLeaveChannel"
-			, "onClickFilter"
-			, "onGetCustomChatChannels"
-			, "onKeyDown"
-			, "onKeyUp"
-		].forEach((e) => this.onEvent(e, this[e].bind(this)));
+		for (const [key, fn] of Object.entries(eventMap)) {
+			this.onEvent(key, this[fn].bind(this));
+		}
 
 		this.find(".filter:not(.channel)").on("click", this.onClickFilter.bind(this));
 

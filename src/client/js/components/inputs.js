@@ -7,6 +7,19 @@ import input from "/js/input.js";
 
 const MOUSE_PATH_DISTANCE = 3;
 
+const eventMap = {
+	onMoveSpeedChange: "onMoveSpeedChange"
+
+	, onUiHover: "onUiHover"
+
+	, keydown: "onKeyDown"
+
+	, touchstart: "onTouchStart"
+	, touchmove: "onTouchMove"
+	, touchend: "onTouchEnd"
+	, touchcancel: "onTouchCancel"
+};
+
 export default {
 	type: "inputs"
 	// Mouse & touch
@@ -31,20 +44,11 @@ export default {
 			, sheetName: "ui"
 			, cell: 7
 		});
-		[ "onTouchStart"
-			, "onTouchMove"
-			, "onTouchEnd"
-			, "onTouchCancel"
-
-			, "onUiHover"
-
-			, "onKeyDown"
-			, "onMoveSpeedChange"
-		].forEach((e) => {
-			this.hookEvent(e, this[e].bind(this));
-		});
+		for (const [eventName, fn] of Object.entries(eventMap)) {
+			this.hookEvent(eventName, this[fn].bind(this));
+		}
 		this.hookEvent("onUiLeave", this.onUiHover.bind(this, false));
-		this.obj.on("onShake", this.onShake.bind(this));
+		this.obj.on("shake", this.onShake.bind(this));
 	}
 
 	, destroy: function () {
@@ -68,6 +72,62 @@ export default {
 		});
 	}
 
+	, showPath: function (e) {
+		if (e.has("button") && e.button !== 0) {
+			return;
+		}
+		const tileX = Math.floor(e.worldX / scale);
+		const tileY = Math.floor(e.worldY / scale);
+		if (tileX === this.hoverTile.x && tileY === this.hoverTile.y) {
+			return;
+		}
+		events.emit("onChangeHoverTile", tileX, tileY);
+
+		this.hoverTile.x = tileX;
+		this.hoverTile.y = tileY;
+		this.sprite.x = this.hoverTile.x * scale;
+		this.sprite.y = this.hoverTile.y * scale;
+	}
+
+	, update: function () {
+		if (this.obj.dead) {
+			this.sprite.visible = false;
+			return;
+		}
+		this.opacityCounter++;
+		if (this.sprite) {
+			this.sprite.alpha = 0.35 + Math.abs(Math.sin(this.opacityCounter / 20) * 0.35);
+		}
+		this.showPath(input.mouse);
+
+		if (this.moveCd > 0) {
+			this.moveCd--;
+		} else {
+			this.keyMove();
+		}
+		this.onMouseInput(input.mouse);
+	}
+
+	, keyMove: function () {
+		if (input.isUIVisible()) {
+			return;
+		}
+		const delta = {
+			x: input.getAxis("horizontal")
+			, y: input.getAxis("vertical")
+		};
+		if (!delta.x && !delta.y) {
+			return;
+		}
+		const newX = Math.floor(this.obj.pather.pathPos.x + delta.x);
+		const newY = Math.floor(this.obj.pather.pathPos.y + delta.y);
+		if (physics.isTileBlocking(newX, newY)) {
+			this.bump(delta.x, delta.y);
+			return;
+		}
+		this.moveCd = this.moveCdMax;
+		this.obj.pather.add(newX, newY);
+	}
 	, onMouseInput: function (e) {
 		if (!e || !e.buttons.includes(0)) {
 			return;
@@ -75,8 +135,8 @@ export default {
 		if (!this.obj.pather) {
 			return;
 		}
-		let dx = Math.floor(e.x / scale) - this.obj.pather.pathPos.x;
-		let dy = Math.floor(e.y / scale) - this.obj.pather.pathPos.y;
+		let dx = Math.floor(e.worldX / scale) - this.obj.pather.pathPos.x;
+		let dy = Math.floor(e.worldY / scale) - this.obj.pather.pathPos.y;
 		const distance = Math.max(Math.abs(dx), Math.abs(dy));
 		if (distance <= 0 || distance > MOUSE_PATH_DISTANCE) {
 			return;
@@ -102,54 +162,18 @@ export default {
 		this.obj.pather.add(newX, newY);
 	}
 
-	, onUiHover: function (dunno, onUiHover) {
-		if (this.sprite) {
-			this.sprite.visible = !onUiHover;
-		}
-	}
-
-	, showPath: function (e) {
-		if (e.has("button") && e.button !== 0) {
-			return;
-		}
-		const tileX = Math.floor(e.x / scale);
-		const tileY = Math.floor(e.y / scale);
-		if (tileX === this.hoverTile.x && tileY === this.hoverTile.y) {
-			return;
-		}
-		events.emit("onChangeHoverTile", tileX, tileY);
-
-		this.hoverTile.x = Math.floor(e.x / scale);
-		this.hoverTile.y = Math.floor(e.y / scale);
-		this.sprite.x = (this.hoverTile.x * scale);
-		this.sprite.y = (this.hoverTile.y * scale);
-	}
-
-	, update: function () {
-		if (this.obj.dead) {
-			this.sprite.visible = false;
-			return;
-		}
-		this.opacityCounter++;
-		if (this.sprite) {
-			this.sprite.alpha = 0.35 + Math.abs(Math.sin(this.opacityCounter / 20) * 0.35);
-		}
-		this.showPath(input.mouse);
-
-		if (this.moveCd > 0) {
-			this.moveCd--;
-		} else {
-			this.keyMove();
-		}
-		this.onMouseInput(input.mouse);
-	}
-
 	//Changes the moveCdMax variable
 	// moveSpeed is affected when mounting and unmounting
 	// moveSpeed: 0		|	moveCdMax: 8
 	// moveSpeed: 200	|	moveCdMax: 4
 	, onMoveSpeedChange: function (moveSpeed) {
 		this.moveCdMax = Math.ceil(4 + (((200 - moveSpeed) / 200) * 4));
+	}
+
+	, onUiHover: function (dunno, onUiHover) {
+		if (this.sprite) {
+			this.sprite.visible = !onUiHover;
+		}
 	}
 
 	, onKeyDown: function (key) {
@@ -166,27 +190,6 @@ export default {
 		}
 	}
 
-	, keyMove: function () {
-		if (input.isUIVisible()) {
-			return;
-		}
-		const delta = {
-			x: input.getAxis("horizontal")
-			, y: input.getAxis("vertical")
-		};
-		if (!delta.x && !delta.y) {
-			return;
-		}
-		const newX = Math.floor(this.obj.pather.pathPos.x + delta.x);
-		const newY = Math.floor(this.obj.pather.pathPos.y + delta.y);
-		if (physics.isTileBlocking(newX, newY)) {
-			this.bump(delta.x, delta.y);
-			return;
-		}
-		this.moveCd = this.moveCdMax;
-		this.obj.pather.add(newX, newY);
-	}
-
 	, onTouchStart: function (e) {
 		this.lastNode = e;
 		const tileX = Math.floor(e.worldX / scale);
@@ -197,7 +200,6 @@ export default {
 		};
 		events.emit("onChangeHoverTile", tileX, tileY);
 	}
-
 	, onTouchMove: function (e) {
 		const lastNode = this.lastNode;
 		let dx = e.x - lastNode.x;
@@ -226,11 +228,9 @@ export default {
 		}
 		this.obj.pather.add(newX, newY);
 	}
-
 	, onTouchEnd: function (e) {
 		this.lastNode = null;
 	}
-
 	, onTouchCancel: function () {
 		this.lastNode = null;
 	}

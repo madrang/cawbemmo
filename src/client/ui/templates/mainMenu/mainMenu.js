@@ -29,7 +29,7 @@ export default {
 		this.el.find(".btnPatreon").on("click", this.patreon.bind(this));
 
 		this.onEvent("onResize", this.onResize.bind(this));
-		this.onEvent("onAction", this.onAction.bind(this));
+		this.onEvent("inputaction", this.onInputAction.bind(this));
 	}
 
 	, openOptions: function () {
@@ -84,7 +84,7 @@ export default {
 		window.location = window.location;
 	}
 
-	, onAction: function (action) {
+	, onInputAction: function (action) {
 		if (action === "mainmenu") {
 			this.toggle();
 		}

@@ -52,8 +52,8 @@ const renderItemManager = {
 	}
 };
 
-events.on("onKeyDown", renderItemManager.onKeyDown.bind(renderItemManager));
-events.on("onKeyUp", renderItemManager.onKeyUp.bind(renderItemManager));
+events.on("keydown", renderItemManager.onKeyDown.bind(renderItemManager));
+events.on("keyup", renderItemManager.onKeyUp.bind(renderItemManager));
 
 const addTooltipEvents = (el, item) => {
 	const leaveHandler = renderItemManager.onMouseLeave.bind(renderItemManager, el, item);

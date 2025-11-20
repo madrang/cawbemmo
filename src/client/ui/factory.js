@@ -40,8 +40,8 @@ export default {
 
 	, init: function () {
 		events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
-		events.on("onUiKeyDown", this.onUiKeyDown.bind(this));
-		events.on("onUiAction", this.onUiAction.bind(this));
+		events.on("uikeypress", this.onUiKeyPress.bind(this));
+		events.on("uiaction", this.onUiAction.bind(this));
 		events.on("onResize", this.onResize.bind(this));
 		events.on("onDestroyedUi", this.onDestroyedUi.bind(this));
 
@@ -153,7 +153,7 @@ export default {
 		}
 	}
 
-	, onUiKeyDown: function (keyEvent) {
+	, onUiKeyPress: function (keyEvent) {
 		if (["o", "j", "h", "i"].includes(keyEvent.key)) {
 			$(".uiOverlay").hide();
 		}

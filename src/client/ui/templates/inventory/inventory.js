@@ -38,8 +38,8 @@ export default {
 		this.onEvent("onToggleUnusableIndicators", this.onToggleUnusableIndicators.bind(this));
 		this.onToggleUnusableIndicators(config.unusableIndicators);
 
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
-		this.onEvent("onKeyUp", this.onKeyUp.bind(this));
+		this.onEvent("keydown", this.onKeyDown.bind(this));
+		this.onEvent("keyup", this.onKeyUp.bind(this));
 
 		this.find(".grid")
 			.on("mousemove", this.onMouseMove.bind(this))

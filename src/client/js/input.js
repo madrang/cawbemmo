@@ -116,19 +116,22 @@ export default {
 		, y: 0
 	}
 
-	, pressedKeys: {}
-	, pressedMouseButtons: []
-	, pressedGamepadButtons: []
-
-	, enabled: true
+	, pressedKeys: {} // Obj for Named keys
+	, pressedMouseButtons: [] // Sparse array for button indexes.
+	, pressedGamepadButtons: [] // Sparse array for button indexes.
 
 	, blacklistedKeys: []
 	, whitelistedKeys: []
 
-	, gamepads: (typeof navigator.getGamepads === "function" ? navigator.getGamepads() : [])
+	, gamepads: []
 	, lastGamepadActionsUpdate: 0
 
-	, init: function () {
+	, init: function (container) {
+		this.uiContainer = document.querySelector(container);
+		if (!this.uiContainer) {
+			throw new Error("ui-container not found!");
+		}
+
 		//TODO Load user configs.
 		_.assign(this.axes, {
 			gamepad: GAMEPAD_AXES_DEFAULT
@@ -139,21 +142,24 @@ export default {
 			, keyboard: KEYBOARD_KEYS_DEFAULT
 		});
 
-		$(window).on("keydown", this.events.keyboard.keyDown.bind(this));
-		$(window).on("keyup", this.events.keyboard.keyUp.bind(this));
-		events.on("onSceneMove", this.events.mouse.sceneMove.bind(this));
+		if (typeof navigator.getGamepads === "function") {
+			this.gamepads = navigator.getGamepads();
+		}
 
-		$(".ui-container")
-			.on("mousedown", this.events.mouse.mouseDown.bind(this))
-			.on("mouseup", this.events.mouse.mouseUp.bind(this))
-			.on("mousemove", this.events.mouse.mouseMove.bind(this))
-			.on("touchstart", this.events.touch.touchStart.bind(this))
-			.on("touchmove", this.events.touch.touchMove.bind(this))
-			.on("touchend", this.events.touch.touchEnd.bind(this))
-			.on("touchcancel", this.events.touch.touchCancel.bind(this));
+		window.addEventListener("gamepadconnected", this.events.gamepad.connected.bind(this));
+		window.addEventListener("gamepaddisconnected", this.events.gamepad.disconnected.bind(this));
+		window.addEventListener("keydown", this.events.keyboard.down.bind(this));
+		window.addEventListener("keyup", this.events.keyboard.up.bind(this));
 
-		window.addEventListener("gamepadconnected", this.events.gamepad.gamepadconnected.bind(this));
-		window.addEventListener("gamepaddisconnected", this.events.gamepad.gamepaddisconnected.bind(this));
+		this.uiContainer.addEventListener("mousedown", this.events.mouse.down.bind(this));
+		this.uiContainer.addEventListener("mouseup", this.events.mouse.up.bind(this));
+		this.uiContainer.addEventListener("mousemove", this.events.mouse.move.bind(this));
+		this.uiContainer.addEventListener("touchstart", this.events.touch.start.bind(this));
+		this.uiContainer.addEventListener("touchmove", this.events.touch.move.bind(this));
+		this.uiContainer.addEventListener("touchend", this.events.touch.end.bind(this));
+		this.uiContainer.addEventListener("touchcancel", this.events.touch.cancel.bind(this));
+
+		events.on("onSceneMove", this.events.mouse.onSceneMove.bind(this));
 
 		if (isMobile) {
 			(async () => {
@@ -175,19 +181,27 @@ export default {
 				, gamepad.axes.length
 			);
 		}
+	}
+
+	, update: function () {
 		if (typeof navigator.getGamepads === "function") {
-			setInterval(this.updateGamepads.bind(this), GAMEPAD_UPDATE_DELAY);
+			this.updateGamepads();
 		}
 	}
 
-	, isUIVisible: function (timestamp) {
-		if (typeof timestamp !== "number") {
-			timestamp = performance.now();
-		}
+	, isUIVisible: function () {
+		const timestamp = performance.now();
 		if (this.isUIVisible.lastUpdate > timestamp - 500) {
 			return this.isUIVisible.lastValue;
 		}
-		const isVisible = Boolean($(".modal:visible, .uiOverlay:visible").length);
+		const uiElems = this.uiContainer.querySelectorAll(".modal, .uiOverlay");
+		let isVisible = false;
+		for (const element of uiElems.values()) {
+			if (element.offsetHeight > 0 && element.offsetWidth > 0) {
+				isVisible = true;
+				break;
+			}
+		}
 		this.isUIVisible.lastUpdate = timestamp;
 		this.isUIVisible.lastValue = isVisible;
 		return isVisible;
@@ -247,11 +261,9 @@ export default {
 					if (this.pressedGamepadButtons[button]) {
 						this.pressedGamepadButtons[button] = 2;
 					} else {
+						this.pressedGamepadButtons[button] = 1;
 						const addedActions = this.getMapping("gamepad", button);
-						if (enableInput) {
-							this.pressedGamepadButtons[button] = 1;
-						} else {
-							// Certain actions should always register even if something else is the target.
+						if (!enableInput) { // Certain actions should always register even if something else is the target.
 							addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
 						}
 						for (const action of addedActions) {
@@ -260,9 +272,9 @@ export default {
 							} else {
 								this.actions[action] = 1;
 								const actionEvent = { action, consumed: false };
-								events.emit("onUiAction", actionEvent);
+								events.emit("uiaction", actionEvent);
 								if (!actionEvent.consumed) {
-									events.emit("onAction", action);
+									events.emit("inputaction", action);
 								}
 							}
 						}
@@ -300,14 +312,23 @@ export default {
 			, timeout: 1000
 		});
 		shaker.start();
-		window.addEventListener("shake", this.events.mobile.onShake.bind(this), false);
+		window.addEventListener("shake", this.events.mobile.shake.bind(this), false);
 	}
 
 	, resetKeys: function () {
-		for (let k in this.pressedKeys) {
-			events.emit("onKeyUp", k);
+		for (const key in this.pressedKeys) {
+			const removedActions = this.getMapping("keyboard", key);
+			for (const action of removedActions) {
+				delete this.actions[action];
+			}
+			events.emit("keyup", key);
 		}
 		this.pressedKeys = {};
+
+		for (const i in this.pressedMouseButtons) {
+			events.emit("mouseup", i);
+		}
+		this.pressedMouseButtons = [];
 	}
 
 	, convertKeyCode: function (charCode) {
@@ -347,7 +368,7 @@ export default {
 		};
 		const actions = [];
 		let done = false;
-		for (const actionName in this.actions) {
+		for (const actionName in this.actions) { // Check already active actions first.
 			if (!this.actions.hasOwnProperty(actionName)) {
 				continue;
 			}
@@ -441,7 +462,7 @@ export default {
 		return false;
 	}
 
-	, isGamepadPressed: function (button) {
+	, isGamepadPressed: function (button, noConsume) {
 		const down = this.pressedGamepadButtons[button];
 		if (down) {
 			if (noConsume) {
@@ -495,19 +516,14 @@ export default {
 	, isKeyAllowed: function (key) {
 		const result = (key.length > 1
 			|| this.whitelistedKeys.includes(key)
-			|| (!this.blacklistedKeys.includes(key)
-				&& !this.blacklistedKeys.includes("*")
-			)
+			|| (!this.blacklistedKeys.includes(key) && !this.blacklistedKeys.includes("*"))
 		);
 		return result;
 	}
 
 	, events: {
 		keyboard: {
-			keyDown: function (e) {
-				if (!this.enabled) {
-					return;
-				}
+			down: function (e) {
 				const code = this.numericalKeyCodeMappings[e.code] || e.which;
 				const key = this.convertKeyCode(code);
 				// Certain keys should always register even if they don't get emitted
@@ -543,9 +559,9 @@ export default {
 					} else {
 						this.actions[action] = 1;
 						const actionEvent = { action, consumed: false };
-						events.emit("onUiAction", actionEvent);
+						events.emit("uiaction", actionEvent);
 						if (!actionEvent.consumed) {
-							events.emit("onAction", action);
+							events.emit("inputaction", action);
 						}
 					}
 				}
@@ -554,9 +570,9 @@ export default {
 				} else if (isBody || isModifier) {
 					this.pressedKeys[key] = 1;
 					const keyEvent = { key, consumed: false };
-					events.emit("onUiKeyDown", keyEvent);
+					events.emit("uikeypress", keyEvent);
 					if (!keyEvent.consumed) {
-						events.emit("onKeyDown", key);
+						events.emit("keydown", key);
 					}
 				}
 				if (key === "backspace") {
@@ -565,10 +581,7 @@ export default {
 					events.emit("onToggleFullscreen");
 				}
 			}
-			, keyUp: function (e) {
-				if (!this.enabled) {
-					return;
-				}
+			, up: function (e) {
 				const code = this.numericalKeyCodeMappings[e.code] || e.which;
 				const key = this.convertKeyCode(code);
 				if (key in this.pressedKeys) {
@@ -577,117 +590,136 @@ export default {
 					for (const action of removedActions) {
 						delete this.actions[action];
 					}
-					events.emit("onKeyUp", key);
+					events.emit("keyup", key);
 				}
 			}
 		}
 
 		, mouse: {
-			mouseDown: function (e) {
-				const el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
+			down: function (e) {
+				this.mouse.x = e.clientX;
+				this.mouse.y = e.clientY;
+				this.mouse.worldX = e.clientX + renderer.pos.x;
+				this.mouse.worldY = e.clientY + renderer.pos.y;
+
+				this.pressedMouseButtons[e.button] = 1;
+				this.mouse.button = e.button;
+				this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
+
+				if (e.target !== this.uiContainer
+					|| this.uiContainer.classList.contains("blocking")
+				) {
 					return;
 				}
-				this.mouse.button = e.button;
-				this.mouse.event = e;
-				this.pressedMouseButtons[e.button] = 1;
-				this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
-				//This is needed for casting targetted spells on Mobile...it's hacky.
-				this.mouse.worldX = e.pageX + renderer.pos.x;
-				this.mouse.worldY = e.pageY + renderer.pos.y;
-				events.emit("mouseDown", this.mouse);
+				const mouseEvent = _.assign({
+					event: e
+				}, this.mouse);
+				events.emit("mousedown", mouseEvent);
 			}
-			, mouseUp: function (e) {
-				const el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
+			, up: function (e) {
+				this.mouse.x = e.clientX;
+				this.mouse.y = e.clientY;
+				this.mouse.worldX = e.clientX + renderer.pos.x;
+				this.mouse.worldY = e.clientY + renderer.pos.y;
+
+				if (!this.pressedMouseButtons[e.button]) {
+					delete this.mouse.button;
 					return;
 				}
 				delete this.pressedMouseButtons[e.button];
-				this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
 				this.mouse.button = e.button;
-				events.emit("mouseUp", this.mouse);
+				this.mouse.buttons = Object.keys(this.pressedMouseButtons).map((n) => Number.parseInt(n));
+
+				if (e.target !== this.uiContainer
+					|| this.uiContainer.classList.contains("blocking")
+				) {
+					return;
+				}
+				const mouseEvent = _.assign({
+					event: e
+				}, this.mouse);
+				events.emit("mouseup", mouseEvent);
 			}
-			, mouseMove: function (e) {
-				if (!e) {
-					return;
-				}
-				const el = $(e.target);
-				if (!el.hasClass("ui-container") || el.hasClass("blocking")) {
-					return;
-				}
-				this.mouse.x = e.offsetX + renderer.pos.x;
-				this.mouse.y = e.offsetY + renderer.pos.y;
+			, move: function (e) {
+				this.mouse.x = e.clientX;
+				this.mouse.y = e.clientY;
+				this.mouse.worldX = e.clientX + renderer.pos.x;
+				this.mouse.worldY = e.clientY + renderer.pos.y;
 				if (this.mouse.has("button") && !this.mouse.buttons.includes(this.mouse.button)) {
 					delete this.mouse.button;
 				}
-				events.emit("mouseMove", this.mouse);
-			}
-			, sceneMove: function (e) {
-				if (e) {
-					this.mouse.x += e.x;
-					this.mouse.y += e.y;
+
+				if (e.target !== this.uiContainer
+					|| this.uiContainer.classList.contains("blocking")
+				) {
+					return;
 				}
-				events.emit("mouseMove", this.mouse);
+				const mouseEvent = _.assign({
+					event: e
+				}, this.mouse);
+				events.emit("mousemove", mouseEvent);
+			}
+			, onSceneMove: function (e) {
+				this.mouse.worldX += e.x;
+				this.mouse.worldY += e.y;
+
+				const mouseEvent = _.assign({
+					event: e
+				}, this.mouse);
+				events.emit("mousemove", mouseEvent);
 			}
 		}
 
 		, touch: {
-			touchStart: function (e) {
-				let el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
+			start: function (e) {
+				const touch = e.touches[0];
+				this.mouse.x = touch.clientX;
+				this.mouse.y = touch.clientY;
+
+				if (e.target !== this.uiContainer
+					|| this.uiContainer.classList.contains("blocking")
+				) {
 					return;
 				}
-
-				let touch = e.touches[0];
-				events.emit("onTouchStart", {
+				events.emit("touchstart", {
 					x: touch.clientX
 					, y: touch.clientY
 					, worldX: touch.clientX + renderer.pos.x
 					, worldY: touch.clientY + renderer.pos.y
 				});
 			}
+			, move: function (e) {
+				const touch = e.touches[0];
+				this.mouse.x = touch.clientX;
+				this.mouse.y = touch.clientY;
 
-			, touchMove: function (e) {
-				let el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
+				if (e.target !== this.uiContainer
+					|| this.uiContainer.classList.contains("blocking")
+				) {
 					return;
 				}
-
-				let touch = e.touches[0];
-				events.emit("onTouchMove", {
+				events.emit("touchmove", {
 					x: touch.clientX
 					, y: touch.clientY
 					, touches: e.touches.length
 				});
 			}
-
-			, touchEnd: function (e) {
-				let el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
-					return;
-				}
-
-				events.emit("onTouchEnd");
+			, end: function (e) {
+				events.emit("touchend", e);
 			}
-
-			, touchCancel: function (e) {
-				let el = $(e.target);
-				if ((!el.hasClass("ui-container")) || (el.hasClass("blocking"))) {
-					return;
-				}
-
-				events.emit("onTouchCancel");
+			, cancel: function (e) {
+				events.emit("touchcancel", e);
 			}
 		}
 
 		, mobile: {
-			onShake: function (e) {
-				events.emit("onShake", e);
+			shake: function (e) {
+				events.emit("shake", e);
 			}
 		}
 
 		, gamepad: {
-			gamepadconnected: function (e) {
+			connected: function (e) {
 				_.log.input.gamepad.debug("Gamepad connected %o", e);
 				const gamepad = e.gamepad;
 				if (!gamepad) {
@@ -702,7 +734,7 @@ export default {
 				);
 				this.gamepads[gamepad.index] = gamepad;
 			}
-			, gamepaddisconnected: function (e) {
+			, disconnected: function (e) {
 				_.log.input.gamepad.debug("Gamepad disconnected %o", e);
 				const gamepad = e.gamepad;
 				if (!gamepad) {

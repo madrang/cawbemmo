@@ -83,6 +83,15 @@ const getStatsAsStrings = (playerStats) => ({
 	}
 });
 
+const eventMap = {
+	onGetStats: "onGetStats"
+	, onGetItems: "onGetItems"
+	, onInspectTarget: "onInspectTarget"
+	, onShowEquipment: "toggle"
+	, keydown: "onKeyDown"
+	, keyup: "onKeyUp"
+};
+
 export default {
 	centered: true
 	, modal: true
@@ -101,17 +110,10 @@ export default {
 		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
 	}
 	, postRender: function () {
-		this.onEvent("onGetStats", this.onGetStats.bind(this));
-		this.onEvent("onGetItems", this.onGetItems.bind(this));
-
-		this.onEvent("onInspectTarget", this.onInspectTarget.bind(this));
-
-		this.onEvent("onShowEquipment", this.toggle.bind(this));
-
+		for (const [key, fn] of Object.entries(eventMap)) {
+			this.onEvent(key, this[fn].bind(this));
+		}
 		this.find(".tab").on("click", this.onTabClick.bind(this));
-
-		this.onEvent("onKeyDown", this.onKeyDown.bind(this));
-		this.onEvent("onKeyUp", this.onKeyUp.bind(this));
 	}
 
 	, beforeHide: function () {
