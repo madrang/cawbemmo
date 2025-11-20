@@ -20,7 +20,7 @@ export default {
 		this.onEvent("mouseDown", this.onMouseDown.bind(this));
 		this.onEvent("onUiKeyDown", this.onUiKeyDown.bind(this));
 
-		$(".ui-container").on("mouseup", this.onMouseDown.bind(this));
+		$("#ui-container").on("mouseup", this.onMouseDown.bind(this));
 	}
 
 	, onContextMenu: function (config, e) {

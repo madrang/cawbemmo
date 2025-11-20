@@ -31,7 +31,7 @@ const main = {
 
 	, init: async function () {
 		if (isMobile) {
-			$(".ui-container").addClass("mobile");
+			$("#ui-container").addClass("mobile");
 
 			//If we're on an ios device, we need to load longPress since that polyfills contextmenu for us
 			if (_.isIos()) {
@@ -40,7 +40,7 @@ const main = {
 		}
 
 		if (window.location.search.includes("hideMonetization")) {
-			$(".ui-container").addClass("hideMonetization");
+			$("#ui-container").addClass("hideMonetization");
 		}
 
 		await client.init();
@@ -51,7 +51,7 @@ const main = {
 			type: "loader"
 			, path: "/ui/templates/loader"
 		});
-		$(".loader-container").remove();
+		$("#loader-container").remove();
 
 		await Promise.all([
 			resources.init()

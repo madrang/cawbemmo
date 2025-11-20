@@ -41,7 +41,7 @@ export default {
 			this.onEvent(eventName, this.events[eventName].bind(this));
 		}
 		this.el.on("click", this.toggleMap.bind(this));
-		this.uiContainer = $(".ui-container");
+		this.uiContainer = $("#ui-container");
 		this.el.addClass("uiMapMini");
 		this.el.css("display", "block");
 	}

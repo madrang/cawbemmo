@@ -113,7 +113,7 @@ export default {
 	, onToggleQualityIndicators: function (state) {
 		const className = `quality-${state.toLowerCase()}`;
 
-		$(".ui-container")
+		$("#ui-container")
 			.removeClass("quality-off quality-bottom quality-border quality-background")
 			.addClass(className);
 	}
@@ -121,7 +121,7 @@ export default {
 	, onToggleUnusableIndicators: function (state) {
 		const className = `unusable-${state.toLowerCase()}`;
 
-		$(".ui-container")
+		$("#ui-container")
 			.removeClass("unusable-off unusable-border unusable-top unusable-background")
 			.addClass(className);
 	}

@@ -15,7 +15,7 @@ export default {
 			this.beforeRender();
 		}
 
-		let container = ".ui-container";
+		let container = "#ui-container";
 		if (this.container) {
 			container += " > " + this.container;
 		}

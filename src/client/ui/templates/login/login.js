@@ -44,7 +44,7 @@ export default {
 		$(`.selectLanguage option[value=""]`).remove();
 
 		this.find(".extra, .version")
-			.appendTo($("<div class=\"uiLoginExtra\"></div>").appendTo(".ui-container"));
+			.appendTo($("<div class=\"uiLoginExtra\"></div>").appendTo("#ui-container"));
 
 		$(".uiLoginExtra").find(".btn").on("click", this.buttonHandler.bind(this));
 
