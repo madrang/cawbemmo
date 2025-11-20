@@ -52,7 +52,6 @@ const main = {
 			, path: "/ui/templates/loader"
 		});
 		$(".loader-container").remove();
-		this.loader.init();
 
 		await Promise.all([
 			resources.init()
