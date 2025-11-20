@@ -1,7 +1,6 @@
 import events from "/js/system/events.js";
 import client from "/js/system/client.js";
 import locale from "/js/locale/index.js";
-import input from "/ui/templates/passives/input.js";
 
 import styles from "./styles.css" with { type: "css" };
 if (!document.adoptedStyleSheets.includes(styles)) {
@@ -29,8 +28,6 @@ export default {
 	, size: {}
 	, ctx: null
 
-	, mouse: { x: 0, y: 0 }
-
 	, currentZoom: 1
 	, pos: { x: 0, y: 0 }
 	, oldPos: null
@@ -50,9 +47,7 @@ export default {
 		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
 	}
 	, postRender: async function () {
-		input.init(this.el, zoom);
-
-		await _.asyncDelay(2500); // Fails if runs too early...
+		await _.asyncDelay(3000); // Fails if runs too early...
 		const temp = await performAction({
 			cpn: "passives", method: "getTree"
 			, data: {}
@@ -87,11 +82,7 @@ export default {
 
 		this.ctx.lineWidth = constants.lineWidth;
 
-		$(this.canvas).on("contextmenu"
-			, () => {
-				return false;
-			}
-		);
+		$(this.canvas).on("contextmenu", () => false);
 		this.find(".btnReset").on("click", this.events.onReset.bind(this));
 
 		this.onEvent("onKeyDown", this.events.onKeyDown.bind(this));
@@ -287,13 +278,9 @@ export default {
 			}
 		}
 		, onMouseMove: function (pos) {
-			if (this.mouse.x === pos.x && this.mouse.y === pos.y) {
-				return;
-			}
-			this.mouse = { x: pos.x, y: pos.y };
 			const cell = {
-				x: Math.floor((this.pos.x + this.mouse.x) / constants.gridSize)
-				, y: Math.floor((this.pos.y + this.mouse.y) / constants.gridSize)
+				x: Math.floor((this.pos.x + pos.x) / constants.gridSize)
+				, y: Math.floor((this.pos.y + pos.y) / constants.gridSize)
 			};
 			const node = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
 			if (node === this.hoverNode) {
@@ -396,8 +383,7 @@ export default {
 			if (!this.oldPos) {
 				this.oldPos = { x: this.pos.x, y: this.pos.y };
 			}
-			let zoomPanMultiplier = this.currentZoom;
-			let scrollSpeed = constants.scrollSpeed / zoomPanMultiplier;
+			let scrollSpeed = constants.scrollSpeed / this.currentZoom;
 
 			const rawX = e.raw.clientX * zoom;
 			const rawY = e.raw.clientY * zoom;

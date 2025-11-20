@@ -156,17 +156,15 @@ export default {
 			if (crushing) {
 				el.find(".infoLevel").addClass("high-level");
 			}
-
 			el.show();
 		}
-
 		if (e && e.button === 2 && this.target) {
 			this.onContextMenu(e);
 		}
 	}
 
 	, buildBar: function (barIndex, value, max) {
-		let box = this.el.find(".statBox").eq(barIndex);
+		const box = this.el.find(".statBox").eq(barIndex);
 
 		let w = Math.floor((value / max) * 100);
 		box.find("[class^=\"stat\"]").css("width", w + "%");

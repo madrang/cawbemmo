@@ -251,7 +251,7 @@ export default {
 						if (enableInput) {
 							this.pressedGamepadButtons[button] = 1;
 						} else {
-							// Certain actions should always register even if the something else is the target.
+							// Certain actions should always register even if something else is the target.
 							addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
 						}
 						for (const action of addedActions) {
@@ -435,7 +435,7 @@ export default {
 			if (noConsume) {
 				return true;
 			}
-			this.pressedMouseButtons[key] = 2;
+			this.pressedMouseButtons[button] = 2;
 			return (down === 1);
 		}
 		return false;

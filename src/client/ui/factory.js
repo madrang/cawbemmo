@@ -154,7 +154,7 @@ export default {
 	}
 
 	, onUiKeyDown: function (keyEvent) {
-		if (["o", "j", "h", "i"].indexOf(keyEvent.key) > -1) {
+		if (["o", "j", "h", "i"].includes(keyEvent.key)) {
 			$(".uiOverlay").hide();
 		}
 	}
