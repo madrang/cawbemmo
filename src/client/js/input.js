@@ -117,8 +117,8 @@ export default {
 	}
 
 	, pressedKeys: {} // Obj for Named keys
-	, pressedMouseButtons: [] // Sparse array for button indexes.
-	, pressedGamepadButtons: [] // Sparse array for button indexes.
+	, pressedMouseButtons: [] // Sparse array for mouse buttons indexes.
+	, pressedGamepadButtons: [] // Sparse array for gamepad buttons indexes.
 
 	, blacklistedKeys: []
 	, whitelistedKeys: []
@@ -209,23 +209,13 @@ export default {
 
 	, updateGamepads: function () {
 		let lastUpdated = Number.POSITIVE_INFINITY;
-		// Check all connected gamepads for the most stale timestamp (smaller is older).
-		for (const gamepad of this.gamepads) {
+		for (const gamepad of this.gamepads) { // Check all connected gamepads for the most stale timestamp (smaller is older).
 			if (!gamepad) {
 				continue;
 			}
 			if (gamepad.timestamp < lastUpdated) {
 				lastUpdated = gamepad.timestamp;
 			}
-		}
-		const timestamp = performance.now();
-		if (lastUpdated === Number.POSITIVE_INFINITY
-			// When no gamepads connected, check every two seconds.
-			? Math.floor(timestamp / 1000) % 2 === 0
-			// With gamepad connected, poll the data after configured delay.
-			: lastUpdated < timestamp - GAMEPAD_UPDATE_DELAY
-		) {
-			this.gamepads = navigator.getGamepads();
 		}
 		if (lastUpdated === Number.POSITIVE_INFINITY) {
 			if (this.pressedGamepadButtons.length) {
@@ -240,51 +230,69 @@ export default {
 			}
 			return;
 		}
-		if (this.lastGamepadActionsUpdate > timestamp - GAMEPAD_UPDATE_DELAY) {
-			// Was updated recently.
-			return;
+		const timestamp = performance.now();
+		if (lastUpdated === Number.POSITIVE_INFINITY
+			? timestamp - this.lastGamepadActionsUpdate < 2000 // When no gamepads connected, check every two seconds.
+			: timestamp - lastUpdated < GAMEPAD_UPDATE_DELAY // With gamepad connected, poll the data after configured delay.
+		) {
+			return; // Was updated recently.
 		}
+		this.gamepads = navigator.getGamepads();
 		this.lastGamepadActionsUpdate = timestamp;
-		//TODO when UI is visible, change action map to allow using the UI with a gamepad.
-		const enableInput = !this.isUIVisible();
+
+		const buttons = [];
 		for (const gamepad of this.gamepads) {
 			if (!gamepad) {
 				continue;
 			}
 			for (const button in gamepad.buttons) {
-				const gButtonInfo = gamepad.buttons[button];
-				if (!gButtonInfo) {
-					delete this.pressedGamepadButtons[button];
-					continue;
+				const newButtonInfo = gamepad.buttons[button];
+				const oldButtonInfo = buttons[button];
+				if (!oldButtonInfo
+					|| ((newButtonInfo.pressed || newButtonInfo.touched) && !oldButtonInfo.pressed && !oldButtonInfo.touched)
+					|| newButtonInfo.value > oldButtonInfo.value
+				) {
+					buttons[button] = newButtonInfo;
 				}
-				if (gButtonInfo.pressed || gButtonInfo.touched || gButtonInfo.value > 0.1) {
-					if (this.pressedGamepadButtons[button]) {
-						this.pressedGamepadButtons[button] = 2;
-					} else {
-						this.pressedGamepadButtons[button] = 1;
-						const addedActions = this.getMapping("gamepad", button);
-						if (!enableInput) { // Certain actions should always register even if something else is the target.
-							addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
-						}
-						for (const action of addedActions) {
-							if (this.actions[action]) {
-								this.actions[action] = 2;
-							} else {
-								this.actions[action] = 1;
-								const actionEvent = { action, consumed: false };
-								events.emit("uiaction", actionEvent);
-								if (!actionEvent.consumed) {
-									events.emit("inputaction", action);
-								}
+			}
+		}
+
+		//TODO when UI is visible, change action map to allow using the UI with a gamepad.
+		const enableInput = !this.isUIVisible();
+
+		for (const button in buttons) {
+			const gButtonInfo = buttons[button];
+			if (!gButtonInfo) {
+				delete this.pressedGamepadButtons[button];
+				continue;
+			}
+			if (gButtonInfo.pressed || gButtonInfo.touched || gButtonInfo.value > 0.1) {
+				if (this.pressedGamepadButtons[button]) {
+					this.pressedGamepadButtons[button] = 2;
+				} else {
+					this.pressedGamepadButtons[button] = 1;
+					const addedActions = this.getMapping("gamepad", button);
+					if (!enableInput) { // Certain actions should always register even if something else is the target.
+						addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
+					}
+					for (const action of addedActions) {
+						if (this.actions[action]) {
+							this.actions[action] = 2;
+						} else {
+							this.actions[action] = 1;
+							const actionEvent = { action, consumed: false };
+							events.emit("uiaction", actionEvent);
+							if (!actionEvent.consumed) {
+								events.emit("inputaction", action);
 							}
 						}
 					}
-				} else if (button in this.pressedGamepadButtons) {
-					delete this.pressedGamepadButtons[button];
-					const removedActions = this.getMapping("gamepad", button);
-					for (const action of removedActions) {
-						delete this.actions[action];
-					}
+				}
+			} else if (button in this.pressedGamepadButtons) {
+				delete this.pressedGamepadButtons[button];
+				const removedActions = this.getMapping("gamepad", button);
+				for (const action of removedActions) {
+					delete this.actions[action];
 				}
 			}
 		}
