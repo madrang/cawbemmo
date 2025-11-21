@@ -26,6 +26,13 @@ const KEYBOARD_MAPPINGS = {
 	, 91: "ctrl"
 	, 93: "ctrl"
 };
+const KEYBOARD_NAMED_MAPPINGS = {
+	Digit1: 49
+	, Digit2: 50
+	, Digit3: 51
+	, Digit4: 52
+	, Digit5: 53
+};
 const KEYBOARD_AXES_DEFAULT = {
 	horizontal: {
 		negative: ["left", "a", "q", "z"]
@@ -102,13 +109,8 @@ export default {
 	, mappings: {}
 	, actions: {}
 
-	, numericalKeyCodeMappings: {
-		Digit1: 49
-		, Digit2: 50
-		, Digit3: 51
-		, Digit4: 52
-		, Digit5: 53
-	}
+	, namedKeyCodeMappings: _.assign({}, KEYBOARD_NAMED_MAPPINGS)
+	, keyCodeMappings: _.assign({}, KEYBOARD_MAPPINGS)
 
 	, mouse: {
 		buttons: []
@@ -340,8 +342,11 @@ export default {
 	}
 
 	, convertKeyCode: function (charCode) {
-		if (charCode in KEYBOARD_MAPPINGS) {
-			return KEYBOARD_MAPPINGS[charCode];
+		if (typeof charCode === "object") {
+			charCode = this.namedKeyCodeMappings[charCode.code] || charCode.which;
+		}
+		if (charCode in this.keyCodeMappings) {
+			return this.keyCodeMappings[charCode];
 		}
 		if (charCode >= 97) {
 			return (charCode - 96).toString();
@@ -532,8 +537,7 @@ export default {
 	, events: {
 		keyboard: {
 			down: function (e) {
-				const code = this.numericalKeyCodeMappings[e.code] || e.which;
-				const key = this.convertKeyCode(code);
+				const key = this.convertKeyCode(e);
 				// Certain keys should always register even if they don't get emitted
 				let isModifier = false;
 				if (this.mappings.keyboard) {
@@ -555,6 +559,7 @@ export default {
 					e.preventDefault();
 				}
 				if (!this.isKeyAllowed(key)) {
+					_.log.input.keyboard.debug("Not allowed key %s press was ignored.", key);
 					return;
 				}
 				const addedActions = this.getMapping("keyboard", key);
@@ -577,21 +582,19 @@ export default {
 					this.pressedKeys[key] = 2;
 				} else if (isBody || isModifier) {
 					this.pressedKeys[key] = 1;
+					_.log.input.keyboard.trace("Key %s press, event: %o actions: %o", key, e, addedActions);
 					const keyEvent = { key, consumed: false };
 					events.emit("uikeypress", keyEvent);
 					if (!keyEvent.consumed) {
 						events.emit("keydown", key);
 					}
 				}
-				if (key === "backspace") {
-					return false;
-				} else if (e.key === "F11") {
+				if (e.key === "F11") {
 					events.emit("onToggleFullscreen");
 				}
 			}
 			, up: function (e) {
-				const code = this.numericalKeyCodeMappings[e.code] || e.which;
-				const key = this.convertKeyCode(code);
+				const key = this.convertKeyCode(e);
 				if (key in this.pressedKeys) {
 					delete this.pressedKeys[key];
 					const removedActions = this.getMapping("keyboard", key);
