@@ -85,7 +85,7 @@ export default {
 	}
 
 	, onInputAction: function (action) {
-		if (action === "mainmenu") {
+		if (action.name === "mainmenu") {
 			this.toggle();
 		}
 	}

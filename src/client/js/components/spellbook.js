@@ -126,11 +126,11 @@ export default {
 	}
 
 	, onInputAction: function (action) {
-		if (action === "target") {
+		if (action.name === "target") {
 			this.tabTarget();
 			return;
 		}
-		if (action.startsWith(ACTION_HEADER)) {
+		if (action.name.startsWith(ACTION_HEADER)) {
 			this.triggerSpell(action.substring(ACTION_HEADER.length));
 		}
 	}

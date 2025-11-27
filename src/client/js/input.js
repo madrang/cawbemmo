@@ -272,6 +272,7 @@ export default {
 		const enableInput = !this.isUIVisible();
 
 		let updated = false;
+		const targetName = this.getTartgetName(document.activeElement);
 		for (const button in buttons) {
 			const gButtonInfo = buttons[button];
 			if (!gButtonInfo) {
@@ -294,12 +295,17 @@ export default {
 							this.actions[action] = INPUT_STATE.CONSUMED;
 						} else {
 							this.actions[action] = INPUT_STATE.TRIGGERED;
-							const actionEvent = { action, consumed: false };
+
+							const actionEvent = {
+								name: action
+								, consumed: false
+								, target: targetName
+							};
 							events.emit("uiaction", actionEvent);
 							if (actionEvent.consumed) {
 								this.actions[action] = INPUT_STATE.CONSUMED;
 							} else {
-								events.emit("inputaction", action);
+								events.emit("inputaction", actionEvent);
 							}
 						}
 					}
@@ -322,7 +328,7 @@ export default {
 				}
 				, buttons
 
-				, target: this.getTartgetName(document.activeElement)
+				, target: targetName
 			};
 			events.emit("inputchanged", gamepadEvent);
 		}
