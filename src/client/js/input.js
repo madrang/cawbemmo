@@ -5,8 +5,9 @@ export class GamepadInputEvent extends Event {
 	#axes;
 	#buttons;
 	#targetName;
+	#repeat;
 
-	constructor (gamepad) {
+	constructor (gamepad, options = {}) {
 		super("gamepad", {
 			bubbles: true // Allows to bubble up the DOM tree
 			, cancelable: true // Allows to be canceled
@@ -15,6 +16,7 @@ export class GamepadInputEvent extends Event {
 		this.#axes = _.assign({}, gamepad.axes);
 		this.#buttons = _.assign([], gamepad.buttons);
 		this.#targetName = gamepad.target;
+		this.#repeat = Boolean(options.repeat);
 	}
 
 	get axes () {
@@ -23,6 +25,10 @@ export class GamepadInputEvent extends Event {
 
 	get buttons () {
 		return this.#buttons;
+	}
+
+	get repeat () {
+		return this.#repeat;
 	}
 
 	get targetName () {
@@ -92,6 +98,7 @@ const KEYBOARD_KEYS_DEFAULT = {
 };
 const KEYBOARD_PREVENT_DEFAULT_KEYCODES = [ 8, 9, 122 ];
 const GAMEPAD_UPDATE_DELAY = 33;
+const GAMEPAD_REPEAT_DELAY = 44;
 const GAMEPAD_AXES_DEFAULT = {
 	horizontal: 0
 	, vertical: 1
@@ -162,7 +169,8 @@ export default {
 	, pressedMouseButtons: [] // Sparse array for mouse buttons indexes.
 
 	, _gamepads: []
-	, lastGamepadActionsUpdate: 0
+	, lastGamepad_update: 0
+	, lastGamepad_change: 0
 	, gamepad: {
 		type: "gamepad"
 		, axes: {
@@ -280,13 +288,13 @@ export default {
 		}
 		const timestamp = performance.now();
 		if (lastUpdated === Number.POSITIVE_INFINITY
-			? timestamp - this.lastGamepadActionsUpdate < 2000 // When no gamepads connected, check every two seconds.
+			? timestamp - this.lastGamepad_update < 2000 // When no gamepads connected, check every two seconds.
 			: timestamp - lastUpdated < GAMEPAD_UPDATE_DELAY // With gamepad connected, poll the data after configured delay.
 		) {
 			return; // Was updated recently.
 		}
 		this._gamepads = navigator.getGamepads();
-		this.lastGamepadActionsUpdate = timestamp;
+		this.lastGamepad_update = timestamp;
 
 		const buttons = [];
 		for (const gamepad of this._gamepads) {
@@ -313,6 +321,7 @@ export default {
 		const enableInput = !this.isUIVisible();
 
 		let updated = false;
+		let repeat = false;
 		const targetName = this.getTartgetName(document.activeElement);
 		for (const button in buttons) {
 			const gButtonInfo = buttons[button];
@@ -323,6 +332,7 @@ export default {
 			if (gButtonInfo.pressed || gButtonInfo.touched || gButtonInfo.value > 0.1) {
 				if (this.pressedGamepadButtons[button] > 0) {
 					this.pressedGamepadButtons[button] = INPUT_STATE.CONSUMED;
+					repeat = timestamp - this.lastGamepad_change > GAMEPAD_REPEAT_DELAY;
 				} else {
 					this.pressedGamepadButtons[button] = INPUT_STATE.CAPTURED;
 					updated = true;
@@ -369,14 +379,17 @@ export default {
 		}
 		const horizontal = this.getAxisOf("gamepad", "horizontal");
 		const vertical = this.getAxisOf("gamepad", "vertical");
-		if (!updated
-			&& (Math.abs(horizontal - this.gamepad.axes.horizontal) > GAMEPAD_AXES_EPSILON
-				|| Math.abs(vertical - this.gamepad.axes.vertical) > GAMEPAD_AXES_EPSILON
-			)
+		if (updated) {
+			repeat = false;
+		} else if (Math.abs(horizontal - this.gamepad.axes.horizontal) > GAMEPAD_AXES_EPSILON
+			|| Math.abs(vertical - this.gamepad.axes.vertical) > GAMEPAD_AXES_EPSILON
 		) {
 			updated = true;
+		} else if (Math.abs(horizontal) > 0.1 || Math.abs(vertical) > 0.1) {
+			repeat = timestamp - this.lastGamepad_change > GAMEPAD_REPEAT_DELAY;
 		}
-		if (updated) {
+		if (updated || repeat) {
+			this.lastGamepad_change = timestamp;
 			this.gamepad.axes = {
 				horizontal
 				, vertical
@@ -388,10 +401,11 @@ export default {
 
 			let shouldContinue = true;
 			if (targetName !== "world") {
-				shouldContinue = document.activeElement.dispatchEvent(new GamepadInputEvent(this.gamepad));
+				shouldContinue = document.activeElement.dispatchEvent(new GamepadInputEvent(this.gamepad, { repeat }));
 			}
 			const gamepadEvent = _.assign({
 				consumed: !shouldContinue
+				, repeat
 			}, this.gamepad);
 			events.emit("inputchanged", gamepadEvent);
 		}
