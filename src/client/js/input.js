@@ -1,6 +1,35 @@
 import events from "/js/system/events.js";
 import renderer from "/js/rendering/renderer.js";
 
+export class GamepadInputEvent extends Event {
+	#axes;
+	#buttons;
+	#targetName;
+
+	constructor (gamepad) {
+		super("gamepad", {
+			bubbles: true // Allows to bubble up the DOM tree
+			, cancelable: true // Allows to be canceled
+			, composed: true // Will trigger listeners outside of a shadow root
+		});
+		this.#axes = _.assign({}, gamepad.axes);
+		this.#buttons = _.assign([], gamepad.buttons);
+		this.#targetName = gamepad.target;
+	}
+
+	get axes () {
+		return this.#axes;
+	}
+
+	get buttons () {
+		return this.#buttons;
+	}
+
+	get targetName () {
+		return this.#targetName;
+	}
+}
+
 const INPUT_STATE = {
 	RELEASED: -1
 	, CAPTURED: 1
@@ -115,34 +144,35 @@ export default {
 	//TODO Detect keyboard mapping, US, CA, FR, Etc...
 	, namedKeyCodeMappings: _.assign({}, KEYBOARD_NAMED_MAPPINGS)
 	, keyCodeMappings: _.assign({}, KEYBOARD_MAPPINGS)
+	, blacklistedKeys: []
+	, whitelistedKeys: []
 	, keyboard: {
-		pressed: []
+		type: "keyboard"
+		, pressed: []
 		, target: ""
 	}
+	, pressedKeys: {} // Obj for Named keys
 
 	, mouse: {
-		buttons: []
+		type: "mouse"
+		, buttons: []
 		, target: ""
 		, x: 0, y: 0
 	}
-
-	, pressedKeys: {} // Obj for Named keys
 	, pressedMouseButtons: [] // Sparse array for mouse buttons indexes.
-	, pressedGamepadButtons: [] // Sparse array for gamepad buttons indexes.
 
-	, blacklistedKeys: []
-	, whitelistedKeys: []
-
+	, _gamepads: []
+	, lastGamepadActionsUpdate: 0
 	, gamepad: {
-		axes: {
+		type: "gamepad"
+		, axes: {
 			horizontal: 0
 			, vertical: 0
 		}
 		, buttons: []
 		, target: ""
 	}
-	, _gamepads: []
-	, lastGamepadActionsUpdate: 0
+	, pressedGamepadButtons: [] // Sparse array for gamepad buttons indexes.
 
 	, init: function (container) {
 		this.uiContainer = document.querySelector(container);
@@ -237,18 +267,16 @@ export default {
 				lastUpdated = gamepad.timestamp;
 			}
 		}
-		if (lastUpdated === Number.POSITIVE_INFINITY) {
-			if (this.pressedGamepadButtons.length) {
-				// All gamepads disconnected with pressed buttons.
-				for (const button in this.pressedGamepadButtons) {
-					delete this.pressedGamepadButtons[button];
-					const removedActions = this.getMapping("gamepad", button);
-					for (const action of removedActions) {
-						delete this.actions[action];
-					}
+		if (lastUpdated === Number.POSITIVE_INFINITY
+			&& this.pressedGamepadButtons.length
+		) { // All gamepads disconnected with pressed buttons.
+			for (const button in this.pressedGamepadButtons) {
+				delete this.pressedGamepadButtons[button];
+				const removedActions = this.getMapping("gamepad", button);
+				for (const action of removedActions) {
+					delete this.actions[action];
 				}
 			}
-			return;
 		}
 		const timestamp = performance.now();
 		if (lastUpdated === Number.POSITIVE_INFINITY
@@ -349,26 +377,22 @@ export default {
 			updated = true;
 		}
 		if (updated) {
-			_.assign(this.gamepad, {
-				axes: {
-					horizontal
-					, vertical
-				}
-				, buttons
-				, target: targetName
-			});
-			const gamepadEvent = {
+			this.gamepad.axes = {
+				horizontal
+				, vertical
+				, cameraX: this.getAxisOf("gamepad", "cameraX")
+				, cameraY: this.getAxisOf("gamepad", "cameraY")
 			};
-			_.assign(gamepadEvent, this.gamepad);
+			this.gamepad.buttons = buttons;
+			this.gamepad.target = targetName;
+
+			let shouldContinue = true;
 			if (targetName !== "world") {
-				const customInputEvent = new CustomEvent("gamepad", {
-					detail: gamepadEvent
-					, bubbles: true // Allows to bubble up the DOM tree
-					, cancelable: true // Allows to be canceled
-					, composed: true // Will trigger listeners outside of a shadow root
-				});
-				document.activeElement.dispatchEvent(customInputEvent);
+				shouldContinue = document.activeElement.dispatchEvent(new GamepadInputEvent(this.gamepad));
 			}
+			const gamepadEvent = _.assign({
+				consumed: !shouldContinue
+			}, this.gamepad);
 			events.emit("inputchanged", gamepadEvent);
 		}
 	}
