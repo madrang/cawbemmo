@@ -27,7 +27,7 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 			} else if (remap.index < 0) {
 				remap.index = newObj.length;
 			}
-			if (remap.hasOwnProperty("value")) {
+			if (Object.hasOwn(remap, "value")) {
 				newObj[remap.index] = assignRecursive(undefined, remap.value);
 			} else {
 				newObj[remap.index] = assignRecursive(newObj[remap.index], objSrc[i], remapCallback, iPath);
@@ -55,7 +55,7 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 	}
 	*/
 	for (const propName in objSrc) {
-		if (!objSrc.hasOwnProperty(propName)) {
+		if (!Object.hasOwn(objSrc, propName)) {
 			continue;
 		}
 		if (!remapCallback) {
@@ -74,7 +74,7 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 		if (!remap.has("index")) {
 			remap.index = propName;
 		}
-		if (remap.hasOwnProperty("value")) {
+		if (Object.hasOwn(remap, "value")) {
 			newObj[remap.index] = assignRecursive(undefined, remap.value);
 		} else {
 			newObj[remap.index] = assignRecursive(newObj[remap.index], objSrc[propName], remapCallback, nPath);
@@ -83,7 +83,7 @@ const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 	return newObj;
 };
 
-const REMAPPERS = {
+export const REMAPPERS = {
 	particles: function(target, value, path, property) {
 		if (Array.isArray(target) && path.endsWith("behaviors") && value.has("type")) {
 			const result = {
