@@ -37,7 +37,7 @@ export default {
 			//Server actions use keyUp
 			events.emit("keyup", action.key);
 		} else {
-			events.emit("keydown", "g");
+			events.emit("keydown", { key: "g" });
 		}
 	}
 

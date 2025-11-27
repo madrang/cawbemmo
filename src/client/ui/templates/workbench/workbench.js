@@ -300,14 +300,14 @@ export default {
 		this.find(".btnCraft").addClass("disabled");
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "shift" && this.hoverItem) {
+	, onKeyDown: function (e) {
+		if (e.key === "shift" && this.hoverItem) {
 			this.toggleTooltip(true, this.hoverEl, null, this.hoverItem);
 		}
 	}
 
-	, onKeyUp: function (key) {
-		if (key === "shift" && this.hoverItem) {
+	, onKeyUp: function (e) {
+		if (e.key === "shift" && this.hoverItem) {
 			this.toggleTooltip(true, this.hoverEl, null, this.hoverItem);
 		}
 	}

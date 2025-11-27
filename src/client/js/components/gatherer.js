@@ -63,8 +63,8 @@ export default {
 		}
 	}
 
-	, onKeyDown: function (key) {
-		if (key !== "g") {
+	, onKeyDown: function (e) {
+		if (e.key !== "g") {
 			return;
 		}
 

@@ -575,16 +575,16 @@ export default {
 		});
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "i") {
+	, onKeyDown: function (e) {
+		if (e.key === "i") {
 			this.toggle();
-		} else if (key === "shift" && this.hoverItem) {
+		} else if (e.key === "shift" && this.hoverItem) {
 			this.onHover();
 		}
 	}
 
-	, onKeyUp: function (key) {
-		if (key === "shift" && this.hoverItem) {
+	, onKeyUp: function (e) {
+		if (e.key === "shift" && this.hoverItem) {
 			this.onHover();
 		}
 	}

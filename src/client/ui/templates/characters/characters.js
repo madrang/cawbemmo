@@ -46,14 +46,14 @@ export default {
 		this.onEvent("keydown", this.onKeyDown.bind(this));
 	}
 
-	, onKeyDown: function (key) {
+	, onKeyDown: function (e) {
 		if (this.el.hasClass("disabled")) {
 			return;
 		}
 
-		if (key === "enter") {
+		if (e.key === "enter") {
 			this.onPlayClick();
-		} else if (key === "up" || key === "down") {
+		} else if (e.key === "up" || e.key === "down") {
 			if (!this.characters || this.selectedIndex === -1) {
 				return;
 			}
@@ -63,7 +63,7 @@ export default {
 				return;
 			}
 
-			const delta = key === "up" ? -1 : 1;
+			const delta = e.key === "up" ? -1 : 1;
 
 			//Clamp index within range [0, numChars - 1]
 			const newIndex = Math.min(Math.max(this.selectedIndex + delta, 0), numChars - 1);

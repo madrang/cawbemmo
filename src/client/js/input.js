@@ -1,13 +1,14 @@
 import events from "/js/system/events.js";
 import renderer from "/js/rendering/renderer.js";
 
-const INPUT_TYPES = [
-	"gamepad"
-	, "keyboard"
-	, "mouse"
-	, "touch"
-	, "mobile"
-];
+const INPUT_STATE = {
+	RELEASED: -1
+	, CAPTURED: 1
+	, TRIGGERED: 2
+	, CONSUMED: 3
+};
+Object.freeze(INPUT_STATE);
+
 const KEYBOARD_MAPPINGS = {
 	8: "backspace"
 	, 9: "tab"
@@ -60,6 +61,7 @@ const KEYBOARD_KEYS_DEFAULT = {
 	, spell_4: [ "4" ]
 	, target: [ "tab" ]
 };
+const KEYBOARD_PREVENT_DEFAULT_KEYCODES = [ 8, 9, 122 ];
 const GAMEPAD_UPDATE_DELAY = 33;
 const GAMEPAD_AXES_DEFAULT = {
 	horizontal: 0
@@ -109,13 +111,18 @@ export default {
 	, mappings: {}
 	, actions: {}
 
+	//TODO Detect keyboard mapping, US, CA, FR, Etc...
 	, namedKeyCodeMappings: _.assign({}, KEYBOARD_NAMED_MAPPINGS)
 	, keyCodeMappings: _.assign({}, KEYBOARD_MAPPINGS)
+	, keyboard: {
+		pressed: []
+		, target: ""
+	}
 
 	, mouse: {
 		buttons: []
-		, x: 0
-		, y: 0
+		, target: ""
+		, x: 0, y: 0
 	}
 
 	, pressedKeys: {} // Obj for Named keys
@@ -150,8 +157,10 @@ export default {
 
 		window.addEventListener("gamepadconnected", this.events.gamepad.connected.bind(this));
 		window.addEventListener("gamepaddisconnected", this.events.gamepad.disconnected.bind(this));
-		window.addEventListener("keydown", this.events.keyboard.down.bind(this));
-		window.addEventListener("keyup", this.events.keyboard.up.bind(this));
+		window.addEventListener("keydown", this.events.keyboard.down.bind(this, true), { capture: true });
+		window.addEventListener("keydown", this.events.keyboard.down.bind(this, false));
+		window.addEventListener("keyup", this.events.keyboard.up.bind(this, true), { capture: true });
+		window.addEventListener("keyup", this.events.keyboard.up.bind(this, false));
 
 		this.uiContainer.addEventListener("mousedown", this.events.mouse.down.bind(this));
 		this.uiContainer.addEventListener("mouseup", this.events.mouse.up.bind(this));
@@ -262,6 +271,7 @@ export default {
 		//TODO when UI is visible, change action map to allow using the UI with a gamepad.
 		const enableInput = !this.isUIVisible();
 
+		let updated = false;
 		for (const button in buttons) {
 			const gButtonInfo = buttons[button];
 			if (!gButtonInfo) {
@@ -269,34 +279,52 @@ export default {
 				continue;
 			}
 			if (gButtonInfo.pressed || gButtonInfo.touched || gButtonInfo.value > 0.1) {
-				if (this.pressedGamepadButtons[button]) {
-					this.pressedGamepadButtons[button] = 2;
+				if (this.pressedGamepadButtons[button] > 0) {
+					this.pressedGamepadButtons[button] = INPUT_STATE.CONSUMED;
 				} else {
-					this.pressedGamepadButtons[button] = 1;
+					this.pressedGamepadButtons[button] = INPUT_STATE.CAPTURED;
+					updated = true;
+
 					const addedActions = this.getMapping("gamepad", button);
 					if (!enableInput) { // Certain actions should always register even if something else is the target.
 						addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
 					}
 					for (const action of addedActions) {
-						if (this.actions[action]) {
-							this.actions[action] = 2;
+						if (this.actions[action] > 0) {
+							this.actions[action] = INPUT_STATE.CONSUMED;
 						} else {
-							this.actions[action] = 1;
+							this.actions[action] = INPUT_STATE.TRIGGERED;
 							const actionEvent = { action, consumed: false };
 							events.emit("uiaction", actionEvent);
-							if (!actionEvent.consumed) {
+							if (actionEvent.consumed) {
+								this.actions[action] = INPUT_STATE.CONSUMED;
+							} else {
 								events.emit("inputaction", action);
 							}
 						}
 					}
 				}
-			} else if (button in this.pressedGamepadButtons) {
+			} else if (button in this.pressedGamepadButtons > 0) {
 				delete this.pressedGamepadButtons[button];
+				updated = true;
+
 				const removedActions = this.getMapping("gamepad", button);
 				for (const action of removedActions) {
 					delete this.actions[action];
 				}
 			}
+		}
+		if (updated) {
+			const gamepadEvent = {
+				axes: {
+					horizontal: this.getAxisOf("gamepad", "horizontal")
+					, vertical: this.getAxisOf("gamepad", "vertical")
+				}
+				, buttons
+
+				, target: this.getTartgetName(document.activeElement)
+			};
+			events.emit("inputchanged", gamepadEvent);
 		}
 	}
 
@@ -439,89 +467,113 @@ export default {
 		return actions;
 	}
 
+	, getTartgetName: function (target) {
+		if (target === document.body || target === this.uiContainer) {
+			return "world";
+		}
+		if (target.id) {
+			return target.id;
+		}
+		let pNode = target.parentNode;
+		while (pNode && pNode !== this.uiContainer) {
+			if (pNode.id) {
+				return pNode.id;
+			}
+			pNode = pNode.parentNode;
+		}
+		return "ui";
+	}
+
 	, isActive: function (action, noConsume) {
 		const active = this.actions[action];
-		if (active) {
+		if (active > 0) {
 			if (noConsume) {
 				return true;
 			}
-			this.actions[action] = 2;
-			return (active === 1);
+			this.actions[action] = INPUT_STATE.CONSUMED;
+			return active !== INPUT_STATE.CONSUMED;
 		}
 		return false;
 	}
 
 	, isKeyDown: function (key, noConsume) {
 		const down = this.pressedKeys[key];
-		if (down) {
+		if (down > 0) {
 			if (noConsume) {
 				return true;
 			}
-			this.pressedKeys[key] = 2;
-			return (down === 1);
+			this.pressedKeys[key] = INPUT_STATE.CONSUMED;
+			return down !== INPUT_STATE.CONSUMED;
 		}
 		return false;
 	}
 
 	, isMouseButtonDown: function (button, noConsume) {
 		const down = this.pressedMouseButtons[button];
-		if (down) {
+		if (down > 0) {
 			if (noConsume) {
 				return true;
 			}
-			this.pressedMouseButtons[button] = 2;
-			return (down === 1);
+			this.pressedMouseButtons[button] = INPUT_STATE.CONSUMED;
+			return down !== INPUT_STATE.CONSUMED;
 		}
 		return false;
 	}
 
 	, isGamepadPressed: function (button, noConsume) {
 		const down = this.pressedGamepadButtons[button];
-		if (down) {
+		if (down > 0) {
 			if (noConsume) {
 				return true;
 			}
-			this.pressedGamepadButtons[button] = 2;
-			return (down === 1);
+			this.pressedGamepadButtons[button] = INPUT_STATE.CONSUMED;
+			return down !== INPUT_STATE.CONSUMED;
 		}
 		return false;
 	}
 
 	, getAxis: function (axisName) {
 		let result = 0;
-		for (const inputType of INPUT_TYPES) {
-			const inputAxes = this.axes[inputType];
-			if (!inputAxes) {
-				continue;
-			}
-			if (!inputAxes.has(axisName)) {
-				continue;
-			}
-			const axis = inputAxes[axisName];
-			switch (inputType) {
-				case "gamepad":
-					for (const gamepad of this.gamepads) {
-						if (!gamepad || !gamepad.axes.has(axis)) {
-							continue;
-						}
-						result += Math.round(gamepad.axes[axis]);
+		for (const inputType in this.axes) {
+			result += this.getAxisOf(inputType, axisName);
+		}
+		return result;
+	}
+	, getAxisOf: function (inputType, axisName) {
+		const inputAxes = this.axes[inputType];
+		if (!inputAxes) {
+			_.log.input.getAxisOf.error("Input type %s not found!", inputType);
+			return 0;
+		}
+		if (!inputAxes.has(axisName)) {
+			_.log.input.getAxisOf.error("Input %s doesnt have axis \"%s\"!", inputType, axisName);
+			return 0;
+		}
+		let result = 0;
+		const axis = inputAxes[axisName];
+		switch (inputType) {
+			case "gamepad":
+				for (const gamepad of this.gamepads) {
+					if (!gamepad || !gamepad.axes.has(axis)) {
+						continue;
 					}
-					break;
-				case "keyboard":
-					for (let i = axis.negative.length - 1; i >= 0; --i) {
-						if (this.pressedKeys[axis.negative[i]]) {
-							result--;
-							break;
-						}
+					result += Math.round(gamepad.axes[axis]);
+				}
+				break;
+			case "keyboard":
+				for (let i = axis.negative.length - 1; i >= 0; --i) {
+					if (this.pressedKeys[axis.negative[i]]) {
+						result--;
+						break;
 					}
-					for (let i = axis.positive.length - 1; i >= 0; --i) {
-						if (this.pressedKeys[axis.positive[i]]) {
-							result++;
-							break;
-						}
+				}
+				for (let i = axis.positive.length - 1; i >= 0; --i) {
+					if (this.pressedKeys[axis.positive[i]]) {
+						result++;
+						break;
 					}
-					break;
-			}
+				}
+				break;
 		}
 		return result;
 	}
@@ -536,72 +588,120 @@ export default {
 
 	, events: {
 		keyboard: {
-			down: function (e) {
+			down: function (capture, e) {
 				const key = this.convertKeyCode(e);
-				// Certain keys should always register even if they don't get emitted
-				let isModifier = false;
-				if (this.mappings.keyboard) {
-					for (const actionName in this.mappings.keyboard) {
-						if (!actionName.startsWith("modifier_")) {
-							continue;
-						}
-						const modifier = this.mappings.keyboard[actionName];
-						if (modifier?.values === key || Array.isArray(modifier?.values) && modifier.values.includes(key)) {
-							isModifier = true;
-						}
-					}
-				}
-				const isBody = e.target === document.body;
-				if (!isModifier && !isBody) {
-					return true;
-				}
-				if (e.keyCode === 9 || e.keyCode === 8 || e.keyCode === 122) {
-					e.preventDefault();
-				}
 				if (!this.isKeyAllowed(key)) {
 					_.log.input.keyboard.debug("Not allowed key %s press was ignored.", key);
 					return;
 				}
-				const addedActions = this.getMapping("keyboard", key);
-				if (!isBody) {
-					addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
+
+				const targetName = this.getTartgetName(e.target);
+				this.keyboard.target = targetName;
+				if (!capture
+					&& targetName === "world"
+					&& KEYBOARD_PREVENT_DEFAULT_KEYCODES.includes(e.keyCode)
+				) {
+					e.preventDefault();
 				}
-				for (const action of addedActions) {
-					if (this.actions[action]) {
-						this.actions[action] = 2;
+
+				if (capture) {
+					const addedActions = this.getMapping("keyboard", key);
+					if (targetName !== "world") { //TODO Implement context based actions mappings.
+						addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
+					}
+					for (const action of addedActions) {
+						if (this.actions[action] > 0) {
+							this.actions[action] = INPUT_STATE.CONSUMED;
+							continue;
+						}
+						this.actions[action] = INPUT_STATE.CAPTURED;
+					}
+					if (this.pressedKeys[key] > 0) {
+						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
 					} else {
-						this.actions[action] = 1;
-						const actionEvent = { action, consumed: false };
-						events.emit("uiaction", actionEvent);
-						if (!actionEvent.consumed) {
-							events.emit("inputaction", action);
+						this.pressedKeys[key] = INPUT_STATE.CAPTURED;
+						this.keyboard.pressed = Object.keys(this.pressedKeys).filter((n) => this.pressedKeys[n] > 0);
+						_.log.input.keyboard.trace("Key %s press, event: %o actions: %o", key, e, addedActions);
+					}
+				} else {
+					for (const action in this.actions) {
+						if (this.actions[action] !== INPUT_STATE.CAPTURED) {
+							continue;
+						}
+						this.actions[action] = INPUT_STATE.TRIGGERED;
+						const actionEvent = {
+							name: action
+							, consumed: false
+							, target: targetName
+						};
+						if (targetName === "world") {
+							events.emit("uiaction", actionEvent);
+						}
+						if (actionEvent.consumed) {
+							this.actions[action] = INPUT_STATE.CONSUMED;
+						} else {
+							events.emit("inputaction", actionEvent);
 						}
 					}
-				}
-				if (this.pressedKeys[key]) {
-					this.pressedKeys[key] = 2;
-				} else if (isBody || isModifier) {
-					this.pressedKeys[key] = 1;
-					_.log.input.keyboard.trace("Key %s press, event: %o actions: %o", key, e, addedActions);
-					const keyEvent = { key, consumed: false };
-					events.emit("uikeypress", keyEvent);
-					if (!keyEvent.consumed) {
-						events.emit("keydown", key);
+
+					const keyEvent = _.assign({
+						key
+						, consumed: false
+						, event: e
+					}, this.keyboard);
+
+					if (this.pressedKeys[key] === INPUT_STATE.CAPTURED) {
+						this.pressedKeys[key] = INPUT_STATE.TRIGGERED;
+						if (targetName === "world") {
+							events.emit("uikeypress", keyEvent);
+						}
+					} else {
+						keyEvent.repeat = Boolean(this.pressedKeys[key]);
 					}
+					if (keyEvent.consumed) {
+						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
+					} else {
+						events.emit("keydown", keyEvent);
+					}
+					events.emit("inputchanged", keyEvent);
 				}
-				if (e.key === "F11") {
+
+				if (e.key === "F11") { //TODO Move to proper component.
 					events.emit("onToggleFullscreen");
 				}
 			}
-			, up: function (e) {
+			, up: function (capture, e) {
+				if (capture) {
+					this.keyboard.target = this.getTartgetName(e.target);
+				}
 				const key = this.convertKeyCode(e);
-				if (key in this.pressedKeys) {
-					delete this.pressedKeys[key];
+				if (!this.pressedKeys[key]) {
+					return;
+				}
+				if (capture) {
+					this.pressedKeys[key] = INPUT_STATE.RELEASED;
+					this.keyboard.pressed = Object.keys(this.pressedKeys).filter((n) => this.pressedKeys[n] > 0);
+
 					const removedActions = this.getMapping("keyboard", key);
 					for (const action of removedActions) {
+						this.actions[action] = INPUT_STATE.RELEASED;
+					}
+				} else {
+					for (const action in this.actions) {
+						if (this.actions[action] !== INPUT_STATE.RELEASED) {
+							continue;
+						}
 						delete this.actions[action];
 					}
-					events.emit("keyup", key);
+					delete this.pressedKeys[key];
+
+					const keyEvent = _.assign({
+						key
+						, consumed: false
+						, event: e
+					}, this.keyboard);
+					events.emit("keyup", keyEvent);
+					events.emit("inputchanged", keyEvent);
 				}
 			}
 		}
@@ -629,6 +729,7 @@ export default {
 					event: e
 				}, this.mouse);
 				events.emit("mousedown", mouseEvent);
+				events.emit("inputchanged", mouseEvent);
 			}
 			, up: function (e) {
 				this.mouse.x = e.clientX;
@@ -656,6 +757,7 @@ export default {
 					event: e
 				}, this.mouse);
 				events.emit("mouseup", mouseEvent);
+				events.emit("inputchanged", mouseEvent);
 			}
 			, move: function (e) {
 				this.mouse.x = e.clientX;
@@ -678,6 +780,7 @@ export default {
 					event: e
 				}, this.mouse);
 				events.emit("mousemove", mouseEvent);
+				events.emit("inputchanged", mouseEvent);
 			}
 			, onSceneMove: function (e) {
 				this.mouse.worldX += e.x;
@@ -687,6 +790,7 @@ export default {
 					event: e
 				}, this.mouse);
 				events.emit("mousemove", mouseEvent);
+				events.emit("inputchanged", mouseEvent);
 			}
 		}
 
@@ -707,6 +811,7 @@ export default {
 					, worldX: touch.clientX + renderer.pos.x
 					, worldY: touch.clientY + renderer.pos.y
 				});
+				//events.emit("inputchanged", mouseEvent);
 			}
 			, move: function (e) {
 				const touch = e.touches[0];
@@ -723,12 +828,15 @@ export default {
 					, y: touch.clientY
 					, touches: e.touches.length
 				});
+				//events.emit("inputchanged", mouseEvent);
 			}
 			, end: function (e) {
 				events.emit("touchend", e);
+				//events.emit("inputchanged", mouseEvent);
 			}
 			, cancel: function (e) {
 				events.emit("touchcancel", e);
+				//events.emit("inputchanged", mouseEvent);
 			}
 		}
 

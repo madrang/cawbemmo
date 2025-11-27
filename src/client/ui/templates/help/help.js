@@ -21,8 +21,8 @@ export default {
 		this.on(".toslink", "click", this.redirect.bind(this));
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "h") {
+	, onKeyDown: function (e) {
+		if (e.key === "h") {
 			this.toggle();
 		}
 	}

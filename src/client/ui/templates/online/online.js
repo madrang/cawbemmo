@@ -47,8 +47,8 @@ export default {
 		this.actions = actions;
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "o") {
+	, onKeyDown: function (e) {
+		if (e.key === "o") {
 			this.toggle();
 		}
 	}

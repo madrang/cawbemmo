@@ -138,8 +138,8 @@ export default {
 			itemEl.data("item", quickItem);
 		}
 
-		, onKeyDown: function (key) {
-			if (key === "r") {
+		, onKeyDown: function (e) {
+			if (e.key === "r") {
 				this.useQuickItem();
 			}
 		}
