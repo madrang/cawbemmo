@@ -14,6 +14,8 @@ import resources from "/js/resources.js";
 import components from "/js/components.js";
 import "/ui/templates/tooltips/tooltips.js";
 
+const WORKER_PATH = "/service-worker.js";
+
 let fnQueueTick = null;
 const getQueueTick = (updateMethod) => {
 	return () => requestAnimationFrame(updateMethod);
@@ -23,6 +25,15 @@ const loadLongPress = async () => {
 	return await import("/js/dependencies/long-press-event.min.js");
 };
 
+const registerServiceWorker = async () => {
+	try {
+		const registration = await navigator.serviceWorker.register(WORKER_PATH);
+		_.log.serviceWorker.debug("Service Worker registered %o", registration);
+	} catch (error) {
+		_.log.serviceWorker.error("Service Worker registration failed:", error);
+	}
+};
+
 const main = {
 	hasFocus: true
 
@@ -30,6 +41,11 @@ const main = {
 	, msPerFrame: Math.floor(1000 / 60)
 
 	, init: async function () {
+		if ("serviceWorker" in navigator) {
+			await registerServiceWorker();
+		} else {
+			_.log.serviceWorker.trace("Service Worker not supported!");
+		}
 		if (isMobile) {
 			$("#ui-container").addClass("mobile");
 
