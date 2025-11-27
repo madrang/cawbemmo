@@ -131,7 +131,7 @@ export default {
 			return;
 		}
 		if (action.name.startsWith(ACTION_HEADER)) {
-			this.triggerSpell(action.substring(ACTION_HEADER.length));
+			this.triggerSpell(action.name.substring(ACTION_HEADER.length));
 		}
 	}
 

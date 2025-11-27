@@ -15,13 +15,12 @@ export default {
 		return this.actions.some((a) => a.id === actionId);
 	}
 
-	, onKeyUp: function (key) {
-		if (!input.isKeyAllowed(key)) {
+	, onKeyUp: function (e) {
+		if (!input.isKeyAllowed(e.key)) {
 			return;
 		}
-
 		this.actions.forEach((a) => {
-			if (a.key !== key) {
+			if (a.key !== e.key) {
 				return;
 			}
 
@@ -35,32 +34,25 @@ export default {
 
 	, extend: function (blueprint) {
 		if (blueprint.addActions) {
-			blueprint.addActions.forEach(function (a) {
+			blueprint.addActions.forEach((a) => {
 				this.actions.spliceWhere((f) => f.key === a.key);
 
-				let exists = this.actions.some(function (ta) {
-					return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
-				});
+				let exists = this.actions.some((ta) => ta.targetId === a.targetId && ta.cpn === a.cpn && ta.method === a.method);
 				if (exists) {
 					return;
 				}
-
 				this.actions.push(a);
 			}, this);
 
 			delete blueprint.addActions;
 		}
-
 		if (blueprint.removeActions) {
-			blueprint.removeActions.forEach(function (a) {
-				this.actions.spliceWhere(function (ta) {
-					return ((ta.targetId === a.targetId) && (ta.cpn === a.cpn) && (ta.method === a.method));
-				});
+			blueprint.removeActions.forEach((a) => {
+				this.actions.spliceWhere((ta) => ta.targetId === a.targetId && ta.cpn === a.cpn && ta.method === a.method);
 			}, this);
 
 			delete blueprint.removeActions;
 		}
-
 		events.emit("onGetServerActions", this.actions);
 	}
 

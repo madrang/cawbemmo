@@ -135,8 +135,8 @@ export default {
 		}
 	}
 
-	, onKeyDown: function (key) {
-		switch (key) {
+	, onKeyDown: function (e) {
+		switch (e.key) {
 			case "enter":
 				this.toggle(true);
 				break;
@@ -151,8 +151,8 @@ export default {
 		}
 	}
 
-	, onKeyUp: function (key) {
-		if (key === "shift") {
+	, onKeyUp: function (e) {
+		if (e.key === "shift") {
 			this.showItemTooltip();
 		}
 	}

@@ -71,18 +71,22 @@ export default {
 		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
 	}
 	, postRender: async function () {
-		await _.asyncDelay(3000); // Fails if runs too early...
-		const temp = await performAction({
-			cpn: "passives", method: "getTree"
-			, data: {}
-		});
-		this.data.nodes = temp.nodes;
-		this.data.links = temp.links.map((l) => {
-			return {
-				from: { id: l.from }
-				, to: { id: l.to }
-			};
-		});
+		try {
+			await _.asyncDelay(2500); // Fails if runs too early...
+			const temp = await performAction({
+				cpn: "passives", method: "getTree"
+				, data: {}
+			});
+			this.data.nodes = temp.nodes;
+			this.data.links = temp.links.map((l) => {
+				return {
+					from: { id: l.from }
+					, to: { id: l.to }
+				};
+			});
+		} catch (error) {
+			_.log.passives.getTree.error(error);
+		}
 
 		//We need to be able to determine the size of elements
 		this.el.css({
@@ -164,7 +168,21 @@ export default {
 		nodes.forEach((n) => this.renderers.node.call(this, n, n.pos.x, n.pos.y));
 	}
 
-	, onAfterShow: function () {
+	, onAfterShow: async function () {
+		if (!this.data.nodes) {
+			const temp = await performAction({
+				cpn: "passives", method: "getTree"
+				, data: {}
+			});
+			this.data.nodes = temp.nodes;
+			this.data.links = temp.links.map((l) => {
+				return {
+					from: { id: l.from }
+					, to: { id: l.to }
+				};
+			});
+		}
+
 		//Calculate midpoint
 		const pClass = window.player.class;
 		const start = this.data.nodes.find((n) => n.spiritStart === pClass);
@@ -295,8 +313,8 @@ export default {
 	}
 
 	, events: {
-		onKeyDown: function (key) {
-			if (key === "p") {
+		onKeyDown: function (e) {
+			if (e.key === "p") {
 				this.toggle();
 			}
 		}

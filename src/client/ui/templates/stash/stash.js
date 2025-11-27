@@ -206,8 +206,8 @@ export default {
 		}
 	}
 
-	, onKeyUp: function (key) {
-		if (key === "shift" && this.hoverItem) {
+	, onKeyUp: function (e) {
+		if (e.key === "shift" && this.hoverItem) {
 			this.onHover();
 		}
 	}

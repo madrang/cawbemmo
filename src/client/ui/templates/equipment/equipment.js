@@ -134,15 +134,15 @@ export default {
 		this.onHoverItem(null, null, null);
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "j") {
+	, onKeyDown: function (e) {
+		if (e.key === "j") {
 			this.toggle();
-		} else if (key === "shift" && this.hoverItem) {
+		} else if (e.key === "shift" && this.hoverItem) {
 			this.onHoverItem(this.hoverEl, this.hoverItem, this.hoverCompare);
 		}
 	}
-	, onKeyUp: function (key) {
-		if (key === "shift" && this.hoverItem) {
+	, onKeyUp: function (e) {
+		if (e.key === "shift" && this.hoverItem) {
 			this.onHoverItem(this.hoverEl, this.hoverItem, null);
 		}
 	}
