@@ -1,6 +1,7 @@
 import events from "/js/system/events.js";
 import client from "/js/system/client.js";
 import locale from "/js/locale/index.js";
+import input from "/js/input.js";
 
 import styles from "./styles.css" with { type: "css" };
 if (!document.adoptedStyleSheets.includes(styles)) {
@@ -20,6 +21,30 @@ const constants = {
 
 const performAction = client.componentProxy.player.performAction;
 
+const percentageStats = [
+	"addCritChance"
+	, "addCritMultiplier"
+	, "addAttackCritChance"
+	, "addAttackCritMultiplier"
+	, "addSpellCritChance"
+	, "addSpellCritMultiplier"
+	, "sprintChance"
+	, "xpIncrease"
+	, "blockAttackChance"
+	, "blockSpellChance"
+	, "dodgeAttackChance"
+	, "dodgeSpellChance"
+	, "attackSpeed"
+	, "castSpeed"
+	, "itemQuantity"
+	, "magicFind"
+	, "catchChance"
+	, "catchSpeed"
+	, "fishRarity"
+	, "fishWeight"
+	, "fishItems"
+];
+
 export default {
 	modal: true
 	, hasClose: true
@@ -30,7 +55,6 @@ export default {
 
 	, currentZoom: 1
 	, pos: { x: 0, y: 0 }
-	, oldPos: null
 
 	, panOrigin: null
 
@@ -85,20 +109,21 @@ export default {
 		$(this.canvas).on("contextmenu", () => false);
 		this.find(".btnReset").on("click", this.events.onReset.bind(this));
 
-		this.onEvent("onKeyDown", this.events.onKeyDown.bind(this));
-		this.onEvent("uiMouseUp", this.events.onPanEnd.bind(this));
 		this.onEvent("onGetPassives", this.events.onGetPassives.bind(this));
 		this.onEvent("onGetPassivePoints", this.events.onGetPassivePoints.bind(this));
 		this.onEvent("onShowPassives", this.toggle.bind(this));
 
-		if (isMobile) {
-			this.onEvent("uiTouchEnd", this.events.onPanEnd.bind(this));
-			this.onEvent("uiTouchStart", this.events.onPanStart.bind(this));
-			this.onEvent("uiTouchMove", this.events.onPan.bind(this));
-		} else {
-			this.onEvent("uiMouseMove", this.events.onPan.bind(this));
-			this.onEvent("uiMouseDown", this.events.onPanStart.bind(this));
-		}
+		this.onEvent("keydown", this.events.onKeyDown.bind(this));
+		this.el
+			.on("gamepad", this.events.keydown.bind(this))
+			.on("keydown", this.events.keydown.bind(this))
+			.on("mousedown", this.events.onPanStart.bind(this))
+			.on("mousemove", this.events.onPan.bind(this))
+			.on("mouseup", this.events.onPanEnd.bind(this))
+			.on("touchstart", this.events.onPanStart.bind(this))
+			.on("touchmove", this.events.onPan.bind(this))
+			.on("touchend", this.events.onPanEnd.bind(this))
+			.on("touchcancel", this.events.onPanEnd.bind(this));
 	}
 
 	, beforeDestroy: function () {
@@ -168,8 +193,6 @@ export default {
 	, renderers: {
 		clear: function () {
 			this.ctx.clearRect(0, 0, this.size.w, this.size.h);
-
-			delete this.oldPos;
 		}
 
 		, node: function (node) {
@@ -277,6 +300,17 @@ export default {
 				this.toggle();
 			}
 		}
+		, keydown: function (e) {
+			//const key = input.convertKeyCode(e);
+			const rawX = input.getAxis("horizontal");
+			const rawY = input.getAxis("vertical");
+
+			const scrollSpeed = constants.gridSize * constants.scrollSpeed / this.currentZoom;
+			this.pos.x += rawX * scrollSpeed;
+			this.pos.y += rawY * scrollSpeed;
+
+			this.renderNodes();
+		}
 		, onMouseMove: function (pos) {
 			const cell = {
 				x: Math.floor((this.pos.x + pos.x) / constants.gridSize)
@@ -288,44 +322,20 @@ export default {
 			}
 			this.hoverNode = node;
 			if (node) {
-				const percentageStats = [
-					"addCritChance"
-					, "addCritMultiplier"
-					, "addAttackCritChance"
-					, "addAttackCritMultiplier"
-					, "addSpellCritChance"
-					, "addSpellCritMultiplier"
-					, "sprintChance"
-					, "xpIncrease"
-					, "blockAttackChance"
-					, "blockSpellChance"
-					, "dodgeAttackChance"
-					, "dodgeSpellChance"
-					, "attackSpeed"
-					, "castSpeed"
-					, "itemQuantity"
-					, "magicFind"
-					, "catchChance"
-					, "catchSpeed"
-					, "fishRarity"
-					, "fishWeight"
-					, "fishItems"
-				];
-
 				let text = Object.keys(node.stats)
 					.map((s) => {
 						let statName = locale.translate("stats", s);
 						let statValue = node.stats[s];
-						if (s.indexOf("CritChance") > -1) {
+						if (s.includes("CritChance")) {
 							statValue /= 20;
 						}
 						let negative = ((statValue + "")[0] === "-");
 						if (percentageStats.includes(s)) {
 							statValue += "%";
 						}
-						return ((negative ? "" : "+") + statValue + " " + statName);
+						return `${negative ? "" : "+"}${statValue} ${statName}`;
 					})
-					.join("<br />");
+					.join("<br/>");
 
 				if (node.spiritStart === window.player.class) {
 					text = locale.translate("passives", "nodes", "myStart");
@@ -370,8 +380,8 @@ export default {
 			this.events.onMouseMove.call(this, e);
 
 			this.panOrigin = {
-				x: e.raw.clientX * zoom
-				, y: e.raw.clientY * zoom
+				x: e.clientX * zoom
+				, y: e.clientY * zoom
 			};
 		}
 
@@ -380,13 +390,10 @@ export default {
 				this.events.onMouseMove.call(this, e);
 				return;
 			}
-			if (!this.oldPos) {
-				this.oldPos = { x: this.pos.x, y: this.pos.y };
-			}
 			let scrollSpeed = constants.scrollSpeed / this.currentZoom;
 
-			const rawX = e.raw.clientX * zoom;
-			const rawY = e.raw.clientY * zoom;
+			const rawX = e.clientX * zoom;
+			const rawY = e.clientY * zoom;
 
 			this.pos.x += (this.panOrigin.x - rawX) * scrollSpeed;
 			this.pos.y += (this.panOrigin.y - rawY) * scrollSpeed;

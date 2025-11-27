@@ -69,6 +69,7 @@ const GAMEPAD_AXES_DEFAULT = {
 	, cameraX: 2
 	, cameraY: 3
 };
+const GAMEPAD_AXES_EPSILON = 0.01;
 const GAMEPAD_BUTTONS_DEFAULT = {
 	/** Standard Gamepad buttons
 	 * 0	Bottom button in right cluster
@@ -132,7 +133,15 @@ export default {
 	, blacklistedKeys: []
 	, whitelistedKeys: []
 
-	, gamepads: []
+	, gamepad: {
+		axes: {
+			horizontal: 0
+			, vertical: 0
+		}
+		, buttons: []
+		, target: ""
+	}
+	, _gamepads: []
 	, lastGamepadActionsUpdate: 0
 
 	, init: function (container) {
@@ -152,7 +161,7 @@ export default {
 		});
 
 		if (typeof navigator.getGamepads === "function") {
-			this.gamepads = navigator.getGamepads();
+			this._gamepads = navigator.getGamepads();
 		}
 
 		window.addEventListener("gamepadconnected", this.events.gamepad.connected.bind(this));
@@ -179,8 +188,8 @@ export default {
 			})().then(this.onLoadShake.bind(this));
 		}
 
-		_.log.input.debug("Gamepads: %o", this.gamepads);
-		for (const gamepad of this.gamepads) {
+		_.log.input.debug("Gamepads: %o", this._gamepads);
+		for (const gamepad of this._gamepads) {
 			if (!gamepad) {
 				continue;
 			}
@@ -220,7 +229,7 @@ export default {
 
 	, updateGamepads: function () {
 		let lastUpdated = Number.POSITIVE_INFINITY;
-		for (const gamepad of this.gamepads) { // Check all connected gamepads for the most stale timestamp (smaller is older).
+		for (const gamepad of this._gamepads) { // Check all connected gamepads for the most stale timestamp (smaller is older).
 			if (!gamepad) {
 				continue;
 			}
@@ -248,11 +257,11 @@ export default {
 		) {
 			return; // Was updated recently.
 		}
-		this.gamepads = navigator.getGamepads();
+		this._gamepads = navigator.getGamepads();
 		this.lastGamepadActionsUpdate = timestamp;
 
 		const buttons = [];
-		for (const gamepad of this.gamepads) {
+		for (const gamepad of this._gamepads) {
 			if (!gamepad) {
 				continue;
 			}
@@ -263,7 +272,11 @@ export default {
 					|| ((newButtonInfo.pressed || newButtonInfo.touched) && !oldButtonInfo.pressed && !oldButtonInfo.touched)
 					|| newButtonInfo.value > oldButtonInfo.value
 				) {
-					buttons[button] = newButtonInfo;
+					buttons[button] = {
+						pressed: newButtonInfo.pressed
+						, touched: newButtonInfo.touched
+						, value: newButtonInfo.value
+					};
 				}
 			}
 		}
@@ -301,35 +314,61 @@ export default {
 								, consumed: false
 								, target: targetName
 							};
-							events.emit("uiaction", actionEvent);
-							if (actionEvent.consumed) {
-								this.actions[action] = INPUT_STATE.CONSUMED;
-							} else {
-								events.emit("inputaction", actionEvent);
+							if (targetName === "world") {
+								events.emit("uiaction", actionEvent);
+							}
+							if (this.actions[action] !== INPUT_STATE.CONSUMED) {
+								if (actionEvent.consumed) {
+									this.actions[action] = INPUT_STATE.CONSUMED;
+								} else {
+									events.emit("inputaction", actionEvent);
+								}
 							}
 						}
 					}
 				}
-			} else if (button in this.pressedGamepadButtons > 0) {
-				delete this.pressedGamepadButtons[button];
+			} else if (this.pressedGamepadButtons[button] > 0) {
+				this.pressedGamepadButtons[button] = INPUT_STATE.RELEASED;
 				updated = true;
 
 				const removedActions = this.getMapping("gamepad", button);
 				for (const action of removedActions) {
 					delete this.actions[action];
 				}
+			} else if (button in this.pressedGamepadButtons) {
+				delete this.pressedGamepadButtons[button];
 			}
 		}
+		const horizontal = this.getAxisOf("gamepad", "horizontal");
+		const vertical = this.getAxisOf("gamepad", "vertical");
+		if (!updated
+			&& (Math.abs(horizontal - this.gamepad.axes.horizontal) > GAMEPAD_AXES_EPSILON
+				|| Math.abs(vertical - this.gamepad.axes.vertical) > GAMEPAD_AXES_EPSILON
+			)
+		) {
+			updated = true;
+		}
 		if (updated) {
-			const gamepadEvent = {
+			_.assign(this.gamepad, {
 				axes: {
-					horizontal: this.getAxisOf("gamepad", "horizontal")
-					, vertical: this.getAxisOf("gamepad", "vertical")
+					horizontal
+					, vertical
 				}
 				, buttons
-
 				, target: targetName
+			});
+			const gamepadEvent = {
 			};
+			_.assign(gamepadEvent, this.gamepad);
+			if (targetName !== "world") {
+				const customInputEvent = new CustomEvent("gamepad", {
+					detail: gamepadEvent
+					, bubbles: true // Allows to bubble up the DOM tree
+					, cancelable: true // Allows to be canceled
+					, composed: true // Will trigger listeners outside of a shadow root
+				});
+				document.activeElement.dispatchEvent(customInputEvent);
+			}
 			events.emit("inputchanged", gamepadEvent);
 		}
 	}
@@ -559,7 +598,7 @@ export default {
 		const axis = inputAxes[axisName];
 		switch (inputType) {
 			case "gamepad":
-				for (const gamepad of this.gamepads) {
+				for (const gamepad of this._gamepads) {
 					if (!gamepad || !gamepad.axes.has(axis)) {
 						continue;
 					}
@@ -568,13 +607,17 @@ export default {
 				break;
 			case "keyboard":
 				for (let i = axis.negative.length - 1; i >= 0; --i) {
-					if (this.pressedKeys[axis.negative[i]]) {
+					const key = axis.negative[i];
+					if (this.pressedKeys[key] > 0) {
+						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
 						result--;
 						break;
 					}
 				}
 				for (let i = axis.positive.length - 1; i >= 0; --i) {
-					if (this.pressedKeys[axis.positive[i]]) {
+					const key = axis.positive[i];
+					if (this.pressedKeys[key] > 0) {
+						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
 						result++;
 						break;
 					}
@@ -643,10 +686,12 @@ export default {
 						if (targetName === "world") {
 							events.emit("uiaction", actionEvent);
 						}
-						if (actionEvent.consumed) {
-							this.actions[action] = INPUT_STATE.CONSUMED;
-						} else {
-							events.emit("inputaction", actionEvent);
+						if (this.actions[action] !== INPUT_STATE.CONSUMED) {
+							if (actionEvent.consumed) {
+								this.actions[action] = INPUT_STATE.CONSUMED;
+							} else {
+								events.emit("inputaction", actionEvent);
+							}
 						}
 					}
 
@@ -662,12 +707,14 @@ export default {
 							events.emit("uikeypress", keyEvent);
 						}
 					} else {
-						keyEvent.repeat = Boolean(this.pressedKeys[key]);
+						keyEvent.repeat = Boolean(this.pressedKeys[key] > 0);
 					}
-					if (keyEvent.consumed) {
-						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
-					} else {
-						events.emit("keydown", keyEvent);
+					if (this.pressedKeys[key] !== INPUT_STATE.CONSUMED) {
+						if (keyEvent.consumed) {
+							this.pressedKeys[key] = INPUT_STATE.CONSUMED;
+						} else {
+							events.emit("keydown", keyEvent);
+						}
 					}
 					events.emit("inputchanged", keyEvent);
 				}
@@ -866,7 +913,7 @@ export default {
 					, gamepad.buttons.length
 					, gamepad.axes.length
 				);
-				this.gamepads[gamepad.index] = gamepad;
+				this._gamepads[gamepad.index] = gamepad;
 			}
 			, disconnected: function (e) {
 				_.log.input.gamepad.debug("Gamepad disconnected %o", e);
@@ -879,7 +926,7 @@ export default {
 					, gamepad.index
 					, gamepad.id
 				);
-				delete this.gamepads[gamepad.index];
+				delete this._gamepads[gamepad.index];
 			}
 		}
 	}
