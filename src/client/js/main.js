@@ -60,18 +60,14 @@ const main = {
 		]);
 
 		events.emit("onResourcesLoaded");
-		this.start();
-	}
 
-	, start: function () {
 		window.onfocus = this.onFocus.bind(this, true);
 		window.onblur = this.onFocus.bind(this, false);
-
 		$(window).on("contextmenu", this.onContextMenu.bind(this));
 
+		input.init("#ui-container");
 		objects.init();
 		renderer.init();
-		input.init("#ui-container");
 
 		numbers.init();
 

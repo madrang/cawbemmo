@@ -75,8 +75,8 @@ export default {
 
 		const talkContext = [
 			target.name
-			, "----------", {
-				text: "talk"
+			, "----------"
+			, { text: "talk"
 				, callback: this.onTalk.bind(this)
 			}
 		];
