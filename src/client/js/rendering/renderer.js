@@ -89,6 +89,7 @@ export default {
 		});
 
 		window.addEventListener("resize", this.onResize.bind(this));
+		document.body.addEventListener("fullscreenchange", this.onFullscreenChange.bind(this));
 
 		$(this.renderer.view).appendTo(".canvas-container");
 
@@ -170,17 +171,30 @@ export default {
 		});
 	}
 
-	, toggleScreen: function () {
-		if (window.innerHeight === screen.height) { // isFullscreen
-			// Change to windowed mode.
-			const doc = document;
-			(doc.cancelFullscreen || doc.msCancelFullscreen || doc.mozCancelFullscreen || doc.webkitCancelFullScreen).call(doc);
+	, toggleScreen: async function () {
+		throw new Error("Debug!");
+		if (!document.fullscreenEnabled) {
+			_.log.requestFullscreen.notice("Fullscreen mode is not available!");
 			return "Windowed";
 		}
-		// Enable fullscreen mode.
-		const el = $("body")[0];
-		(el.requestFullscreen || el.msRequestFullscreen || el.mozRequestFullscreen || el.webkitRequestFullscreen).call(el);
-		return "Fullscreen";
+		if (document.fullscreenElement
+			|| window.innerHeight === screen.height
+		) { // isFullscreen
+			try { // Change to windowed mode.
+				await document.exitFullscreen();
+				return "Windowed";
+			} catch (error) {
+				_.log.exitFullscreen.error(error);
+				return "Fullscreen";
+			}
+		}
+		try { // Enable fullscreen mode.
+			await document.body.requestFullscreen();
+			return "Fullscreen";
+		} catch (error) {
+			_.log.requestFullscreen.error(error);
+			return "Windowed";
+		}
 	}
 
 	, buildTitleScreen: async function () {
@@ -225,6 +239,9 @@ export default {
 			this.buildTitleScreen();
 		}
 		events.emit("onResize");
+	}
+	, onFullscreenChange: function (e) {
+		_.log.onFullscreenChange.trace("Screen mode changed %o", e);
 	}
 
 	, getTexture: function (baseTex, cell, size = 8) {

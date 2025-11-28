@@ -123,8 +123,8 @@ export default {
 		this.find("#options-quality .value").html(state.capitalize());
 	}
 
-	, toggleScreen: function () {
-		const state = renderer.toggleScreen();
+	, toggleScreen: async function () {
+		const state = await renderer.toggleScreen();
 		const newValue = (state === "Windowed") ? "Off" : "On";
 
 		this.find("#options-fullscreen .value").html(newValue);

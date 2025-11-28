@@ -96,7 +96,11 @@ const KEYBOARD_KEYS_DEFAULT = {
 	, spell_4: [ "4" ]
 	, target: [ "tab" ]
 };
-const KEYBOARD_PREVENT_DEFAULT_KEYCODES = [ 8, 9, 122 ];
+const KEYBOARD_PREVENT_DEFAULT_KEYCODES = [
+	8 // backspace
+	, 9 // tab
+	, 122 // F11
+];
 const GAMEPAD_UPDATE_DELAY = 33;
 const GAMEPAD_REPEAT_DELAY = 44;
 const GAMEPAD_AXES_DEFAULT = {
@@ -757,7 +761,7 @@ export default {
 					events.emit("inputchanged", keyEvent);
 				}
 
-				if (e.key === "F11") { //TODO Move to proper component.
+				if (!capture && e.key === "F11") { //TODO Move to proper component.
 					events.emit("onToggleFullscreen");
 				}
 			}
