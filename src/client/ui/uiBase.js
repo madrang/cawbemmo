@@ -120,8 +120,12 @@ export default {
 
 	, show: function () {
 		if (this.shown) {
+			if (this.modal) {
+				this.el.focus();
+			}
 			return;
 		}
+
 		if (this.modal) {
 			//Close any other open modal
 			$(".modal").toArray().forEach((el) => {
@@ -132,6 +136,7 @@ export default {
 			});
 		}
 		this.shown = true;
+
 		if (this.isFlex) {
 			this.el.css("display", "flex");
 		} else {
@@ -143,6 +148,10 @@ export default {
 		if (this.centeredX || this.centeredY) {
 			this.center(this.centeredX, this.centeredY);
 		}
+		if (this.modal) {
+			this.el.focus();
+		}
+
 		events.emit("onShowUi", this);
 	}
 
