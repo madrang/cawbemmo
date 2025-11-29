@@ -670,11 +670,10 @@ export default {
 	}
 
 	, isKeyAllowed: function (key) {
-		const result = (key.length > 1
-			|| this.whitelistedKeys.includes(key)
-			|| (!this.blacklistedKeys.includes(key) && !this.blacklistedKeys.includes("*"))
+		return Boolean(key
+			&& !this.blacklistedKeys.includes(key)
+			&& (!this.blacklistedKeys.includes("*") || this.whitelistedKeys.includes(key))
 		);
-		return result;
 	}
 
 	, events: {
