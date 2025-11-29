@@ -172,7 +172,6 @@ export default {
 	}
 
 	, toggleScreen: async function () {
-		throw new Error("Debug!");
 		if (!document.fullscreenEnabled) {
 			_.log.requestFullscreen.notice("Fullscreen mode is not available!");
 			return "Windowed";
