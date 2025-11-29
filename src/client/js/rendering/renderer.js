@@ -89,7 +89,6 @@ export default {
 		});
 
 		window.addEventListener("resize", this.onResize.bind(this));
-		document.body.addEventListener("fullscreenchange", this.onFullscreenChange.bind(this));
 
 		$(this.renderer.view).appendTo(".canvas-container");
 
@@ -238,9 +237,6 @@ export default {
 			this.buildTitleScreen();
 		}
 		events.emit("onResize");
-	}
-	, onFullscreenChange: function (e) {
-		_.log.onFullscreenChange.trace("Screen mode changed %o", e);
 	}
 
 	, getTexture: function (baseTex, cell, size = 8) {
