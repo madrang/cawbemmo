@@ -12,8 +12,7 @@ const OFFLINE_RESSOURCES = [
 const onInstall = async (installEvent) => {
 	const cache = await caches.open(CACHE_NAME);
 	const reqOptions = {
-		// Ensures that the response isn't fulfilled from cache.
-		cache: "reload"
+		cache: "reload" // Ensures that the response isn't fulfilled from cache.
 	};
 	await cache.addAll(
 		OFFLINE_RESSOURCES.map((ressourceUrl) => new Request(ressourceUrl, reqOptions))
@@ -25,8 +24,7 @@ self.addEventListener("install", (installEvent) => {
 	const p = onInstall(installEvent);
 	installEvent.waitUntil(p);
 
-	// Force the waiting service worker to become the active service worker.
-	self.skipWaiting();
+	self.skipWaiting(); // Force the waiting service worker to become the active service worker.
 });
 
 const onActivate = async (activateEvent) => {
@@ -40,8 +38,7 @@ self.addEventListener("activate", (activateEvent) => {
 	const p = onActivate(activateEvent);
 	activateEvent.waitUntil(p);
 
-	// Tell the active service worker to take control of the page immediately.
-	self.clients.claim();
+	self.clients.claim(); // Tell the active service worker to take control of the page immediately.
 });
 
 const fetchHandlers = {
@@ -51,8 +48,6 @@ const fetchHandlers = {
 			if (preloadResponse) {
 				return preloadResponse;
 			}
-
-			// Always try the network first.
 			const networkResponse = await fetch(fetchEvent.request);
 			return networkResponse;
 		} catch (error) {

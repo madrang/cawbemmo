@@ -235,6 +235,7 @@ export default {
 		if (!elmnt) {
 			elmnt = this.el;
 		}
+		// eslint-disable-next-line no-undef
 		if (elmnt instanceof jQuery) {
 			elmnt = elmnt[0];
 		}

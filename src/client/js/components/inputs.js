@@ -179,8 +179,8 @@ export default {
 		}
 	}
 
-	, onKeyDown: function (key) {
-		if (key === "esc") {
+	, onKeyDown: function (e) {
+		if (e.key === "esc") {
 			client.request({
 				cpn: "player"
 				, method: "performAction"
