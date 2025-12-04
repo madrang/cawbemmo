@@ -55,13 +55,14 @@ const onNewLogEvent = function (req, entry) {
 	userLogger.print(logLevel, entry);
 };
 
-const loadRoute = function (rName, options, loadedAPIs) {
-	const routeModule = require("./routes/" + rName);
+const loadRoute = function (routeName) {
+	const options = API_ROUTES[routeName] || {};
+	const routeModule = require("./routes/" + routeName);
 	if ("createRouter" in routeModule) {
-		routeModule.router = routeModule.createRouter(options, loadedAPIs);
+		routeModule.router = routeModule.createRouter(options, API_ROUTES);
 		delete routeModule.createRouter;
 	}
-	loadedAPIs[rName] = routeModule;
+	API_ROUTES[routeName] = routeModule;
 	return routeModule;
 };
 
@@ -83,7 +84,31 @@ const init = async function () {
 	app.use(cookieParser());
 	app.use(express.json({ limit: "50mb" }));
 
-	app.post("/log", (req, res) => {
+	for (const apiName in API_ROUTES) {
+		const routeModule = loadRoute(apiName);
+		if (routeModule.router) {
+			app.use("/api/" + apiName, routeModule.router);
+		}
+	}
+
+	const routeFiles = fileLister.getFiles("./server/routes/");
+	for (const fName of routeFiles) {
+		if (!fName.endsWith(".js")) {
+			continue;
+		}
+		const apiName = fName.slice(0, fName.lastIndexOf("."));
+		if (API_ROUTES[apiName]) {
+			continue;
+		}
+		const routeModule = loadRoute(apiName);
+		if (routeModule.router) {
+			app.use("/api/" + apiName, routeModule.router);
+		}
+	}
+
+	const logWindowMs = 60 * 1000;
+	const logLimit = 8;
+	app.post("/log", API_ROUTES.limiter.create(logWindowMs, logLimit), (req, res) => {
 		if (Array.isArray(req.body)) {
 			for (const entry of req.body) {
 				onNewLogEvent(req, entry);
@@ -94,25 +119,6 @@ const init = async function () {
 		res.send({ response: "ok" });
 	});
 
-	const loadedAPIs = {};
-	for (const apiName in API_ROUTES) {
-		const routeModule = loadRoute(apiName, API_ROUTES[apiName], loadedAPIs);
-		app.use("/api/" + apiName, routeModule.router);
-		API_ROUTES[apiName] = routeModule;
-	}
-	const routeFiles = fileLister.getFiles("./server/routes/");
-	for (const fName of routeFiles) {
-		if (!fName.endsWith(".js")) {
-			continue;
-		}
-		const apiName = fName.slice(0, fName.lastIndexOf("."));
-		if (API_ROUTES[apiName]) {
-			continue;
-		}
-		const routeModule = loadRoute(apiName, {}, loadedAPIs);
-		app.use("/api/" + apiName, routeModule.router);
-		API_ROUTES[apiName] = routeModule;
-	}
 	app.get("/admin", (req, res, next) => {
 		if (req.path === "/admin") {
 			return res.redirect("/admin/index.html");

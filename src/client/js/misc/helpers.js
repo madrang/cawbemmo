@@ -50,7 +50,12 @@ const getColor = function (level) {
 	}
 };
 
+let nextSendDelay = 0;
 const sendLogBuffer = async function (logData) {
+	if (nextSendDelay > 0) {
+		await _.asyncDelay(nextSendDelay);
+		nextSendDelay = 0;
+	}
 	const response = await fetch("/log", {
 		method: "POST"
 		, headers: {
@@ -59,6 +64,7 @@ const sendLogBuffer = async function (logData) {
 		, body: JSON.stringify(logData)
 	});
 	if (!response.ok) {
+		nextSendDelay = (response.headers.get("Retry-After") || 5) * 1000;
 		throw new Error(`HTTP${response.status}:${response.statusText}`);
 	}
 	return await response.json();
