@@ -120,7 +120,8 @@ export default {
 		this.onEvent("keydown", this.events.onKeyDown.bind(this));
 		this.el
 			.on("gamepad", this.events.keydown.bind(this))
-			.on("keydown", this.events.keydown.bind(this))
+			.on("keydown", this.events.keydown.bind(this));
+		this.find(".bottom")
 			.on("mousedown", this.events.onPanStart.bind(this))
 			.on("mousemove", this.events.onPan.bind(this))
 			.on("mouseup", this.events.onPanEnd.bind(this))
@@ -329,10 +330,10 @@ export default {
 
 			this.renderNodes();
 		}
-		, onMouseMove: function (pos) {
+		, onMouseMove: function (e) {
 			const cell = {
-				x: Math.floor((this.pos.x + pos.x) / constants.gridSize)
-				, y: Math.floor((this.pos.y + pos.y) / constants.gridSize)
+				x: Math.floor((this.pos.x + e.offsetX) / constants.gridSize)
+				, y: Math.floor((this.pos.y + e.offsetY) / constants.gridSize)
 			};
 			const node = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
 			if (node === this.hoverNode) {
@@ -362,8 +363,8 @@ export default {
 				}
 
 				const tooltipPos = {
-					x: (input.mouse.raw.clientX + 15) / zoom
-					, y: (input.mouse.raw.clientY) / zoom
+					x: (e.clientX + 15) / zoom
+					, y: e.clientY / zoom
 				};
 				events.emit("onShowTooltip", text, this.el[0], tooltipPos);
 				this.tooltipId = node.id;
@@ -376,8 +377,8 @@ export default {
 		, onPanStart: function (e) {
 			if (isMobile) {
 				let cell = {
-					x: Math.floor((this.pos.x + e.x) / constants.gridSize)
-					, y: Math.floor((this.pos.y + e.y) / constants.gridSize)
+					x: Math.floor((this.pos.x + e.offsetX) / constants.gridSize)
+					, y: Math.floor((this.pos.y + e.offsetY) / constants.gridSize)
 				};
 
 				const node = this.data.nodes.find((n) => n.pos.x === cell.x && n.pos.y === cell.y);
