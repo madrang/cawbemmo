@@ -266,7 +266,7 @@ module.exports = {
 
 		const action = isAdd ? "addActions" : "removeActions";
 		obj.syncer.setArray(true, "serverActions", action, {
-			key: "u"
+			inputAction: "gather"
 			, action: {
 				cpn: "gatherer"
 				, method: "gather"

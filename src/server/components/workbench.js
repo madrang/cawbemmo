@@ -46,7 +46,7 @@ module.exports = {
 		}
 
 		obj.syncer.setArray(true, "serverActions", "removeActions", {
-			key: "u"
+			inputAction: "use"
 			, action: {
 				cpn: "workbench"
 				, method: "open"
@@ -67,8 +67,8 @@ module.exports = {
 		let msg = `Press U to ${this.noticeMessage || `access the ${this.obj.name}`}`;
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
-			key: "u"
-			, name: "access workbench"
+			name: "access workbench"
+			, inputAction: "use"
 			, action: {
 				cpn: "workbench"
 				, method: "open"

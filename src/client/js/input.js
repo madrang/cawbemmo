@@ -90,7 +90,8 @@ const KEYBOARD_KEYS_DEFAULT = {
 	, mainmenu: [ "esc" ]
 	, select: [ "backquote" ]
 
-	, gather: [ "u" ]
+	, gather: [ "g" ]
+	, use: [ "u" ]
 	, spell_0: [ " " ]
 	, spell_1: [ "1" ]
 	, spell_2: [ "2" ]
@@ -148,6 +149,7 @@ const GAMEPAD_BUTTONS_DEFAULT = {
 	, spell_0: [ 0 ]
 	, gather: [ 1 ]
 	, target: [ 2 ]
+	, use: [ 3 ]
 };
 
 export default {

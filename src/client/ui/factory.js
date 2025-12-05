@@ -249,8 +249,6 @@ export default {
 		}
 		if (UI_HOTKEYS.includes(e.key)) {
 			$(".uiOverlay").hide();
-			e.consumed = true;
-			return;
 		}
 	}
 
@@ -258,7 +256,7 @@ export default {
 		if (e.consumed) {
 			return;
 		}
-		_.log.factory.onInputChanged.trace(e);
+		//_.log.factory.onInputChanged.trace(e);
 	}
 
 	, preload: function () {
