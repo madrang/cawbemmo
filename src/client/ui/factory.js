@@ -4,6 +4,13 @@ import client from "/js/system/client.js";
 import globals from "/js/system/globals.js";
 import browserStorage from "/js/system/browserStorage.js";
 
+const UI_HOTKEYS = [
+	"o" // Online players
+	, "j" // Hero panel
+	, "h" // Help
+	, "i" // Inventory
+];
+
 const setUiTypes = (list) => {
 	list.forEach((l, i) => {
 		if (typeof l === "string") {
@@ -39,11 +46,15 @@ export default {
 	, ingameUisBuilt: false
 
 	, init: function () {
-		events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
 		events.on("uikeypress", this.onUiKeyPress.bind(this));
 		events.on("uiaction", this.onUiAction.bind(this));
+		events.on("inputchanged", this.onInputChanged.bind(this));
+		window.addEventListener("contextmenu", this.onContextMenu.bind(this));
+
 		events.on("onResize", this.onResize.bind(this));
 		events.on("onDestroyedUi", this.onDestroyedUi.bind(this));
+
+		events.on("onBuildIngameUis", this.onBuildIngameUis.bind(this));
 
 		setUiTypes(globals.clientConfig.uiLoginList);
 		setUiTypes(globals.clientConfig.uiList);
@@ -129,6 +140,78 @@ export default {
 		this.uis.push(ui);
 	}
 
+	, focusNextElement: function ( reverse, activeElem ) {
+		// Check if an element is defined or use activeElement
+		activeElem = activeElem instanceof HTMLElement ? activeElem : document.activeElement;
+
+		const queryString = [
+			`a:not([disabled]):not([tabindex="-1"])`
+			, `button:not([disabled]):not([tabindex="-1"])`
+			, `input:not([disabled]):not([tabindex="-1"])`
+			, `select:not([disabled]):not([tabindex="-1"])`
+			, `[tabindex]:not([disabled]):not([tabindex="-1"])`
+		].join(",");
+
+		const focusable = Array.from(document.querySelectorAll(queryString))
+			.filter((elem) => { // Check for visibility while always include the current activeElement.
+				if (elem === activeElem) {
+					return true;
+				}
+				return (elem.offsetWidth > 0 || elem.offsetHeight > 0) && elem.tabIndex !== -1;
+			})
+			.sort((a, b) => {
+				// Sort the array by index from smallest to largest
+				if (a.tabIndex > 0 && b.tabIndex > 0) {
+					if (a.tabIndex < b.tabIndex) {
+						return -1;
+					}
+					if (b.tabIndex < a.tabIndex) {
+						return 1;
+					}
+					return 0;
+				}
+				if (a.tabIndex > 0) {
+					return -1;
+				}
+				if (b.tabIndex > 0) {
+					return 1;
+				}
+				if (!a.compareDocumentPosition) {
+					return 0;
+				}
+				const position = a.compareDocumentPosition(b);
+				if (position & Node.DOCUMENT_POSITION_FOLLOWING || position & Node.DOCUMENT_POSITION_CONTAINED_BY) {
+					// If 'b' follows 'a' or 'b' is contained by 'a', then 'a' comes before 'b'
+					return -1;
+				} else if (position & Node.DOCUMENT_POSITION_PRECEDING || position & Node.DOCUMENT_POSITION_CONTAINS) {
+					// If 'b' precedes 'a' or 'b' contains 'a', then 'b' comes before 'a'
+					return 1;
+				}
+				return 0;
+			});
+
+		let focusElem;
+		// if reverse is true use the previous focusable element
+		if (reverse) {
+			focusElem = focusable[focusable.indexOf(activeElem) - 1] || focusable[focusable.length - 1];
+		} else {
+			// reverse is false use the next focusable element
+			focusElem = focusable[focusable.indexOf(activeElem) + 1] || focusable[0];
+		}
+		if (focusElem) {
+			focusElem.focus();
+		}
+		return focusElem;
+	}
+
+	, onContextMenu: function (e) {
+		const allowed = ["txtUsername", "txtPassword"].some((s) => $(e.target).hasClass(s));
+		if (!allowed) {
+			e.preventDefault();
+			return false;
+		}
+	}
+
 	, onResize: function () {
 		for (const ui of this.uis) {
 			if (ui.centered) {
@@ -139,24 +222,43 @@ export default {
 		}
 	}
 
-	, onUiAction: function (actionEvent) {
-		if (actionEvent.action === "mainmenu") {
+	, onUiAction: function (e) {
+		if (e.actionName === "mainmenu") {
 			for (const u of this.uis) {
 				if (!u.modal || !u.shown) {
 					continue;
 				}
-				actionEvent.consumed = true;
+				e.consumed = true;
 				u.toggle();
 			}
 			$(".uiOverlay").hide();
 			events.emit("onHideContextMenu");
+			return;
+		}
+		if (e.actionName === "select") {
+			this.focusNextElement();
+			e.consumed = true;
 		}
 	}
 
-	, onUiKeyPress: function (keyEvent) {
-		if (["o", "j", "h", "i"].includes(keyEvent.key)) {
-			$(".uiOverlay").hide();
+	, onUiKeyPress: function (e) {
+		if (e.key === "F11") {
+			events.emit("onToggleFullscreen");
+			e.consumed = true;
+			return;
 		}
+		if (UI_HOTKEYS.includes(e.key)) {
+			$(".uiOverlay").hide();
+			e.consumed = true;
+			return;
+		}
+	}
+
+	, onInputChanged: function (e) {
+		if (e.consumed) {
+			return;
+		}
+		_.log.factory.onInputChanged.trace(e);
 	}
 
 	, preload: function () {

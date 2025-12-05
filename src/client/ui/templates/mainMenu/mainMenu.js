@@ -84,8 +84,8 @@ export default {
 		window.location = window.location;
 	}
 
-	, onInputAction: function (action) {
-		if (action.name === "mainmenu") {
+	, onInputAction: function (e) {
+		if (e.actionName === "mainmenu") {
 			this.toggle();
 		}
 	}

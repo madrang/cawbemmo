@@ -56,6 +56,7 @@ const KEYBOARD_MAPPINGS = {
 	, 39: "right"
 	, 40: "down"
 	, 46: "del"
+	, 192: "backquote"
 
 	//hacks for mac cmd key
 	, 224: "ctrl"
@@ -87,6 +88,7 @@ const KEYBOARD_KEYS_DEFAULT = {
 	, modifier_2: [ "ctrl" ]
 
 	, mainmenu: [ "esc" ]
+	, select: [ "backquote" ]
 
 	, gather: [ "u" ]
 	, spell_0: [ " " ]
@@ -141,6 +143,7 @@ const GAMEPAD_BUTTONS_DEFAULT = {
 	, modifier_2: [ 5 ]
 
 	, mainmenu: [ 9 ]
+	, select: [ 8 ]
 
 	, spell_0: [ 0 ]
 	, gather: [ 1 ]
@@ -352,7 +355,7 @@ export default {
 							this.actions[action] = INPUT_STATE.TRIGGERED;
 
 							const actionEvent = {
-								name: action
+								actionName: action
 								, consumed: false
 								, target: targetName
 							};
@@ -720,7 +723,7 @@ export default {
 						}
 						this.actions[action] = INPUT_STATE.TRIGGERED;
 						const actionEvent = {
-							name: action
+							actionName: action
 							, consumed: false
 							, target: targetName
 						};
@@ -758,10 +761,6 @@ export default {
 						}
 					}
 					events.emit("inputchanged", keyEvent);
-				}
-
-				if (!capture && e.key === "F11") { //TODO Move to proper component.
-					events.emit("onToggleFullscreen");
 				}
 			}
 			, up: function (capture, e) {

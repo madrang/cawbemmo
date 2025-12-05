@@ -63,31 +63,33 @@ const main = {
 		await globals.init();
 		await locale.init();
 
+		// Load the animated loader instead of the initial static placeholder.
 		this.loader = await uiFactory.buildFromConfig({
 			type: "loader"
 			, path: "/ui/templates/loader"
 		});
+		// Remove the static loader.
 		$("#loader-container").remove();
 
+		// Load all content.
 		await Promise.all([
 			resources.init()
 			, components.init()
 			, sound.init()
 		]);
-
+		// Loading complete.
 		events.emit("onResourcesLoaded");
 
 		window.onfocus = this.onFocus.bind(this, true);
 		window.onblur = this.onFocus.bind(this, false);
-		$(window).on("contextmenu", this.onContextMenu.bind(this));
 
 		input.init("#ui-container");
 		objects.init();
 		renderer.init();
-
 		numbers.init();
-
 		uiFactory.init();
+
+		// Init complete, remove loader.
 		this.loader.destroy();
 		delete this.loader;
 
@@ -96,18 +98,12 @@ const main = {
 	}
 
 	, onFocus: function (hasFocus) {
-		//Hack: Later we might want to make it not render when out of focus
-		this.hasFocus = true;
-		if (!hasFocus) {
+		this.hasFocus = hasFocus;
+		if (hasFocus) {
+			this.msPerFrame = Math.floor(1000 / 60);
+		} else {
 			input.resetKeys();
-		}
-	}
-
-	, onContextMenu: function (e) {
-		const allowed = ["txtUsername", "txtPassword"].some((s) => $(e.target).hasClass(s));
-		if (!allowed) {
-			e.preventDefault();
-			return false;
+			this.msPerFrame = Math.floor(1000 / 15);
 		}
 	}
 
@@ -127,7 +123,6 @@ const main = {
 		renderer.render();
 
 		this.lastRender = time;
-
 		fnQueueTick();
 	}
 };

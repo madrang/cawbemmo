@@ -125,13 +125,13 @@ export default {
 		events.emit("onSetTarget", this.target, null);
 	}
 
-	, onInputAction: function (action) {
-		if (action.name === "target") {
+	, onInputAction: function (e) {
+		if (e.actionName === "target") {
 			this.tabTarget();
 			return;
 		}
-		if (action.name.startsWith(ACTION_HEADER)) {
-			this.triggerSpell(action.name.substring(ACTION_HEADER.length));
+		if (e.actionName.startsWith(ACTION_HEADER)) {
+			this.triggerSpell(e.actionName.substring(ACTION_HEADER.length));
 		}
 	}
 
