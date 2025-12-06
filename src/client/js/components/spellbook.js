@@ -70,7 +70,7 @@ export default {
 	}
 
 	, getSpell: function (number) {
-		const spellNumber = (number === " ") ? 0 : Number.parseInt(number);
+		const spellNumber = Number.parseInt(number);
 		return this.spells.find((s) => s.id === spellNumber);
 	}
 
@@ -136,14 +136,10 @@ export default {
 	}
 
 	, triggerSpell: function (key) {
-		if (isNaN(key)) {
-			return;
-		}
 		let spell = this.getSpell(key);
 		if (!spell) {
 			return;
 		}
-
 		let isShiftDown = input.isKeyDown("shift");
 
 		let oldTarget = null;

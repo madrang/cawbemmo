@@ -51,6 +51,7 @@ const KEYBOARD_MAPPINGS = {
 	, 16: "shift"
 	, 17: "ctrl"
 	, 27: "esc"
+	, 32: "space"
 	, 37: "left"
 	, 38: "up"
 	, 39: "right"
@@ -64,12 +65,32 @@ const KEYBOARD_MAPPINGS = {
 	, 93: "ctrl"
 };
 const KEYBOARD_NAMED_MAPPINGS = {
-	Digit1: 49
+	Digit0: 48
+	, Digit1: 49
 	, Digit2: 50
 	, Digit3: 51
 	, Digit4: 52
 	, Digit5: 53
+	, Digit6: 54
+	, Digit7: 55
+	, Digit8: 56
+	, Digit9: 57
+
+	, NumpadDecimal: "NumpadDecimal"
+	, NumpadDivide: "NumpadDivide"
+	, NumpadMultiply: "NumpadMultiply"
+	, NumpadSubtract: "NumpadSubtract"
+	, NumpadAdd: "NumpadAdd"
+	, NumpadEnter: "NumpadEnter"
 };
+for (let i = 0; i <= 32; ++i) {
+	if (i >= 0 && i <= 9) {
+		KEYBOARD_NAMED_MAPPINGS[`Numpad${i}`] = `Numpad${i}`;
+	}
+	if (i >= 1 && i <= 32) {
+		KEYBOARD_NAMED_MAPPINGS["F" + i] = "F" + i;
+	}
+}
 const KEYBOARD_AXES_DEFAULT = {
 	horizontal: {
 		negative: ["left", "a", "q", "z"]
@@ -92,7 +113,7 @@ const KEYBOARD_KEYS_DEFAULT = {
 
 	, gather: [ "g" ]
 	, use: [ "u" ]
-	, spell_0: [ " " ]
+	, spell_0: [ "space" ]
 	, spell_1: [ "1" ]
 	, spell_2: [ "2" ]
 	, spell_3: [ "3" ]
@@ -464,6 +485,9 @@ export default {
 	, convertKeyCode: function (charCode) {
 		if (typeof charCode === "object") {
 			charCode = this.namedKeyCodeMappings[charCode.code] || charCode.which;
+		}
+		if (typeof charCode === "string") {
+			return charCode;
 		}
 		if (charCode in this.keyCodeMappings) {
 			return this.keyCodeMappings[charCode];
