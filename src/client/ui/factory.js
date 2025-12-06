@@ -242,7 +242,7 @@ export default {
 	}
 
 	, onUiKeyPress: function (e) {
-		if (e.key === "F11") {
+		if (!isMobile && e.key === "F11") {
 			events.emit("onToggleFullscreen");
 			e.consumed = true;
 			return;
