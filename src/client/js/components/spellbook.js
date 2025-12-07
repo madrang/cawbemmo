@@ -79,18 +79,17 @@ export default {
 	}
 
 	, onMouseDown: function (e) {
-		if (isMobile && this.groundTargetSpell) {
-			// Allow attacking ground on mobile.
-			this.groundTarget = {
+		if (isMobile && this.groundTargetSpell) { // Allow attacking ground on mobile.
+			this.triggerSpell(this.groundTargetSpell, {
 				x: Math.floor(e.worldX / scale)
 				, y: Math.floor(e.worldY / scale)
-			};
-			this.triggerSpell(this.groundTargetSpell);
+			});
 			this.groundTargetSpell = null;
+			return;
 		}
 		if (!isMobile && e?.button === 0
-			&& this.target
-			&& this.hoverTarget?.id === this.target.id
+			&& this.hoverTarget && this.target
+			&& this.hoverTarget.id === this.target.id
 		) { // Allow attack with mouse.
 			client.request({
 				cpn: "player"
@@ -135,38 +134,16 @@ export default {
 		}
 	}
 
-	, triggerSpell: function (key) {
+	, triggerSpell: function (key, target) {
 		let spell = this.getSpell(key);
 		if (!spell) {
+			_.log.spellbook.error("Spell %s not found!", key);
 			return;
 		}
-		let isShiftDown = input.isKeyDown("shift");
-
-		let oldTarget = null;
-		if (isShiftDown || spell.targetPlayerPos) {
-			oldTarget = this.target;
-			this.target = this.obj;
-		}
-
-		if (!spell.aura && !spell.targetGround && !spell.autoTargetFollower && !this.target) {
-			return;
-		}
-
-		let target = this.groundTarget || this.obj.inputs.hoverTile;
-		if (spell.autoTargetFollower && !this.target) {
-			target = null;
-		} else if (!spell.targetGround && this.target) {
-			target = this.target.id;
-		} else if (spell.targetPlayerPos) {
-			isShiftDown = true;
-		}
-		if (isShiftDown) {
-			this.target = oldTarget;
-		}
-		if (target === this.obj && spell.noTargetSelf) {
-			return;
-		}
-		if (isMobile && spell.targetGround && !spell.targetPlayerPos && !this.groundTarget) {
+		if (isMobile && !target
+			&& spell.targetGround
+			&& !spell.targetPlayerPos
+		) { // Allow attacking ground on mobile.
 			if (this.groundTargetSpell === key) {
 				this.groundTargetSpell = null;
 				events.emit("onGetAnnouncement", {
@@ -180,6 +157,32 @@ export default {
 			});
 			return;
 		}
+
+		const targetSelf = input.isKeyDown("shift") || spell.targetPlayerPos;
+		if (!spell.aura
+			&& !targetSelf
+			&& !spell.targetGround
+			&& !spell.autoTargetFollower
+			&& !this.target
+		) {
+			_.log.spellbook.debug("Spell %s requires a target!", spell.name);
+			return;
+		}
+
+		if (!target) {
+			target = this.obj.inputs.hoverTile;
+		}
+		if (spell.autoTargetFollower && !this.target) {
+			target = null;
+		} else if (!spell.targetGround && this.target) {
+			target = this.target.id;
+		} else if (targetSelf) {
+			target = this.obj.id;
+		}
+		if (target === this.obj && spell.noTargetSelf) {
+			_.log.spellbook.trace("Spell %s can't target self!", spell.name);
+			return;
+		}
 		if (target) {
 			client.request({
 				cpn: "player"
@@ -188,12 +191,9 @@ export default {
 					priority: input.isKeyDown("ctrl")
 					, spell: spell.id
 					, target: target
-					, self: isShiftDown
+					, self: targetSelf
 				}
 			});
-		}
-		if (isMobile) {
-			this.groundTarget = null;
 		}
 	}
 
