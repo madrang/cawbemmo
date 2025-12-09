@@ -311,7 +311,9 @@ export default {
 	, onToggleNameplates: function (show) {
 		for (let obj of this.objects) {
 			const ns = obj.nameSprite;
-			if ((!ns) || (obj.dead) || ((obj.sprite) && (!obj.sprite.visible))) {
+			if (!ns || obj.dead
+				|| (obj.sprite && !obj.sprite.visible)
+			) {
 				continue;
 			}
 			ns.visible = show;

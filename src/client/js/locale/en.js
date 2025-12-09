@@ -43,8 +43,7 @@ export const loader = {
 };
 
 export const login = {
-	credits: "Credits"
-	, language: "Language"
+	language: "Language"
 	, login: "Login"
 	, password: "Password"
 	, register: "Register"
@@ -52,9 +51,47 @@ export const login = {
 	, selfcheck: "Health Check"
 };
 
+export const mainMenu = {
+	pageTitle: "Menu"
+	, charSelect: "Character Select"
+	, logOut: "Log Out"
+};
+
 export const menus = {
 	back: "Back"
 	, next: "Next"
+};
+
+export const options = {
+	pageTitle: "Options"
+	, enabled: "On"
+	, disabled: "Off"
+	, game: {
+		pageTitle: "Game"
+		, fullscreen: "Fullscreen"
+		, volume: {
+			sound: "Sound Volume"
+			, music: "Music Volume"
+		}
+		, chat: "Chat"
+		, lastChannel: "Remember Last Chat Channel"
+	}
+	, controllers: {
+		pageTitle: "Controllers"
+		, gamepad: "Gamepad"
+		, keyboard: "Keyboard"
+	}
+	, indicators: {
+		pageTitle: "Indicators"
+		, nameplates: "Nameplates"
+		, quests: "Quests"
+		, events: "Events"
+		, party: "Party"
+		, damageNumbers: "Damage Numbers"
+		, inventory: "Inventory"
+		, itemQuality: "Quality Indicators"
+		, itemUnusable: "Unusable Indicators"
+	}
 };
 
 export const party = {
