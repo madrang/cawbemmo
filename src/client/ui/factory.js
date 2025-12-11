@@ -293,16 +293,42 @@ export default {
 	}
 
 	, exitGame: function () {
-		$("[class^=\"ui\"]:not(.ui-container)").toArray().forEach((el) => {
-			let ui = $(el).data("ui");
+		const elmList = $(`[class^="ui"]:not(.ui-container)`).toArray();
+		for (const el of elmList) {
+			const ui = $(el).data("ui");
 			if (ui && ui.destroy) {
 				ui.destroy();
 			}
-		});
+		}
 		this.ingameUisBuilt = false;
 	}
 
 	, getUi: function (type) {
 		return this.uis.find((u) => u.type === type);
+	}
+
+	, onElementActivated: function (e) {
+		const target = $(e.currentTarget);
+		const uiType = target.data("ui");
+		if (uiType) {
+			const ui = this.getUi(uiType);
+			if (ui) {
+				ui.toggle();
+				return;
+			}
+			this.build(uiType, {
+				modal: true
+			});
+			return;
+		}
+		const href = target.data("href");
+		if (href) {
+			window.open(href, "_blank");
+			return;
+		}
+		if (target.hasClass("btnClose")) {
+			return;
+		}
+		_.log.factory.elementActivated.error("Target %o couldn't be handled.", target);
 	}
 };

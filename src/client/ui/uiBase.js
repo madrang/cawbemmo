@@ -167,6 +167,7 @@ export default {
 		if (this.afterHide) {
 			this.afterHide();
 		}
+
 		events.emit("onHideUi", this);
 	}
 
@@ -217,16 +218,15 @@ export default {
 	}
 
 	, toggle: function () {
-		if (!this.shown) {
-			this.show();
-		} else {
+		if (this.shown) {
 			this.hide();
+		} else {
+			this.show();
 		}
-		events.emit("onToggleUi", this);
 	}
 
 	, buildClose: function () {
-		$("<div class=\"btn btnClose\">X</div>")
+		$(`<div class="btn btnClose">X</div>`)
 			.appendTo(this.find(".heading").eq(0))
 			.on("click", this.hide.bind(this));
 	}

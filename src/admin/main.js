@@ -263,7 +263,6 @@ async function showMenu(event, menuId) {
 function toggleUiElement(uiElm) {
 	if (uiElm.style.display === "none") {
 		uiElm.style.display = "block";
-		//events.emit("onToggleUi", uiElm);
 		return;
 	}
 	uiElm.style.display = "none";
