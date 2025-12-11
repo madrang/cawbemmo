@@ -192,24 +192,24 @@ export default {
 			}
 			this.drawMap();
 		}
-		, onKeyDown: function (key) {
-			if (!key) {
+		, onKeyDown: function (e) {
+			if (!e?.key) {
 				return;
 			}
 			if (this.el.css("display") !== "block") {
 				// Map hidden...
 				return;
 			}
-			if (key === "m") {
+			if (e.key === "m") {
 				this.toggleMap();
 				return;
 			}
-			if (key === "13" && this.mapScale > CANVAS_SCALE) {
+			if (e.key === "93" && this.mapScale > CANVAS_SCALE) {
 				this.mapScale--;
 				this.drawMap();
 				return;
 			}
-			if (key === "11" && this.mapScale < 11) {
+			if (e.key === "91" && this.mapScale < 11) {
 				this.mapScale++;
 				this.drawMap();
 				return;
