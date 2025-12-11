@@ -12,8 +12,8 @@ const template = await _.loadHTML("/ui/templates/stash/template.html", { raw: tr
 //const tplItem = await _.loadHTML("/ui/templates/inventory/templateItem.html", { raw: true });
 
 const eventMap = {
-	keyup: "onKeyUp"
-	, keydown: "onKeyDown"
+	onKeyUp: "keyup"
+	, onKeyDown: "keydown"
 	, onOpenStash: "onOpenStash"
 	, onAddStashItems: "onAddStashItems"
 	, onRemoveStashItems: "onRemoveStashItems"
@@ -32,8 +32,8 @@ export default {
 	, hasClose: true
 
 	, postRender: function () {
-		for (const [key, fn] of Object.entries(eventMap)) {
-			this.onEvent(key, this[fn].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.onEvent(key, this[prop].bind(this));
 		}
 	}
 

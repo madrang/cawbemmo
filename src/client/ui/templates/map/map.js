@@ -9,6 +9,10 @@ if (!document.adoptedStyleSheets.includes(styles)) {
 const template = await _.loadHTML("/ui/templates/map/template.html", { raw: true });
 
 const CANVAS_SCALE = 4;
+const eventMap = {
+	onGetObject: "onGetObject"
+	, onKeyDown: "keydown"
+};
 
 export default {
 	tpl: template
@@ -41,10 +45,10 @@ export default {
 	, rawImage: null
 
 	, postRender: function () {
-		this.mapCanvas = document.createElement("canvas");
-		for (const eventName in this.events) {
-			this.onEvent(eventName, this.events[eventName].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.onEvent(key, this[prop].bind(this));
 		}
+		this.mapCanvas = document.createElement("canvas");
 		this.el.on("click", this.toggleMap.bind(this));
 		this.uiContainer = $("#ui-container");
 		this.el.addClass("uiMapMini");
@@ -185,35 +189,34 @@ export default {
 		}
 	}
 
-	, events: {
-		onGetObject: function (object) {
-			if (!object.id) {
-				return;
-			}
-			this.drawMap();
+	, onGetObject: function (object) {
+		if (!object.id) {
+			return;
 		}
-		, onKeyDown: function (e) {
-			if (!e?.key) {
-				return;
-			}
-			if (this.el.css("display") !== "block") {
-				// Map hidden...
-				return;
-			}
-			if (e.key === "m") {
-				this.toggleMap();
-				return;
-			}
-			if (e.key === "93" && this.mapScale > CANVAS_SCALE) {
-				this.mapScale--;
-				this.drawMap();
-				return;
-			}
-			if (e.key === "91" && this.mapScale < 11) {
-				this.mapScale++;
-				this.drawMap();
-				return;
-			}
+		this.drawMap();
+	}
+
+	, onKeyDown: function (e) {
+		if (!e?.key) {
+			return;
+		}
+		if (this.el.css("display") !== "block") {
+			// Map hidden...
+			return;
+		}
+		if (e.key === "m") {
+			this.toggleMap();
+			return;
+		}
+		if (e.key === "93" && this.mapScale > CANVAS_SCALE) {
+			this.mapScale--;
+			this.drawMap();
+			return;
+		}
+		if (e.key === "91" && this.mapScale < 11) {
+			this.mapScale++;
+			this.drawMap();
+			return;
 		}
 	}
 };

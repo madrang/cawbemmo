@@ -20,8 +20,8 @@ const eventMap = {
 	, onLeaveChannel: "onLeaveChannel"
 	, onClickFilter: "onClickFilter"
 	, onGetCustomChatChannels: "onGetCustomChatChannels"
-	, keydown: "onKeyDown"
-	, keyup: "onKeyUp"
+	, onKeyDown: "keydown"
+	, onKeyUp: "keyup"
 };
 
 export default {
@@ -42,8 +42,8 @@ export default {
 	, lastCustomChannel: null
 
 	, postRender: function () {
-		for (const [key, fn] of Object.entries(eventMap)) {
-			this.onEvent(key, this[fn].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.onEvent(key, this[prop].bind(this));
 		}
 
 		this.find(".filter:not(.channel)").on("click", this.onClickFilter.bind(this));

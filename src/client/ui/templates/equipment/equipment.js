@@ -87,9 +87,9 @@ const eventMap = {
 	onGetStats: "onGetStats"
 	, onGetItems: "onGetItems"
 	, onInspectTarget: "onInspectTarget"
-	, onShowEquipment: "toggle"
-	, keydown: "onKeyDown"
-	, keyup: "onKeyUp"
+	, toggle: "onShowEquipment"
+	, onKeyDown: "keydown"
+	, onKeyUp: "keyup"
 };
 
 export default {
@@ -110,9 +110,10 @@ export default {
 		this.tpl = locale.getLocalizedMessage(locale.dictionary, template);
 	}
 	, postRender: function () {
-		for (const [key, fn] of Object.entries(eventMap)) {
-			this.onEvent(key, this[fn].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.onEvent(key, this[prop].bind(this));
 		}
+
 		this.find(".tab").on("click", this.onTabClick.bind(this));
 	}
 

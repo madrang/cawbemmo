@@ -16,7 +16,7 @@ const template = await _.loadHTML("/ui/templates/options/template.html", { raw: 
 
 const eventMap = {
 	onResize: "onResize"
-	, uikeypress: "onUiKeyPress"
+	, onUiKeyPress: "uikeypress"
 	, onToggleNameplates: "onToggleNameplates"
 	, onToggleQualityIndicators: "onToggleQualityIndicators"
 	, onToggleUnusableIndicators: "onToggleUnusableIndicators"
@@ -51,8 +51,8 @@ export default {
 
 		this.find(".item.volume .btn").on("click", this.modifyVolume.bind(this));
 
-		for (const [key, fn] of Object.entries(eventMap)) {
-			this.onEvent(key, this[fn].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.onEvent(key, this[prop].bind(this));
 		}
 
 		this.find(".item").on("click", events.emit.bind(events, "onClickOptionsItem"));

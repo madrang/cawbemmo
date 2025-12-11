@@ -12,12 +12,12 @@ const eventMap = {
 
 	, onUiHover: "onUiHover"
 
-	, keydown: "onKeyDown"
+	, onKeyDown: "keydown"
 
-	, touchstart: "onTouchStart"
-	, touchmove: "onTouchMove"
-	, touchend: "onTouchEnd"
-	, touchcancel: "onTouchCancel"
+	, onTouchStart: "touchstart"
+	, onTouchMove: "touchmove"
+	, onTouchEnd: "touchend"
+	, onTouchCancel: "touchcancel"
 };
 
 export default {
@@ -44,8 +44,8 @@ export default {
 			, sheetName: "ui"
 			, cell: 7
 		});
-		for (const [eventName, fn] of Object.entries(eventMap)) {
-			this.hookEvent(eventName, this[fn].bind(this));
+		for (const [prop, key] of Object.entries(eventMap)) {
+			this.hookEvent(key, this[prop].bind(this));
 		}
 		this.hookEvent("onUiLeave", this.onUiHover.bind(this, false));
 		this.obj.on("shake", this.onShake.bind(this));
