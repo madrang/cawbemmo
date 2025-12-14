@@ -94,7 +94,6 @@ const create = (windowMs, limit) => {
 	};
 };
 
-export {
-	create as default
-	, create
+export default {
+	create
 };

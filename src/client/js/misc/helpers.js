@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import gExports from "/common/globals.js";
-import logging from "/common/logging.js";
+import gExports from "/common/globals.mjs";
+import logging from "/common/logging.mjs";
 
 const urlParams = Object.fromEntries(window.location.search.substr(1).split("&").map((k) => k.split("=")));
 

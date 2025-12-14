@@ -55,9 +55,18 @@ const onNewLogEvent = function (req, entry) {
 	userLogger.print(logLevel, entry);
 };
 
-const loadRoute = function (routeName) {
+const loadRoute = async function (routeName, filePath) {
+	if (!filePath) {
+		filePath = routeName;
+	}
+	_.log["server/index"].trace("Loading %s", filePath);
 	const options = API_ROUTES[routeName] || {};
-	const routeModule = require("./routes/" + routeName);
+	let routeModule;
+	if (filePath.endsWith(".mjs")) {
+		routeModule = (await import("./routes/" + filePath)).default;
+	} else {
+		routeModule = require("./routes/" + filePath);
+	}
 	if ("createRouter" in routeModule) {
 		routeModule.router = routeModule.createRouter(options, API_ROUTES);
 		delete routeModule.createRouter;
@@ -85,7 +94,7 @@ const init = async function () {
 	app.use(express.json({ limit: "50mb" }));
 
 	for (const apiName in API_ROUTES) {
-		const routeModule = loadRoute(apiName);
+		const routeModule = await loadRoute(apiName);
 		if (routeModule.router) {
 			app.use("/api/" + apiName, routeModule.router);
 		}
@@ -93,14 +102,14 @@ const init = async function () {
 
 	const routeFiles = fileLister.getFiles("./server/routes/");
 	for (const fName of routeFiles) {
-		if (!fName.endsWith(".js")) {
+		if (!fName.endsWith(".js") && !fName.endsWith(".mjs")) {
 			continue;
 		}
 		const apiName = fName.slice(0, fName.lastIndexOf("."));
 		if (API_ROUTES[apiName]) {
 			continue;
 		}
-		const routeModule = loadRoute(apiName);
+		const routeModule = await loadRoute(apiName, fName);
 		if (routeModule.router) {
 			app.use("/api/" + apiName, routeModule.router);
 		}

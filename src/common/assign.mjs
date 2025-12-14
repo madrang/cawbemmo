@@ -1,4 +1,4 @@
-/** assign.js - A recursive implementation of Object.assign()
+/** assign.mjs - A recursive implementation of Object.assign()
  */
 const assignRecursive = function (newObj, objSrc, remapCallback, path) {
 	if (!objSrc || typeof objSrc !== "object") {

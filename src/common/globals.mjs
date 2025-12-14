@@ -333,12 +333,12 @@ const tmpExport = {
 				}
 				clearTimeout(timeout);
 			}
-			timeout = setTimeout(function () {
+			timeout = setTimeout(() => {
 				if (!immediate) {
 					applyFn(context, args);
 				}
 				timeout = null;
-			}, wait)
+			}, wait);
 			if (callNow) {
 				applyFn(context, args);
 			}
@@ -493,10 +493,10 @@ const tmpExport = {
 	}
 };
 
-import assignModule from "./assign.js";
+import assignModule from "./assign.mjs";
 assignModule.assign(tmpExport, assignModule);
 
-import * as mathModule from "./math.js";
+import * as mathModule from "./math.mjs";
 assignModule.assign(tmpExport, mathModule);
 
 export default tmpExport;
