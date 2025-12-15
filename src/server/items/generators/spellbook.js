@@ -1,6 +1,5 @@
-let spells = require("../../config/spells");
-let spellsConfig = require("../../config/spellsConfig");
-let configTypes = require("../config/types");
+const spells = require("../../config/spells");
+const configTypes = require("../config/types");
 
 const qualityGenerator = require("./quality");
 const qualityCount = qualityGenerator.qualities.length;
@@ -51,12 +50,18 @@ module.exports = {
 		let spellName = blueprint.spellName?.replaceAll("_", " ");
 
 		if (!spellName) {
-			let spellList = Object.keys(spellsConfig.spells).filter((s) => !spellsConfig.spells[s].auto && !spellsConfig.spells[s].noDrop);
-			spellName = spellList[Math.floor(Math.random() * spellList.length)];
+			const spellList = Array.from(spells.map.entries())
+				.filter(([, s]) => s.config && !s.config.auto && !s.config.noDrop)
+				.map(([n]) => n);
+			spellName = _.getRandomObj(spellList);
 		}
 
-		let spell = _.assignWith("particles", {}, spellsConfig.spells[spellName], blueprint.spellConfig);
-		let spellAesthetic = spells.spells.find((s) => s.name.toLowerCase() === spellName) || {};
+		let spellAesthetic = spells.map.get(spellName) || {};
+		const spellConfig = spellAesthetic.config;
+		if (!spellConfig) {
+			_.log.generators.spellbook.notice("Spell %s has no config defined!", spellName);
+		}
+		let spell = _.assignWith("particles", {}, spellConfig, blueprint.spellConfig);
 
 		if (!item.slot) {
 			let sprite = [10, 0];

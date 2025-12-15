@@ -1,6 +1,6 @@
-let generator = require("../../items/generator");
-let skins = require("../../config/skins");
-let factions = require("../../config/factions");
+const generator = require("../../items/generator");
+const skins = require("../../config/skins");
+const Factions = require("../../config/factions");
 
 module.exports = {
 	baseItems: []
@@ -68,7 +68,7 @@ module.exports = {
 		list.items = null;
 		list.items = [];
 
-		let faction = factions.getFaction(blueprint.faction.id);
+		let faction = Factions.getById(blueprint.faction.id);
 		let statGenerator = faction.uniqueStat;
 
 		let itemCount = blueprint.items.min + Math.floor(Math.random() * (blueprint.items.max - blueprint.items.min));

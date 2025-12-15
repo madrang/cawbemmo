@@ -85,9 +85,9 @@ module.exports = {
 		routeGlobal.call(this, msg);
 	}
 
-	, setupEventForwarder: function(forwardEvents) {
+	, setupEventForwarder: function (forwardEvents) {
 		for (const eName of forwardEvents) {
-			eventEmitter.on(eName, (function(msg) {
+			eventEmitter.on(eName, (function (msg) {
 				for (const propName in msg) {
 					if (!msg.hasOwnProperty(propName)) {
 						continue;
@@ -208,8 +208,7 @@ module.exports = {
 				? p.zoneName === zoneName
 					&& (zoneId ? p.zoneId === zoneId : true)
 				: p.zoneName !== undefined
-				)
-			).map((p) => {
+			)).map((p) => {
 				const promise = new Promise((res) => {
 					const msg = {
 						cpn: "auth"

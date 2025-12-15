@@ -402,7 +402,7 @@ module.exports = {
 
 	, getRandom: function () {
 		let useList = this.list.filter((l) => (!this.ignoreList.some((o) => (o === l.obj))));
-		return _.randomObj(useList);
+		return _.getRandomObj(useList);
 	}
 
 	, hasAggroOn: function (obj) {

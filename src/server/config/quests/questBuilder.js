@@ -46,7 +46,7 @@ module.exports = {
 			pickQuest = config.infini.find((c) => c.type === template.type);
 		}
 		if (!pickQuest) {
-			pickQuest = config.infini[Math.floor(Math.random() * config.infini.length)];
+			pickQuest = _.getRandomObj(config.infini);
 		}
 		const pickType = pickQuest.type.capitalize();
 		const questClass = _.safeRequire(module, `../../config/quests/templates/quest${pickType}`);

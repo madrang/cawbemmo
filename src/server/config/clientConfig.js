@@ -9,7 +9,7 @@ const tos = require("./tos");
 const config = {
 	logoPath: "images/logo_CWB.png"
 	// loginBackground, using undefined means default will load. Randomly using static as a broken login.
-	, loginBackgroundGeneratorPath: [ undefined, "js/rendering/backgrounds/static", undefined ]
+	, loginBackgroundGeneratorPath: [ undefined, "/js/rendering/backgrounds/static.js", undefined ]
 	, resourceList: []
 	, textureList: [
 		"tiles"
@@ -116,37 +116,42 @@ const config = {
 	, tilesNoFlip: {
 		tiles: [
 			//Stairs
-			171, 179, 10, 11, 12, 13, 14, 15, 26, 27, 28, 29, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 74, 75, 76, 77, 78, 79, 90, 91, 91, 93, 94, 95, 111
+			10, 11, 12, 13, 14, 15, 26, 27, 28, 29, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 74, 75, 76, 77, 78, 79, 90, 91, 91, 93, 94, 95, 111, 171, 179
 			//bridge
-			,199,215
+			, 199, 215
 
 			//indoor
-			,329,331,333,347,349
+			, 329, 331, 333, 347, 349
 		]
 		, walls: [
 			//Outdoor
 			//trees
-			0,1,2,3,4,5,6,7,16,17,18,19,20,21
+			0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21
 
 			//building jaune
-			,67,68,69,70,71
-			,79,80,81,82,83,84,85,86,87,95,96,97
+			, 67, 68, 69, 70, 71
+			, 79, 80, 81, 82, 83, 84, 85, 86, 87, 95, 96, 97
 			//building rouge
-			,421,422,423,435,436,437,438,439
+			, 421, 422, 423, 435, 436, 437, 438, 439
+			//building bleue
+			, 200, 201, 202, 203, 204, 205, 216, 217, 218, 219, 220, 221, 222, 223, 225, 225, 232, 233, 234, 235, 236, 237, 248, 249, 250, 251, 252, 253
+			//bateau
+			, 145, 146, 160, 161, 162, 163, 176, 177, 178, 179
 			//building vert
-			,136,137,138,139,152,153,154,155,158,159,168,169,170,171,172,173,184,185,186,187,188,189
+			, 136, 137, 138, 139, 152, 153, 154, 155, 158, 159, 168, 169, 170, 171, 172, 173, 184, 185, 186, 187, 188, 189
 			//porte garage
-			,483,484
+			, 483, 484
 			//airclim
-			,481,482
+			, 481, 482
 
 			//bridge
-			,199,215
+			, 199, 215
+			//Patetate
+			, 72, 73, 74, 75, 76, 88, 89, 90, 91, 92
 			//Bus
-			,104,105,106,107,108,120,121,122,123,124
+			, 104, 105, 106, 107, 108, 120, 121, 122, 123, 124
+
 			//indoor
-
-
 		]
 		, objects: [
 			//Clotheslines
@@ -166,6 +171,10 @@ const config = {
 	, uiLoginList: [
 		"login"
 		, "announcements"
+		, { type: "credits"
+			, load: false
+			, preload: false
+		}
 	]
 	, uiList: [
 		"mainMenu"
@@ -174,11 +183,6 @@ const config = {
 		, "options"
 		, "progressBar"
 
-		, { type: "announcements"
-			// loaded on login, should already be loaded.
-			, autoLoadOnPlay: false
-			, preload: false
-		}
 		, "hud"
 		, "middleHud"
 		, "map"
@@ -210,19 +214,19 @@ const config = {
 		, "workbench"
 
 		, { type: "createCharacter"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "characters"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "terms"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 		, { type: "changeLog"
-			, autoLoadOnPlay: false
+			, load: false
 			, preload: false
 		}
 	]
@@ -243,19 +247,24 @@ module.exports = {
 	config
 
 	, init: async function () {
-		for (const f of fileLister.getFiles("./clientComponents")) {
-			if (!f.endsWith(".js")) {
+		for (const jsFile of fileLister.getFiles("../client/js/components")) {
+			if (!jsFile.endsWith(".js")) {
 				return;
 			}
 			config.clientComponents.push({
-				type: f.split(".")[0]
-				, path: "server/clientComponents/" + f
+				type: "module"
+				, path: "/js/components/" + jsFile
 			});
 		}
-		config.clientComponents.push({
-			extends: "effects"
-			, path: "server/clientComponents/effects/auras.js"
-		});
+		for (const jsFile of fileLister.getFiles("../client/js/components/effects")) {
+			if (!jsFile.endsWith(".js")) {
+				return;
+			}
+			config.clientComponents.push({
+				type: "module"
+				, path: "/js/components/effects/" + jsFile
+			});
+		}
 
 		events.emit("onBeforeGetClientConfig", config);
 		await this.calculateAtlasTextureDimensions();
@@ -287,19 +296,7 @@ module.exports = {
 			await this.calculateAtlasTextureDimensions();
 		}
 
-		const indexOfSheet = atlasTextures.indexOf(spriteSheet);
-
-		let tileCountBeforeSheet = 0;
-		for (let i = 0; i < indexOfSheet; i++) {
-			const sheet = atlasTextures[i];
-			const { width, height } = atlasTextureDimensions[sheet];
-
-			const spSize = config.spriteSizes[sheet] || 8;
-			tileCountBeforeSheet += ((width / spSize) * (height / spSize));
-		}
-
-		//Tile index 0 is 'no tile' in map files so we need to increment by 1
-		return tileCountBeforeSheet + tileIndexInSource + 1;
+		return this.getTileIndexInAtlasSync(spriteSheet, tileIndexInSource);
 	}
 
 	, getTileIndexInAtlasSync: function (spriteSheet, tileIndexInSource) {

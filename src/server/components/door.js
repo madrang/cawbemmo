@@ -82,7 +82,7 @@ module.exports = {
 		}
 
 		obj.syncer.setArray(true, "serverActions", "removeActions", {
-			key: "u"
+			inputAction: "use"
 			, action: {
 				cpn: "door"
 				, method: "unlock"
@@ -112,7 +112,7 @@ module.exports = {
 
 		if (canAction) {
 			obj.syncer.setArray(true, "serverActions", "addActions", {
-				key: "u"
+				inputAction: "use"
 				, name: this.closed ? "open door" : "close door"
 				, action: {
 					cpn: "door"

@@ -46,7 +46,7 @@ module.exports = {
 		}
 
 		obj.syncer.setArray(true, "serverActions", "removeActions", {
-			key: "u"
+			inputAction: "use"
 			, action: {
 				cpn: "workbench"
 				, method: "open"
@@ -67,8 +67,8 @@ module.exports = {
 		let msg = `Press U to ${this.noticeMessage || `access the ${this.obj.name}`}`;
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
-			key: "u"
-			, name: "access workbench"
+			name: "access workbench"
+			, inputAction: "use"
 			, action: {
 				cpn: "workbench"
 				, method: "open"
@@ -113,32 +113,26 @@ module.exports = {
 	}
 
 	, getRecipe: function (msg) {
-		let obj = this.obj.instance.objects.objects.find((o) => o.serverId === msg.sourceId);
-		if ((!obj) || (!obj.player)) {
+		const obj = this.obj.instance.objects.objects.find((o) => o.serverId === msg.sourceId);
+		if (!obj || !obj.player) {
 			return;
 		}
-
 		const sendRecipe = buildRecipe(this.craftType, obj, msg);
-
 		this.resolveCallback(msg, sendRecipe);
 	}
 
 	, craft: function (msg) {
 		const result = craft(this, msg);
-
 		if (result) {
 			this.resolveCallback(msg, result);
 		}
 	}
 
-	, resolveCallback: function (msg, result) {
-		let callbackId = (msg.has("callbackId")) ? msg.callbackId : msg;
-		result = result || [];
-
+	, resolveCallback: function (msg, result = []) {
+		const callbackId = (msg.has("callbackId")) ? msg.callbackId : msg;
 		if (!callbackId) {
 			return;
 		}
-
 		process.send({
 			module: "atlas"
 			, method: "resolveCallback"

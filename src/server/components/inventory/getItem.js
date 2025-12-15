@@ -40,7 +40,7 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 	let quantity = item.quantity;
 
 	let exists = false;
-	if (isItemStackable(item) && !noStack) {
+	if (!noStack && isItemStackable(item)) {
 		let existItem = cpnInv.items.find((i) => i.name === item.name);
 		if (existItem) {
 			exists = true;
@@ -91,7 +91,7 @@ module.exports = (cpnInv, item, hideMessage, noStack, hideAlert, createBagIfFull
 		let msg = item.name;
 		if (quantity) {
 			msg += ` x${quantity}`;
-		} else if ((item.stats) && (item.stats.weight)) {
+		} else if (item.stats?.weight) {
 			msg += ` ${item.stats.weight}lb`;
 		}
 

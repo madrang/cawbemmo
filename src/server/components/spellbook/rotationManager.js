@@ -1,17 +1,6 @@
 const getDefaultRotationSpell = (rotationSpells) => {
 	const spells = rotationSpells.filter((s) => !s.atRotationTicks);
-
-	if (!spells.length) {
-		return;
-	}
-
-	if (spells.length === 1) {
-		return spells[0];
-	}
-
-	const randomSpell = spells[Math.floor(Math.random() * spells.length)];
-
-	return randomSpell;
+	return _.getRandomObj(spells);
 };
 
 //Mobs that define rotations (normally bosses) use this method to determine their spell choices
@@ -20,11 +9,9 @@ const getRotationSpell = (source, target) => {
 
 	//Find spell matching current tick
 	let rotationEntry = rotationSpells.find((s) => s.atRotationTicks?.includes(currentTick));
-
 	if (!rotationEntry) {
 		rotationEntry = getDefaultRotationSpell(rotationSpells);
 	}
-
 	if (!rotationEntry) {
 		return;
 	}
@@ -52,12 +39,7 @@ const getRandomSpell = (source, target) => {
 	const valid = source.spells.filter((s) => {
 		return (!s.selfCast && !s.procCast && !s.castOnDeath && s.canCast(target));
 	});
-
-	if (!valid.length) {
-		return null;
-	}
-
-	return valid[Math.floor(Math.random() * valid.length)];
+	return _.getRandomObj(valid);
 };
 
 const getSpellToCast = (source, target) => {
@@ -92,11 +74,9 @@ const tick = (source) => {
 //Gets the range we need to be at to cast a specific rotation spell
 const getFurthestRangeRotation = (source, target, checkCanCast) => {
 	const spell = getRotationSpell(source, target);
-
 	if (!spell) {
 		return 0;
 	}
-
 	return spell.range;
 };
 
@@ -127,7 +107,6 @@ const getFurthestRange = (source, target, checkCanCast) => {
 			furthest = spell.range;
 		}
 	}
-
 	return furthest;
 };
 
@@ -135,7 +114,6 @@ const resetRotation = (source) => {
 	if (!source.rotation) {
 		return;
 	}
-
 	source.rotation.currentTick = 0;
 };
 

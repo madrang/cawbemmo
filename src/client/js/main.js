@@ -1,138 +1,131 @@
-define([
-	"js/system/client"
-	, "ui/factory"
-	, "js/rendering/renderer"
-	, "js/objects/objects"
-	, "js/rendering/effects"
-	, "js/rendering/numbers"
-	, "js/input"
-	, "js/system/events"
-	, "js/resources"
-	, "js/sound/sound"
-	, "js/system/globals"
-	, "js/components/components"
-	, "ui/templates/tooltips/tooltips"
-], function (
-	client,
-	uiFactory,
-	renderer,
-	objects,
-	effects,
-	numbers,
-	input,
-	events,
-	resources,
-	sound,
-	globals,
-	components
-) {
-	let fnQueueTick = null;
-	const getQueueTick = (updateMethod) => {
-		return () => requestAnimationFrame(updateMethod);
-	};
+import "/js/misc/helpers.js";
+import client from "/js/system/client.js";
+import uiFactory from "/ui/factory.js";
+import renderer from "/js/rendering/renderer.js";
+import objects from "/js/objects/objects.js";
+//import effects from "/js/rendering/effects.js";
+import numbers from "/js/rendering/numbers.js";
+import input from "/js/input.js";
+import events from "/js/system/events.js";
+import sound from "/js/sound/sound.js";
+import globals from "/js/system/globals.js";
+import locale from "/js/locale/index.js";
+import resources from "/js/resources.js";
+import components from "/js/components.js";
+import "/ui/templates/tooltips/tooltips.js";
 
-	const loadLongPress = async () => {
-		return new Promise((res) => {
-			require(["longPress"], res);
+const WORKER_PATH = "/service-worker.js";
+
+let fnQueueTick = null;
+const getQueueTick = (updateMethod) => {
+	return () => requestAnimationFrame(updateMethod);
+};
+
+const loadLongPress = async () => {
+	return await import("/js/dependencies/long-press-event.min.js");
+};
+
+const registerServiceWorker = async () => {
+	try {
+		const registration = await navigator.serviceWorker.register(WORKER_PATH);
+		_.log.serviceWorker.debug("Service Worker registered %o", registration);
+	} catch (error) {
+		_.log.serviceWorker.error("Service Worker registration failed:", error);
+	}
+};
+
+const main = {
+	hasFocus: true
+
+	, lastRender: 0
+	, msPerFrame: Math.floor(1000 / 60)
+
+	, init: async function () {
+		if ("serviceWorker" in navigator) {
+			await registerServiceWorker();
+		} else {
+			_.log.serviceWorker.trace("Service Worker not supported!");
+		}
+		if (isMobile) {
+			$("#ui-container").addClass("mobile");
+
+			//If we're on an ios device, we need to load longPress since that polyfills contextmenu for us
+			if (_.isIos()) {
+				await loadLongPress();
+			}
+		}
+
+		if (window.location.search.includes("hideMonetization")) {
+			$("#ui-container").addClass("hideMonetization");
+		}
+
+		await client.init();
+		await globals.init();
+		await locale.init();
+
+		// Load the animated loader instead of the initial static placeholder.
+		this.loader = await uiFactory.buildFromConfig({
+			type: "loader"
+			, path: "/ui/templates/loader"
 		});
-	};
+		// Remove the static loader.
+		$("#loader-container").remove();
 
-	return {
-		hasFocus: true
+		// Load all content.
+		await Promise.all([
+			resources.init()
+			, components.init()
+			, sound.init()
+		]);
+		// Loading complete.
+		events.emit("onResourcesLoaded");
 
-		, lastRender: 0
-		, msPerFrame: Math.floor(1000 / 60)
+		window.onfocus = this.onFocus.bind(this, true);
+		window.onblur = this.onFocus.bind(this, false);
 
-		, init: async function () {
-			if (isMobile) {
-				$(".ui-container").addClass("mobile");
+		input.init("#ui-container");
+		objects.init();
+		renderer.init();
+		numbers.init();
+		uiFactory.init();
 
-				//If we're on an ios device, we need to load longPress since that polyfills contextmenu for us
-				if (_.isIos()) {
-					await loadLongPress();
-				}
-			}
+		// Init complete, remove loader.
+		this.loader.destroy();
+		delete this.loader;
 
-			if (window.location.search.includes("hideMonetization")) {
-				$(".ui-container").addClass("hideMonetization");
-			}
+		fnQueueTick = getQueueTick(this.update.bind(this));
+		fnQueueTick();
+	}
 
-			client.init(this.onClientReady.bind(this));
+	, onFocus: function (hasFocus) {
+		this.hasFocus = hasFocus;
+		if (hasFocus) {
+			this.msPerFrame = Math.floor(1000 / 60);
+		} else {
+			input.resetKeys();
+			this.msPerFrame = Math.floor(1000 / 15);
 		}
+	}
 
-		, onClientReady: function () {
-			client.request({
-				module: "clientConfig"
-				, method: "getClientConfig"
-				, callback: this.onGetClientConfig.bind(this)
-			});
-		}
-
-		, onGetClientConfig: async function (config) {
-			globals.clientConfig = config;
-
-			await resources.init();
-			await components.init();
-
-			events.emit("onResourcesLoaded");
-			this.start();
-		}
-
-		, start: function () {
-			window.onfocus = this.onFocus.bind(this, true);
-			window.onblur = this.onFocus.bind(this, false);
-
-			$(window).on("contextmenu", this.onContextMenu.bind(this));
-
-			sound.init();
-
-			objects.init();
-			renderer.init();
-			input.init();
-
-			numbers.init();
-
-			uiFactory.init();
-
-			fnQueueTick = getQueueTick(this.update.bind(this));
+	, update: function () {
+		const time = Date.now();
+		if (time - this.lastRender < this.msPerFrame - 1) {
 			fnQueueTick();
-
-			$(".loader-container").remove();
+			return;
 		}
 
-		, onFocus: function (hasFocus) {
-			//Hack: Later we might want to make it not render when out of focus
-			this.hasFocus = true;
-			if (!hasFocus) {
-				input.resetKeys();
-			}
-		}
+		input.update();
+		objects.update();
+		renderer.update();
+		uiFactory.update();
+		numbers.update();
 
-		, onContextMenu: function (e) {
-			const allowed = ["txtUsername", "txtPassword"].some((s) => $(e.target).hasClass(s));
-			if (!allowed) {
-				e.preventDefault();
-				return false;
-			}
-		}
+		renderer.render();
 
-		, update: function () {
-			const time = Date.now();
-			if (time - this.lastRender < this.msPerFrame - 1) {
-				fnQueueTick();
-				return;
-			}
+		this.lastRender = time;
+		fnQueueTick();
+	}
+};
 
-			objects.update();
-			renderer.update();
-			uiFactory.update();
-			numbers.update();
-
-			renderer.render();
-
-			this.lastRender = time;
-
-			fnQueueTick();
-		}
-	};
-});
+export default main;
+main.init();

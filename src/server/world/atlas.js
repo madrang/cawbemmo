@@ -48,7 +48,7 @@ module.exports = {
 			serverObj.socket.emit("event", {
 				event: "onGetAnnouncement"
 				, data: {
-					msg: "Loading map, please wait as this may take a few moments..."
+					msg: "Chargement de la zone " + zoneName + "... Veuillez patientez"
 					, ttl: 150
 				}
 			});

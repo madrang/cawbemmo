@@ -70,7 +70,7 @@ module.exports = {
 						gotos.push(g.number);
 					}
 				}
-				state = _.randomObj(gotos);
+				state = _.getRandomObj(gotos);
 			} else {
 				state = goto;
 			}
@@ -130,7 +130,7 @@ module.exports = {
 					});
 				}
 			});
-			const pick = msgs[Math.floor(Math.random() * msgs.length)];
+			const pick = _.getRandomObj(msgs);
 			result.msg = pick.msg.msg;
 			result.options = useMsg[pick.index].options;
 		} else {

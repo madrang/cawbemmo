@@ -134,15 +134,15 @@ module.exports = {
 
 	, buySell: function (msg) {
 		switch (msg.action) {
-		case "buy":
-			this.buy(msg);
-			break;
-		case "sell":
-			this.sell(msg);
-			break;
-		case "buyback":
-			this.buyback(msg);
-			break;
+			case "buy":
+				this.buy(msg);
+				break;
+			case "sell":
+				this.sell(msg);
+				break;
+			case "buyback":
+				this.buyback(msg);
+				break;
 		}
 	}
 
@@ -350,9 +350,8 @@ module.exports = {
 		return (this.buybackList[sourceName] || []).find((i) => i.id === itemId);
 	}
 
-	, resolveCallback: function (msg, result) {
-		let callbackId = msg.has("callbackId") ? msg.callbackId : msg;
-		result = result || [];
+	, resolveCallback: function (msg, result = []) {
+		const callbackId = msg.has("callbackId") ? msg.callbackId : msg;
 		if (!callbackId) {
 			return;
 		}

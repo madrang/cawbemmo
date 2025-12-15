@@ -1,228 +1,201 @@
-define([
-	"js/system/events"
-	, "js/system/client"
-	, "html!ui/templates/createCharacter/template"
-	, "css!ui/templates/createCharacter/styles"
-	, "ui/factory"
-	, "js/system/globals"
-], function (
-	events,
-	client,
-	template,
-	styles,
-	uiFactory,
-	globals
-) {
-	return {
-		tpl: template
-		, centered: true
+import client from "/js/system/client.js";
+import events from "/js/system/events.js";
+import globals from "/js/system/globals.js";
+import uiFactory from "/ui/factory.js";
 
-		, classSprites: null
-		, class: null
-		, costume: 0
-		, skinId: null
+import styles from "./styles.css" with { type: "css" };
+if (!document.adoptedStyleSheets.includes(styles)) {
+	document.adoptedStyleSheets.push(styles);
+}
 
-		, prophecies: []
+const template = await _.loadHTML("/ui/templates/createCharacter/template.html", { raw: true });
 
-		, beforeRender: function () {
-			const { clientConfig: { logoPath } } = globals;
-			if (!logoPath) {
-				return;
-			}
+export default {
+	tpl: template
+	, centered: true
 
-			const tempEl = $(this.tpl);
-			tempEl.find(".logo").attr("src", logoPath);
+	, classSprites: null
+	, class: null
+	, costume: 0
+	, skinId: null
 
-			this.tpl = tempEl.prop("outerHTML");
+	, prophecies: []
+
+	, beforeRender: function () {
+		const { clientConfig: { logoPath } } = globals;
+		if (!logoPath) {
+			return;
 		}
 
-		, postRender: function () {
-			this.getSkins();
+		const tempEl = $(this.tpl);
+		tempEl.find(".logo").attr("src", logoPath);
 
-			uiFactory.build("tooltips");
+		this.tpl = tempEl.prop("outerHTML");
+	}
 
-			this.find(".txtClass")
-				.on("click", this.changeClass.bind(this))
-				.on("mousemove", this.onClassHover.bind(this))
-				.on("mouseleave", this.onClassUnhover.bind(this));
+	, postRender: function () {
+		this.getSkins();
 
-			this.find(".skinBox .btn").on("click", this.changeCostume.bind(this));
+		uiFactory.build("tooltips");
 
-			this.find(".btnBack").on("click", this.back.bind(this));
-			this.find(".btnCreate").on("click", this.create.bind(this));
+		this.find(".txtClass")
+			.on("click", this.changeClass.bind(this))
+			.on("mousemove", this.onClassHover.bind(this))
+			.on("mouseleave", this.onClassUnhover.bind(this));
 
-			this.find(".prophecy")
-				.on("click", this.onProphecyClick.bind(this))
-				.on("mousemove", this.onProphecyHover.bind(this))
-				.on("mouseleave", this.onProphecyUnhover.bind(this));
+		this.find(".skinBox .btn").on("click", this.changeCostume.bind(this));
+
+		this.find(".btnBack").on("click", this.back.bind(this));
+		this.find(".btnCreate").on("click", this.create.bind(this));
+
+		this.find(".prophecy")
+			.on("click", this.onProphecyClick.bind(this))
+			.on("mousemove", this.onProphecyHover.bind(this))
+			.on("mouseleave", this.onProphecyUnhover.bind(this));
+	}
+
+	, getSkins: async function () {
+		this.el.addClass("disabled");
+		this.classSprites = await client.componentProxy.auth.getSkinList({});
+		this.el.removeClass("disabled");
+
+		this.costume = 0;
+
+		this.class = "concierge";
+		this.find(".txtClass").html("concierge");
+
+		this.changeCostume();
+	}
+
+	, onProphecyHover: function (e) {
+		let el = $(e.target);
+
+		let pos = {
+			x: e.clientX + 25
+			, y: e.clientY
+		};
+
+		let text = el.attr("tooltip");
+
+		events.emit("onShowTooltip", text, el[0], pos);
+		$(".uiTooltips .tooltip").addClass("bright");
+	}
+
+	, onProphecyUnhover: function (e) {
+		let el = $(e.target);
+		events.emit("onHideTooltip", el[0]);
+	}
+
+	, onProphecyClick: function (e) {
+		let el = $(e.target);
+		let pName = el.attr("prophecy");
+
+		if (el.hasClass("active")) {
+			this.prophecies.spliceWhere((p) => p === pName);
+			el.removeClass("active");
+		} else {
+			this.prophecies.push(pName);
+			el.addClass("active");
 		}
+	}
 
-		, getSkins: function () {
-			this.el.addClass("disabled");
+	, clear: function () {
+		this.prophecies = [];
+		this.find(".prophecy").removeClass("active");
+	}
 
-			client.request({
-				cpn: "auth"
-				, method: "getSkinList"
-				, data: {
+	, back: function () {
+		this.clear();
+		this.destroy();
 
-				}
-				, callback: this.onGetSkins.bind(this)
-			});
-		}
+		uiFactory.build("characters");
+	}
 
-		, onGetSkins: function (result) {
-			this.el.removeClass("disabled");
+	, create: async function () {
+		this.el.addClass("disabled");
 
-			this.classSprites = result;
+		const eCreateCharacter = {
+			name: this.find(".txtName").val()
+			, class: this.class
+			, skinId: this.skinId
+			, prophecies: this.prophecies
+		};
 
-			this.costume = 0;
+		events.emit("beforeCreateCharacter", eCreateCharacter);
 
-			this.class = "owl";
-			this.find(".txtClass").html("Owl");
+		const result = await client.componentProxy.auth.createCharacter(eCreateCharacter);
+		this.el.removeClass("disabled");
 
-			this.changeCostume();
-		}
-
-		, onProphecyHover: function (e) {
-			let el = $(e.target);
-
-			let pos = {
-				x: e.clientX + 25
-				, y: e.clientY
-			};
-
-			let text = el.attr("tooltip");
-
-			events.emit("onShowTooltip", text, el[0], pos);
-			$(".uiTooltips .tooltip").addClass("bright");
-		}
-
-		, onProphecyUnhover: function (e) {
-			let el = $(e.target);
-			events.emit("onHideTooltip", el[0]);
-		}
-
-		, onProphecyClick: function (e) {
-			let el = $(e.target);
-			let pName = el.attr("prophecy");
-
-			if (el.hasClass("active")) {
-				this.prophecies.spliceWhere(function (p) {
-					return (p === pName);
-				});
-				el.removeClass("active");
-			} else {
-				this.prophecies.push(pName);
-				el.addClass("active");
-			}
-		}
-
-		, clear: function () {
-			this.prophecies = [];
-			this.find(".prophecy").removeClass("active");
-		}
-
-		, back: function () {
+		if (result) {
+			this.el.find(".message").html(result);
+		} else {
 			this.clear();
-
 			this.destroy();
-
-			uiFactory.build("characters", {});
 		}
+	}
 
-		, create: function () {
-			this.el.addClass("disabled");
+	, onClassHover: function (e) {
+		let el = $(e.target);
 
-			const eCreateCharacter = {
-				name: this.find(".txtName").val()
-				, class: this.class
-				, skinId: this.skinId
-				, prophecies: this.prophecies
-			};
+		let pos = {
+			x: e.clientX + 25
+			, y: e.clientY
+		};
 
-			events.emit("beforeCreateCharacter", eCreateCharacter);
+		let text = ({
+			concierge: "Le concierge utilise les pouvoir de planché propre et de vadrouille magique <br /><br />1 point d'intelligence par niveau."
+			, "pee wee": "le pee wee commence faible mais devien de plus en plus fort plus la saison avance<br /><br />1 point de force par niveau"
+			, "party animal": "Le party animal n'est pas arrêtable il vas faire le party jusqu'a avoir couché tout le monde <br /><br />1 point de dextérité par niveau"
+			//, necro: "test d'ajout des necro"
+		})[this.class];
 
-			client.request({
-				cpn: "auth"
-				, method: "createCharacter"
-				, data: eCreateCharacter
-				, callback: this.onCreate.bind(this)
-			});
+		events.emit("onShowTooltip", text, el[0], pos, 200);
+		$(".uiTooltips .tooltip").addClass("bright");
+	}
+
+	, onClassUnhover: function (e) {
+		let el = $(e.target);
+		events.emit("onHideTooltip", el[0]);
+	}
+
+	, changeClass: function (e) {
+		let el = $(e.target);
+		let classes = ["concierge", "pee wee", "party animal" ];
+		let nextIndex = (classes.indexOf(this.class) + 1) % classes.length;
+
+		let newClass = classes[nextIndex];
+
+		el.html(newClass.capitalize());
+
+		this.class = newClass;
+
+		this.onClassHover(e);
+	}
+
+	, changeCostume: function (e) {
+		let delta = (e ? Math.floor($(e.target).attr("delta")) : 0);
+		let spriteList = this.classSprites;
+		if (!spriteList) {
+			return;
 		}
-
-		, onCreate: function (result) {
-			this.el.removeClass("disabled");
-
-			if (!result) {
-				this.clear();
-				this.destroy();
-			} else {
-				this.el.find(".message").html(result);
-			}
+		this.costume = (this.costume + delta) % spriteList.length;
+		if (this.costume < 0) {
+			this.costume = spriteList.length - 1;
 		}
+		this.skinId = spriteList[this.costume].id;
+		$(".txtCostume").html(spriteList[this.costume].name);
+		this.setSprite();
+	}
 
-		, onClassHover: function (e) {
-			let el = $(e.target);
+	, setSprite: function () {
+		let classSprite = this.classSprites[this.costume];
+		let costume = classSprite.sprite.split(",");
+		let spirteX = -costume[0] * 8;
+		let spriteY = -costume[1] * 8;
 
-			let pos = {
-				x: e.clientX + 25
-				, y: e.clientY
-			};
+		let spritesheet = classSprite.spritesheet || "../../../images/characters.png";
 
-			let text = ({
-				owl: "The wise Owl guides you; granting you the focus needed to cast spells. <br /><br />Upon level up, you gain 1 Intellect."
-				, bear: "The towering Bear strenghtens you; lending force to your blows. <br /><br />Upon level up, you gain 1 Strength."
-				, lynx: "The nimble Lynx hastens you; allowing your strikes to land true. <br /><br />Upon level up, you gain 1 Dexterity."
-			})[this.class];
-
-			events.emit("onShowTooltip", text, el[0], pos, 200);
-			$(".uiTooltips .tooltip").addClass("bright");
-		}
-
-		, onClassUnhover: function (e) {
-			let el = $(e.target);
-			events.emit("onHideTooltip", el[0]);
-		}
-
-		, changeClass: function (e) {
-			let el = $(e.target);
-			let classes = ["owl", "bear", "lynx"];
-			let nextIndex = (classes.indexOf(this.class) + 1) % classes.length;
-
-			let newClass = classes[nextIndex];
-
-			el.html(newClass.capitalize());
-
-			this.class = newClass;
-
-			this.onClassHover(e);
-		}
-
-		, changeCostume: function (e) {
-			let delta = (e ? Math.floor($(e.target).attr("delta")) : 0);
-			let spriteList = this.classSprites;
-			if (!spriteList) {
-				return;
-			}
-			this.costume = (this.costume + delta) % spriteList.length;
-			if (this.costume < 0) {
-				this.costume = spriteList.length - 1;
-			}
-			this.skinId = spriteList[this.costume].id;
-			$(".txtCostume").html(spriteList[this.costume].name);
-			this.setSprite();
-		}
-
-		, setSprite: function () {
-			let classSprite = this.classSprites[this.costume];
-			let costume = classSprite.sprite.split(",");
-			let spirteX = -costume[0] * 8;
-			let spriteY = -costume[1] * 8;
-
-			let spritesheet = classSprite.spritesheet || "../../../images/characters.png";
-
-			this.find(".sprite")
-				.css("background", "url(\"" + spritesheet + "\") " + spirteX + "px " + spriteY + "px");
-		}
-	};
-});
+		this.find(".sprite")
+			.css("background", "url(\"" + spritesheet + "\") " + spirteX + "px " + spriteY + "px");
+	}
+};

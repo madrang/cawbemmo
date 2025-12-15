@@ -7,7 +7,7 @@ const basePath = tempPath.slice(0, tempPath.lastIndexOf("/"));
 //Methods
 const appRoot = (req, res) => {
 	let path = req.path;
-	if (!path || path == "/") {
+	if (!path || path === "/") {
 		path = "/client/";
 	}
 	res.sendFile("index.html", {
@@ -35,9 +35,16 @@ const appFile = (req, res) => {
 	if (!validRequest) {
 		return;
 	}
-	res.sendFile(file, {
-		root: "../" + root
-	});
+	res.sendFile(file
+		, {
+			root: "../" + root
+		}
+		, (err) => {
+			if (err) {
+				res.status(404).end(err.message);
+			}
+		}
+	);
 };
 
 //Exports

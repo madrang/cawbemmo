@@ -7,13 +7,11 @@ const restEndpoints = {
 };
 
 module.exports = {
-	init: async function (app) {
+	init: function (app) {
 		events.emit("onBeforeRegisterRestEndpoints", restEndpoints);
-
-		Object.entries(restEndpoints).forEach((e) => {
-			const [ route, handler ] = e;
+		for (const [ route, handler ] of Object.entries(restEndpoints)) {
 			app.get(`/${route}`, handler);
-		});
+		}
 	}
 
 	, willHandle: function (url) {

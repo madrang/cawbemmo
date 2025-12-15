@@ -58,7 +58,7 @@ module.exports = {
 
 			let template = {};
 			if (summonTemplates) {
-				template = summonTemplates[Math.floor(Math.random() * summonTemplates.length)];
+				template = _.getRandomObj(summonTemplates);
 			}
 			const blueprint = {
 				x

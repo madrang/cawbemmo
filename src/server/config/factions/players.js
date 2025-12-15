@@ -4,7 +4,6 @@ module.exports = {
 	, description: "The players faction."
 
 	, relations: {
-
 	}
 
 	, noGainRep: true

@@ -594,7 +594,11 @@ const routerConfig = {
 				}
 			}
 			, passives: {
-				tickNode: {
+				getTree: {
+					callback: false
+					, data: []
+				}
+				, tickNode: {
 					callback: false
 					, data: [
 						{

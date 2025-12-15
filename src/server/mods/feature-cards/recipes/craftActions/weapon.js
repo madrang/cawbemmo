@@ -1,7 +1,7 @@
 let itemGenerator = require("../../../../items/generator");
 
 module.exports = (config, crafter) => {
-	const slot = config.slot || ["oneHanded", "twoHanded"][Math.floor(Math.random() * 2)];
+	const slot = config.slot || _.getRandomFrom("oneHanded", "twoHanded");
 	const result = itemGenerator.generate({
 		noSpell: true
 		, slot

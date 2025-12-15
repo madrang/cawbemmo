@@ -1,4 +1,4 @@
-let classes = require("../config/spirits");
+const classes = require("../config/spirits");
 const eventEmitter = require("../misc/events");
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
 	}
 
 	, spawn: function (character, cb) {
-		let obj = this.obj;
+		const obj = this.obj;
 		if (character.dead) {
 			obj.dead = true;
 		}
@@ -60,7 +60,7 @@ module.exports = {
 		obj.addComponent("trade", character.components.find((c) => c.type === "trade"));
 		obj.addComponent("reputation", character.components.find((c) => c.type === "reputation"));
 
-		let social = character.components.find((c) => c.type === "social");
+		const social = character.components.find((c) => c.type === "social");
 		if (social) {
 			delete social.party;
 		}
@@ -88,7 +88,7 @@ module.exports = {
 		}
 		obj.addComponent("effects", blueprintEffects);
 
-		let prophecies = character.components.find((c) => c.type === "prophecies");
+		const prophecies = character.components.find((c) => c.type === "prophecies");
 		if (prophecies) {
 			obj.addComponent("prophecies", prophecies);
 		}

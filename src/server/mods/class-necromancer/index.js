@@ -10,7 +10,6 @@ module.exports = {
 	, init: function () {
 		this.events.on("onBeforeGetItemTypes", this.beforeGetItemTypes.bind(this));
 		this.events.on("onBeforeGetSpellsInfo", this.beforeGetSpellsInfo.bind(this));
-		this.events.on("onBeforeGetSpellsConfig", this.beforeGetSpellsConfig.bind(this));
 		this.events.on("onBeforeGetSpellTemplate", this.beforeGetSpellTemplate.bind(this));
 		this.events.on("onBeforeGetClientConfig", this.onBeforeGetClientConfig.bind(this));
 		this.events.on("onBeforeGetAnimations", this.beforeGetAnimations.bind(this));
@@ -94,7 +93,7 @@ module.exports = {
 	}
 
 	, beforeGetItemTypes: function (types) {
-		["Sickle", "Jade Sickle", "Golden Sickle", "Bone Sickle"].forEach(function (s, i) {
+		["Sickle", "Jade Sickle", "Golden Sickle", "Bone Sickle"].forEach((s, i) => {
 			types.oneHanded[s] = {
 				spritesheet: `${this.folderName}/images/items.png`
 				, sprite: [i, 0]
@@ -118,49 +117,7 @@ module.exports = {
 		}, this);
 	}
 
-	, beforeGetSpellsConfig: function (spells) {
-		spells["harvest life"] = {
-			statType: ["str", "int"]
-			, statMult: 1
-			, cdMax: 10
-			, castTimeMax: 3
-			, manaCost: 5
-			, isAttack: true
-			, range: 1
-			, random: {
-				damage: [4, 14]
-				, healPercent: [2, 15]
-			}
-		};
-
-		spells["summon skeleton"] = {
-			statType: ["str", "int"]
-			, statMult: 0.27
-			, cdMax: 6
-			, castTimeMax: 6
-			, manaCost: 5
-			, range: 9
-			, random: {
-				damagePercent: [20, 76]
-				, hpPercent: [40, 60]
-			}
-		};
-
-		spells["blood barrier"] = {
-			statType: ["str", "int"]
-			, statMult: 0.1
-			, cdMax: 13
-			, castTimeMax: 3
-			, manaCost: 5
-			, range: 9
-			, random: {
-				i_drainPercentage: [10, 50]
-				, shieldMultiplier: [2, 5]
-				, i_frenzyDuration: [5, 15]
-			}
-		};
-	}
-
+	// eslint-disable-next-line max-lines-per-function
 	, beforeGetSpellsInfo: function (spells) {
 		spells.push({
 			name: "Harvest Life"
@@ -169,6 +126,19 @@ module.exports = {
 			, icon: [0, 0]
 			, animation: "melee"
 			, spritesheet: `${this.folderName}/images/abilityIcons.png`
+			, config: {
+				statType: ["str", "int"]
+				, statMult: 1
+				, cdMax: 10
+				, castTimeMax: 3
+				, manaCost: 5
+				, isAttack: true
+				, range: 1
+				, random: {
+					damage: [4, 14]
+					, healPercent: [2, 15]
+				}
+			}
 			, particles: {
 				color: {
 					start: ["ff4252", "b34b3a"]
@@ -205,6 +175,18 @@ module.exports = {
 			, icon: [1, 0]
 			, animation: "magic"
 			, spritesheet: `${this.folderName}/images/abilityIcons.png`
+			, config: {
+				statType: ["str", "int"]
+				, statMult: 0.27
+				, cdMax: 6
+				, castTimeMax: 6
+				, manaCost: 5
+				, range: 9
+				, random: {
+					damagePercent: [20, 76]
+					, hpPercent: [40, 60]
+				}
+			}
 			, particles: {
 				color: {
 					start: ["ff4252", "b34b3a"]
@@ -242,6 +224,19 @@ module.exports = {
 			, animation: "magic"
 			, spellType: "buff"
 			, spritesheet: `${this.folderName}/images/abilityIcons.png`
+			, config: {
+				statType: ["str", "int"]
+				, statMult: 0.1
+				, cdMax: 13
+				, castTimeMax: 3
+				, manaCost: 5
+				, range: 9
+				, random: {
+					i_drainPercentage: [10, 50]
+					, shieldMultiplier: [2, 5]
+					, i_frenzyDuration: [5, 15]
+				}
+			}
 			, particles: {
 				color: {
 					start: ["ff4252", "b34b3a"]

@@ -3,7 +3,7 @@ let mobBuilder = require("../../world/mobBuilder");
 const buildMob = (objects, mobConfig, x, y, mobIndex) => {
 	const {
 		id, name
-		, sheetName="mobs"
+		, sheetName = "mobs"
 		, cell
 		, attackable
 		, properties
@@ -102,7 +102,7 @@ const spawnAnimation = (syncer, { x, y }) => {
 	}, -1);
 };
 
-const getPosXY = function(pos, index=0) {
+const getPosXY = function (pos, index = 0) {
 	if (!pos) {
 		return;
 	}
@@ -150,10 +150,10 @@ module.exports = {
 						y += spawnRect.y;
 					}
 				} else if (freeSpots?.length > 0) {
-					[ x, y ]  = _.randomObj(freeSpots);
+					[ x, y ] = _.getRandomObj(freeSpots);
 				} else if (spawnRect) {
-					x = _.randomInt(spawnRect.x, spawnRect.x + (spawnRect.w || 1));
-					y = _.randomInt(spawnRect.y, spawnRect.y + (spawnRect.h || 1));
+					x = _.getRandomInt(spawnRect.x, spawnRect.x + (spawnRect.w || 1));
+					y = _.getRandomInt(spawnRect.y, spawnRect.y + (spawnRect.h || 1));
 				} else {
 					_.log.phaseSpawnMob.error("No position for mob object '%s'!", l.name);
 					continue;

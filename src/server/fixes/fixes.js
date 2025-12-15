@@ -11,9 +11,21 @@ module.exports = {
 		});
 	}
 
-	, fixCharacter: function (player) {
-		let inv = player.components.find((c) => (c.type === "inventory"));
-		if ((inv) && (inv.items)) {
+	, fixCharacter: function (character) {
+		switch (character.class) {
+			case "owl":
+				character.class = "concierge";
+				break;
+			case "bear":
+				character.class = "pee wee";
+				break;
+			case "lynx":
+				character.class = "party animal";
+				break;
+			default: break;
+		}
+		const inv = character.components.find((c) => (c.type === "inventory"));
+		if (inv && inv.items) {
 			this.fixItems(inv.items);
 		}
 	}

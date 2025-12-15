@@ -1,28 +1,3 @@
-const workerConfig = JSON.parse(process.argv[2]);
-
-// Globals
-global._ = require("../misc/helpers");
-// Configure logger base name
-_.log = _.log.worker[`Map/${workerConfig.name}`];
-// Log warnings
-process.on("warning", (e) => {
-	_.log.warn(`Warning: ${e.toString()}\r\n`, e.stack);
-});
-
-global.io = require("../db/io");
-global.consts = require("../config/consts");
-
-global.instancer = require("./instancer");
-instancer.mapName = workerConfig.name;
-
-global.eventManager = require("../events/events");
-global.clientConfig = require("../config/clientConfig");
-global.rezoneManager = require("./rezoneManager");
-require("../misc/random");
-
-const mods = require("../misc/mods");
-const eventEmitter = require("../misc/events");
-
 // Components Imports
 const COMPONENTS_CONFIGURATIONS_PATHS = {
 	components: "../components/components"
@@ -32,7 +7,6 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	, animations: "../config/animations"
 
 	, classes: "../config/spirits"
-	, spellsConfig: "../config/spellsConfig"
 	, spells: "../config/spells"
 
 	, itemTypes: "../items/config/types"
@@ -42,10 +16,34 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	, itemEffects: "../items/itemEffects"
 	, profanities: "../language/profanities"
 };
-
 (async function () {
+	const workerConfig = JSON.parse(process.argv[2]);
+
+	// Globals
+	global._ = (await import("../misc/helpers.mjs")).default;
+	// Configure logger base name
+	_.log = _.log.worker[`Map/${workerConfig.name}`];
+	// Log warnings
+	process.on("warning", (e) => {
+		_.log.warn(`Warning: ${e.toString()}\r\n`, e.stack);
+	});
+
+	global.io = require("../db/io");
+	global.consts = require("../config/consts");
+
+	global.instancer = require("./instancer");
+	instancer.mapName = workerConfig.name;
+
+	global.eventManager = require("../events/events");
+	global.clientConfig = require("../config/clientConfig");
+	global.rezoneManager = require("./rezoneManager");
+	require("../misc/random");
+
+	const mods = require("../misc/mods");
+	const eventEmitter = require("../misc/events");
+
 	// Init database
-	await new Promise(resolve => io.init(resolve));
+	await new Promise((resolve) => io.init(resolve));
 	// Add crash loggers
 	const onCrash = async (e) => {
 		if (e.toString().indexOf("ERR_IPC_CHANNEL_CLOSED") >= 0) {
@@ -68,7 +66,16 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	// Load mods
 	await mods.init({ logger: _.log.mods });
 	// and then load the components configurations.
-	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS, (c) => c.init(), _.log.ComponentsConfiguration);
+	await _.requireAll(module, COMPONENTS_CONFIGURATIONS_PATHS
+		, (component, componentName) => {
+			//if (componentName == "factions") {
+			//	component = new component();
+			//}
+			component.init();
+			return component;
+		}
+		, _.log.ComponentsConfiguration
+	);
 
 	rezoneManager.init();
 	await clientConfig.init();
@@ -103,6 +110,7 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 
 	// Start listening to messages.
 	process.on("message", (m) => {
+		//_.log.worker.trace("New message %o", m);
 		if (m.module) {
 			const instances = instancer.instances;
 			const iLen = instances.length;
@@ -113,21 +121,27 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 					const object = objects[j];
 					if (object.name === m.args[0]) {
 						const mod = object.instance[m.module];
+						//_.log.worker.trace("Sending message to instancer module.");
 						return mod[m.method].apply(mod, m.args);
 					}
 				}
 			}
+			_.log.worker.warn("Missing handler module for message %o", m);
 			return;
 		}
 		if (m.threadModule) {
+			//_.log.worker.trace("Sending message to thread module.");
 			return global[m.threadModule][m.method](m.data);
 		}
 		if (m.method) {
+			//_.log.worker.trace("Sending message to instancer.");
 			return instancer[m.method](m.args);
 		}
 		if (m.event) {
+			//_.log.worker.trace("Sending message to eventEmitter.");
 			return eventEmitter.emit(m.event, m.data);
 		}
+		_.log.worker.warn("Discarded invalid message %o", m);
 	});
 	// Notify parent that worker is ready.
 	process.send({

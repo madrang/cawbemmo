@@ -136,7 +136,7 @@ module.exports = {
 		const actionType = active ? "addActions" : "removeActions";
 		obj.syncer.setArray(true, "serverActions", actionType, {
 			id: "openStash"
-			, key: "u"
+			, inputAction: "use"
 			, action: {
 				cpn: "stash"
 				, method: "open"

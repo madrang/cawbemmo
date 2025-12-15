@@ -1,4 +1,4 @@
-let components = require("../components/components");
+const components = require("../components/components");
 
 module.exports = {
 	components: []
@@ -242,7 +242,7 @@ module.exports = {
 					sprintChance -= 100;
 				} while (sprintChance > 0 && this.actionQueue[0]?.action === "move");
 				// Move to furthest tile within maxDistance
-				while(this.actionQueue[0]?.action === "move") {
+				while (this.actionQueue[0]?.action === "move") {
 					const { data: { x: xNew, y: yNew } } = this.actionQueue[0];
 					if (Math.max(Math.abs(xOld - xNew), Math.abs(yOld - yNew)) <= maxDistance) {
 						q = this.dequeue();
@@ -334,11 +334,11 @@ module.exports = {
 
 	, onEvent: function (eventName, callback) {
 		this.eventListeners.push({ eventName, callback });
-		return this.offEvent.bind(this, entry);
+		return this.offEvent.bind(this, eventName);
 	}
 
-	, offEvent: function (entry) {
-		this.eventListeners.spliceWhere((e) => e === entry);
+	, offEvent: function (eventName) {
+		this.eventListeners.spliceWhere((l) => l.eventName === eventName);
 	}
 
 	, fireEvent: function (event, ...args) {
