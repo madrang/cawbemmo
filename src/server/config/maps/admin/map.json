@@ -907,7 +907,7 @@
          "name":"objects",
          "objects":[
                 {
-                 "gid":1120,
+                 "gid":1184,
                  "height":8,
                  "id":1076,
                  "name":"Table",
@@ -1840,7 +1840,7 @@
          "value":"[{\"x\":100,\"y\":100}]"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.10.1",
+ "tiledversion":"1.11.0",
  "tileheight":8,
  "tilesets":[
         {
@@ -2019,26 +2019,26 @@
          "tilewidth":8
         }, 
         {
-         "columns":8,
+         "columns":16,
          "firstgid":1049,
          "image":"..\/..\/..\/..\/client\/images\/objects.png",
          "imageheight":176,
-         "imagewidth":64,
+         "imagewidth":128,
          "margin":0,
          "name":"objects",
          "spacing":0,
-         "tilecount":176,
+         "tilecount":352,
          "tileheight":8,
          "tiles":[
                 {
-                 "id":42,
+                 "id":82,
                  "probability":5
                 }],
          "tilewidth":8
         }, 
         {
          "columns":8,
-         "firstgid":1225,
+         "firstgid":1401,
          "image":"..\/..\/..\/..\/client\/images\/bigObjects.png",
          "imageheight":240,
          "imagewidth":192,
@@ -2051,7 +2051,7 @@
         }, 
         {
          "columns":8,
-         "firstgid":1305,
+         "firstgid":1481,
          "image":"..\/..\/..\/..\/client\/images\/bosses.png",
          "imageheight":240,
          "imagewidth":192,
