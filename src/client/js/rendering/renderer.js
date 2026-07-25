@@ -866,13 +866,16 @@ export default {
 		sprite.y = (y * scale) + offsetY;
 
 		if (sprite.width > scale) {
+			//Center the oversized sprite over its tile horizontally and stand it on the tile vertically (feet at the tile bottom).
+			// The offsets are derived from the sprite's actual size so they hold for any source dimensions — characters (16px/2 tiles),
+			// bigObjects/bosses (24px/3 tiles), etc. (Previously hardcoded to -scale/-scale*2, which only fit 24px sprites.)
+			const overhang = sprite.width - scale;
 			if (flipX) {
-				sprite.x += scale;
+				sprite.x += (overhang / 2);
 			} else {
-				sprite.x -= scale;
+				sprite.x -= (overhang / 2);
 			}
-
-			sprite.y -= (scale * 2);
+			sprite.y -= overhang;
 		}
 
 		if (oldY !== sprite.y) {

@@ -1,5 +1,6 @@
 import events from "/js/system/events.js";
 import globals from "/js/system/globals.js";
+import spriteRegistry from "/js/system/spriteRegistry.js";
 
 const tplItem = `
 	<div class="renderItem item">
@@ -174,6 +175,10 @@ export default (container, item, useEl, manageTooltip, getItemContextConfig, sho
 	if (getItemContextConfig) {
 		addContextEvents(itemEl, item, getItemContextConfig);
 	}
-	itemEl.addClass(`spriteSize${size}`);
+	//Scale/margin for filling icon frame live in the per-sheet <sheet>.less override (injected by spriteRegistry at init),
+	//targeted via this class. Sheets without an override render at their source size.
+	if (spriteRegistry.getSpriteCSS({ name: sheetName })) {
+		itemEl.addClass(`sprite-${sheetName}-inventory`);
+	}
 	return itemEl;
 };

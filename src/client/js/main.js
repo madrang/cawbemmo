@@ -9,6 +9,7 @@ import input from "/js/input.js";
 import events from "/js/system/events.js";
 import sound from "/js/sound/sound.js";
 import globals from "/js/system/globals.js";
+import spriteRegistry from "/js/system/spriteRegistry.js";
 import locale from "/js/locale/index.js";
 import resources from "/js/resources.js";
 import components from "/js/components.js";
@@ -79,6 +80,10 @@ const main = {
 		]);
 		// Loading complete.
 		events.emit("onResourcesLoaded");
+
+		// Preload per-sheet sprite overrides + cache image dimensions (needs resources loaded).
+		// Must finish before any UI renders below.
+		await spriteRegistry.init();
 
 		window.onfocus = this.onFocus.bind(this, true);
 		window.onblur = this.onFocus.bind(this, false);

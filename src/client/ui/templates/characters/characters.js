@@ -1,6 +1,7 @@
 import client from "/js/system/client.js";
 //import events from "/js/system/events.js";
 import globals from "/js/system/globals.js";
+import spriteRegistry from "/js/system/spriteRegistry.js";
 import uiFactory from "/ui/factory.js";
 import locale from "/js/locale/index.js";
 
@@ -148,11 +149,14 @@ export default {
 
 		this.find(".btn").removeClass("disabled");
 
-		let spriteY = Math.floor(charInfo.cell / 8);
-		let spirteX = charInfo.cell - (spriteY * 8);
+		const props = spriteRegistry.getSpriteProps({ name: charInfo.sheetName, module: "characters" });
+		// Column count derives from the sheet's pixel width / source size, mirroring the renderer's getTexture (textures.width / size).
+		const charCols = props.sheetWidth / props.size;
+		let spriteY = Math.floor(charInfo.cell / charCols);
+		let spirteX = charInfo.cell - (spriteY * charCols);
 
-		spirteX = -(spirteX * 8);
-		spriteY = -(spriteY * 8);
+		spirteX = -(spirteX * props.size);
+		spriteY = -(spriteY * props.size);
 
 		let spritesheet = charInfo.sheetName;
 		if (spritesheet === "characters") {
@@ -160,7 +164,12 @@ export default {
 		}
 
 		this.find(".sprite")
-			.css("background", `url("${spritesheet}") ${spirteX}px ${spriteY}px`)
+			.css({
+				width: props.width
+				, height: props.height
+				, transform: props.transform
+				, background: `url("${spritesheet}") ${spirteX}px ${spriteY}px`
+			})
 			.show();
 
 		this.find(".name").html(charName);

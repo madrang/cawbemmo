@@ -266,8 +266,30 @@ module.exports = {
 			});
 		}
 
+		this.buildSpriteOverrides();
+
 		events.emit("onBeforeGetClientConfig", config);
 		await this.calculateAtlasTextureDimensions();
+	}
+
+	//Scans client/images/ for <sheet>.json (props) and <sheet>.less (css rules) override files and records which sheets have them.
+	//The client uses this manifest to preload only existing overrides (no 404s). See spriteRegistry.
+	, buildSpriteOverrides: function () {
+		const overrides = {};
+		for (const fileName of fileLister.getFiles("../client/images")) {
+			const match = fileName.match(/^(.+)\.(json|less)$/);
+			if (!match) {
+				continue;
+			}
+			const [, sheet, ext] = match;
+			overrides[sheet] = overrides[sheet] || { props: false, css: false };
+			if (ext === "json") {
+				overrides[sheet].props = true;
+			} else {
+				overrides[sheet].css = true;
+			}
+		}
+		config.spriteOverrides = overrides;
 	}
 
 	//The client needs to know this as well as the map loader
