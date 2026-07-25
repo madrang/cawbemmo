@@ -115,6 +115,19 @@ Object.defineProperties(String.prototype, {
 	}
 });
 
+if (typeof Touch === "function" && Touch.prototype) {
+	Object.defineProperty(Touch.prototype, "toPos", {
+		enumerable: false, writable: true
+		, value: function (target, zoom = 1) {
+			const rect = target.getBoundingClientRect();
+			return {
+				x: (this.pageX - rect.left) * zoom
+				, y: (this.pageY - rect.top) * zoom
+			};
+		}
+	});
+}
+
 const makeQuerablePromise = function (promise) {
 	if (typeof promise !== 'object') {
 		throw new Error('promise is not an object.');
