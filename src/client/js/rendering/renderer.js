@@ -6,6 +6,7 @@ import tileOpacity from "/js/rendering/tileOpacity.js";
 import particles from "/js/rendering/particles.js";
 import shaderOutline from "/js/rendering/shaders/outline.js";
 import spritePool from "/js/rendering/spritePool.js";
+import spriteRegistry from "/js/system/spriteRegistry.js";
 import globals from "/js/system/globals.js";
 
 const particleLayers = ["particlesUnder", "particles"];
@@ -846,8 +847,13 @@ export default {
 
 		const spriteSizes = globals.clientConfig.spriteSizes;
 		const newSize = spriteSizes[sheetName] || 8;
-		obj.w = newSize * scaleMult;
-		obj.h = newSize * scaleMult;
+		//In-world size multiplier from the sheet's <sheet>.json "world" override
+		//(defaults to 1 for sheets without one). Cached on the sprite so
+		//setSpritePosition can derive scale.x from the same value.
+		const { world: { scale: sheetScale = 1 } = {} } = spriteRegistry.getSpriteProps({ name: sheetName, module: "world" });
+		sprite.sheetScale = sheetScale;
+		obj.w = newSize * scaleMult * sheetScale;
+		obj.h = newSize * scaleMult * sheetScale;
 		sprite.width = obj.w;
 		sprite.height = obj.h;
 		sprite.texture = this.getTexture(sheetName, cell, newSize);
@@ -882,7 +888,7 @@ export default {
 			this.reorder();
 		}
 
-		sprite.scale.x = flipX ? -scaleMult : scaleMult;
+		sprite.scale.x = flipX ? -(scaleMult * (sprite.sheetScale ?? 1)) : (scaleMult * (sprite.sheetScale ?? 1));
 	}
 
 	, reorder: function () {
