@@ -37,6 +37,64 @@ export const equipment = {
 	}
 };
 
+export const help = {
+	heading: "Aide"
+
+	, movement: {
+		name: "Mouvement"
+		, desc: "WASD / Flèches"
+		, mobileDesc: "Touché l'écran et glissé"
+	}
+	, cancelMove: {
+		name: "Cancellé le mouvement"
+		, desc: "Touche: [escape]"
+		, mobileDesc: "Secouer l'appareil"
+	}
+	, combat: {
+		name: "Combat"
+		, desc: "Cliquez sur un enemie et appuyé sur [espace] pour activé l'attaque automatique"
+		, mobileDesc: "Touché un ennemie et appuyé sur une magie"
+	}
+	, chat: {
+		name: "Chat"
+		, desc: "Appuyé sur la touche [entré] pour activé la fenêtre de clavardage"
+		, mobileDesc: "Touché l'icone de chat"
+	}
+	, inventory: {
+		name: "Inventaire"
+		, desc: "Appuyé sur [i] pour ouvrir l'inventaire"
+	}
+	, equipment: {
+		name: "Équipment"
+		, desc: "Clique droit sur un item de vôtre inventaire pour l'équippé ou appuyé sur [j] pour la fenêtre d'Équipment click"
+	}
+	, stats: {
+		name: "Stats"
+		, desc: "Les esprits hiboux ont besoin d'Int pour faire plus de dégâts. Les lynx ont besoin de Dex et les ours de Str"
+	}
+	, showNames: {
+		name: "Voir les noms"
+		, desc: "Touche [v]"
+	}
+	, whosOnline: {
+		name: "Qui es en ligne"
+		, desc: "Touche [O]"
+	}
+	, tos: {
+		name: "Termes de services"
+		, desc: "voir"
+		, mobileDesc: "Pas encore disponible"
+	}
+	, menu: {
+		name: "Menu"
+		, desc: "Vous pouvez accedé au menu en sélectionnant l'icode de menu"
+	}
+	, interaction: {
+		name: "Interaction"
+		, desc: "Pour interagir avec un objet"
+	}
+};
+
 export const loader = {
 	loading: "Chargement ${progress}%"
 	, wait: "Chargement..."

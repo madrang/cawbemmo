@@ -37,6 +37,64 @@ export const equipment = {
 	}
 };
 
+export const help = {
+	heading: "Help"
+
+	, movement: {
+		name: "Movement"
+		, desc: "WASD / Arrows"
+		, mobileDesc: "Touch the screen and drag"
+	}
+	, cancelMove: {
+		name: "Cancel movement"
+		, desc: "Key: [escape]"
+		, mobileDesc: "Shake the device"
+	}
+	, combat: {
+		name: "Combat"
+		, desc: "Click an enemy and press [space] to enable auto-attack"
+		, mobileDesc: "Tap an enemy and press a spell"
+	}
+	, chat: {
+		name: "Chat"
+		, desc: "Press [enter] to open the chat window"
+		, mobileDesc: "Tap the chat icon"
+	}
+	, inventory: {
+		name: "Inventory"
+		, desc: "Press [i] to open the inventory"
+	}
+	, equipment: {
+		name: "Equipment"
+		, desc: "Right-click an item in your inventory to equip it, or press [j] for the Equipment window"
+	}
+	, stats: {
+		name: "Stats"
+		, desc: "Owl Spirits need Int to deal more damage. Lynxes need Dex and Bears need Str"
+	}
+	, showNames: {
+		name: "Show names"
+		, desc: "Key [v]"
+	}
+	, whosOnline: {
+		name: "Who's online"
+		, desc: "Key [O]"
+	}
+	, tos: {
+		name: "Terms of Service"
+		, desc: "view"
+		, mobileDesc: "Not yet available"
+	}
+	, menu: {
+		name: "Menu"
+		, desc: "Open the menu by selecting the menu icon"
+	}
+	, interaction: {
+		name: "Interaction"
+		, desc: "To interact with an object"
+	}
+};
+
 export const loader = {
 	loading: "Loading ${progress}%"
 	, wait: "Loading, please wait..."
