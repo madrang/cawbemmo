@@ -10,7 +10,6 @@ const lessMiddleware = require("less-middleware");
 const cookieParser = require("cookie-parser");
 
 const fileLister = require("../misc/fileLister");
-const rest = require("../security/rest");
 
 const API_ROUTES = {
 	auth: {
@@ -138,7 +137,7 @@ const init = async function () {
 	app.get("/admin/js/", API_ROUTES.auth.createAuth(99), appFile);
 
 	app.use((req, res, next) => {
-		if (!rest.willHandle(req.url) && !sharedFolders.some((s) => req.url.startsWith(s))) {
+		if (!sharedFolders.some((s) => req.url.startsWith(s))) {
 			req.url = `/client/${req.url}`;
 		}
 		next();
@@ -147,8 +146,6 @@ const init = async function () {
 		once: IS_PROD
 		, force: !IS_PROD
 	}));
-
-	rest.init(app);
 
 	app.get("/", appRoot);
 	app.get(/^(.*)$/, appFile);
