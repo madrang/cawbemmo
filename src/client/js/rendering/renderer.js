@@ -850,7 +850,7 @@ export default {
 		//In-world size multiplier from the sheet's <sheet>.json "world" override
 		//(defaults to 1 for sheets without one). Cached on the sprite so
 		//setSpritePosition can derive scale.x from the same value.
-		const { world: { scale: sheetScale = 1 } = {} } = spriteRegistry.getSpriteProps({ name: sheetName, module: "world" });
+		const { scale: sheetScale = 1 } = spriteRegistry.getSpriteProps({ name: sheetName, module: "world" });
 		sprite.sheetScale = sheetScale;
 		obj.w = newSize * scaleMult * sheetScale;
 		obj.h = newSize * scaleMult * sheetScale;
