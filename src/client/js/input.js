@@ -756,8 +756,9 @@ export default {
 				}
 
 				if (capture) {
+					const typing = this.isTextInputFocused();
 					const addedActions = this.getMapping("keyboard", key);
-					if (targetName !== "world") { //TODO Implement context based actions mappings.
+					if (typing || targetName !== "world") { //TODO Implement context based actions mappings.
 						addedActions.spliceWhere((a) => !a.startsWith("modifier_"));
 					}
 					for (const action of addedActions) {
@@ -766,6 +767,13 @@ export default {
 							continue;
 						}
 						this.actions[action] = INPUT_STATE.CAPTURED;
+					}
+					if (typing && !addedActions.some((a) => a.startsWith("modifier_"))) {
+						// While a text input is focused, don't record non-modifier keys into
+						// pressedKeys: movement axes (WASD via getAxis) and isKeyDown polls
+						// would otherwise react to typing. Modifier keys (shift/ctrl) are still
+						// tracked so their polled state stays usable (e.g. tooltips, inventory).
+						return;
 					}
 					if (this.pressedKeys[key] > 0) {
 						this.pressedKeys[key] = INPUT_STATE.CONSUMED;
