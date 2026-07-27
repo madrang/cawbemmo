@@ -583,6 +583,29 @@ export default {
 		return actions;
 	}
 
+	//Reverse of getMapping: resolves an action name back to its first bound
+	//key, uppercased for display (e.g. getKeyForAction("gather") -> "G").
+	//Returns "" if the action has no binding for inputType.
+	, getKeyForAction: function (actionName, inputType = "keyboard") {
+		const inputMap = this.mappings[inputType];
+		if (!inputMap || inputMap[actionName] === undefined) {
+			return "";
+		}
+		let value = inputMap[actionName];
+		//Structured bindings (e.g. modifier_1: { values: ["shift"], actions: [...] })
+		//carry their trigger keys under .values; resolve those rather than the
+		//wrapper object, matching how getMapping reads the same shape.
+		if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+			value = value.values;
+		}
+		if (value === undefined) {
+			return "";
+		}
+		const keys = Array.isArray(value) ? value : [ value ];
+		const first = keys[0];
+		return (typeof first === "string") ? first.toUpperCase() : String(first);
+	}
+
 	, getTartgetName: function (target) {
 		if (target === document.body || target === this.uiContainer) {
 			return "world";

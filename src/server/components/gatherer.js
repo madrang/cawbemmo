@@ -231,7 +231,7 @@ module.exports = {
 		}
 		const actionString = `${action} ${gatherResult.nodeName}`;
 
-		this.sendAnnouncement(`Press U to ${actionString}`);
+		this.sendAnnouncement(`Press \${key.gather} to ${actionString}`);
 
 		this.nodes.spliceWhere((n) => (n === node));
 		this.nodes.push(node);

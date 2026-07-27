@@ -99,7 +99,7 @@ module.exports = {
 		}
 
 		let canAction = true;
-		let msg = "Press U to open this door";
+		let msg = "Press ${key.use} to open this door";
 
 		if (this.closed) {
 			if (this.locked && !this.canActorUnlockThis(obj)) {
@@ -107,7 +107,7 @@ module.exports = {
 				msg = "You don't have the key to unlock this door";
 			}
 		} else {
-			msg = "Press U to close this door";
+			msg = "Press ${key.use} to close this door";
 		}
 
 		if (canAction) {

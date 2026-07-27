@@ -150,7 +150,7 @@ module.exports = {
 			return;
 		}
 
-		let msg = "Press U to access your Shared Stash";
+		let msg = "Press ${key.use} to access your Shared Stash";
 		obj.instance.syncer.queue("onGetAnnouncement", {
 			src: obj.id
 			, msg: msg

@@ -64,7 +64,7 @@ module.exports = {
 			return;
 		}
 
-		let msg = `Press U to ${this.noticeMessage || `access the ${this.obj.name}`}`;
+		let msg = `Press \${key.use} to ${this.noticeMessage || `access the ${this.obj.name}`}`;
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
 			name: "access workbench"

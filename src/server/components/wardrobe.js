@@ -63,7 +63,7 @@ module.exports = {
 			this.proximalPlayers.push(obj);
 		}
 
-		let msg = "Press U to access the wardrobe";
+		let msg = "Press ${key.use} to access the wardrobe";
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
 			name: "open wardrobe"
