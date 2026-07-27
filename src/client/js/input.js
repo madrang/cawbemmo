@@ -623,6 +623,15 @@ export default {
 		return "ui";
 	}
 
+	, isTextInputFocused: function () {
+		const el = document.activeElement;
+		if (!el) {
+			return false;
+		}
+		const tag = el.tagName;
+		return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
+	}
+
 	, isActive: function (action, noConsume) {
 		const active = this.actions[action];
 		if (active > 0) {
@@ -805,7 +814,7 @@ export default {
 					if (this.pressedKeys[key] !== INPUT_STATE.CONSUMED) {
 						if (keyEvent.consumed) {
 							this.pressedKeys[key] = INPUT_STATE.CONSUMED;
-						} else {
+						} else if (!this.isTextInputFocused()) {
 							events.emit("keydown", keyEvent);
 						}
 					}
