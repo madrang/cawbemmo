@@ -63,7 +63,7 @@ module.exports = {
 			this.proximalPlayers.push(obj);
 		}
 
-		let msg = "Press ${key.use} to access the wardrobe";
+		let msg = language.translate(obj.language, "announcements", "wardrobe");
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
 			name: "open wardrobe"

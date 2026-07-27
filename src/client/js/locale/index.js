@@ -1,90 +1,5 @@
 import events from "/js/system/events.js";
-
-const percentageStats = [
-	"addCritChance"
-	, "addCritMultiplier"
-	, "addAttackCritChance"
-	, "addAttackCritMultiplier"
-	, "addSpellCritChance"
-	, "addSpellCritMultiplier"
-	, "sprintChance"
-	, "xpIncrease"
-	, "blockAttackChance"
-	, "blockSpellChance"
-	, "dodgeAttackChance"
-	, "dodgeSpellChance"
-	, "attackSpeed"
-	, "castSpeed"
-	, "itemQuantity"
-	, "magicFind"
-	, "catchChance"
-	, "catchSpeed"
-	, "fishRarity"
-	, "fishWeight"
-	, "fishItems"
-];
-
-const getMessage = function getMessage (target, nParts, curPath = []) {
-	if (!Array.isArray(nParts) || nParts.length <= 0) {
-		return target;
-	}
-	if (typeof target !== "object") {
-		_.log.locale.getMessage.error(`Current path ${curPath.join(".")} is missing ${nParts.join(".")}`);
-		return undefined;
-	}
-	const np = nParts.shift();
-	const subTarget = target[np];
-	curPath.push(np);
-
-	if (!subTarget) {
-		_.log.locale.getMessage.error(curPath.join(".") + " not found.");
-		return undefined;
-	}
-	return getMessage(subTarget, nParts, curPath);
-};
-
-const _reLocAllMsg = new RegExp("\\${(\\S+?)}", "gm");
-const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
-	// Parse messages and replace localized strings tokens when found.
-	// Return unmoddified message if not a localized string.
-	if (!dictionary) {
-		throw new Error("Missing dictionary!");
-	}
-	if (typeof message !== "string") {
-		return message;
-	}
-	const logger = _.log.getLocalizedMessage;
-	return message.replaceAll(_reLocAllMsg, (match, msgName, offset, curString) => {
-		msgName = msgName.trim();
-		if (!msgName) {
-			logger.warn(`The localised message "${match}" is invalid as it results into an empty name.`);
-			return match;
-		}
-		logger.trace(`Looking for "${msgName}"`);
-		if (!msgName.includes(".")) {
-			if (typeof dictionary === "object" && Object.prototype.has.call(dictionary, msgName)) {
-				return dictionary[msgName];
-			} else if (typeof dictionary === "function") {
-				return dictionary(msgName);
-			}
-			return msgName;
-		}
-		const nameParts = msgName.split(".");
-		if (typeof dictionary === "function") {
-			const strMsg = dictionary(...nameParts);
-			if (strMsg === undefined || strMsg === null) {
-				logger.error(`dictionary("${msgName}") returned an empty value!`);
-				return msgName;
-			}
-			return strMsg;
-		} else if (typeof dictionary === "object") {
-			return getMessage(dictionary, nameParts);
-		}
-		logger.error(`dictionary "${dictionary}" does not declare "${msgName}"`);
-		logger.trace(dictionary);
-		return msgName;
-	});
-};
+import { getMessage, getLocalizedMessage, stringifyStatValue, translate } from "/common/locale.mjs";
 
 /** Localize an HTML structure using the current locale.
  * @static
@@ -185,33 +100,9 @@ export default {
 	, getMessage
 	, localizeHTML
 
-	, stringifyStatValue: function (statName, statValue) {
-		if (statName.includes("CritChance")) {
-			statValue = statValue / 20;
-		}
-		if (percentageStats.includes(statName) || statName.includes("Percent")
-			|| (statName.startsWith("element") && !statName.includes("Resist"))
-		) {
-			statValue += "%";
-		}
-		return statValue + "";
-	}
+	, stringifyStatValue
 
 	, translate: function (...propNames) {
-		let replDict;
-		const lastPropType = (propNames.length > 0 ? typeof propNames[propNames.length - 1] : undefined);
-		if (lastPropType === "object") {
-			replDict = Object.assign({}, this.dictionary, propNames.pop());
-		} else if (lastPropType === "function") {
-			replDict = propNames.pop();
-		} else {
-			replDict = this.dictionary;
-		}
-
-		const msg = getMessage(this.dictionary, propNames);
-		if (typeof msg !== "string") {
-			throw new Error(`propName "${propNames.join(".")}" couldn't be translated!`);
-		}
-		return getLocalizedMessage(replDict, msg);
+		return translate(this.dictionary, ...propNames);
 	}
 };

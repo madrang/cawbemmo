@@ -99,15 +99,15 @@ module.exports = {
 		}
 
 		let canAction = true;
-		let msg = "Press ${key.use} to open this door";
+		let msg = language.translate(obj.language, "announcements", "doorOpen");
 
 		if (this.closed) {
 			if (this.locked && !this.canActorUnlockThis(obj)) {
 				canAction = false;
-				msg = "You don't have the key to unlock this door";
+				msg = language.translate(obj.language, "announcements", "doorLocked");
 			}
 		} else {
-			msg = "Press ${key.use} to close this door";
+			msg = language.translate(obj.language, "announcements", "doorClose");
 		}
 
 		if (canAction) {

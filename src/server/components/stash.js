@@ -150,7 +150,7 @@ module.exports = {
 			return;
 		}
 
-		let msg = "Press ${key.use} to access your Shared Stash";
+		let msg = language.translate(obj.language, "announcements", "stash");
 		obj.instance.syncer.queue("onGetAnnouncement", {
 			src: obj.id
 			, msg: msg

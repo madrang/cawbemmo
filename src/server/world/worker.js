@@ -39,6 +39,8 @@ const COMPONENTS_CONFIGURATIONS_PATHS = {
 	global.rezoneManager = require("./rezoneManager");
 	require("../misc/random");
 
+	global.language = (await import("../language/index.mjs")).default;
+
 	const mods = require("../misc/mods");
 	const eventEmitter = require("../misc/events");
 

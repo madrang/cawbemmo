@@ -64,7 +64,9 @@ module.exports = {
 			return;
 		}
 
-		let msg = `Press \${key.use} to ${this.noticeMessage || `access the ${this.obj.name}`}`;
+		let msg = this.noticeMessage
+			? language.translate(obj.language, "announcements", "workbenchNotice", { notice: this.noticeMessage })
+			: language.translate(obj.language, "announcements", "workbench", { workbenchName: this.obj.name });
 
 		obj.syncer.setArray(true, "serverActions", "addActions", {
 			name: "access workbench"

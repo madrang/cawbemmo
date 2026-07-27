@@ -75,6 +75,7 @@ export default {
 		const res = await client.componentProxy.auth.login({
 			username: this.val(".txtUsername")
 			, password: this.val(".txtPassword")
+			, language: locale.language
 		});
 		this.onLogin(res);
 	}
@@ -98,6 +99,7 @@ export default {
 		const res = await client.componentProxy.auth.register({
 			username: this.val(".txtUsername")
 			, password: this.val(".txtPassword")
+			, language: locale.language
 		});
 		this.onLogin(res);
 	}

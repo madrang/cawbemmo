@@ -6,3 +6,5 @@ global.leaderboard = (await import("./leaderboard/leaderboard.js")).default;
 global.clientConfig = (await import("./config/clientConfig.js")).default;
 
 global.consts = (await import("./config/consts.js")).default;
+
+global.language = (await import("./language/index.mjs")).default;
