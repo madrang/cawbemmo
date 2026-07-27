@@ -70,24 +70,24 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 			} else if (typeof dictionary === "function") {
 				return dictionary(msgName);
 			}
-			return msgName;
+			return match;
 		}
 		const nameParts = msgName.split(".");
 		if (typeof dictionary === "function") {
 			const strMsg = dictionary(...nameParts);
 			if (strMsg === undefined || strMsg === null) {
 				logger.error(`dictionary("${msgName}") returned an empty value!`);
-				return msgName;
+				return match;
 			}
 			return strMsg;
 		} else if (typeof dictionary === "object") {
-			// Coalesce a missing path to the bare token name, matching the single-segment and function-dict fallbacks above.
-			// Without this, getMessage returns undefined and String.replaceAll substitutes the literal string "undefined" into the message.
-			return getMessage(dictionary, nameParts) ?? msgName;
+			//Coalesce a missing path to the full ${token}: without this,
+			// getMessage returns undefined and String.replaceAll substitutes the literal string "undefined" into the message.
+			return getMessage(dictionary, nameParts) ?? match;
 		}
 		logger.error(`dictionary "${dictionary}" does not declare "${msgName}"`);
 		logger.trace(dictionary);
-		return msgName;
+		return match;
 	});
 };
 

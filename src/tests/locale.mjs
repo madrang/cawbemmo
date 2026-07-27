@@ -67,14 +67,14 @@ describe("getLocalizedMessage", () => {
 			expect(getLocalizedMessage(dict, "${a.b.c}")).to.equal("deep");
 		});
 
-		it("leaves an unknown token as its bare dotted name", () => {
+		it("leaves an unknown dotted token intact (full ${token})", () => {
 			const dict = {};
-			expect(getLocalizedMessage(dict, "${a.b.c}")).to.equal("a.b.c");
+			expect(getLocalizedMessage(dict, "${a.b.c}")).to.equal("${a.b.c}");
 		});
 
-		it("leaves an unknown single-segment token as its bare name", () => {
+		it("leaves an unknown single-segment token intact (full ${token})", () => {
 			const dict = {};
-			expect(getLocalizedMessage(dict, "${missing}")).to.equal("missing");
+			expect(getLocalizedMessage(dict, "${missing}")).to.equal("${missing}");
 		});
 
 		it("resolves multiple tokens in one message", () => {
@@ -126,9 +126,9 @@ describe("getLocalizedMessage", () => {
 			expect(getLocalizedMessage(dict, "${key.unbound}")).to.equal("key.unbound");
 		});
 
-		it("falls back to the bare name when the function returns null/undefined", () => {
+		it("leaves the token intact (full ${token}) when the function returns null/undefined", () => {
 			const dict = () => null;
-			expect(getLocalizedMessage(dict, "${a.b}")).to.equal("a.b");
+			expect(getLocalizedMessage(dict, "${a.b}")).to.equal("${a.b}");
 		});
 	});
 
@@ -214,10 +214,10 @@ describe("translate", () => {
 		expect(render(3)).to.equal("click delete 1 more time to confirm");
 	});
 
-	it("falls back to the bare token name when a runtime token is omitted", () => {
-		//${s} is unknown to the dictionary and not in the object → bare "s".
+	it("leaves an omitted runtime token intact (full ${token})", () => {
+		//${s} is unknown to the dictionary and not in the object → survives as ${s}.
 		expect(translate(dict, "characters", "deleteCountdown", { countdown: 2 }))
-			.to.equal("click delete 2 more times to confirm");
+			.to.equal("click delete 2 more time${s} to confirm");
 	});
 
 	it("merges the object over the dictionary (object tokens override)", () => {
