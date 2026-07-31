@@ -53,7 +53,7 @@ module.exports = {
 				, element: "arcane"
 				, cdMax: 5
 				, particles: {
-					emitterVersion: "1.2.0"
+					emitterVersion: "0.0.0"
 					, minParticleLifetime: 1
 					, maxParticleLifetime: 2
 					, colorBehavior: {
@@ -139,7 +139,7 @@ module.exports = {
 				, element: "arcane"
 				, cdMax: 5
 				, particles: {
-					emitterVersion: "1.2.0"
+					emitterVersion: "0.0.0"
 					, minParticleLifetime: 1
 					, maxParticleLifetime: 2
 					, colorBehavior: {
@@ -223,7 +223,7 @@ module.exports = {
 			, spells: [{
 				type: "projectile"
 				, particles: {
-					emitterVersion: "1.2.0"
+					emitterVersion: "0.0.0"
 					, colorBehavior: {
 						mode: "random"
 						, listData: {
@@ -257,7 +257,7 @@ module.exports = {
 				, element: "arcane"
 				, cdMax: 8
 				, particles: {
-					emitterVersion: "1.2.0"
+					emitterVersion: "0.0.0"
 					, minParticleLifetime: 1
 					, maxParticleLifetime: 3
 					, colorBehavior: {
@@ -412,7 +412,7 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								emitterVersion: "1.2.0"
+								emitterVersion: "0.0.0"
 								, minParticleLifetime: 1
 								, maxParticleLifetime: 4
 								, colorBehavior: {
@@ -462,7 +462,7 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								emitterVersion: "1.2.0"
+								emitterVersion: "0.0.0"
 								, minParticleLifetime: 1
 								, maxParticleLifetime: 2
 								, colorBehavior: {
@@ -596,7 +596,7 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								emitterVersion: "1.2.0"
+								emitterVersion: "0.0.0"
 								, minParticleLifetime: 4
 								, maxParticleLifetime: 16
 								, colorBehavior: {
@@ -655,7 +655,7 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								emitterVersion: "1.2.0"
+								emitterVersion: "0.0.0"
 								, minParticleLifetime: 1
 								, maxParticleLifetime: 3
 								, colorBehavior: {

@@ -19,7 +19,7 @@ export default {
 
 	, init: function (blueprint) {
 		const particleBlueprint = _.assignWith("particles", {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 2
 			, colorBehavior: {

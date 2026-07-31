@@ -3,7 +3,7 @@ import renderer from "/js/rendering/renderer.js";
 
 const getEmitterConfig = function (pos, blueprint, maxAlpha) {
 	return {
-		emitterVersion: "1.2.0"
+		emitterVersion: "0.0.0"
 		, minParticleLifetime: (blueprint.lifetime || { min: 1 }).min
 		, maxParticleLifetime: (blueprint.lifetime || { max: 4 }).max
 		, spawnInterval: 0.9 + Math.random()

@@ -9,7 +9,7 @@ export default {
 		this.blueprint = {
 			new: true
 			, blueprint: _.assignWith("particles", {
-				emitterVersion: "1.2.0"
+				emitterVersion: "0.0.0"
 				, particlesPerWave: 14
 				, colorBehavior: {
 					mode: "list"

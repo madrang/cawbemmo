@@ -28,7 +28,7 @@ module.exports = {
 	, tickParticles: {
 		ttl: 5
 		, blueprint: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 2
 			, spawnInterval: 0.25

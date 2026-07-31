@@ -33,7 +33,7 @@ export default {
 		this.obj.addComponent("particles", {
 			chance: chances[index]
 			, blueprint: {
-				emitterVersion: "1.2.0"
+				emitterVersion: "0.0.0"
 				, minParticleLifetime: 1
 				, maxParticleLifetime: 4
 				, colorBehavior: {

@@ -43,7 +43,7 @@ export default {
 			blueprint: this.particles
 		} : {
 			blueprint: {
-				emitterVersion: "1.2.0"
+				emitterVersion: "0.0.0"
 				, minParticleLifetime: 1
 				, maxParticleLifetime: 3
 				, colorBehavior: {

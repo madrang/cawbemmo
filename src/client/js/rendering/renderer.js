@@ -89,7 +89,7 @@ export default {
 			width: this.width
 			, height: this.height
 			, preference: "webgl"
-			, background: "0x2d2136"
+			, background: "#2d2136"
 			, resolution: 1
 		});
 
@@ -759,7 +759,7 @@ export default {
 		}
 
 		graphics.rect(0, 0, obj.w, obj.h);
-		graphics.fill({ color: obj.color || "0x48edff", alpha: fillAlpha });
+		graphics.fill({ color: obj.color || "#48edff", alpha: fillAlpha });
 
 		if (obj.strokeColor) {
 			graphics.stroke({ width: scaleMult, color: obj.strokeColor });

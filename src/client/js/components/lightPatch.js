@@ -6,7 +6,7 @@ const BLEND_ADD = "add";
 export default {
 	type: "lightPatch"
 
-	, color: "ffeb38"
+	, color: "#ffeb38"
 	, patches: []
 	, rays: []
 
@@ -35,7 +35,7 @@ export default {
 				sprite.height = size;
 				sprite.x += scaleMult * Math.floor(Math.random() * 4);
 				sprite.y += scaleMult * Math.floor(Math.random() * 4);
-				sprite.tint = "0x" + this.color;
+				sprite.tint = this.color;
 				sprite.alpha = (maxAlpha * 0.3) + (Math.random() * (maxAlpha * 0.7));
 				sprite.blendMode = BLEND_ADD;
 				this.patches.push(sprite);

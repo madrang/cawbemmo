@@ -3,7 +3,7 @@ import physics from "/js/misc/physics.js";
 const bptParticles = {
 	chance: 0.1
 	, blueprint: {
-		emitterVersion: "1.2.0"
+		emitterVersion: "0.0.0"
 		, spawnChance: 0.025
 		, colorBehavior: {
 			mode: "list"

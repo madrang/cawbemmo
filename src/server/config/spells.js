@@ -35,7 +35,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 1
 			, colorBehavior: {
@@ -90,7 +90,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 3
 			, colorBehavior: {
@@ -146,7 +146,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 2
 			, spawnInterval: 0.2
@@ -202,7 +202,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 2
 			, spawnInterval: 0.02
@@ -291,7 +291,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 3
 			, colorBehavior: {
@@ -357,7 +357,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 3
 			, colorBehavior: {
@@ -498,7 +498,7 @@ const spells = [
 			}
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 3
 			, colorBehavior: {
@@ -614,7 +614,7 @@ const spells = [
 			]
 		}
 		, particles: {
-			emitterVersion: "1.2.0"
+			emitterVersion: "0.0.0"
 			, minParticleLifetime: 1
 			, maxParticleLifetime: 1
 			, colorBehavior: {

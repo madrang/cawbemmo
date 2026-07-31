@@ -51,7 +51,11 @@ export default {
 		// out here so the library doesn't receive an unknown config field.
 		delete config.blendMode;
 
-		const options = _.assignWith("particles", {}, particleDefaults(this.texture), config);
+		const options = _.assignWith("particles", {}, particleDefaults, config);
+		options.textureBehavior = {
+			textureConfigs: [{ textures: [this.texture] }]
+			, mode: "static"
+		};
 		//console.log("Particles emitter created", options);
 		const emitter = new Emitter(this.stage, options);
 		emitter.obj = obj;

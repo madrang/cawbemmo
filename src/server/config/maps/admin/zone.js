@@ -281,7 +281,7 @@ module.exports = {
 				, cdMax: 7
 				, targetRandom: true
 				, particles: {
-					emitterVersion: "1.2.0"
+					emitterVersion: "0.0.0"
 					, colorBehavior: {
 						mode: "random"
 						, listData: {
@@ -313,7 +313,7 @@ module.exports = {
 						return {
 							type: "particles"
 							, blueprint: {
-								emitterVersion: "1.2.0"
+								emitterVersion: "0.0.0"
 								, minParticleLifetime: 5
 								, maxParticleLifetime: 12
 								, colorBehavior: {

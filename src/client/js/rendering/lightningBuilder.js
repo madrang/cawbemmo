@@ -77,7 +77,7 @@ export default {
 					lightPatch.width = scaleMult * linkSize;
 					lightPatch.height = scaleMult * linkSize;
 					lightPatch.alpha = Math.random() * 0.5;
-					lightPatch.tint = "0xffffff";
+					lightPatch.tint = "#ffffff";
 					lightPatch.blendMode = BLEND_ADD;
 					line.sprites.push(lightPatch);
 				}
@@ -95,7 +95,7 @@ export default {
 			return hex.length === 1 ? "0" + hex : hex;
 		};
 
-		return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+		return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 	}
 
 	, update: function (obj) {
