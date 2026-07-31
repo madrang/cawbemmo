@@ -754,7 +754,7 @@ export default {
 		}
 
 		let fillAlpha = obj.fillAlpha;
-		if (obj.has("fillAlpha")) {
+		if (!obj.has("fillAlpha")) {
 			fillAlpha = 1;
 		}
 
