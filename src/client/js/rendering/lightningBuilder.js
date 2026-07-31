@@ -1,5 +1,7 @@
 import renderer from "/js/rendering/renderer.js";
 
+const BLEND_ADD = "add";
+
 export default {
 	build: function (config) {
 		let obj = {
@@ -76,7 +78,7 @@ export default {
 					lightPatch.height = scaleMult * linkSize;
 					lightPatch.alpha = Math.random() * 0.5;
 					lightPatch.tint = "0xffffff";
-					lightPatch.blendMode = PIXI.BLEND_MODES.ADD;
+					lightPatch.blendMode = BLEND_ADD;
 					line.sprites.push(lightPatch);
 				}
 				x += Math.cos(nAngle) * scaleMult;
