@@ -1,4 +1,4 @@
-import { Assets, ParticleContainer } from "pixi.js";
+import { ParticleContainer, Texture } from "pixi.js";
 import { Emitter } from "/js/dependencies/pixi-particle-system/index.js";
 import particleDefaults from "./particleDefaults.js";
 
@@ -17,7 +17,18 @@ export default {
 		this.renderer = options.renderer;
 		this.stage = options.stage;
 
-		this.texture = await Assets.load(PARTICLE_TEXTURE_URL);
+		// Load the particle image the same way resources.js loads every other
+		// sprite (new Image + onload), then wrap it with Texture.from. We avoid
+		// PIXI's Assets loader here because its image parser isn't registered in
+		// this no-bundler client, so Assets.load throws "Cannot read properties of
+		// undefined (reading 'load')".
+		const image = await new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = () => resolve(img);
+			img.onerror = () => reject(new Error(`Failed to load particle image: ${PARTICLE_TEXTURE_URL}`));
+			img.src = PARTICLE_TEXTURE_URL;
+		});
+		this.texture = Texture.from(image);
 	}
 
 	// Build the ParticleContainer used as the particle layer. v8's
