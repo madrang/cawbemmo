@@ -18,8 +18,8 @@ export default {
 		this.stage = options.stage;
 
 		// Load the particle image the same way resources.js loads every other
-		// sprite (new Image + onload), then wrap it with Texture.from. We avoid
-		// PIXI's Assets loader here because its image parser isn't registered in
+		// sprite (new Image + onload), then wrap it with Texture.from.
+		// We avoid PIXI's Assets loader here because its image parser isn't registered in
 		// this no-bundler client, so Assets.load throws "Cannot read properties of
 		// undefined (reading 'load')".
 		const image = await new Promise((resolve, reject) => {
@@ -31,9 +31,6 @@ export default {
 		this.texture = Texture.from(image);
 	}
 
-	// Build the ParticleContainer used as the particle layer. v8's
-	// ParticleContainer requires a texture at construction time; the particle
-	// image is loaded in init() (called before this), so this.texture is ready.
 	, createContainer: function () {
 		return new ParticleContainer({
 			texture: this.texture
