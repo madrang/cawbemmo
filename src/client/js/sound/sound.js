@@ -149,9 +149,10 @@ export default {
 			}
 			updated = true;
 		}
-		// Stop only once the gain has reached silence (curVol, not the target):
-		// this lets a fade-out ramp finish on its own instead of cutting it.
-		if (isPlaying && curVol <= 0) {
+		// Stop only when both the current gain and the target are at silence.
+		// Checking the target prevents stopping a sound right after scheduling
+		// a fade-in ramp from 0 (which would cancel the ramp).
+		if (isPlaying && volume <= 0 && curVol <= 0) {
 			entry.sound.stop();
 			updated = true;
 		}
