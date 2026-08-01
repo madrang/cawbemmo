@@ -1,5 +1,5 @@
 {
-    "socket.io": "4.8.1"
+    "socket.io": "4.8.3"
     , "howler": "2.2.4"
     , "pixi-particle-system": "1.2.0"
     , "pixijs": "8.19.0"

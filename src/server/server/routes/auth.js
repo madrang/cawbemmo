@@ -25,7 +25,7 @@ const createRouter = (options) => {
 		try {
 			const decodedToken = await jVerify(token, jwtSecret);
 			if (!decodedToken.username) {
-				return res.status(204);
+				return res.status(204).send();
 			}
 			const accountInfo = await io.getAsync({
 				key: decodedToken.username
@@ -57,54 +57,53 @@ const createRouter = (options) => {
 				, noParse: true
 			});
 			if (!storedPassword) {
-				res.status(401).jsonp({
+				return res.status(401).jsonp({
 					message: "Login not successful"
 					, error: "User not found"
 				});
 			}
 			const compareResult = await bCompare(password, storedPassword);
 			if (!compareResult) {
-				res.status(401).jsonp({
+				return res.status(401).jsonp({
 					message: "Login not successful"
 					, error: "User not found"
 				});
-			} else {
-				const accountInfo = await io.getAsync({
-					key: username
-					, table: "accountInfo"
-					, noDefault: true
-				}) || {
-					loginStreak: 0
-					, level: 0
-				};
-				const maxAge = 3 * 60 * 60;
-				const token = jwt.sign(
-					{
-						username
-						, level: accountInfo.level
-					}
-					, jwtSecret
-					, {
-						// 3hrs in sec
-						expiresIn: maxAge
-					}
-				);
-				res.cookie("jwt", token, {
-					// Flags the cookie to be accessible only by the web server.
-					httpOnly: true
-					// 3hrs in ms
-					, maxAge: maxAge * 1000
-				});
-				res.status(200).jsonp({
-					message: "Login successful"
-					, user: {
-						username
-						, ...accountInfo
-					}
-					, jwt: token
-					, expiresIn: maxAge
-				});
 			}
+			const accountInfo = await io.getAsync({
+				key: username
+				, table: "accountInfo"
+				, noDefault: true
+			}) || {
+				loginStreak: 0
+				, level: 0
+			};
+			const maxAge = 3 * 60 * 60;
+			const token = jwt.sign(
+				{
+					username
+					, level: accountInfo.level
+				}
+				, jwtSecret
+				, {
+					// 3hrs in sec
+					expiresIn: maxAge
+				}
+			);
+			res.cookie("jwt", token, {
+				// Flags the cookie to be accessible only by the web server.
+				httpOnly: true
+				// 3hrs in ms
+				, maxAge: maxAge * 1000
+			});
+			res.status(200).jsonp({
+				message: "Login successful"
+				, user: {
+					username
+					, ...accountInfo
+				}
+				, jwt: token
+				, expiresIn: maxAge
+			});
 		} catch (err) {
 			return res.status(400).jsonp({
 				message: "An error occurred"
@@ -184,7 +183,7 @@ const createRouter = (options) => {
 		} catch (err) {
 			res.status(401).jsonp({
 				message: "User creation failed"
-				, error: err.mesage
+				, error: err.message
 			});
 		}
 	});
