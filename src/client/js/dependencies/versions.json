@@ -3,5 +3,5 @@
     , "howler": "2.2.4"
     , "pixi-particle-system": "1.2.0"
     , "pixijs": "8.19.0"
-    , "jquery": "3.7.1"
+    , "jquery": "4.0.0"
 }
