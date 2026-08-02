@@ -24,7 +24,7 @@ module.exports = {
 				}
 			}
 		}
-		, "sbire": {
+		, sbire: {
 			level: 9
 			, faction: "hostile"
 			, regular: {

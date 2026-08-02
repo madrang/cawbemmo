@@ -24,7 +24,7 @@ module.exports = {
 				}
 			}
 		}
-		, "vidanges": {
+		, vidanges: {
 			level: 10
 			, faction: "hostile"
 			, regular: {
@@ -196,7 +196,7 @@ module.exports = {
 			}]
 		}
 
-		, "canette": {
+		, canette: {
 			level: 4
 			, faction: "hostile"
 			, regular: {

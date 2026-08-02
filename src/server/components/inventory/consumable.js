@@ -1,6 +1,6 @@
 const Item = require("./item");
 module.exports = class Consumable extends Item {
-	async use(cpnInv) {
+	async use (cpnInv) {
 		const itemUsed = await super.use(cpnInv);
 		if (!itemUsed) {
 			return false;

@@ -18,7 +18,7 @@ module.exports = {
 			}
 		}
 
-		, "canette": {
+		, canette: {
 			level: 4
 			, faction: "hostile"
 			, regular: {
@@ -106,7 +106,7 @@ module.exports = {
 			}]
 		}
 
-		, "rat": {
+		, rat: {
 			level: 5
 
 			, regular: {

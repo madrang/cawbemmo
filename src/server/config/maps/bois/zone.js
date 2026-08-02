@@ -38,7 +38,7 @@ module.exports = {
 				, sprite: [0, 0]
 			}
 		}
-		, "papillion": {
+		, papillion: {
 			level: 6
 			, faction: "hostile"
 			, regular: {
@@ -57,7 +57,7 @@ module.exports = {
 			, faction: "hostile"
 			, rare: {
 				name: "Boss des wézo"
-				,hpMult: 3
+				, hpMult: 3
 				, dmgMult: 3
 
 				, drops: {

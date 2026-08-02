@@ -11,7 +11,7 @@ module.exports = {
 		//Load all mods
 		const modList = fileLister.getDirectories("mods");
 		const loadList = modList.map((modName) => {
-			if(!knownModuleSet.has(modName)) {
+			if (!knownModuleSet.has(modName)) {
 				knownModuleSet.add(modName);
 				this.logger.debug("Loading module '%s'", modName);
 			}
