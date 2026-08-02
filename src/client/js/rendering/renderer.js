@@ -259,7 +259,7 @@ export default {
 		}
 		if (baseTex === "sprites") {
 			// The 'sprites' texture maps to all the sheets in loading order.
-			const { clientConfig: { atlasTextureDimensions, atlasTextures, spriteSizes } } = globals;
+			const { clientConfig: { atlasTextures, spriteSizes } } = globals;
 			let curId = 0;
 			baseTex = atlasTextures.find((t) => {
 				const texture = this.textures[t];
