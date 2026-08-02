@@ -16,7 +16,7 @@ const keyDict = (...parts) => {
 		const key = input.getKeyForAction(parts[1]);
 		//Fall back to the token's bare name if the action is unbound, matching
 		//how the locale resolver treats unresolved tokens.
-		return key || parts.join(".");
+		return (key && key.toUpperCase()) || parts.join(".");
 	}
 	return parts.join(".");
 };
