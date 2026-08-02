@@ -32,7 +32,6 @@ const getMessage = function getMessage (target, nParts, curPath = []) {
 		return target;
 	}
 	if (typeof target !== "object") {
-		_.log.locale.getMessage.error(`Current path ${curPath.join(".")} is missing ${nParts.join(".")}`);
 		return undefined;
 	}
 	const np = nParts.shift();
@@ -40,7 +39,6 @@ const getMessage = function getMessage (target, nParts, curPath = []) {
 	curPath.push(np);
 
 	if (!subTarget) {
-		_.log.locale.getMessage.error(curPath.join(".") + " not found.");
 		return undefined;
 	}
 	return getMessage(subTarget, nParts, curPath);
@@ -63,7 +61,6 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 			logger.warn(`The localised message "${match}" is invalid as it results into an empty name.`);
 			return match;
 		}
-		logger.trace(`Looking for "${msgName}"`);
 		if (!msgName.includes(".")) {
 			if (typeof dictionary === "object" && Object.prototype.has.call(dictionary, msgName)) {
 				return dictionary[msgName];
@@ -76,7 +73,6 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 		if (typeof dictionary === "function") {
 			const strMsg = dictionary(...nameParts);
 			if (strMsg === undefined || strMsg === null) {
-				logger.error(`dictionary("${msgName}") returned an empty value!`);
 				return match;
 			}
 			return strMsg;
@@ -85,8 +81,6 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 			// getMessage returns undefined and String.replaceAll substitutes the literal string "undefined" into the message.
 			return getMessage(dictionary, nameParts) ?? match;
 		}
-		logger.error(`dictionary "${dictionary}" does not declare "${msgName}"`);
-		logger.trace(dictionary);
 		return match;
 	});
 };
