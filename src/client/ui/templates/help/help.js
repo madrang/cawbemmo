@@ -22,8 +22,7 @@ const helpDict = (...parts) => {
 		return locale.dictionary.key?.[keyToken] || keyToken;
 	}
 	// Delegate help.* and any other locale tokens to the object dictionary.
-	const resolved = locale.getMessage(locale.dictionary, parts.slice());
-	return (resolved !== undefined) ? resolved : parts.join(".");
+	return locale.getMessage(locale.dictionary, parts);
 };
 
 const template = locale.getLocalizedMessage(helpDict, rawTemplate);

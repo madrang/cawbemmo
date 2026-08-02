@@ -19,7 +19,6 @@ const keyDict = (...parts) => {
 		//Fall back to the token's bare name if the action is unbound, matching how the locale resolver treats unresolved tokens.
 		return (key && key.toUpperCase()) || parts.join(".");
 	}
-	return undefined;
 };
 
 export default {

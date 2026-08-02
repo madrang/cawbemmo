@@ -55,7 +55,7 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 		return message;
 	}
 	const logger = _.log.getLocalizedMessage;
-	return message.replaceAll(_reLocAllMsg, (match, msgName, offset, curString) => {
+	const replaceOnce = (input) => input.replaceAll(_reLocAllMsg, (match, msgName) => {
 		msgName = msgName.trim();
 		if (!msgName) {
 			logger.warn(`The localised message "${match}" is invalid as it results into an empty name.`);
@@ -84,6 +84,20 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 		}
 		return match;
 	});
+
+	// Re-scan until the message stops changing, so a value that itself contains
+	// a token (e.g. a help string embedding ${key.*}) resolves fully.
+	// Cap the passes to break self-referential cycles (a token whose value contains the same token).
+	let result = message;
+	for (let pass = 0; pass < 10; pass++) {
+		const next = replaceOnce(result);
+		if (next === result) {
+			return next;
+		}
+		result = next;
+	}
+	logger.warn(`Stopped resolving after 10 passes; possible self-referential token cycle in: ${message}`);
+	return result;
 };
 
 const stringifyStatValue = function stringifyStatValue (statName, statValue) {
