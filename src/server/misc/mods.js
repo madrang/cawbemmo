@@ -38,6 +38,7 @@ module.exports = {
 				loadList.push(m);
 				continue;
 			}
+			this.logger.info("Enabling mod '%s' (%s).", id, folderName);
 			await this.onGetMod(folderName, mod);
 			this.mods.push(mod);
 		}
