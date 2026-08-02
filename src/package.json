@@ -19,5 +19,8 @@
 
   , "scripts": {
     "test": "mocha --reporter spec"
+    , "lint:server": "cd server && ../node_modules/.bin/eslint ."
+    , "lint:client": "cd client && ../node_modules/.bin/eslint ."
+    , "lint": "npm run lint:server && npm run lint:client"
   }
 }
