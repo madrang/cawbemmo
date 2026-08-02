@@ -17,24 +17,29 @@
 			padding: 8px;
 			background-color: fade(#3a3b4a, 90%);
 			border-left: 3px solid @grayD;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
 
 			&:hover {
 				background-color: fade(lighten(#3a3b4a, 15%), 90%);
 			}
 
-			.zone {
-				color: @tealC;
-				margin-bottom: 4px;
-				text-align: right;
-			}
-
 			.name {
 				color: @white;
+				flex: 1;
 				margin-bottom: 3px;
+			}
+
+			.zone {
+				color: @tealC;
+				margin-left: 8px;
+				text-align: right;
 			}
 
 			.description {
 				color: darken(@white, 35%);
+				flex-basis: 100%;
 			}
 
 			&.disabled {
@@ -57,6 +62,7 @@
 			.reward {
 				display: none;
 				color: @tealC;
+				flex-basis: 100%;
 			}
 
 			&:hover {
@@ -72,6 +78,7 @@
 
 			.ready-text {
 				display: none;
+				flex-basis: 100%;
 			}
 
 			&.active {
