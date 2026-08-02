@@ -65,7 +65,8 @@ const getLocalizedMessage = function getLocalizedMessage (dictionary, message) {
 			if (typeof dictionary === "object" && Object.prototype.has.call(dictionary, msgName)) {
 				return dictionary[msgName];
 			} else if (typeof dictionary === "function") {
-				return dictionary(msgName);
+				const strMsg = dictionary(msgName);
+				return (typeof strMsg === "string" ? strMsg : match);
 			}
 			return match;
 		}
